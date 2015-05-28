@@ -1,0 +1,84 @@
+#%RAML 0.8
+---
+title: SPHERE.IO API
+baseUri: https://api.sphere.io
+version: v1
+securitySchemes:
+  - oauth_2_0:
+      description: |
+        HTTP API authorization uses <a href="http://tools.ietf.org/html/rfc6750" target="_blank">OAuth2</a>.
+
+        Clients must obtain an access token from the auth service using one of
+        the authorization flows described below, before they are able to make authorized requests
+        to other SPHERE.IO services. On successful completion of an authorization flow,
+        a client will be given an `access_token`, which they need to include in requests
+        to authorized service endpoints via the HTTP `Authorization` header like this:
+      type: OAuth 2.0
+      describedBy:
+        headers:
+          Authorization:
+            description: |
+              On successful completion of an authorization flow,
+              a client will be given an `access_token`, which they need to include in requests
+              to authorized service endpoints via the HTTP `Authorization` header like this:
+
+                  Authorization: Bearer {access_token}
+            type: string
+        responses:
+          401:
+            description: Unauthorized
+      settings:
+        authorizationUri: https://auth.sphere.io/oauth/token
+        accessTokenUri: https://auth.sphere.io/oauth/token
+        authorizationGrants: [ credentials ]
+        scopes:
+          - "manage_project:{projectKey}"
+          - "manage_products:{projectKey}"
+          - "view_products:{projectKey}"
+          - "manage_orders:{projectKey}"
+          - "view_orders:{projectKey}"
+          - "manage_customers:{projectKey}"
+          - "view_customers:{projectKey}"
+securedBy: [ oauth_2_0]
+traits: !include traits.raml
+mediaType: application/json
+resourceTypes:
+  - base:
+      get?:
+        responses:
+          200?: !include deprecation.raml
+          400: !include 400-error.raml
+          404: !include 404-error.raml
+          500: !include 500-error.raml
+          503: !include 503-error.raml
+      post?:
+        responses:
+          200?: !include deprecation.raml
+          201?: !include deprecation.raml
+          400: !include 400-error.raml
+          404: !include 404-error.raml
+          500: !include 500-error.raml
+          503: !include 503-error.raml
+      delete?:
+        responses:
+          200?: !include deprecation.raml
+          400: !include 400-error.raml
+          404: !include 404-error.raml
+          500: !include 500-error.raml
+          503: !include 503-error.raml
+/{projectKey}:
+  type: base
+  displayName: Project
+  description: The Project endpoint is used to retrieve certain information from a project.
+  get:
+    description: The Endpoint is responding a limited set of information about settings and configuration of the project.
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/project.example.json
+            schema: !include schemas/project.schema.json
+  /categories: !include categories.raml
+  /customers: !include customers.raml
+  /login: !include login.raml

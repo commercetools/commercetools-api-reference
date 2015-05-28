@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "category" : {
+    "id" : "#category",
+    "title": "Category",
+    "type": "object",
+
+    "required": ["id", "version", "name", "slug", "createdAt", "lastModifiedAt", "ancestors"],
+
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "The unique ID of the category"
+      },
+      "version": {
+        "type": "number",
+        "description": "The current version of the category"
+      },
+      "name": {"$ref": "http://localhost:8080/sphere/schemas/sphereio.schema.json#localized-string"},
+      "slug": {"$ref": "#localized-string-slug"},
+      "description": {"$ref": "#localized-string"},
+      "ancestors": {
+        "type": "array",
+        "items": {"$ref": "#reference-category"}
+      },
+      "parent": {"$ref": "#reference-category"},
+      "orderHint": {
+        "type": "string",
+        "description": "An attribute as base for a custom category order in one level",
+        "pattern": "^0\\.\\d+$"
+      },
+      "externalId": {
+        "type": "string",
+        "description": "Optional ID defined in some external system"
+      },
+      "createdAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Date of the category creation"
+      },
+      "lastModifiedAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Date of last modification"
+      }
+    }
+  },
+  "reference-category" : {
+    "id" : "#reference-category",
+    "title": "Reference (Category)",
+    "description": "A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
+    "type": "object",
+
+    "properties": {
+      "typeId ": {
+        "type": "string",
+        "description": "The typeId designates the type of the referenced resource",
+        "enum": ["category"]
+      },
+      "id": {
+        "type": "string",
+        "description": "The unique ID of the referenced resource"
+      }
+    }
+  },
+  "localized-string" : {
+    "id" : "#localized-string",
+    "title": "LocalizedString",
+    "description": "A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+    "type": "object",
+
+    "patternProperties": {
+      "^[a-z]{2}$": {
+        "type": "string",
+        "description": "The value for this language"
+      }
+    }
+  },
+  "localized-string-slug" : {
+    "id" : "#localized-string-slug",
+    "title": "LocalizedString",
+    "description": "A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+    "type": "object",
+
+    "patternProperties": {
+      "^[a-z]{2}$": {
+        "type": "string",
+        "description": "The slug for this language",
+        "pattern": "^[-a-zA-Z0-9_]{2,64}$"
+      }
+    }
+  }
+}

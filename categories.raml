@@ -1,0 +1,70 @@
+type: base
+displayName: Categories
+description: Categories are used to organize products in a hierarchical structure.
+get:
+  description: Query Categories
+  is:
+    - query:
+        whereExample: slug(en = "long-sleeves")
+    - sortable:
+        sortExample: name.en asc
+    - pagging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/categories.example.json
+          schema: !include schemas/categories.schema.json
+post:
+  description: Create a Category
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/category-create.example.json
+      schema: !include schemas/category-create.schema.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/category.example.json
+          schema: !include schemas/category.schema.json
+/{ID}:
+  type: base
+  displayName: Category
+  get:
+    description: Get Category by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/category.example.json
+            schema: !include schemas/category.schema.json
+  post:
+    description: Update a Category
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/category-update.example.json
+        schema: !include schemas/category-update.schema.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/category.example.json
+            schema: !include schemas/category.schema.json
+  delete:
+    description: Delete a Category
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/category.example.json
+            schema: !include schemas/category.schema.json
