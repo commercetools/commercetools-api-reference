@@ -1,0 +1,141 @@
+{
+  "$schema":"http://json-schema.org/draft-04/schema#",
+  "title":"Category Update Command",
+  "type":"object",
+  "required":["version","actions"],
+  "properties":{
+    "version":{
+      "type":"number",
+      "description":"The expected version of the category on which the changes should be applied. If the expected version does not match the actual version, a 409 Conflict will be returned."
+    },
+    "actions":{
+      "type":"array",
+      "items":{
+        "title":"Action",
+        "type":"object",
+        "oneOf":[{
+          "title":"changeName",
+          "type":"object",
+          "required":["action","name"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changeName"]
+            },
+            "name":{
+              "title":"LocalizedString",
+              "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+              "type":"object",
+              "patternProperties":{
+                "^[a-z]{2}$":{
+                  "type":"string",
+                  "description":"The value for this language"
+                }
+              }
+            }
+          }
+        },{
+          "title":"changeSlug",
+          "type":"object",
+          "required":["action","slug"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changeSlug"]
+            },
+            "slug":{
+              "title":"LocalizedString",
+              "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+              "type":"object",
+              "patternProperties":{
+                "^[a-z]{2}$":{
+                  "type":"string",
+                  "description":"The slug for this language",
+                  "pattern":"^[-a-zA-Z0-9_]{2,64}$"
+                }
+              }
+            }
+          }
+        },{
+          "title":"setDescription",
+          "type":"object",
+          "required":["action","description"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["setDescription"]
+            },
+            "description":{
+              "title":"LocalizedString",
+              "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+              "type":"object",
+              "patternProperties":{
+                "^[a-z]{2}$":{
+                  "type":"string",
+                  "description":"The value for this language"
+                }
+              }
+            }
+          }
+        },{
+          "title":"changeParent",
+          "type":"object",
+          "description":"Changing parents should not be done concurrently. Concurrent changes of parent categories might currently lead to corrupted ancestor lists (paths).",
+          "required":["action","parent"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changeParent"]
+            },
+            "parent":{
+              "title":"Reference (Category)",
+              "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
+              "type":"object",
+              "properties":{
+                "typeId ":{
+                  "type":"string",
+                  "description":"The typeId designates the type of the referenced resource",
+                  "enum":["category"]
+                },
+                "id":{
+                  "type":"string",
+                  "description":"The unique ID of the referenced resource"
+                }
+              }
+            }
+          }
+        },{
+          "title":"changeOrderHint",
+          "type":"object",
+          "required":["action","orderHint"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changeOrderHint"]
+            },
+            "orderHint":{
+              "type":"string",
+              "description":"An attribute as base for a custom category order in one level",
+              "pattern":"^0\\.\\d+$"
+            }
+          }
+        },{
+          "title":"setExternalId",
+          "type":"object",
+          "description":"Sets a new ID which can be used as additional identifier for external Systems like CRM or ERP.",
+          "required":["action"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["setExternalId"]
+            },
+            "externalId":{
+              "type":"string",
+              "description":"Optional ID defined in some external system. If not defined, the external ID is unset"
+            }
+          }
+        }]
+      }
+    }
+  }
+}
