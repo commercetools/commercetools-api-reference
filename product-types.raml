@@ -1,0 +1,70 @@
+type: base
+displayName: Product Types
+description: Product Types are used to describe common characteristics, most importantly common custom attributes, of many concrete products.
+get:
+  description: Query Product Types
+  is:
+    - query:
+        whereExample: slug(en = "long-sleeves")
+    - sortable:
+        sortExample: name.en asc
+    - pagging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/product-types.example.json
+          schema: !include schemas/product-types.schema.json
+post:
+  description: Create a Product Type
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/product-type-create.example.json
+      schema: !include schemas/product-type-create.schema.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/product-type.example.json
+          schema: !include schemas/product-type.schema.json
+/{ID}:
+  type: base
+  displayName: Product Type
+  get:
+    description: Get Product Type by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product-type.example.json
+            schema: !include schemas/product-type.schema.json
+  post:
+    description: Update a Product Type
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/product-type-update.example.json
+        schema: !include schemas/product-type-update.schema.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product-type.example.json
+            schema: !include schemas/product-type.schema.json
+  delete:
+    description: Delete a Product Type
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product-type.example.json
+            schema: !include schemas/product-type.schema.json
