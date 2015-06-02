@@ -1,0 +1,70 @@
+type: base
+displayName: Product 
+description: Products are the sellable goods in an e-commerce project on SPHERE.IO. This document explains some design concepts of products on SPHERE.IO and describes the available HTTP APIs for working with them.
+get:
+  description: Query Product 
+  is:
+    - query:
+        whereExample: slug(en = "long-sleeves")
+    - sortable:
+        sortExample: name.en asc
+    - pagging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/products.example.json
+          schema: !include schemas/products.schema.json
+post:
+  description: Create a Product
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/product-create.example.json
+      schema: !include schemas/product-create.schema.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/product.example.json
+          schema: !include schemas/product.schema.json
+/{ID}:
+  type: base
+  displayName: Product
+  get:
+    description: Get Product by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product.example.json
+            schema: !include schemas/product.schema.json
+  post:
+    description: Update a Product
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/product-update.example.json
+        schema: !include schemas/product-update.schema.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product.example.json
+            schema: !include schemas/product.schema.json
+  delete:
+    description: Delete a Product
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product.example.json
+            schema: !include schemas/product.schema.json
