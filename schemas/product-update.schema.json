@@ -1,0 +1,200 @@
+{
+  "$schema":"http://json-schema.org/draft-04/schema#",
+  "title":"Update a Product",
+  "type":"object",
+  "required":["version","actions"],
+  "properties":{
+   "version": {
+      "$ref": "version-update.schema.json"
+    },
+    "actions": {
+      "type": "array",
+
+      "items": {
+        "title": "Action",
+        "type": "object",
+
+        "oneOf": [{
+          "title": "changeName",
+          "type": "object",
+
+          "required": ["action", "name"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changeName"]
+            },
+            "name": {"$ref": "localized-string.schema.json"},
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "setDescription",
+          "type": "object",
+
+          "required": ["action", "description"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["setDescription"]
+            },
+            "description": {"$ref": "localized-string.schema.json"},
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "changeSlug",
+          "type": "object",
+
+          "required": ["action", "slug"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changeSlug"]
+            },
+            "slug": {
+              "$ref": "localized-string.schema.json",
+              "description":"Allowed are alphabetic, numeric, underscore (_) and hyphen (-) characters. Maximum size is 256."
+            },
+            "staged": {"type": "boolean"}
+          }
+        },{
+          "title": "addVariant",
+          "type": "object",
+
+          "required": ["action"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["addVariant"]
+            },
+            "sku": { "type":"string"},
+            "prices": {
+              "type": "array",
+              "description": "The prices of the variant. The prices does not contain two prices for the same price scope (same currency, country, customer group and channel).",
+              "items":{
+                "$ref":"price.schema.json"
+              }
+            },
+            "images": {
+              "type": "array",
+              "description": "External images for the new variant. You can also upload images to use the SPHERE.IO Content Delivery Network.",
+              "items":{
+                "$ref":"image.schema.json"
+              }
+            },
+            "attributes": {
+              "type":"object",
+              "description": "The custom attributes of the master variant. A nested JSON object where a field name corresponds to the name of a product attribute defined on the referenced product type and the value is a valid JSON value for that attribute."
+            },
+            "staged": {"type": "boolean"}
+          }
+        },{
+          "title": "removeVariant",
+          "type": "object",
+
+          "required": ["action", "id"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["removeVariant"]
+            },
+            "id": {"type":"number"},
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "setMetaAttributes",
+          "type": "object",
+          "required": ["action"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["setMetaAttributes"]
+            },
+            "metaTitle": {
+              "$ref":"localized-string.schema.json"
+            },
+            "metaDescription": {
+              "$ref":"localized-string.schema.json"
+            },
+             "metaKeywords": {
+              "$ref":"localized-string.schema.json"
+            },
+            "staged": {"type": "boolean"}
+          }
+        },{
+          "title": "addPrice",
+          "type": "object",
+          "description":"Adds the given price to the product variant's prices set. Prices are defined with a scope (currency, country, customer group and channel) and/or a validity period (validFrom and/or validTo). A price without validity period (no validFrom and no validUntil) is always valid for its scope.",
+
+          "required": ["action", "variantId", "price"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["addPrice"]
+            },
+            "variantId": {"type": "number"},
+            "price": {"$ref":"price.schema.json"},
+            "staged": {"type": "boolean"}
+          }
+        },{
+          "title": "changePrice",
+          "type": "object",
+          "description":"Replaces a price in the product variant's prices set. The price to replace is specified by its ID.",
+          "required": ["action", "priceId", "price"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changePrice"]
+            },
+            "priceId": {"type": "number"},
+            "price": {"$ref":"price.schema.json"},
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "removePrice",
+          "type": "object",
+          "description":"It can update a Enum attribute definition or a Set of EnumType attribute definition.",
+
+          "required": ["action", "priceId"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["removePrice"]
+            },
+            "priceId": {"type": "number"},
+            "price": {"$ref":"price.schema.json"},
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "setAttribute",
+          "type": "object",
+          "description":"It can update a LocalizableEnum attribute definition or a Set of LocalizableEnumType attribute definition.", 
+
+          "required": ["action", "variantId", "name"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changeLocalizedEnumValueOrder"]
+            },
+            "variantId": {"type": "number"},
+            "name": {"type": "string"},
+            "value": {
+              "type":"object",
+              "description":"If the attribute exists and the value is omitted or set to null, the attribute is removed. If the attribute exists and a value is provided, the new value is applied. If the attribute does not exist and a value is provided, it is added as a new attribute."
+            },
+            "staged": {"type": "boolean"}
+          }
+        }]
+      }
+    }
+  }
+}
