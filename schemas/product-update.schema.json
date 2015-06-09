@@ -1,0 +1,431 @@
+{
+  "$schema":"http://json-schema.org/draft-04/schema#",
+  "title":"Update a Product",
+  "type":"object",
+  "required":["version","actions"],
+  "properties":{
+   "version": {
+      "$ref": "version-update.schema.json"
+    },
+    "actions": {
+      "type": "array",
+
+      "items": {
+        "title": "Action",
+        "type": "object",
+
+        "oneOf": [{
+          "title": "changeName",
+          "type": "object",
+
+          "required": ["action", "name"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changeName"]
+            },
+            "name": {"$ref": "localized-string.schema.json"},
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "setDescription",
+          "type": "object",
+
+          "required": ["action", "description"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["setDescription"]
+            },
+            "description": {"$ref": "localized-string.schema.json"},
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "changeSlug",
+          "type": "object",
+
+          "required": ["action", "slug"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changeSlug"]
+            },
+            "slug": {
+              "$ref": "localized-string.schema.json",
+              "description":"Allowed are alphabetic, numeric, underscore (_) and hyphen (-) characters. Maximum size is 256."
+            },
+            "staged": {"type": "boolean"}
+          }
+        },{
+          "title": "addVariant",
+          "type": "object",
+
+          "required": ["action"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["addVariant"]
+            },
+            "sku": { "type":"string"},
+            "prices": {
+              "type": "array",
+              "description": "The prices of the variant. The prices does not contain two prices for the same price scope (same currency, country, customer group and channel).",
+              "items":{
+                "$ref":"price.schema.json"
+              }
+            },
+            "images": {
+              "type": "array",
+              "description": "External images for the new variant. You can also upload images to use the SPHERE.IO Content Delivery Network.",
+              "items":{
+                "$ref":"image.schema.json"
+              }
+            },
+            "attributes": {
+              "type":"object",
+              "description": "The custom attributes of the master variant. A nested JSON object where a field name corresponds to the name of a product attribute defined on the referenced product type and the value is a valid JSON value for that attribute."
+            },
+            "staged": {"type": "boolean"}
+          }
+        },{
+          "title": "removeVariant",
+          "type": "object",
+
+          "required": ["action", "id"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["removeVariant"]
+            },
+            "id": {"type":"number"},
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "setMetaAttributes",
+          "type": "object",
+          "required": ["action"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["setMetaAttributes"]
+            },
+            "metaTitle": {
+              "$ref":"localized-string.schema.json"
+            },
+            "metaDescription": {
+              "$ref":"localized-string.schema.json"
+            },
+             "metaKeywords": {
+              "$ref":"localized-string.schema.json"
+            },
+            "staged": {"type": "boolean"}
+          }
+        },{
+          "title": "addPrice",
+          "type": "object",
+          "description":"Adds the given price to the product variant's prices set. Prices are defined with a scope (currency, country, customer group and channel) and/or a validity period (validFrom and/or validTo). A price without validity period (no validFrom and no validUntil) is always valid for its scope.",
+
+          "required": ["action", "variantId", "price"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["addPrice"]
+            },
+            "variantId": {"type": "number"},
+            "price": {"$ref":"price.schema.json"},
+            "staged": {"type": "boolean"}
+          }
+        },{
+          "title": "changePrice",
+          "type": "object",
+          "description":"Replaces a price in the product variant's prices set. The price to replace is specified by its ID.",
+          "required": ["action", "priceId", "price"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changePrice"]
+            },
+            "priceId": {"type": "number"},
+            "price": {"$ref":"price.schema.json"},
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "removePrice",
+          "type": "object",
+          "description":"It can update a Enum attribute definition or a Set of EnumType attribute definition.",
+
+          "required": ["action", "priceId"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["removePrice"]
+            },
+            "priceId": {"type": "number"},
+            "price": {"$ref":"price.schema.json"},
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "setAttribute",
+          "type": "object",
+          "description":"It can update a LocalizableEnum attribute definition or a Set of LocalizableEnumType attribute definition.",
+
+          "required": ["action", "variantId", "name"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["setAttribute"]
+            },
+            "variantId": {"type": "number"},
+            "name": {"type": "string"},
+            "value": {
+              "type":"object",
+              "description":"If the attribute exists and the value is omitted or set to null, the attribute is removed. If the attribute exists and a value is provided, the new value is applied. If the attribute does not exist and a value is provided, it is added as a new attribute."
+            },
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "setAttributeInAllVariants",
+          "type": "object",
+          "description":"Adds / Removes / Changes a custom attribute in all variants at the same time (it can be helpful to set attribute values that are constrained with SameForAll).",
+
+          "required": ["action", "name"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["setAttributeInAllVariants"]
+            },
+            "name": {"type": "string"},
+            "value": {
+              "type":"object",
+              "description":"If the attribute exists and the value is omitted or set to null, the attribute is removed. If the attribute exists and a value is provided, the new value is applied. If the attribute does not exist and a value is provided, it is added as a new attribute."
+            },
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "addToCategory",
+          "type": "object",
+
+          "required": ["action", "category"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["addToCategory"]
+            },
+            "category": {
+              "$ref":"reference.schema.json",
+              "description":"Reference to a Category."
+            },
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "removeFromCategory",
+          "type": "object",
+
+          "required": ["action", "category"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["removeFromCategory"]
+            },
+            "category": {
+              "$ref":"reference.schema.json",
+              "description":"Reference to a Category."
+            },
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "setTaxCategory",
+          "type": "object",
+          "description":"Adds, changes or removes a product's tax category. This change can never be staged and is thus immediately visible in published products.",
+
+          "required": ["action"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["setTaxCategory"]
+            },
+            "taxCategory": {
+              "$ref":"reference.schema.json",
+              "description":"If left blank or set to null, the tax category is unset/removed."
+            }
+          }
+        }, {
+          "title": "setSKU",
+          "type": "object",
+          "description": "Adds, changes or removes an SKU on a product variant. An SKU can only be changed or removed from a variant through this operation if there is no inventory entry associated with that SKU. This change can never be staged and is thus immediately visible in published products.",
+
+          "required": ["action", "variantId"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["setSKU"]
+            },
+            "variantId": {"type": "number"},
+            "sku":{
+              "type":"string",
+              "description": "If left blank or set to null, the SKU is unset/removed."
+            }
+          }
+        }, {
+          "title": "addExternalImage",
+          "type": "object",
+          "description": "Adds external image url with meta-information to the product variant.",
+
+          "required": ["action", "variantId", "image"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["addExternalImage"]
+            },
+            "variantId": {
+              "type": "number",
+              "description":"The ID of the variant where image should be added"
+            },
+            "image":{
+              "$ref":"image.schema.json"
+            },
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "removeImage",
+          "type": "object",
+          "description": "Removes a product image and deletes it from the Content Delivery Network (it would not be deleted from the CDN in case of external image). Deletion from the CDN is not instant, which means the image file itself will stay available for some time after the deletion.",
+
+          "required": ["action", "variantId", "imageUrl"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["removeImage"]
+            },
+            "variantId": {
+              "type": "number",
+              "description":"The ID of the variant which has the image"
+            },
+            "imageUrl":{
+              "type":"string",
+              "description": "The URL of the image"
+            },
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "setSearchKeywords",
+          "type": "object",
+
+          "required": ["action", "searchKeywords"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["setSearchKeywords"]
+            },
+            "searchKeywords": {
+              "$ref": "search-keywords.schema.json"
+            },
+            "staged": {"type": "boolean"}
+          }
+        }, {
+          "title": "setMetaDescription",
+          "type": "object",
+
+          "required": ["action"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["setMetaDescription"]
+            },
+            "metaDescription": {
+              "$ref": "localized-string.schema.json"
+            }
+          }
+        }, {
+          "title": "setMetaTitle",
+          "type": "object",
+
+          "required": ["action"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["setMetaTitle"]
+            },
+            "metaTitle": {
+              "$ref": "localized-string.schema.json"
+            }
+          }
+        }, {
+          "title": "setMetaKeywords",
+          "type": "object",
+
+          "required": ["action"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["setMetaKeywords"]
+            },
+            "metaKeywords": {
+              "$ref": "localized-string.schema.json"
+            }
+          }
+        }, {
+          "title": "revertStagedChanges",
+          "type": "object",
+          "description": "Revert all changes, which were made to the staged version of a product and reset to the current version.",
+
+          "required": ["action"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["revertStagedChanges"]
+            }
+          }
+        }, {
+          "title": "publish",
+          "type": "object",
+          "description": "Publishes a product, which causes the staged projection of the product to override the current projection. If the product is published for the first time, the current projection is created.",
+
+          "required": ["action"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["publish"]
+            }
+          }
+        }, {
+          "title": "unpublish",
+          "type": "object",
+          "description": "Unpublishes a product, effectively deleting the current projection of the product, leaving only the staged projection. Consequently, when a product is unpublished, it will no longer be included in query or search results issued with staged=false, since such results only include current projections.",
+
+          "required": ["action"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["unpublish"]
+            }
+          }
+        }]
+      }
+    }
+  }
+}

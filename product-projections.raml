@@ -1,0 +1,40 @@
+type: base
+displayName: Product Projection
+description: A projected representation of a product shows the product with its current or staged data. The current or staged representation of a product in a catalog is called a product projection.
+get:
+  description: Query Product Projection
+  queryParameters:
+    staged:
+      type: boolean
+      description: Whether to query for the current or staged projections.
+      required: false  
+  is:
+    - query:
+        whereExample: slug(en = "long-sleeves")
+    - sortable:
+        sortExample: createdAt asc
+    - pagging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/product-projections.example.json
+          schema: !include schemas/product-projections.schema.json
+/{ID}:
+  type: base
+  displayName: Product Projection
+  get:
+    description: Get Product Projection by ID
+    queryParameters:
+      staged:
+        type: boolean
+        description: Whether to query for the current or staged projections.
+        required: false  
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product-projection.example.json
+            schema: !include schemas/product-projection.schema.json

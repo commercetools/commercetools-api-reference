@@ -1,0 +1,204 @@
+{
+  "$schema":"http://json-schema.org/draft-04/schema#",
+  "title":"Update a Product Type",
+  "type":"object",
+  "required":["version","actions"],
+  "properties":{
+   "version": {
+      "$ref": "version-update.schema.json"
+    },
+    "actions": {
+      "type": "array",
+
+      "items": {
+        "title": "Action",
+        "type": "object",
+
+        "oneOf": [{
+          "title": "changeName",
+          "type": "object",
+
+          "required": ["action", "name"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changeName"]
+            },
+            "name": {"type": "string"}
+          }
+        }, {
+          "title": "changeDescription",
+          "type": "object",
+
+          "required": ["action", "description"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changeDescription"]
+            },
+            "description": {"type": "string"}
+          }
+        }, {
+          "title": "addAttributeDefinition",
+          "type": "object",
+
+          "required": ["action", "attribute"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["addAttributeDefinition"]
+            },
+            "attribute": {
+              "$ref":"attribute-definition.schema.json"
+            }
+          }
+        },{
+          "title": "removeAttributeDefinition",
+          "type": "object",
+
+          "required": ["action", "attribute"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["removeAttributeDefinition"]
+            },
+            "attribute": {
+              "$ref":"attribute-definition.schema.json",
+              "description":"The name of the attribute to remove."
+            }
+          }
+        },{
+          "title": "changeLabel",
+          "type": "object",
+
+          "required": ["action", "attributeName", "label"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changeLabel"]
+            },
+            "attributeName": {
+              "type":"string",
+              "description":"The name of the attribute definition to update."
+            },
+            "label": {
+              "$ref":"localized-string.schema.json"
+            }
+          }
+        }, {
+          "title": "addPlainEnumValue",
+          "type": "object",
+          "description":"Adds an enum to the values of EnumType. It can update a EnumType attribute definition or a Set of EnumType attribute definition.",
+
+          "required": ["action", "attributeName", "value"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["addPlainEnumValue"]
+            },
+            "attributeName": {
+              "type": "string",
+              "description":"The name of the attribute definition to update."
+            },
+            "value": {
+              "$ref":"plain-enum-value.schema.json"
+            }
+          }
+        },{
+          "title": "addLocalizedEnumValue",
+          "type": "object",
+          "description":"Adds an localizable enum to the values of LocalizableEnumType. It can update a LocalizableEnum attribute definition or a Set of LocalizableEnumType attribute definition.",
+
+
+          "required": ["action", "attributeName", "value"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["addLocalizedEnumValue"]
+            },
+            "attributeName": {
+              "type": "string",
+              "description":"The name of the attribute definition to update."
+            },
+            "value": {
+              "$ref":"localized-enum-value.schema.json"
+            }
+          }
+        },
+        {
+          "title": "changeAttributeOrder",
+          "type": "object",
+
+          "required": ["action", "attributes"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changeAttributeOrder"]
+            },
+            "attributes": {
+              "type":"array",
+              "description":"TThe values must be equal to the values of the attribute enum values (except for the order).",
+              "items":{
+                "$ref":"attribute-definition.schema.json"
+              }
+            }
+          }
+        }, {
+          "title": "changePlainEnumValueOrder",
+          "type": "object",
+          "description":"It can update a Enum attribute definition or a Set of EnumType attribute definition.",
+
+          "required": ["action", "attributeName", "values"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changePlainEnumValueOrder"]
+            },
+            "attributeName": {
+              "type": "string"
+            },
+            "values": {
+              "type":"array",
+              "description":"TThe values must be equal to the values of the attribute enum values (except for the order).",
+              "items":{
+                "$ref":"plain-enum-value.schema.json"
+              }
+            }
+          }
+        }, {
+          "title": "changeLocalizedEnumValueOrder",
+          "type": "object",
+          "description":"It can update a LocalizableEnum attribute definition or a Set of LocalizableEnumType attribute definition.",
+
+          "required": ["action", "attributeName", "values"],
+
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["changeLocalizedEnumValueOrder"]
+            },
+            "attributeName": {
+              "type": "string"
+            },
+            "values": {
+              "type":"array",
+              "description":"The values must be equal to the values of the attribute enum values (except for the order).",
+              "items":{
+                "$ref":"localized-enum-value.schema.json"
+              }
+            }
+          }
+        }]
+      }
+    }
+  }
+}
