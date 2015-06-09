@@ -1,0 +1,321 @@
+{
+  "$schema":"http://json-schema.org/draft-04/schema#",
+  "title":"Update a Product Type",
+  "type":"object",
+  "required":["version","actions"],
+  "properties":{
+    "version":{
+      "type":"number",
+      "description":"The expected version of the category on which the changes should be applied. If the expected version does not match the actual version, a 409 Conflict will be returned."
+    },
+    "actions":{
+      "type":"array",
+      "items":{
+        "title":"Action",
+        "type":"object",
+        "oneOf":[{
+          "title":"changeName",
+          "type":"object",
+          "required":["action","name"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changeName"]
+            },
+            "name":{
+              "type":"string"
+            }
+          }
+        },{
+          "title":"changeDescription",
+          "type":"object",
+          "required":["action","description"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changeDescription"]
+            },
+            "description":{
+              "type":"string"
+            }
+          }
+        },{
+          "title":"addAttributeDefinition",
+          "type":"object",
+          "required":["action","attribute"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["addAttributeDefinition"]
+            },
+            "attribute":{
+              "title":"Attribute Type",
+              "type":"object",
+              "properties":{
+                "type":{
+                  "$ref":"attribute-type.schema.json",
+                  "description":"Describes the type of the attribute."
+                },
+                "name":{
+                  "type":"string",
+                  "description":"The unique name of the attribute used in the API. The name must be between two and 36 characters long and can contain the ASCII letters A to Z in lowercase or uppercase, digits, underscores (_) and the hyphen-minus (-)."
+                },
+                "label":{
+                  "$ref":"localized-string.schema.json",
+                  "description":"A human-readable label for the attribute."
+                },
+                "isRequired":{
+                  "type":"boolean",
+                  "description":"Whether the attribute is required to have a value."
+                },
+                "attributeConstraint":{
+                  "$ref":"attribute-constraint.schema.json",
+                  "description":"Describes how an attribute or a set of attributes should be validated across all variants of a product."
+                },
+                "inputHint":{
+                  "$ref":"text-input-hint.schema.json",
+                  "description":"Provides a visual representation type for this attribute."
+                },
+                "displayGroup":{
+                  "$ref":"display-group.schema.json",
+                  "description":"UI hint telling in which group an edit control for an attribute should be displayed."
+                },
+                "isSearchable":{
+                  "type":"boolean",
+                  "description":"Whether the attribute's values should generally be enabled in product search. This determines whether the value is stored in products for matching terms in the context of full-text search queries and can be used in facets & filters as part of product search queries. The exact features that are enabled/disabled with this flag depend on the concrete attribute type and are described there."
+                }
+              }
+            }
+          }
+        },{
+          "title":"removeAttributeDefinition",
+          "type":"object",
+          "required":["action","attribute"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["removeAttributeDefinition"]
+            },
+            "attribute":{
+              "$ref":"attribute-definition.schema.json",
+              "description":"The name of the attribute to remove."
+            }
+          }
+        },{
+          "title":"changeLabel",
+          "type":"object",
+          "required":["action","attributeName","label"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changeLabel"]
+            },
+            "attributeName":{
+              "type":"string",
+              "description":"The name of the attribute definition to update."
+            },
+            "label":{
+              "title":"LocalizedString",
+              "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+              "type":"object",
+              "patternProperties":{
+                "^[a-z]{2}$":{
+                  "type":"string",
+                  "description":"The value for this language"
+                }
+              }
+            }
+          }
+        },{
+          "title":"addPlainEnumValue",
+          "type":"object",
+          "description":"Adds an enum to the values of EnumType. It can update a EnumType attribute definition or a Set of EnumType attribute definition.",
+          "required":["action","attributeName","value"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["addPlainEnumValue"]
+            },
+            "attributeName":{
+              "type":"string",
+              "description":"The name of the attribute definition to update."
+            },
+            "value":{
+              "title":"Plain Enum Value",
+              "type":"object",
+              "properties":{
+                "key ":{
+                  "type":"string",
+                  "description":"The key of the value used as a programmatic identifier, e.g. in facets & filters."
+                },
+                "label":{
+                  "type":"string",
+                  "description":"A descriptive label of the value."
+                }
+              }
+            }
+          }
+        },{
+          "title":"addLocalizedEnumValue",
+          "type":"object",
+          "description":"Adds an localizable enum to the values of LocalizableEnumType. It can update a LocalizableEnum attribute definition or a Set of LocalizableEnumType attribute definition.",
+          "required":["action","attributeName","value"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["addLocalizedEnumValue"]
+            },
+            "attributeName":{
+              "type":"string",
+              "description":"The name of the attribute definition to update."
+            },
+            "value":{
+              "title":"Localized Enum Value",
+              "type":"object",
+              "properties":{
+                "key ":{
+                  "type":"string",
+                  "description":"The key of the value used as a programmatic identifier, e.g. in facets & filters."
+                },
+                "label":{
+                  "title":"LocalizedString",
+                  "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+                  "type":"object",
+                  "patternProperties":{
+                    "^[a-z]{2}$":{
+                      "type":"string",
+                      "description":"The value for this language"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },{
+          "title":"changeAttributeOrder",
+          "type":"object",
+          "required":["action","attributes"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changeAttributeOrder"]
+            },
+            "attributes":{
+              "type":"array",
+              "description":"TThe values must be equal to the values of the attribute enum values (except for the order).",
+              "items":{
+                "title":"Attribute Type",
+                "type":"object",
+                "properties":{
+                  "type":{
+                    "$ref":"attribute-type.schema.json",
+                    "description":"Describes the type of the attribute."
+                  },
+                  "name":{
+                    "type":"string",
+                    "description":"The unique name of the attribute used in the API. The name must be between two and 36 characters long and can contain the ASCII letters A to Z in lowercase or uppercase, digits, underscores (_) and the hyphen-minus (-)."
+                  },
+                  "label":{
+                    "$ref":"localized-string.schema.json",
+                    "description":"A human-readable label for the attribute."
+                  },
+                  "isRequired":{
+                    "type":"boolean",
+                    "description":"Whether the attribute is required to have a value."
+                  },
+                  "attributeConstraint":{
+                    "$ref":"attribute-constraint.schema.json",
+                    "description":"Describes how an attribute or a set of attributes should be validated across all variants of a product."
+                  },
+                  "inputHint":{
+                    "$ref":"text-input-hint.schema.json",
+                    "description":"Provides a visual representation type for this attribute."
+                  },
+                  "displayGroup":{
+                    "$ref":"display-group.schema.json",
+                    "description":"UI hint telling in which group an edit control for an attribute should be displayed."
+                  },
+                  "isSearchable":{
+                    "type":"boolean",
+                    "description":"Whether the attribute's values should generally be enabled in product search. This determines whether the value is stored in products for matching terms in the context of full-text search queries and can be used in facets & filters as part of product search queries. The exact features that are enabled/disabled with this flag depend on the concrete attribute type and are described there."
+                  }
+                }
+              }
+            }
+          }
+        },{
+          "title":"changePlainEnumValueOrder",
+          "type":"object",
+          "description":"It can update a Enum attribute definition or a Set of EnumType attribute definition.",
+          "required":["action","attributeName","values"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changePlainEnumValueOrder"]
+            },
+            "attributeName":{
+              "type":"string"
+            },
+            "values":{
+              "type":"array",
+              "description":"TThe values must be equal to the values of the attribute enum values (except for the order).",
+              "items":{
+                "title":"Plain Enum Value",
+                "type":"object",
+                "properties":{
+                  "key ":{
+                    "type":"string",
+                    "description":"The key of the value used as a programmatic identifier, e.g. in facets & filters."
+                  },
+                  "label":{
+                    "type":"string",
+                    "description":"A descriptive label of the value."
+                  }
+                }
+              }
+            }
+          }
+        },{
+          "title":"changeLocalizedEnumValueOrder",
+          "type":"object",
+          "description":"It can update a LocalizableEnum attribute definition or a Set of LocalizableEnumType attribute definition.",
+          "required":["action","attributeName","values"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changeLocalizedEnumValueOrder"]
+            },
+            "attributeName":{
+              "type":"string"
+            },
+            "values":{
+              "type":"array",
+              "description":"The values must be equal to the values of the attribute enum values (except for the order).",
+              "items":{
+                "title":"Localized Enum Value",
+                "type":"object",
+                "properties":{
+                  "key ":{
+                    "type":"string",
+                    "description":"The key of the value used as a programmatic identifier, e.g. in facets & filters."
+                  },
+                  "label":{
+                    "title":"LocalizedString",
+                    "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+                    "type":"object",
+                    "patternProperties":{
+                      "^[a-z]{2}$":{
+                        "type":"string",
+                        "description":"The value for this language"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }]
+      }
+    }
+  }
+}

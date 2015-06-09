@@ -1,0 +1,770 @@
+{
+  "$schema":"http://json-schema.org/draft-04/schema#",
+  "title":"Update a Product",
+  "type":"object",
+  "required":["version","actions"],
+  "properties":{
+    "version":{
+      "type":"number",
+      "description":"The expected version of the category on which the changes should be applied. If the expected version does not match the actual version, a 409 Conflict will be returned."
+    },
+    "actions":{
+      "type":"array",
+      "items":{
+        "title":"Action",
+        "type":"object",
+        "oneOf":[{
+          "title":"changeName",
+          "type":"object",
+          "required":["action","name"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changeName"]
+            },
+            "name":{
+              "title":"LocalizedString",
+              "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+              "type":"object",
+              "patternProperties":{
+                "^[a-z]{2}$":{
+                  "type":"string",
+                  "description":"The value for this language"
+                }
+              }
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"setDescription",
+          "type":"object",
+          "required":["action","description"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["setDescription"]
+            },
+            "description":{
+              "title":"LocalizedString",
+              "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+              "type":"object",
+              "patternProperties":{
+                "^[a-z]{2}$":{
+                  "type":"string",
+                  "description":"The value for this language"
+                }
+              }
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"changeSlug",
+          "type":"object",
+          "required":["action","slug"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changeSlug"]
+            },
+            "slug":{
+              "$ref":"localized-string.schema.json",
+              "description":"Allowed are alphabetic, numeric, underscore (_) and hyphen (-) characters. Maximum size is 256."
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"addVariant",
+          "type":"object",
+          "required":["action"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["addVariant"]
+            },
+            "sku":{
+              "type":"string"
+            },
+            "prices":{
+              "type":"array",
+              "description":"The prices of the variant. The prices does not contain two prices for the same price scope (same currency, country, customer group and channel).",
+              "items":{
+                "title":"Price",
+                "type":"object",
+                "required":["id","value"],
+                "properties":{
+                  "id":{
+                    "type":"string",
+                    "description":"The unique ID of this price."
+                  },
+                  "value":{
+                    "title":"Money",
+                    "required":["centAmount","currencyCode"],
+                    "type":"object",
+                    "properties":{
+                      "centAmount":{
+                        "type":"integer"
+                      },
+                      "currencyCode":{
+                        "type":"string",
+                        "pattern":"[A-Z]{3}"
+                      }
+                    }
+                  },
+                  "country":{
+                    "type":"string",
+                    "pattern":"[A-Z]{2}"
+                  },
+                  "customerGroup":{
+                    "$ref":"reference.schema.json",
+                    "description":"A reference to a customer group."
+                  },
+                  "channel":{
+                    "$ref":"reference.schema.json",
+                    "description":"A reference to a channel."
+                  },
+                  "validFrom":{
+                    "type":"string",
+                    "description":"Date from which the price is valid.",
+                    "format":"date-time"
+                  },
+                  "validUntil":{
+                    "type":"string",
+                    "description":"Date until which the price is valid.",
+                    "format":"date-time"
+                  },
+                  "discounted":{
+                    "$ref":"discounted-price.schema.json",
+                    "description":"Optional Set if a matching ProductDiscount exists. If set the Cart will use the discounted value for the cart price calculation."
+                  }
+                }
+              }
+            },
+            "images":{
+              "type":"array",
+              "description":"External images for the new variant. You can also upload images to use the SPHERE.IO Content Delivery Network.",
+              "items":{
+                "title":"Image",
+                "required":["url","dimensions"],
+                "type":"object",
+                "properties":{
+                  "url":{
+                    "type":"string",
+                    "description":"URL of the image in its original size. This can be used to obtain the image in different sizes."
+                  },
+                  "dimensions":{
+                    "description":"Dimensions of the original image. This can be used by your application e.g. to determine whether the image is large enough to display a zoom view.",
+                    "type":"object",
+                    "properties":{
+                      "w":{
+                        "type":"number"
+                      },
+                      "h":{
+                        "type":"number"
+                      }
+                    }
+                  },
+                  "label":{
+                    "type":"string",
+                    "description":"Custom label that can be used, for example, as an image description."
+                  }
+                }
+              }
+            },
+            "attributes":{
+              "type":"object",
+              "description":"The custom attributes of the master variant. A nested JSON object where a field name corresponds to the name of a product attribute defined on the referenced product type and the value is a valid JSON value for that attribute."
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"removeVariant",
+          "type":"object",
+          "required":["action","id"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["removeVariant"]
+            },
+            "id":{
+              "type":"number"
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"setMetaAttributes",
+          "type":"object",
+          "required":["action"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["setMetaAttributes"]
+            },
+            "metaTitle":{
+              "title":"LocalizedString",
+              "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+              "type":"object",
+              "patternProperties":{
+                "^[a-z]{2}$":{
+                  "type":"string",
+                  "description":"The value for this language"
+                }
+              }
+            },
+            "metaDescription":{
+              "title":"LocalizedString",
+              "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+              "type":"object",
+              "patternProperties":{
+                "^[a-z]{2}$":{
+                  "type":"string",
+                  "description":"The value for this language"
+                }
+              }
+            },
+            "metaKeywords":{
+              "title":"LocalizedString",
+              "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+              "type":"object",
+              "patternProperties":{
+                "^[a-z]{2}$":{
+                  "type":"string",
+                  "description":"The value for this language"
+                }
+              }
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"addPrice",
+          "type":"object",
+          "description":"Adds the given price to the product variant's prices set. Prices are defined with a scope (currency, country, customer group and channel) and/or a validity period (validFrom and/or validTo). A price without validity period (no validFrom and no validUntil) is always valid for its scope.",
+          "required":["action","variantId","price"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["addPrice"]
+            },
+            "variantId":{
+              "type":"number"
+            },
+            "price":{
+              "title":"Price",
+              "type":"object",
+              "required":["id","value"],
+              "properties":{
+                "id":{
+                  "type":"string",
+                  "description":"The unique ID of this price."
+                },
+                "value":{
+                  "title":"Money",
+                  "required":["centAmount","currencyCode"],
+                  "type":"object",
+                  "properties":{
+                    "centAmount":{
+                      "type":"integer"
+                    },
+                    "currencyCode":{
+                      "type":"string",
+                      "pattern":"[A-Z]{3}"
+                    }
+                  }
+                },
+                "country":{
+                  "type":"string",
+                  "pattern":"[A-Z]{2}"
+                },
+                "customerGroup":{
+                  "$ref":"reference.schema.json",
+                  "description":"A reference to a customer group."
+                },
+                "channel":{
+                  "$ref":"reference.schema.json",
+                  "description":"A reference to a channel."
+                },
+                "validFrom":{
+                  "type":"string",
+                  "description":"Date from which the price is valid.",
+                  "format":"date-time"
+                },
+                "validUntil":{
+                  "type":"string",
+                  "description":"Date until which the price is valid.",
+                  "format":"date-time"
+                },
+                "discounted":{
+                  "$ref":"discounted-price.schema.json",
+                  "description":"Optional Set if a matching ProductDiscount exists. If set the Cart will use the discounted value for the cart price calculation."
+                }
+              }
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"changePrice",
+          "type":"object",
+          "description":"Replaces a price in the product variant's prices set. The price to replace is specified by its ID.",
+          "required":["action","priceId","price"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["changePrice"]
+            },
+            "priceId":{
+              "type":"number"
+            },
+            "price":{
+              "title":"Price",
+              "type":"object",
+              "required":["id","value"],
+              "properties":{
+                "id":{
+                  "type":"string",
+                  "description":"The unique ID of this price."
+                },
+                "value":{
+                  "title":"Money",
+                  "required":["centAmount","currencyCode"],
+                  "type":"object",
+                  "properties":{
+                    "centAmount":{
+                      "type":"integer"
+                    },
+                    "currencyCode":{
+                      "type":"string",
+                      "pattern":"[A-Z]{3}"
+                    }
+                  }
+                },
+                "country":{
+                  "type":"string",
+                  "pattern":"[A-Z]{2}"
+                },
+                "customerGroup":{
+                  "$ref":"reference.schema.json",
+                  "description":"A reference to a customer group."
+                },
+                "channel":{
+                  "$ref":"reference.schema.json",
+                  "description":"A reference to a channel."
+                },
+                "validFrom":{
+                  "type":"string",
+                  "description":"Date from which the price is valid.",
+                  "format":"date-time"
+                },
+                "validUntil":{
+                  "type":"string",
+                  "description":"Date until which the price is valid.",
+                  "format":"date-time"
+                },
+                "discounted":{
+                  "$ref":"discounted-price.schema.json",
+                  "description":"Optional Set if a matching ProductDiscount exists. If set the Cart will use the discounted value for the cart price calculation."
+                }
+              }
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"removePrice",
+          "type":"object",
+          "description":"It can update a Enum attribute definition or a Set of EnumType attribute definition.",
+          "required":["action","priceId"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["removePrice"]
+            },
+            "priceId":{
+              "type":"number"
+            },
+            "price":{
+              "title":"Price",
+              "type":"object",
+              "required":["id","value"],
+              "properties":{
+                "id":{
+                  "type":"string",
+                  "description":"The unique ID of this price."
+                },
+                "value":{
+                  "title":"Money",
+                  "required":["centAmount","currencyCode"],
+                  "type":"object",
+                  "properties":{
+                    "centAmount":{
+                      "type":"integer"
+                    },
+                    "currencyCode":{
+                      "type":"string",
+                      "pattern":"[A-Z]{3}"
+                    }
+                  }
+                },
+                "country":{
+                  "type":"string",
+                  "pattern":"[A-Z]{2}"
+                },
+                "customerGroup":{
+                  "$ref":"reference.schema.json",
+                  "description":"A reference to a customer group."
+                },
+                "channel":{
+                  "$ref":"reference.schema.json",
+                  "description":"A reference to a channel."
+                },
+                "validFrom":{
+                  "type":"string",
+                  "description":"Date from which the price is valid.",
+                  "format":"date-time"
+                },
+                "validUntil":{
+                  "type":"string",
+                  "description":"Date until which the price is valid.",
+                  "format":"date-time"
+                },
+                "discounted":{
+                  "$ref":"discounted-price.schema.json",
+                  "description":"Optional Set if a matching ProductDiscount exists. If set the Cart will use the discounted value for the cart price calculation."
+                }
+              }
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"setAttribute",
+          "type":"object",
+          "description":"It can update a LocalizableEnum attribute definition or a Set of LocalizableEnumType attribute definition.",
+          "required":["action","variantId","name"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["setAttribute"]
+            },
+            "variantId":{
+              "type":"number"
+            },
+            "name":{
+              "type":"string"
+            },
+            "value":{
+              "type":"object",
+              "description":"If the attribute exists and the value is omitted or set to null, the attribute is removed. If the attribute exists and a value is provided, the new value is applied. If the attribute does not exist and a value is provided, it is added as a new attribute."
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"setAttributeInAllVariants",
+          "type":"object",
+          "description":"Adds / Removes / Changes a custom attribute in all variants at the same time (it can be helpful to set attribute values that are constrained with SameForAll).",
+          "required":["action","name"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["setAttributeInAllVariants"]
+            },
+            "name":{
+              "type":"string"
+            },
+            "value":{
+              "type":"object",
+              "description":"If the attribute exists and the value is omitted or set to null, the attribute is removed. If the attribute exists and a value is provided, the new value is applied. If the attribute does not exist and a value is provided, it is added as a new attribute."
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"addToCategory",
+          "type":"object",
+          "required":["action","category"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["addToCategory"]
+            },
+            "category":{
+              "$ref":"reference.schema.json",
+              "description":"Reference to a Category."
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"removeFromCategory",
+          "type":"object",
+          "required":["action","category"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["removeFromCategory"]
+            },
+            "category":{
+              "$ref":"reference.schema.json",
+              "description":"Reference to a Category."
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"setTaxCategory",
+          "type":"object",
+          "description":"Adds, changes or removes a product's tax category. This change can never be staged and is thus immediately visible in published products.",
+          "required":["action"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["setTaxCategory"]
+            },
+            "taxCategory":{
+              "$ref":"reference.schema.json",
+              "description":"If left blank or set to null, the tax category is unset/removed."
+            }
+          }
+        },{
+          "title":"setSKU",
+          "type":"object",
+          "description":"Adds, changes or removes an SKU on a product variant. An SKU can only be changed or removed from a variant through this operation if there is no inventory entry associated with that SKU. This change can never be staged and is thus immediately visible in published products.",
+          "required":["action","variantId"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["setSKU"]
+            },
+            "variantId":{
+              "type":"number"
+            },
+            "sku":{
+              "type":"string",
+              "description":"If left blank or set to null, the SKU is unset/removed."
+            }
+          }
+        },{
+          "title":"addExternalImage",
+          "type":"object",
+          "description":"Adds external image url with meta-information to the product variant.",
+          "required":["action","variantId","image"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["addExternalImage"]
+            },
+            "variantId":{
+              "type":"number",
+              "description":"The ID of the variant where image should be added"
+            },
+            "image":{
+              "title":"Image",
+              "required":["url","dimensions"],
+              "type":"object",
+              "properties":{
+                "url":{
+                  "type":"string",
+                  "description":"URL of the image in its original size. This can be used to obtain the image in different sizes."
+                },
+                "dimensions":{
+                  "description":"Dimensions of the original image. This can be used by your application e.g. to determine whether the image is large enough to display a zoom view.",
+                  "type":"object",
+                  "properties":{
+                    "w":{
+                      "type":"number"
+                    },
+                    "h":{
+                      "type":"number"
+                    }
+                  }
+                },
+                "label":{
+                  "type":"string",
+                  "description":"Custom label that can be used, for example, as an image description."
+                }
+              }
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"removeImage",
+          "type":"object",
+          "description":"Removes a product image and deletes it from the Content Delivery Network (it would not be deleted from the CDN in case of external image). Deletion from the CDN is not instant, which means the image file itself will stay available for some time after the deletion.",
+          "required":["action","variantId","imageUrl"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["removeImage"]
+            },
+            "variantId":{
+              "type":"number",
+              "description":"The ID of the variant which has the image"
+            },
+            "imageUrl":{
+              "type":"string",
+              "description":"The URL of the image"
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"setSearchKeywords",
+          "type":"object",
+          "required":["action","searchKeywords"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["setSearchKeywords"]
+            },
+            "searchKeywords":{
+              "title":"Search Keywords",
+              "description":"Search keywords are primarily used by the suggester. SearchKeywords is a JSON object where the keys are ISO language tags. The value to a language tag key is an array of SearchKeyword for the specific language.",
+              "type":"object",
+              "properties":{
+                "^([a-z]){2}$":{
+                  "type":"array",
+                  "items":{
+                    "title":"Search Keyword",
+                    "required":["text"],
+                    "type":"object",
+                    "properties":{
+                      "text":{
+                        "type":"string",
+                        "description":"Text to return in the result of a suggest query."
+                      },
+                      "suggestTokenizer":{
+                        "$ref":"suggest-tokenizer.schema.json",
+                        "description":"If no tokenizer is defines, the text is used as as single token."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "staged":{
+              "type":"boolean"
+            }
+          }
+        },{
+          "title":"setMetaDescription",
+          "type":"object",
+          "required":["action"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["setMetaDescription"]
+            },
+            "metaDescription":{
+              "title":"LocalizedString",
+              "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+              "type":"object",
+              "patternProperties":{
+                "^[a-z]{2}$":{
+                  "type":"string",
+                  "description":"The value for this language"
+                }
+              }
+            }
+          }
+        },{
+          "title":"setMetaTitle",
+          "type":"object",
+          "required":["action"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["setMetaTitle"]
+            },
+            "metaTitle":{
+              "title":"LocalizedString",
+              "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+              "type":"object",
+              "patternProperties":{
+                "^[a-z]{2}$":{
+                  "type":"string",
+                  "description":"The value for this language"
+                }
+              }
+            }
+          }
+        },{
+          "title":"setMetaKeywords",
+          "type":"object",
+          "required":["action"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["setMetaKeywords"]
+            },
+            "metaKeywords":{
+              "title":"LocalizedString",
+              "description":"A localized string is a JSON object where the keys are ISO language tags, and the values the corresponding strings used for that language",
+              "type":"object",
+              "patternProperties":{
+                "^[a-z]{2}$":{
+                  "type":"string",
+                  "description":"The value for this language"
+                }
+              }
+            }
+          }
+        },{
+          "title":"revertStagedChanges",
+          "type":"object",
+          "description":"Revert all changes, which were made to the staged version of a product and reset to the current version.",
+          "required":["action"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["revertStagedChanges"]
+            }
+          }
+        },{
+          "title":"publish",
+          "type":"object",
+          "description":"Publishes a product, which causes the staged projection of the product to override the current projection. If the product is published for the first time, the current projection is created.",
+          "required":["action"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["publish"]
+            }
+          }
+        },{
+          "title":"unpublish",
+          "type":"object",
+          "description":"Unpublishes a product, effectively deleting the current projection of the product, leaving only the staged projection. Consequently, when a product is unpublished, it will no longer be included in query or search results issued with staged=false, since such results only include current projections.",
+          "required":["action"],
+          "properties":{
+            "action":{
+              "type":"string",
+              "enum":["unpublish"]
+            }
+          }
+        }]
+      }
+    }
+  }
+}
