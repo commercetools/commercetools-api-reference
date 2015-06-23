@@ -20,25 +20,37 @@ var options = {
 raml.loadFile('project.raml').then( function(rootNode) {
         var outputFilename = 'project-exploded';
         
-        writeRAML(rootNode, outputFilename+".raml");
+        writeRAML(rootNode, outputFilename);
+        writeJSON(rootNode, outputFilename);
         
         var rootNodeDeref = traverse.clone(rootNode);
         derefSchemata(rootNodeDeref);
-        writeRAML(rootNodeDeref, outputFilename+"-dereferencedSchemata.raml");
-        
+        writeRAML(rootNodeDeref, outputFilename+"-dereferencedSchemata");
+        writeJSON(rootNodeDeref, outputFilename+"-dereferencedSchemata");
+
   }, function(error) {
           console.log('Error parsing: ' + error);
-  });
+});
 
 function writeRAML(rootNode, filePath){
-    fs.writeFile(filePath, toRAML(rootNode), function(err) {
+    fs.writeFile(filePath+".raml", toRAML(rootNode), function(err) {
             if(err) {
               console.log(err);
             } else {
-              console.log("RAML saved to " + filePath);
+              console.log("RAML (yaml) saved to " + filePath+".raml");
             }
         });
-    }
+}
+
+function writeJSON(rootNode, filePath){
+    fs.writeFile(filePath+".json", JSON.stringify(rootNode, null, 4), function(err) {
+            if(err) {
+              console.log(err);
+            } else {
+              console.log("RAML (json) saved to " + filePath+".json");
+            }
+        });
+}
 
 function derefSchemata(rootNode){
     if(options.derefSchemata){
