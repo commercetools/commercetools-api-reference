@@ -42,11 +42,11 @@ function writeRAML(rootNode, filePath){
 
 function derefSchemata(rootNode){
     if(options.derefSchemata){
-        traverse(rootNode).forEach(function (x) {
+        traverse(rootNode).forEach(function (node) {
             if (this.key == "schema" && this.parent.key == "application/json" && this.isLeaf){
-                // console.log(v.validate(x, "TODO json schema metaschema"));
-                // TODO crappy sh... the jsonSchemaDeref call simply does nothing but doesn't show errors either.
-                this.update(jsonSchemaDeref(x, {baseFolder: process.cwd()+"/schemas/"}));
+                var schemaObj = JSON.parse(node);
+                var derefSchemaObj = jsonSchemaDeref(schemaObj, {baseFolder: process.cwd()+"/schemas/"});
+                this.update(JSON.stringify(derefSchemaObj, null, 4));
             }
         });
     }
