@@ -1,7 +1,11 @@
-language: node_js
-install:
-- npm install jslint jsonlint -g
+language: scala
 script:
-- jslint schemas/*.json
-- cd schemas; for file in *.json; do jsonlint $file --in-place; done; cd -
-- git diff --shortstat --exit-code
+- git clone https://github.com/cneijenhuis/json-schema-ref-inliner.git
+- mkdir -p inlined
+- cd json-schema-ref-inliner
+- for f in ../schemas/*.schema.json; do file=$(basename $f); par="$par https://raw.githubusercontent.com/sphereio/sphere-api-reference/master/schemas/$file ../inlined/."; done
+- sbt "run $par"
+- cd ..
+- git add inlined/*
+- git commit -m "Inlined json schemas"
+- git push origin master
