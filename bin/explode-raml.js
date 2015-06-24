@@ -5,7 +5,7 @@
 *    open http://olegilyenko.github.io/api-console/dist/?raml=/api-console/sphere/project-exploded.raml
 * 4. decide whether to check in the exploded files or not.
 *
-* FYI: as this is a quick build/test script and not a server application it is intentionally done synchronous
+* FYI: as this is a build/test script and not a server application it is intentionally done synchronous
 */
 
 var fs = require('fs');
@@ -14,11 +14,12 @@ var toRAML = require('raml-object-to-raml');
 var jsonSchemaDeref = require('json-schema-deref-sync');
 var traverse = require('traverse');
 var JSCK = require('jsck');
-var metaValidator = new JSCK.draft4(
-    JSON.parse(
-        fs.readFileSync('json-schema-draft4.json', 'utf8')
-    )
-);
+var jsonSchemaSchema = JSON.parse(fs.readFileSync('json-schema-draft4.json', 'utf8'));
+var metaValidator = new JSCK.draft4(jsonSchemaSchema);
+
+
+// TODO add error handling to all traversal code (it "eats" even critical errors this way).
+// TODO print helpful paths in error messages (by array id currently)
 
 // "main" call:
 raml.loadFile('project.raml').then( function(rootNode) {
@@ -32,8 +33,7 @@ raml.loadFile('project.raml').then( function(rootNode) {
         writeRAML(rootNodeDeref, outputFilename+"-dereferencedSchemata");
         writeJSON(rootNodeDeref, outputFilename+"-dereferencedSchemata");
 
-        // TODO: fix this function. 
-        // validateSchemata(rootNodeDeref);
+        validateSchemata(rootNodeDeref);
         
         // TODO: this doesn't detect random invalid changes to examples (check specific example change against schema)
         validateExamples(rootNodeDeref);
@@ -63,20 +63,16 @@ function derefSchemata(rootNode){
     });
 }
 
-function validateSchemata(root){
+function validateSchemata(rootNode){
     traverse(rootNode).forEach(function (node) {
         if (this.key == "schema" && this.parent.key == "application/json" && this.isLeaf){
             var schemaObj = JSON.parse(node);
-            // TODO program silently breaks and stops in the following call:
-            var schemaErrors = metaValidator.validate(derefSchemaObj);
-            
+            var schemaErrors = metaValidator.validate(schemaObj);
             if(!schemaErrors.valid){
                 console.log("schema NOT OK: "+this.path);
                 for(error in schemaErrors.errors){
                     console.log(error);
                 }
-            }else{
-                console.log("schema OK: "+this.path);
             }
         }
     });
@@ -95,8 +91,6 @@ function validateExamples(rootNode){
                 for(error in schemaErrors.errors){
                     console.log(error);
                 }
-            }else{
-                console.log("example OK:" + this.path);
             }
         }
     });
