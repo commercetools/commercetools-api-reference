@@ -19,6 +19,9 @@ var traverse = require('traverse');
 var raml = require('raml-parser');
 var toRAML = require('raml-object-to-raml');
 
+// better readable output of errors than JSON.parse
+var jsonlint = require("jsonlint");
+
 var jsonSchemaDeref = require('json-schema-deref-sync');
 
 var JSCK = require('jsck');
@@ -32,7 +35,7 @@ var metaValidator = new JSCK.draft4(jsonSchemaSchema);
 // FYI: the "raml.loadFile" call does already:
 // * _validate_ the RAML file against the RAML spec
 // * _inline_ the RAML file references ("!include" statements)
-console.log("\n# Starting RAML consistency check and explosion\n");
+console.log("\n# RAML consistency check and explosion\n");
 raml.loadFile('project.raml').then( function(raml) {
         var outputFilename = 'project-exploded';
 
@@ -92,7 +95,13 @@ function derefSchemata(rootNode){
             } catch (ex){
                 console.log(" * **could not parse JSON of this schema: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```");
-                console.log(ex);
+                try{
+                    jsonlint.parse(this.parent.node.schema);
+                }catch(ex){
+                    console.log(ex);
+                    console.log("```");
+                    return;
+                }
                 console.log("```");
                 return;
             }
@@ -113,7 +122,13 @@ function validateSchemata(rootNode){
             } catch (ex){
                 console.log(" * **could not parse JSON of this schema: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```");
-                console.log(ex);
+                try{
+                    jsonlint.parse(this.parent.node.schema);
+                }catch(ex){
+                    console.log(ex);
+                    console.log("```");
+                    return;
+                }
                 console.log("```");
                 return;
             }
@@ -143,7 +158,13 @@ function validateExamples(rootNode){
             } catch (ex){
                 console.log(" * **could not parse JSON of this schema: " + printRamlResponseContext(this.parent) * "**");
                 console.log("```");
-                console.log(ex);
+                try{
+                    jsonlint.parse(this.parent.node.schema);
+                }catch(ex){
+                    console.log(ex);
+                    console.log("```");
+                    return;
+                }
                 console.log("```");
                 return;
             }
@@ -153,7 +174,13 @@ function validateExamples(rootNode){
             } catch (ex){
                 console.log(" * **could not parse JSON of this example: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```");
-                console.log(ex);
+                try{
+                    jsonlint.parse(node);
+                }catch(ex){
+                    console.log(ex);
+                    console.log("```");
+                    return;
+                }
                 console.log("```");
                 return;
             }
@@ -190,7 +217,6 @@ function validateExamples(rootNode){
 // takes a "this" context of the traverse library and tries to make the RAML context transparent
 // assumes that the context is a RAML response description node like "application/json".
 function printRamlResponseContext(context){
-    // TODO some RAML parts have different paths ("undefined" in the results). probably the traits.
     var elements = [];
     elements.unshift(context.key); // should be the content type
     var responseTypeContext = context.parent.parent;
