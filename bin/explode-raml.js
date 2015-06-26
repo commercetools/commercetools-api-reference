@@ -6,6 +6,7 @@
 * 4. decide whether to check in the exploded files or not.
 *
 * FYI: as this is a build/test script and not a server application it is intentionally done synchronous
+* FYI: the traversal code "eats" critical errors under circumstances -> check "done!" output and try/catch calls to libraries
 */
 
 var fs = require('fs');
@@ -16,10 +17,6 @@ var traverse = require('traverse');
 var JSCK = require('jsck');
 var jsonSchemaSchema = JSON.parse(fs.readFileSync('json-schema-draft4.json', 'utf8'));
 var metaValidator = new JSCK.draft4(jsonSchemaSchema);
-
-
-// TODO add error handling to all traversal code (it "eats" even critical errors this way).
-// TODO print helpful paths in error messages (by array id currently)
 
 // "main" call:
 raml.loadFile('project.raml').then( function(rootNode) {
@@ -35,8 +32,10 @@ raml.loadFile('project.raml').then( function(rootNode) {
 
         validateSchemata(rootNodeDeref);
         
-        // TODO: this doesn't detect random invalid changes to examples (check specific example change against schema)
         validateExamples(rootNodeDeref);
+
+        // confirm that the traversal hasn't eaten some error:
+        console.log("done!");
 
   }, function(error) {
           console.log('Error parsing project RAML: ' + error);
@@ -69,10 +68,10 @@ function validateSchemata(rootNode){
             var schemaObj = JSON.parse(node);
             var schemaErrors = metaValidator.validate(schemaObj);
             if(!schemaErrors.valid){
-                console.log("schema NOT OK: "+this.path);
-                for(error in schemaErrors.errors){
-                    console.log(error);
-                }
+                console.log("# schema NOT OK: "+ printRamlResponseContext(this.parent));
+                console.log(JSON.stringify(schemaErrors.errors, null, 2));
+            }else{
+                console.log("# schema OK: "+ printRamlResponseContext(this.parent));
             }
         }
     });
@@ -84,16 +83,36 @@ function validateExamples(rootNode){
             var schemaObj = JSON.parse(this.parent.node.schema);
             var exampleObj = JSON.parse(node);
             schemaObj = jsonSchemaDeref(schemaObj, {baseFolder: process.cwd()+"/schemas/"});
-            var validator = new JSCK.draft4(schemaObj);
+            try {
+                var validator = new JSCK.draft4(schemaObj);
+            } catch (ex) {
+                console.log("# could not instantiate validator for schema: " + printRamlResponseContext(this.parent));
+                console.log(ex);
+                return;
+            }
             var schemaErrors = validator.validate(exampleObj);
             if(!schemaErrors.valid){
-                console.log("example NOT OK: "+this.path);
-                for(error in schemaErrors.errors){
-                    console.log(error);
-                }
+                console.log("# example NOT OK: "+ printRamlResponseContext(this.parent));
+                console.log(JSON.stringify(schemaErrors.errors, null, 2));
+            }else{
+                console.log("# example OK: "+ printRamlResponseContext(this.parent));
             }
         }
     });
+}
+
+// takes a "this" context of the traverse library and tries to make the RAML context transparent
+// assumes that the context is a RAML response description node like "application/json".
+function printRamlResponseContext(context){
+    var elements = [];
+    elements.unshift(context.key); // should be the content type
+    var responseTypeContext = context.parent.parent;
+    elements.unshift(responseTypeContext.key);
+    var methodContext = responseTypeContext.parent.parent;
+    elements.unshift(methodContext.node["method"]);
+    var resourceContext = methodContext.parent.parent;
+    elements.unshift(resourceContext.node["displayName"] + " ("+resourceContext.node["relativeUri"]+")");
+    return elements.join("->");;
 }
 
 
