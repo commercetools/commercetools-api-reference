@@ -5,7 +5,7 @@
 *    open http://olegilyenko.github.io/api-console/dist/?raml=/api-console/sphere/project-exploded.raml
 * 4. decide whether to check in the exploded files or not.
 *
-* FYI: the console output tries to be "markdownish", so you can do node bin/explode-raml.js > results.md for large results
+* FYI: the console output is "markdown", so you can do node bin/explode-raml.js > results.md for large results and look at it
 *
 * FYI: as this is a build/test script and not a server application it is intentionally done synchronous
 * FYI: the traversal code "eats" critical errors under circumstances -> check "done!" output and try/catch calls to libraries
@@ -38,14 +38,6 @@ raml.loadFile('project.raml').then( function(raml) {
 
         var lintedRaml = traverse.clone(raml);
 
-        // validates all schemata against the "metaschema / schema schema"
-        // and writes "linted" JSON back into the tree
-        validateSchemata(lintedRaml);
-
-        // validates all examples against the matching schema
-        // and writes "linted" JSON back into the tree
-        validateExamples(lintedRaml);
-
         // write out the RAML
         // FYI: the "writeRAML" implies "linting" the RAML
         writeRAML(lintedRaml, outputFilename);
@@ -53,14 +45,23 @@ raml.loadFile('project.raml').then( function(raml) {
         // write a JSON version to have a programatically more approachable version at hand.
         // FYI: this is not a 1:1 representation of the JSON view on the RAML YAML,
         //      it's the internal representation of the  RAML library.
-        writeJSON(lintedRaml, outputFilename);
+        writeJSON(lintedRaml, outputFilename+"-ast");
         
         // dereference the schemata in the RAML (sometimes called "schema inlining", too)
         // and write out two more files
         var dereferencedRaml = traverse.clone(lintedRaml);
         derefSchemata(dereferencedRaml);
+
+        // validates all schemata against the "metaschema / schema schema"
+        // and writes "linted" JSON back into the tree
+        validateSchemata(dereferencedRaml);
+
+        // validates all examples against the matching schema
+        // and writes "linted" JSON back into the tree
+        validateExamples(dereferencedRaml);
+
         writeRAML(dereferencedRaml, outputFilename+"-dereferencedSchemata");
-        writeJSON(dereferencedRaml, outputFilename+"-dereferencedSchemata");
+        writeJSON(dereferencedRaml, outputFilename+"-dereferencedSchemata-ast");
 
         // confirm that the traversal hasn't eaten some error:
         console.log("\n# done!\n");
