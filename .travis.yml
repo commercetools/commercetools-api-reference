@@ -1,0 +1,21 @@
+language: scala
+install:
+- npm install jslint -g
+before_script:
+- git config --global user.email "automation@commercetools.de"
+- git config --global user.name "Travis-CI"
+- git config credential.helper "store --file=.git/credentials"
+- echo "https://${GH_TOKEN}:@github.com" > .git/credentials
+script:
+- jslint schemas/*.json
+- git clone https://github.com/cneijenhuis/json-schema-ref-inliner.git
+- for schema in schemas/*.schema.json; do file=$(basename $schema); params="$params https://raw.githubusercontent.com/sphereio/sphere-api-reference/master/${schema} ../inlined/."; done
+- cd json-schema-ref-inliner; sbt "run $params"; cd ..
+after_success:
+- changed_schemas=$(git diff --name-only | wc -l)
+- if [ "$changed_schemas" != "0" ]; then git add schemas && git commit -m "Prettified json schemas" && git push origin master; fi
+- changed_inlined=$(git diff --name-only | wc -l)
+- if [ "$changed_inlined" != "0" ]; then git add inlined && git commit -m "Inlined json schemas" && git push origin master; fi
+env:
+  global:
+    secure: W46W2jwFRwTgRgSGHylD9u29Sd/yqdCPCFLsprktVbYVvIANcdw1gBPQr30x4cWvML8UTWBZRiVasFNXQSNuQEc9OkvGDY2nk5znrBDVUqvZm2jReCpk79GEP9hZvcoxt1faGLHm7LG2L5DxFafQ/mthDBuu18Ik04/oKSguMZD2f21gv9Z7x4BQ/jK82RHhkQ2l7jQy6bvu0os5G/5S/TabUguXpOSgcrGboTDHEa+YdO+AeY2bNacduYlRZMdMI6C5nyCMuHWpfDumnKlbrW4IV25eHu5Ti0fFph8/KE84D5jpvEZO7Vg/NJDm4B/Lc1iDMVTWXKclB0/zIMR2O8kPeAe6WoS2fMwbd9JYCPJd/LNAoBWKRkDHmTNqGcYWoqeg2+E8IAMG8sXm+hubyQ+MEEIvCw+eS0wvUsxNtHNQFzVHw8iR8Nmxzb1qJVO+AQPDHq8GNcwzMG1IH6DFgnc3s+pHLDftYSokhQSklOM52PLpbBW/QuSi1cCqn6E0Zs1FxV8lups4TWt/5/mdYKahNyA6xjzVaSrsPcOaCo3G/xYqLn35o7jRT5T1WS/PclXIJKtiM6vvj3IXdUnCnN+pDBB7FqGFk6MTKWacImeRWprbXhchfD4Lp+iuLcqEY/1Nt+/cm/ycJMCJy7qUTq8iIDgRXTD97k32XtnhkDA=
