@@ -25,10 +25,14 @@ var JSCK = require('jsck');
 var jsonSchemaSchema = JSON.parse(fs.readFileSync('json-schema-draft4.json', 'utf8'));
 var metaValidator = new JSCK.draft4(jsonSchemaSchema);
 
+// var MarkdownIt = require('markdown-it');
+// var mdAst = MarkdownIt.parse("# heading", {});
+// TODO hwo to find out if there are errors in the MD?
+
 // FYI: the "raml.loadFile" call does already:
 // * _validate_ the RAML file against the RAML spec
 // * _inline_ the RAML file references ("!include" statements)
-console.log("# Starting RAML consistency check and explosion");
+console.log("\n# Starting RAML consistency check and explosion\n");
 raml.loadFile('project.raml').then( function(raml) {
         var outputFilename = 'project-exploded';
 
@@ -59,7 +63,7 @@ raml.loadFile('project.raml').then( function(raml) {
         writeJSON(dereferencedRaml, outputFilename+"-dereferencedSchemata");
 
         // confirm that the traversal hasn't eaten some error:
-        console.log("# done!");
+        console.log("\n# done!\n");
 
   }, function(error) {
           console.log(' * **Error parsing project RAML: ' + error + "**");
@@ -78,7 +82,7 @@ function writeJSON(rootNode, filePath){
 }
 
 function derefSchemata(rootNode){
-    console.log("## Schemata Derefefrencing");
+    console.log("\n## Schemata Dereferencing\n");
     traverse(rootNode).forEach(function (node) {
         if (this.key == "schema" && this.parent.key == "application/json" && this.isLeaf){
 
@@ -99,7 +103,7 @@ function derefSchemata(rootNode){
 }
 
 function validateSchemata(rootNode){
-    console.log("## Schemata Validity Check");
+    console.log("\n## Schemata Validity Check\n");
     traverse(rootNode).forEach(function (node) {
         if (this.key == "schema" && this.parent.key == "application/json" && this.isLeaf){
 
@@ -129,7 +133,7 @@ function validateSchemata(rootNode){
 }
 
 function validateExamples(rootNode){
-    console.log("## Example Validity Check");
+    console.log("\n## Example Validity Check\n");
     traverse(rootNode).forEach(function (node) {
         if (this.key == "example" && this.parent.key == "application/json" && this.parent.node.hasOwnProperty("schema")){
 
