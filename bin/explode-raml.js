@@ -10,7 +10,7 @@
 * FYI: as this is a build/test script and not a server application it is intentionally done synchronous
 * FYI: the traversal code "eats" critical errors under circumstances -> check "done!" output and try/catch calls to libraries
 *
-* TODO: validate Markdown parts, too.
+* TODO: validate Markdown parts, too (or move the bigger ones into separate files and do it in the source file validation)
 */
 
 var fs = require('fs');
@@ -216,6 +216,7 @@ function validateExamples(rootNode){
 
 // takes a "this" context of the traverse library and tries to make the RAML context transparent
 // assumes that the context is a RAML response description node like "application/json".
+// TODO improve formatting on paths like "schema OK: resources -> 0 -> resources -> 0 -> resources -> 0 -> 1 -> application/json"
 function printRamlResponseContext(context){
     var elements = [];
     elements.unshift(context.key); // should be the content type
