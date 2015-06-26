@@ -10,29 +10,48 @@
 */
 
 var fs = require('fs');
+var traverse = require('traverse');
+
 var raml = require('raml-parser');
 var toRAML = require('raml-object-to-raml');
+
 var jsonSchemaDeref = require('json-schema-deref-sync');
-var traverse = require('traverse');
+
 var JSCK = require('jsck');
 var jsonSchemaSchema = JSON.parse(fs.readFileSync('json-schema-draft4.json', 'utf8'));
 var metaValidator = new JSCK.draft4(jsonSchemaSchema);
 
-// "main" call:
-raml.loadFile('project.raml').then( function(rootNode) {
+// FYI: the "raml.loadFile" call does already:
+// * _validate_ the RAML file against the RAML spec
+// * _inline_ the RAML file references ("!include" statements)
+raml.loadFile('project.raml').then( function(raml) {
         var outputFilename = 'project-exploded';
-        
-        writeRAML(rootNode, outputFilename);
-        writeJSON(rootNode, outputFilename);
-        
-        var rootNodeDeref = traverse.clone(rootNode);
-        derefSchemata(rootNodeDeref);
-        writeRAML(rootNodeDeref, outputFilename+"-dereferencedSchemata");
-        writeJSON(rootNodeDeref, outputFilename+"-dereferencedSchemata");
 
-        validateSchemata(rootNodeDeref);
+        var lintedRaml = traverse.clone(raml);
+
+        // validates all schemata against the "metaschema / schema schema"
+        // and writes "linted" JSON back into the tree
+        validateSchemata(lintedRaml);
+
+        // validates all examples against the matching schema
+        // and writes "linted" JSON back into the tree
+        validateExamples(lintedRaml);
+
+        // write out the RAML
+        // FYI: the "writeRAML" implies "linting" the RAML
+        writeRAML(lintedRaml, outputFilename);
+
+        // write a JSON version to have a programatically more approachable version at hand.
+        // FYI: this is not a 1:1 representation of the JSON view on the RAML YAML,
+        //      it's the internal representation of the  RAML library.
+        writeJSON(lintedRaml, outputFilename);
         
-        validateExamples(rootNodeDeref);
+        // dereference the schemata in the RAML (sometimes called "schema inlining", too)
+        // and write out two more files
+        var dereferencedRaml = traverse.clone(lintedRaml);
+        derefSchemata(dereferencedRaml);
+        writeRAML(dereferencedRaml, outputFilename+"-dereferencedSchemata");
+        writeJSON(dereferencedRaml, outputFilename+"-dereferencedSchemata");
 
         // confirm that the traversal hasn't eaten some error:
         console.log("##### done! ######");
@@ -41,7 +60,8 @@ raml.loadFile('project.raml').then( function(rootNode) {
           console.log('Error parsing project RAML: ' + error);
 });
 
-// helpers:
+// ####  helpers ###:
+
 function writeRAML(rootNode, filePath){
     fs.writeFileSync(filePath+".raml", toRAML(rootNode));
     console.log("RAML (yaml) saved to " + filePath+".raml");
@@ -89,6 +109,8 @@ function validateSchemata(rootNode){
             }else{
                 console.log("# schema OK: "+ printRamlResponseContext(this.parent));
             }
+            // "lint":
+            this.update(JSON.stringify(schemaObj, null, 4));
         }
     });
 }
@@ -130,6 +152,10 @@ function validateExamples(rootNode){
             }else{
                 console.log("# example OK: "+ printRamlResponseContext(this.parent));
             }
+
+            // "lint":
+            this.update(JSON.stringify(exampleObj, null, 4));
+
         }
     });
 }
