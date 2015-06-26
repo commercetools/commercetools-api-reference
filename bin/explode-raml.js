@@ -191,10 +191,16 @@ function printRamlResponseContext(context){
     var responseTypeContext = context.parent.parent;
     elements.unshift(responseTypeContext.key);
     var methodContext = responseTypeContext.parent.parent;
-    elements.unshift(methodContext.node["method"]);
-    var resourceContext = methodContext.parent.parent;
-    elements.unshift(resourceContext.node["displayName"] + " ("+resourceContext.node["relativeUri"]+")");
-    return elements.join(" -> ");;
+    if(methodContext.node["method"]){
+        // probably a normal endpoint definition
+        elements.unshift(methodContext.node["method"]);
+        var resourceContext = methodContext.parent.parent;
+        elements.unshift(resourceContext.node["displayName"] + " ("+resourceContext.node["relativeUri"]+")");
+    }else{
+        // probably a trait or so -> fail over to the traverse path.
+        elements.unshift(methodContext.path.join(" -> "));
+    }
+    return elements.join(" -> ");
 }
 
 
