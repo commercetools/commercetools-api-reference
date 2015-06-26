@@ -35,7 +35,7 @@ raml.loadFile('project.raml').then( function(rootNode) {
         validateExamples(rootNodeDeref);
 
         // confirm that the traversal hasn't eaten some error:
-        console.log("done!");
+        console.log("##### done! ######");
 
   }, function(error) {
           console.log('Error parsing project RAML: ' + error);
@@ -55,7 +55,15 @@ function writeJSON(rootNode, filePath){
 function derefSchemata(rootNode){
     traverse(rootNode).forEach(function (node) {
         if (this.key == "schema" && this.parent.key == "application/json" && this.isLeaf){
-            var schemaObj = JSON.parse(node);
+
+            try{
+                var schemaObj = JSON.parse(this.parent.node.schema);
+            } catch (ex){
+                console.log("# could not parse JSON of this schema: " + printRamlResponseContext(this.parent));
+                console.log(ex);
+                return;
+            }
+
             var derefSchemaObj = jsonSchemaDeref(schemaObj, {baseFolder: process.cwd()+"/schemas/"});
             this.update(JSON.stringify(derefSchemaObj, null, 4));
         }
@@ -65,7 +73,15 @@ function derefSchemata(rootNode){
 function validateSchemata(rootNode){
     traverse(rootNode).forEach(function (node) {
         if (this.key == "schema" && this.parent.key == "application/json" && this.isLeaf){
-            var schemaObj = JSON.parse(node);
+
+            try{
+                var schemaObj = JSON.parse(this.parent.node.schema);
+            } catch (ex){
+                console.log("# could not parse JSON of this schema: " + printRamlResponseContext(this.parent));
+                console.log(ex);
+                return;
+            }
+
             var schemaErrors = metaValidator.validate(schemaObj);
             if(!schemaErrors.valid){
                 console.log("# schema NOT OK: "+ printRamlResponseContext(this.parent));
@@ -80,9 +96,25 @@ function validateSchemata(rootNode){
 function validateExamples(rootNode){
     traverse(rootNode).forEach(function (node) {
         if (this.key == "example" && this.parent.key == "application/json" && this.parent.node.hasOwnProperty("schema")){
-            var schemaObj = JSON.parse(this.parent.node.schema);
-            var exampleObj = JSON.parse(node);
+
+            try{
+                var schemaObj = JSON.parse(this.parent.node.schema);
+            } catch (ex){
+                console.log("# could not parse JSON of this schema: " + printRamlResponseContext(this.parent));
+                console.log(ex);
+                return;
+            }
+
+            try{
+                var exampleObj = JSON.parse(node);
+            } catch (ex){
+                console.log("# could not parse JSON of this example: " + printRamlResponseContext(this.parent));
+                console.log(ex);
+                return;
+            }
+
             schemaObj = jsonSchemaDeref(schemaObj, {baseFolder: process.cwd()+"/schemas/"});
+
             try {
                 var validator = new JSCK.draft4(schemaObj);
             } catch (ex) {
@@ -90,6 +122,7 @@ function validateExamples(rootNode){
                 console.log(ex);
                 return;
             }
+
             var schemaErrors = validator.validate(exampleObj);
             if(!schemaErrors.valid){
                 console.log("# example NOT OK: "+ printRamlResponseContext(this.parent));
@@ -112,7 +145,7 @@ function printRamlResponseContext(context){
     elements.unshift(methodContext.node["method"]);
     var resourceContext = methodContext.parent.parent;
     elements.unshift(resourceContext.node["displayName"] + " ("+resourceContext.node["relativeUri"]+")");
-    return elements.join("->");;
+    return elements.join(" -> ");;
 }
 
 
