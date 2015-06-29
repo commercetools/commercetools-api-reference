@@ -5,13 +5,14 @@
 
 var fs = require('fs');
 var jsonSchemaDeref = require('json-schema-deref-sync');
-
 // better readable output of errors than JSON.parse
 var jsonlint = require("jsonlint");
-
 var JSCK = require('jsck');
 var jsonSchemaSchema = JSON.parse(fs.readFileSync('json-schema-draft4.json', 'utf8'));
 var metaValidator = new JSCK.draft4(jsonSchemaSchema);
+
+// go!
+var hasErrors = 0;
 
 console.log("\n# Source JSON validation\n");
 
@@ -24,6 +25,7 @@ for(var index in schemata){
         try{
             var schemaObj = JSON.parse(schemaString);
         } catch (ex){
+            hasErrors++;
             console.log(" * **could not parse JSON of this schema: " + path + "**");
             console.log("```");
             try{
@@ -38,6 +40,7 @@ for(var index in schemata){
         }
         var schemaErrors = metaValidator.validate(schemaObj);
         if(!schemaErrors.valid){
+            hasErrors++;
             console.log(" * **schema NOT OK: "+ path + "**");
             console.log("```json");
             console.log(JSON.stringify(schemaErrors.errors, null, 2));
@@ -59,6 +62,7 @@ for(var index in examples){
             var exampleObj = JSON.parse(exampleString);
             console.log(" * example OK: "+ path);
         }catch (ex){
+            hasErrors++;
             console.log(" * **could not parse JSON of this example: " + path + "**");
             console.log("```");
             try{
@@ -76,3 +80,5 @@ for(var index in examples){
 }
 
 console.log("\n# done!\n");
+
+process.exit(hasErrors);

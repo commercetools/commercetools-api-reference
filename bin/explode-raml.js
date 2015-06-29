@@ -11,19 +11,16 @@
 * FYI: the traversal code "eats" critical errors under circumstances -> check "done!" output and try/catch calls to libraries
 *
 * TODO: validate Markdown parts, too (or move the bigger ones into separate files and do it in the source file validation)
+*
 */
 
 var fs = require('fs');
 var traverse = require('traverse');
-
 var raml = require('raml-parser');
 var toRAML = require('raml-object-to-raml');
-
 // better readable output of errors than JSON.parse
 var jsonlint = require("jsonlint");
-
 var jsonSchemaDeref = require('json-schema-deref-sync');
-
 var JSCK = require('jsck');
 var jsonSchemaSchema = JSON.parse(fs.readFileSync('json-schema-draft4.json', 'utf8'));
 var metaValidator = new JSCK.draft4(jsonSchemaSchema);
@@ -32,11 +29,16 @@ var metaValidator = new JSCK.draft4(jsonSchemaSchema);
 // var mdAst = MarkdownIt.parse("# heading", {});
 // TODO hwo to find out if there are errors in the MD?
 
+// go!
+var hasErrors = 0;
+
 // FYI: the "raml.loadFile" call does already:
 // * _validate_ the RAML file against the RAML spec
 // * _inline_ the RAML file references ("!include" statements)
 console.log("\n# RAML consistency check and explosion\n");
+
 raml.loadFile('project.raml').then( function(raml) {
+
         var outputFilename = 'project-exploded';
 
         var lintedRaml = traverse.clone(raml);
@@ -69,8 +71,12 @@ raml.loadFile('project.raml').then( function(raml) {
         // confirm that the traversal hasn't eaten some error:
         console.log("\n# done!\n");
 
+        process.exit(hasErrors);
+
   }, function(error) {
+          hasErrors++;
           console.log(' * **Error parsing project RAML: ' + error + "**");
+          process.exit(hasErrors);
 });
 
 // ####  helpers ###:
@@ -93,6 +99,7 @@ function derefSchemata(rootNode){
             try{
                 var schemaObj = JSON.parse(this.parent.node.schema);
             } catch (ex){
+                hasErrors++;
                 console.log(" * **could not parse JSON of this schema: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```");
                 try{
@@ -120,6 +127,7 @@ function validateSchemata(rootNode){
             try{
                 var schemaObj = JSON.parse(this.parent.node.schema);
             } catch (ex){
+                hasErrors++;
                 console.log(" * **could not parse JSON of this schema: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```");
                 try{
@@ -135,6 +143,7 @@ function validateSchemata(rootNode){
 
             var schemaErrors = metaValidator.validate(schemaObj);
             if(!schemaErrors.valid){
+                hasErrors++;
                 console.log(" * **schema NOT OK: "+ printRamlResponseContext(this.parent) + "**");
                 console.log("```json");
                 console.log(JSON.stringify(schemaErrors.errors, null, 2));
@@ -156,6 +165,7 @@ function validateExamples(rootNode){
             try{
                 var schemaObj = JSON.parse(this.parent.node.schema);
             } catch (ex){
+                hasErrors++;
                 console.log(" * **could not parse JSON of this schema: " + printRamlResponseContext(this.parent) * "**");
                 console.log("```");
                 try{
@@ -172,6 +182,7 @@ function validateExamples(rootNode){
             try{
                 var exampleObj = JSON.parse(node);
             } catch (ex){
+                hasErrors++;
                 console.log(" * **could not parse JSON of this example: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```");
                 try{
@@ -190,6 +201,7 @@ function validateExamples(rootNode){
             try {
                 var validator = new JSCK.draft4(schemaObj);
             } catch (ex) {
+                hasErrors++;
                 console.log(" * **could not instantiate validator for schema: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```");
                 console.log(ex);
@@ -199,6 +211,7 @@ function validateExamples(rootNode){
 
             var schemaErrors = validator.validate(exampleObj);
             if(!schemaErrors.valid){
+                hasErrors++;
                 console.log(" * **example NOT OK: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```json");
                 console.log(JSON.stringify(schemaErrors.errors, null, 2));
