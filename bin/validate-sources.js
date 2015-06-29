@@ -1,6 +1,8 @@
 /*
 * validates the source JSON files
 * (it is easier to debug the exploded dereferenced stuff if the atomic sources are OK)
+*
+* TODO load and validate the RAML itself, too (like in the explosion script).
 */
 
 var fs = require('fs');
