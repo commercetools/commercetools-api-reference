@@ -24,10 +24,14 @@ var jsonSchemaDeref = require('json-schema-deref-sync');
 var JSCK = require('jsck');
 var jsonSchemaSchema = JSON.parse(fs.readFileSync('json-schema-draft4.json', 'utf8'));
 var metaValidator = new JSCK.draft4(jsonSchemaSchema);
+var markdownlint = require("markdownlint");
 
-// var MarkdownIt = require('markdown-it');
-// var mdAst = MarkdownIt.parse("# heading", {});
-// TODO hwo to find out if there are errors in the MD?
+// var mdLintResult = markdownlint.sync({ "strings": { keyName: markdownString }});
+// var mdLintResultString = mdLintResult.toString();
+// if (resultString) {
+//    do stuff on error
+// }
+
 
 // go!
 var hasErrors = 0;
