@@ -16,7 +16,6 @@ var fs = require('fs');
 var traverse = require('traverse');
 var raml = require('raml-parser');
 var toRAML = require('raml-object-to-raml');
-// better readable output of errors than JSON.parse
 var jsonlint = require("jsonlint");
 var jsonSchemaDeref = require('json-schema-deref-sync');
 var JSCK = require('jsck');
@@ -110,7 +109,7 @@ function derefSchemata(rootNode){
                 var schemaObj = JSON.parse(this.parent.node.schema);
             } catch (ex){
                 numErrors++;
-                console.log(" * **could not parse JSON of this schema: " + printRamlResponseContext(this.parent) + "**");
+                console.log(" * **could not parse JSON of this schema: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
                 console.log("```");
                 try{
                     jsonlint.parse(this.parent.node.schema);
@@ -138,7 +137,7 @@ function validateSchemata(rootNode){
                 var schemaObj = JSON.parse(this.parent.node.schema);
             } catch (ex){
                 numErrors++;
-                console.log(" * **could not parse JSON of this schema: " + printRamlResponseContext(this.parent) + "**");
+                console.log(" * **could not parse JSON of this schema: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
                 console.log("```");
                 try{
                     jsonlint.parse(this.parent.node.schema);
@@ -154,12 +153,12 @@ function validateSchemata(rootNode){
             var schemaErrors = metaValidator.validate(schemaObj);
             if(!schemaErrors.valid){
                 numErrors++;
-                console.log(" * **schema NOT OK: "+ printRamlResponseContext(this.parent) + "**");
+                console.log(" * **schema NOT OK: "+ prettifyRamlPath(this.parent).join(" -> ") + "**");
                 console.log("```json");
                 console.log(JSON.stringify(schemaErrors.errors, null, 2));
                 console.log("```");
             }else{
-                console.log(" * schema OK: "+ printRamlResponseContext(this.parent));
+                console.log(" * schema OK: "+ prettifyRamlPath(this.parent).join(" -> "));
             }
             // "lint":
             this.update(JSON.stringify(schemaObj, null, 4));
@@ -176,7 +175,7 @@ function validateExamples(rootNode){
                 var schemaObj = JSON.parse(this.parent.node.schema);
             } catch (ex){
                 numErrors++;
-                console.log(" * **could not parse JSON of this schema: " + printRamlResponseContext(this.parent) * "**");
+                console.log(" * **could not parse JSON of this schema: " + prettifyRamlPath(this.parent).join(" -> ") * "**");
                 console.log("```");
                 try{
                     jsonlint.parse(this.parent.node.schema);
@@ -193,7 +192,7 @@ function validateExamples(rootNode){
                 var exampleObj = JSON.parse(node);
             } catch (ex){
                 numErrors++;
-                console.log(" * **could not parse JSON of this example: " + printRamlResponseContext(this.parent) + "**");
+                console.log(" * **could not parse JSON of this example: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
                 console.log("```");
                 try{
                     jsonlint.parse(node);
@@ -212,7 +211,7 @@ function validateExamples(rootNode){
                 var validator = new JSCK.draft4(schemaObj);
             } catch (ex) {
                 numErrors++;
-                console.log(" * **could not instantiate validator for schema: " + printRamlResponseContext(this.parent) + "**");
+                console.log(" * **could not instantiate validator for schema: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
                 console.log("```");
                 console.log(ex);
                 console.log("```");
@@ -222,12 +221,12 @@ function validateExamples(rootNode){
             var schemaErrors = validator.validate(exampleObj);
             if(!schemaErrors.valid){
                 numErrors++;
-                console.log(" * **example NOT OK: " + printRamlResponseContext(this.parent) + "**");
+                console.log(" * **example NOT OK: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
                 console.log("```json");
                 console.log(JSON.stringify(schemaErrors.errors, null, 2));
                 console.log("```");
             }else{
-                console.log(" * example OK: " + printRamlResponseContext(this.parent));
+                console.log(" * example OK: " + prettifyRamlPath(this.parent).join(" -> "));
             }
 
             // "lint":
@@ -248,7 +247,7 @@ function validateMarkdown(rootNode){
             if (mdLintResultString) {
                 // FYI: the markdown lint does currently not break the test, it's just for warning purpose.
                 // numErrors++;
-                console.log(" * **description markdown NOT OK: " + printRamlResponseContext(this) + "**");
+                console.log(" * **description markdown NOT OK: " + prettifyRamlPath(this).join(" -> ") + "**");
                 console.log("```");
                 console.log(mdLintResultString);
                 console.log("```");
@@ -256,34 +255,55 @@ function validateMarkdown(rootNode){
                 console.log(this.node);
                 console.log("```");
             }else{
-                console.log(" * description markdown OK: " + printRamlResponseContext(this));
+                console.log(" * description markdown OK: " + prettifyRamlPath(this).join(" -> "));
             }
 
         }
     });
 }
 
-// takes a "this" context of the traverse library and tries to make the RAML context transparent
-// assumes that the context is a RAML response description node like "application/json".
-// TODO improve formatting on paths like "schema OK: resources -> 0 -> resources -> 0 -> resources -> 0 -> 1 -> application/json"
-function printRamlResponseContext(context){
-    var elements = [];
-    elements.unshift(context.key); // should be the content type
-    var responseTypeContext = context.parent.parent;
-    elements.unshift(responseTypeContext.key);
-    var methodContext = responseTypeContext.parent.parent;
-    if(typeof methodContext != "undefined"){
-        if(methodContext.node["method"]){
-            // probably a normal endpoint definition
-            elements.unshift(methodContext.node["method"]);
-            var resourceContext = methodContext.parent.parent;
-            elements.unshift(resourceContext.node["displayName"] + " ("+resourceContext.node["relativeUri"]+")");
+// recursively walks up the tree and creates a readable array of RAML position.
+function prettifyRamlPath(traverseContext, outputArray){
+    if(typeof outputArray == "undefined") outputArray = [];
+    // exit on the root node:
+    if(typeof traverseContext.key == "undefined") return outputArray;
+    // skip "resources" and "methods" entries (self-explanatory by context):
+    if(traverseContext.key == "resources" || traverseContext.key == "methods") return prettifyRamlPath(traverseContext.parent, outputArray);
+
+    var pretty = "";
+    // decide what's the best name
+    if(traverseContext.node["displayName"]){
+        pretty += traverseContext.node["displayName"];
+    }else{
+        if(isNaN(traverseContext.key)){
+            pretty += traverseContext.key;
+        }else if(traverseContext.node["method"]){
+            pretty += traverseContext.node["method"];
         }else{
-            // probably a trait or so -> fail over to the traverse path.
-            elements.unshift(methodContext.path.join(" -> "));
+            if(traverseContext.key.length == 3){
+                // it is very unlikely that we have arrays > 100 entries, so this is an HTTP code:
+                pretty += "HTTP " + traverseContext.key;
+            }else{
+                // some numeric cases remain, so we'll output them as a number
+                pretty += "[" + traverseContext.key + "]";
+            }
         }
     }
-    return elements.join(" -> ");
+    // add helpful extra info:
+    if(traverseContext.node["relativeUri"]){
+        pretty += " (" + traverseContext.node["relativeUri"] + ")";
+    }
+    // add to result
+    outputArray.unshift(pretty)
+    // recurse:
+    prettifyRamlPath(traverseContext.parent, outputArray);
+    return outputArray;
 }
 
-
+function printNodeProps(node){
+    var out = "";
+    for (var key in node){
+        out += key + " ,";
+    }
+    return out;
+}
