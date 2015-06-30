@@ -10,8 +10,6 @@
 * FYI: as this is a build/test script and not a server application it is intentionally done synchronous
 * FYI: the traversal code "eats" critical errors under circumstances -> check "done!" output and try/catch calls to libraries
 *
-* TODO: validate Markdown parts, too (or move the bigger ones into separate files and do it in the source file validation)
-*
 */
 
 var fs = require('fs');
@@ -26,15 +24,20 @@ var jsonSchemaSchema = JSON.parse(fs.readFileSync('json-schema-draft4.json', 'ut
 var metaValidator = new JSCK.draft4(jsonSchemaSchema);
 var markdownlint = require("markdownlint");
 
-// var mdLintResult = markdownlint.sync({ "strings": { keyName: markdownString }});
-// var mdLintResultString = mdLintResult.toString();
-// if (resultString) {
-//    do stuff on error
-// }
-
+var markdownLintDefaults = {
+    config: {
+        // TODO agree on markdown style and ruleset
+        // find the rules and their well-written rationale here: https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md
+        "default": true,
+        "MD002": false, // first heading must not necessarily be a H1 because the markdown is a document fragment and not a document.
+        "MD013": {
+            "line_length": 120
+        },
+    }
+}
 
 // go!
-var hasErrors = 0;
+var numErrors = 0;
 
 // FYI: the "raml.loadFile" call does already:
 // * _validate_ the RAML file against the RAML spec
@@ -47,15 +50,6 @@ raml.loadFile('project.raml').then( function(raml) {
 
         var lintedRaml = traverse.clone(raml);
 
-        // write out the RAML
-        // FYI: the "writeRAML" implies "linting" the RAML
-        writeRAML(lintedRaml, outputFilename);
-
-        // write a JSON version to have a programatically more approachable version at hand.
-        // FYI: this is not a 1:1 representation of the JSON view on the RAML YAML,
-        //      it's the internal representation of the  RAML library.
-        writeJSON(lintedRaml, outputFilename+"-ast");
-        
         // dereference the schemata in the RAML (sometimes called "schema inlining", too)
         // and write out two more files
         var dereferencedRaml = traverse.clone(lintedRaml);
@@ -69,18 +63,30 @@ raml.loadFile('project.raml').then( function(raml) {
         // and writes "linted" JSON back into the tree
         validateExamples(dereferencedRaml);
 
+        validateMarkdown(dereferencedRaml);
+
+        console.log("\n## Writing exploded files\n");
+
+        // write out the RAML
+        // FYI: the "writeRAML" implies "linting" the RAML
+        writeRAML(lintedRaml, outputFilename);
         writeRAML(dereferencedRaml, outputFilename+"-dereferencedSchemata");
+
+        // write a JSON version to have a programatically more approachable version at hand.
+        // FYI: this is not a 1:1 representation of the JSON view on the RAML YAML,
+        //      it's the internal representation of the  RAML library.
+        writeJSON(lintedRaml, outputFilename+"-ast");
         writeJSON(dereferencedRaml, outputFilename+"-dereferencedSchemata-ast");
 
         // confirm that the traversal hasn't eaten some error:
         console.log("\n# done!\n");
 
-        process.exit(hasErrors);
+        process.exit(numErrors);
 
   }, function(error) {
-          hasErrors++;
+          numErrors++;
           console.log(' * **Error parsing project RAML: ' + error + "**");
-          process.exit(hasErrors);
+          process.exit(numErrors);
 });
 
 // ####  helpers ###:
@@ -103,7 +109,7 @@ function derefSchemata(rootNode){
             try{
                 var schemaObj = JSON.parse(this.parent.node.schema);
             } catch (ex){
-                hasErrors++;
+                numErrors++;
                 console.log(" * **could not parse JSON of this schema: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```");
                 try{
@@ -131,7 +137,7 @@ function validateSchemata(rootNode){
             try{
                 var schemaObj = JSON.parse(this.parent.node.schema);
             } catch (ex){
-                hasErrors++;
+                numErrors++;
                 console.log(" * **could not parse JSON of this schema: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```");
                 try{
@@ -147,7 +153,7 @@ function validateSchemata(rootNode){
 
             var schemaErrors = metaValidator.validate(schemaObj);
             if(!schemaErrors.valid){
-                hasErrors++;
+                numErrors++;
                 console.log(" * **schema NOT OK: "+ printRamlResponseContext(this.parent) + "**");
                 console.log("```json");
                 console.log(JSON.stringify(schemaErrors.errors, null, 2));
@@ -169,7 +175,7 @@ function validateExamples(rootNode){
             try{
                 var schemaObj = JSON.parse(this.parent.node.schema);
             } catch (ex){
-                hasErrors++;
+                numErrors++;
                 console.log(" * **could not parse JSON of this schema: " + printRamlResponseContext(this.parent) * "**");
                 console.log("```");
                 try{
@@ -186,7 +192,7 @@ function validateExamples(rootNode){
             try{
                 var exampleObj = JSON.parse(node);
             } catch (ex){
-                hasErrors++;
+                numErrors++;
                 console.log(" * **could not parse JSON of this example: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```");
                 try{
@@ -205,7 +211,7 @@ function validateExamples(rootNode){
             try {
                 var validator = new JSCK.draft4(schemaObj);
             } catch (ex) {
-                hasErrors++;
+                numErrors++;
                 console.log(" * **could not instantiate validator for schema: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```");
                 console.log(ex);
@@ -215,7 +221,7 @@ function validateExamples(rootNode){
 
             var schemaErrors = validator.validate(exampleObj);
             if(!schemaErrors.valid){
-                hasErrors++;
+                numErrors++;
                 console.log(" * **example NOT OK: " + printRamlResponseContext(this.parent) + "**");
                 console.log("```json");
                 console.log(JSON.stringify(schemaErrors.errors, null, 2));
@@ -231,6 +237,32 @@ function validateExamples(rootNode){
     });
 }
 
+function validateMarkdown(rootNode){
+    console.log("\n## Description Markdown Check\n");
+    traverse(rootNode).forEach(function (node) {
+        if (this.key == "description" && typeof this.node == "string"){
+            var mdLintOptions = traverse.clone(markdownLintDefaults);
+            mdLintOptions.strings =  { "" : this.node };
+            var mdLintResult = markdownlint.sync(mdLintOptions);
+            var mdLintResultString = mdLintResult.toString();
+            if (mdLintResultString) {
+                // FYI: the markdown lint does currently not break the test, it's just for warning purpose.
+                // numErrors++;
+                console.log(" * **description markdown NOT OK: " + printRamlResponseContext(this) + "**");
+                console.log("```");
+                console.log(mdLintResultString);
+                console.log("```");
+                console.log("```markdown");
+                console.log(this.node);
+                console.log("```");
+            }else{
+                console.log(" * description markdown OK: " + printRamlResponseContext(this));
+            }
+
+        }
+    });
+}
+
 // takes a "this" context of the traverse library and tries to make the RAML context transparent
 // assumes that the context is a RAML response description node like "application/json".
 // TODO improve formatting on paths like "schema OK: resources -> 0 -> resources -> 0 -> resources -> 0 -> 1 -> application/json"
@@ -240,14 +272,16 @@ function printRamlResponseContext(context){
     var responseTypeContext = context.parent.parent;
     elements.unshift(responseTypeContext.key);
     var methodContext = responseTypeContext.parent.parent;
-    if(methodContext.node["method"]){
-        // probably a normal endpoint definition
-        elements.unshift(methodContext.node["method"]);
-        var resourceContext = methodContext.parent.parent;
-        elements.unshift(resourceContext.node["displayName"] + " ("+resourceContext.node["relativeUri"]+")");
-    }else{
-        // probably a trait or so -> fail over to the traverse path.
-        elements.unshift(methodContext.path.join(" -> "));
+    if(typeof methodContext != "undefined"){
+        if(methodContext.node["method"]){
+            // probably a normal endpoint definition
+            elements.unshift(methodContext.node["method"]);
+            var resourceContext = methodContext.parent.parent;
+            elements.unshift(resourceContext.node["displayName"] + " ("+resourceContext.node["relativeUri"]+")");
+        }else{
+            // probably a trait or so -> fail over to the traverse path.
+            elements.unshift(methodContext.path.join(" -> "));
+        }
     }
     return elements.join(" -> ");
 }
