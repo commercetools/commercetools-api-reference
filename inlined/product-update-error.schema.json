@@ -13,384 +13,387 @@
       "description":"Human-readable message"
     },
     "errors":{
-      "type":"object",
-      "oneOf":[{
-        "title":"Error",
+      "type":"array",
+      "items":{
         "type":"object",
-        "required":["code","message"],
-        "properties":{
-          "code":{
-            "type":"string",
-            "description":"Specific error code"
-          },
-          "message":{
-            "type":"string",
-            "description":"Human-readable message"
-          }
-        }
-      },{
-        "title":"DuplicatePriceScope",
-        "type":"object",
-        "description":"A given price scope conflicts with an existing one. Every price of a product variant must have a distinct combination of currency, customer group, country and channel. These four properties constitute the scope of a price.",
-        "required":["code","message","conflictingPrices"],
-        "properties":{
-          "code":{
-            "type":"string",
-            "description":"Specific error code",
-            "enum":["DuplicatePriceScope"]
-          },
-          "message":{
-            "type":"string",
-            "description":"Human-readable message"
-          },
-          "conflictingPrices":{
-            "type":"array",
-            "items":{
-              "title":"Price",
-              "type":"object",
-              "required":["id","value"],
-              "properties":{
-                "id":{
-                  "type":"string",
-                  "description":"The unique ID of this price."
-                },
-                "value":{
-                  "title":"Money",
-                  "required":["centAmount","currencyCode"],
-                  "type":"object",
-                  "properties":{
-                    "centAmount":{
-                      "type":"integer"
-                    },
-                    "currencyCode":{
-                      "type":"string",
-                      "pattern":"[A-Z]{3}"
-                    }
-                  }
-                },
-                "country":{
-                  "type":"string",
-                  "pattern":"[A-Z]{2}"
-                },
-                "customerGroup":{
-                  "title":"Reference",
-                  "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
-                  "type":"object",
-                  "properties":{
-                    "typeId ":{
-                      "type":"string",
-                      "description":"The typeId designates the type of the referenced resource",
-                      "enum":["product","product-type","category","tax-category","customer","customer-group","cart","order","channel","state","product-discount"]
-                    },
-                    "id":{
-                      "type":"string",
-                      "description":"The unique ID of the referenced resource"
-                    }
-                  },
-                  "description":"A reference to a customer group."
-                },
-                "channel":{
-                  "title":"Reference",
-                  "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
-                  "type":"object",
-                  "properties":{
-                    "typeId ":{
-                      "type":"string",
-                      "description":"The typeId designates the type of the referenced resource",
-                      "enum":["product","product-type","category","tax-category","customer","customer-group","cart","order","channel","state","product-discount"]
-                    },
-                    "id":{
-                      "type":"string",
-                      "description":"The unique ID of the referenced resource"
-                    }
-                  },
-                  "description":"A reference to a channel."
-                },
-                "validFrom":{
-                  "type":"string",
-                  "description":"Date from which the price is valid.",
-                  "format":"date-time"
-                },
-                "validUntil":{
-                  "type":"string",
-                  "description":"Date until which the price is valid.",
-                  "format":"date-time"
-                },
-                "discounted":{
-                  "title":"Discounted Price",
-                  "type":"object",
-                  "required":["value","discount"],
-                  "properties":{
-                    "value":{
-                      "title":"Money",
-                      "required":["centAmount","currencyCode"],
-                      "type":"object",
-                      "properties":{
-                        "centAmount":{
-                          "type":"integer"
-                        },
-                        "currencyCode":{
-                          "type":"string",
-                          "pattern":"[A-Z]{3}"
-                        }
-                      }
-                    },
-                    "country":{
-                      "type":"string",
-                      "pattern":"[A-Z]{2}"
-                    },
-                    "discount":{
-                      "title":"Reference",
-                      "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
-                      "type":"object",
-                      "properties":{
-                        "typeId ":{
-                          "type":"string",
-                          "description":"The typeId designates the type of the referenced resource",
-                          "enum":["product","product-type","category","tax-category","customer","customer-group","cart","order","channel","state","product-discount"]
-                        },
-                        "id":{
-                          "type":"string",
-                          "description":"The unique ID of the referenced resource"
-                        }
-                      },
-                      "description":"A reference to a ProductDiscount."
-                    }
-                  },
-                  "description":"Optional Set if a matching ProductDiscount exists. If set the Cart will use the discounted value for the cart price calculation."
-                }
-              }
+        "oneOf":[{
+          "title":"Error",
+          "type":"object",
+          "required":["code","message"],
+          "properties":{
+            "code":{
+              "type":"string",
+              "description":"Specific error code"
+            },
+            "message":{
+              "type":"string",
+              "description":"Human-readable message"
             }
           }
-        }
-      },{
-        "title":"DuplicateVariantValues",
-        "type":"object",
-        "required":["code","message","variantValues"],
-        "description":"A given combination of variant values conflicts with an existing one. Every product variant must have a distinct combination of SKU, prices, and custom attribute values.",
-        "properties":{
-          "code":{
-            "type":"string",
-            "description":"Specific error code",
-            "enum":["DuplicateVariantValues"]
-          },
-          "message":{
-            "type":"string",
-            "description":"Human-readable message"
-          },
-          "variantValues":{
-            "title":"Variant Value",
-            "type":"object",
-            "required":["prices","images","attributes"],
-            "properties":{
-              "sku":{
-                "type":"string",
-                "description":"The SKU of the variant."
-              },
-              "prices":{
-                "type":"array",
-                "description":"The prices of the variant. The prices does not contain two prices for the same price scope (same currency, country, customer group and channel).",
-                "items":{
-                  "title":"Price",
-                  "type":"object",
-                  "required":["id","value"],
-                  "properties":{
-                    "id":{
-                      "type":"string",
-                      "description":"The unique ID of this price."
-                    },
-                    "value":{
-                      "title":"Money",
-                      "required":["centAmount","currencyCode"],
-                      "type":"object",
-                      "properties":{
-                        "centAmount":{
-                          "type":"integer"
-                        },
-                        "currencyCode":{
-                          "type":"string",
-                          "pattern":"[A-Z]{3}"
-                        }
+        },{
+          "title":"DuplicatePriceScope",
+          "type":"object",
+          "description":"A given price scope conflicts with an existing one. Every price of a product variant must have a distinct combination of currency, customer group, country and channel. These four properties constitute the scope of a price.",
+          "required":["code","message","conflictingPrices"],
+          "properties":{
+            "code":{
+              "type":"string",
+              "description":"Specific error code",
+              "enum":["DuplicatePriceScope"]
+            },
+            "message":{
+              "type":"string",
+              "description":"Human-readable message"
+            },
+            "conflictingPrices":{
+              "type":"array",
+              "items":{
+                "title":"Price",
+                "type":"object",
+                "required":["id","value"],
+                "properties":{
+                  "id":{
+                    "type":"string",
+                    "description":"The unique ID of this price."
+                  },
+                  "value":{
+                    "title":"Money",
+                    "required":["centAmount","currencyCode"],
+                    "type":"object",
+                    "properties":{
+                      "centAmount":{
+                        "type":"integer"
+                      },
+                      "currencyCode":{
+                        "type":"string",
+                        "pattern":"[A-Z]{3}"
+                      }
+                    }
+                  },
+                  "country":{
+                    "type":"string",
+                    "pattern":"[A-Z]{2}"
+                  },
+                  "customerGroup":{
+                    "title":"Reference",
+                    "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
+                    "type":"object",
+                    "properties":{
+                      "typeId ":{
+                        "type":"string",
+                        "description":"The typeId designates the type of the referenced resource",
+                        "enum":["product","product-type","category","tax-category","customer","customer-group","cart","order","channel","state","product-discount"]
+                      },
+                      "id":{
+                        "type":"string",
+                        "description":"The unique ID of the referenced resource"
                       }
                     },
-                    "country":{
-                      "type":"string",
-                      "pattern":"[A-Z]{2}"
+                    "description":"A reference to a customer group."
+                  },
+                  "channel":{
+                    "title":"Reference",
+                    "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
+                    "type":"object",
+                    "properties":{
+                      "typeId ":{
+                        "type":"string",
+                        "description":"The typeId designates the type of the referenced resource",
+                        "enum":["product","product-type","category","tax-category","customer","customer-group","cart","order","channel","state","product-discount"]
+                      },
+                      "id":{
+                        "type":"string",
+                        "description":"The unique ID of the referenced resource"
+                      }
                     },
-                    "customerGroup":{
-                      "title":"Reference",
-                      "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
-                      "type":"object",
-                      "properties":{
-                        "typeId ":{
-                          "type":"string",
-                          "description":"The typeId designates the type of the referenced resource",
-                          "enum":["product","product-type","category","tax-category","customer","customer-group","cart","order","channel","state","product-discount"]
-                        },
-                        "id":{
-                          "type":"string",
-                          "description":"The unique ID of the referenced resource"
+                    "description":"A reference to a channel."
+                  },
+                  "validFrom":{
+                    "type":"string",
+                    "description":"Date from which the price is valid.",
+                    "format":"date-time"
+                  },
+                  "validUntil":{
+                    "type":"string",
+                    "description":"Date until which the price is valid.",
+                    "format":"date-time"
+                  },
+                  "discounted":{
+                    "title":"Discounted Price",
+                    "type":"object",
+                    "required":["value","discount"],
+                    "properties":{
+                      "value":{
+                        "title":"Money",
+                        "required":["centAmount","currencyCode"],
+                        "type":"object",
+                        "properties":{
+                          "centAmount":{
+                            "type":"integer"
+                          },
+                          "currencyCode":{
+                            "type":"string",
+                            "pattern":"[A-Z]{3}"
+                          }
                         }
                       },
-                      "description":"A reference to a customer group."
-                    },
-                    "channel":{
-                      "title":"Reference",
-                      "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
-                      "type":"object",
-                      "properties":{
-                        "typeId ":{
-                          "type":"string",
-                          "description":"The typeId designates the type of the referenced resource",
-                          "enum":["product","product-type","category","tax-category","customer","customer-group","cart","order","channel","state","product-discount"]
-                        },
-                        "id":{
-                          "type":"string",
-                          "description":"The unique ID of the referenced resource"
-                        }
+                      "country":{
+                        "type":"string",
+                        "pattern":"[A-Z]{2}"
                       },
-                      "description":"A reference to a channel."
-                    },
-                    "validFrom":{
-                      "type":"string",
-                      "description":"Date from which the price is valid.",
-                      "format":"date-time"
-                    },
-                    "validUntil":{
-                      "type":"string",
-                      "description":"Date until which the price is valid.",
-                      "format":"date-time"
-                    },
-                    "discounted":{
-                      "title":"Discounted Price",
-                      "type":"object",
-                      "required":["value","discount"],
-                      "properties":{
-                        "value":{
-                          "title":"Money",
-                          "required":["centAmount","currencyCode"],
-                          "type":"object",
-                          "properties":{
-                            "centAmount":{
-                              "type":"integer"
-                            },
-                            "currencyCode":{
-                              "type":"string",
-                              "pattern":"[A-Z]{3}"
-                            }
+                      "discount":{
+                        "title":"Reference",
+                        "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
+                        "type":"object",
+                        "properties":{
+                          "typeId ":{
+                            "type":"string",
+                            "description":"The typeId designates the type of the referenced resource",
+                            "enum":["product","product-type","category","tax-category","customer","customer-group","cart","order","channel","state","product-discount"]
+                          },
+                          "id":{
+                            "type":"string",
+                            "description":"The unique ID of the referenced resource"
                           }
                         },
-                        "country":{
-                          "type":"string",
-                          "pattern":"[A-Z]{2}"
-                        },
-                        "discount":{
-                          "title":"Reference",
-                          "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
-                          "type":"object",
-                          "properties":{
-                            "typeId ":{
-                              "type":"string",
-                              "description":"The typeId designates the type of the referenced resource",
-                              "enum":["product","product-type","category","tax-category","customer","customer-group","cart","order","channel","state","product-discount"]
-                            },
-                            "id":{
-                              "type":"string",
-                              "description":"The unique ID of the referenced resource"
-                            }
-                          },
-                          "description":"A reference to a ProductDiscount."
-                        }
-                      },
-                      "description":"Optional Set if a matching ProductDiscount exists. If set the Cart will use the discounted value for the cart price calculation."
-                    }
-                  }
-                }
-              },
-              "attributes":{
-                "type":"array",
-                "items":{
-                  "title":"Attribute",
-                  "type":"object"
-                }
-              },
-              "images":{
-                "type":"array",
-                "items":{
-                  "title":"Image",
-                  "required":["url","dimensions"],
-                  "type":"object",
-                  "properties":{
-                    "url":{
-                      "type":"string",
-                      "description":"URL of the image in its original size. This can be used to obtain the image in different sizes."
-                    },
-                    "dimensions":{
-                      "description":"Dimensions of the original image. This can be used by your application e.g. to determine whether the image is large enough to display a zoom view.",
-                      "type":"object",
-                      "properties":{
-                        "w":{
-                          "type":"number"
-                        },
-                        "h":{
-                          "type":"number"
-                        }
+                        "description":"A reference to a ProductDiscount."
                       }
                     },
-                    "label":{
-                      "type":"string",
-                      "description":"Custom label that can be used, for example, as an image description."
+                    "description":"Optional Set if a matching ProductDiscount exists. If set the Cart will use the discounted value for the cart price calculation."
+                  }
+                }
+              }
+            }
+          }
+        },{
+          "title":"DuplicateVariantValues",
+          "type":"object",
+          "required":["code","message","variantValues"],
+          "description":"A given combination of variant values conflicts with an existing one. Every product variant must have a distinct combination of SKU, prices, and custom attribute values.",
+          "properties":{
+            "code":{
+              "type":"string",
+              "description":"Specific error code",
+              "enum":["DuplicateVariantValues"]
+            },
+            "message":{
+              "type":"string",
+              "description":"Human-readable message"
+            },
+            "variantValues":{
+              "title":"Variant Value",
+              "type":"object",
+              "required":["prices","images","attributes"],
+              "properties":{
+                "sku":{
+                  "type":"string",
+                  "description":"The SKU of the variant."
+                },
+                "prices":{
+                  "type":"array",
+                  "description":"The prices of the variant. The prices does not contain two prices for the same price scope (same currency, country, customer group and channel).",
+                  "items":{
+                    "title":"Price",
+                    "type":"object",
+                    "required":["id","value"],
+                    "properties":{
+                      "id":{
+                        "type":"string",
+                        "description":"The unique ID of this price."
+                      },
+                      "value":{
+                        "title":"Money",
+                        "required":["centAmount","currencyCode"],
+                        "type":"object",
+                        "properties":{
+                          "centAmount":{
+                            "type":"integer"
+                          },
+                          "currencyCode":{
+                            "type":"string",
+                            "pattern":"[A-Z]{3}"
+                          }
+                        }
+                      },
+                      "country":{
+                        "type":"string",
+                        "pattern":"[A-Z]{2}"
+                      },
+                      "customerGroup":{
+                        "title":"Reference",
+                        "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
+                        "type":"object",
+                        "properties":{
+                          "typeId ":{
+                            "type":"string",
+                            "description":"The typeId designates the type of the referenced resource",
+                            "enum":["product","product-type","category","tax-category","customer","customer-group","cart","order","channel","state","product-discount"]
+                          },
+                          "id":{
+                            "type":"string",
+                            "description":"The unique ID of the referenced resource"
+                          }
+                        },
+                        "description":"A reference to a customer group."
+                      },
+                      "channel":{
+                        "title":"Reference",
+                        "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
+                        "type":"object",
+                        "properties":{
+                          "typeId ":{
+                            "type":"string",
+                            "description":"The typeId designates the type of the referenced resource",
+                            "enum":["product","product-type","category","tax-category","customer","customer-group","cart","order","channel","state","product-discount"]
+                          },
+                          "id":{
+                            "type":"string",
+                            "description":"The unique ID of the referenced resource"
+                          }
+                        },
+                        "description":"A reference to a channel."
+                      },
+                      "validFrom":{
+                        "type":"string",
+                        "description":"Date from which the price is valid.",
+                        "format":"date-time"
+                      },
+                      "validUntil":{
+                        "type":"string",
+                        "description":"Date until which the price is valid.",
+                        "format":"date-time"
+                      },
+                      "discounted":{
+                        "title":"Discounted Price",
+                        "type":"object",
+                        "required":["value","discount"],
+                        "properties":{
+                          "value":{
+                            "title":"Money",
+                            "required":["centAmount","currencyCode"],
+                            "type":"object",
+                            "properties":{
+                              "centAmount":{
+                                "type":"integer"
+                              },
+                              "currencyCode":{
+                                "type":"string",
+                                "pattern":"[A-Z]{3}"
+                              }
+                            }
+                          },
+                          "country":{
+                            "type":"string",
+                            "pattern":"[A-Z]{2}"
+                          },
+                          "discount":{
+                            "title":"Reference",
+                            "description":"A `Reference` is a JSON object representing a (loose) reference to another resource on SPHERE.IO platform",
+                            "type":"object",
+                            "properties":{
+                              "typeId ":{
+                                "type":"string",
+                                "description":"The typeId designates the type of the referenced resource",
+                                "enum":["product","product-type","category","tax-category","customer","customer-group","cart","order","channel","state","product-discount"]
+                              },
+                              "id":{
+                                "type":"string",
+                                "description":"The unique ID of the referenced resource"
+                              }
+                            },
+                            "description":"A reference to a ProductDiscount."
+                          }
+                        },
+                        "description":"Optional Set if a matching ProductDiscount exists. If set the Cart will use the discounted value for the cart price calculation."
+                      }
+                    }
+                  }
+                },
+                "attributes":{
+                  "type":"array",
+                  "items":{
+                    "title":"Attribute",
+                    "type":"object"
+                  }
+                },
+                "images":{
+                  "type":"array",
+                  "items":{
+                    "title":"Image",
+                    "required":["url","dimensions"],
+                    "type":"object",
+                    "properties":{
+                      "url":{
+                        "type":"string",
+                        "description":"URL of the image in its original size. This can be used to obtain the image in different sizes."
+                      },
+                      "dimensions":{
+                        "description":"Dimensions of the original image. This can be used by your application e.g. to determine whether the image is large enough to display a zoom view.",
+                        "type":"object",
+                        "properties":{
+                          "w":{
+                            "type":"number"
+                          },
+                          "h":{
+                            "type":"number"
+                          }
+                        }
+                      },
+                      "label":{
+                        "type":"string",
+                        "description":"Custom label that can be used, for example, as an image description."
+                      }
                     }
                   }
                 }
               }
             }
           }
-        }
-      },{
-        "title":"DuplicateAttributeValue",
-        "type":"object",
-        "required":["code","message","attribute"],
-        "description":"The Unique AttributeConstraint was violated.",
-        "properties":{
-          "code":{
-            "type":"string",
-            "description":"Specific error code",
-            "enum":["DuplicateAttributeValue"]
-          },
-          "message":{
-            "type":"string",
-            "description":"Human-readable message"
-          },
-          "attribute":{
-            "title":"Attribute",
-            "type":"object"
-          }
-        }
-      },{
-        "title":"DuplicateAttributeValues",
-        "type":"object",
-        "required":["code","message","attributes"],
-        "description":"The CombinationUnique AttributeConstraint was violated.",
-        "properties":{
-          "code":{
-            "type":"string",
-            "description":"Specific error code",
-            "enum":["DuplicateAttributeValues"]
-          },
-          "message":{
-            "type":"string",
-            "description":"Human-readable message"
-          },
-          "attributes":{
-            "type":"array",
-            "items":{
+        },{
+          "title":"DuplicateAttributeValue",
+          "type":"object",
+          "required":["code","message","attribute"],
+          "description":"The Unique AttributeConstraint was violated.",
+          "properties":{
+            "code":{
+              "type":"string",
+              "description":"Specific error code",
+              "enum":["DuplicateAttributeValue"]
+            },
+            "message":{
+              "type":"string",
+              "description":"Human-readable message"
+            },
+            "attribute":{
               "title":"Attribute",
               "type":"object"
             }
           }
-        }
-      }]
+        },{
+          "title":"DuplicateAttributeValues",
+          "type":"object",
+          "required":["code","message","attributes"],
+          "description":"The CombinationUnique AttributeConstraint was violated.",
+          "properties":{
+            "code":{
+              "type":"string",
+              "description":"Specific error code",
+              "enum":["DuplicateAttributeValues"]
+            },
+            "message":{
+              "type":"string",
+              "description":"Human-readable message"
+            },
+            "attributes":{
+              "type":"array",
+              "items":{
+                "title":"Attribute",
+                "type":"object"
+              }
+            }
+          }
+        }]
+      }
     }
   }
 }
