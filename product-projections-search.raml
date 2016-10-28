@@ -1,0 +1,53 @@
+type: base
+displayName: Product Projection Search
+description: This endpoint provides high performance search queries over ProductProjections. The query result contains the ProductProjections for which at least one ProductVariant matches the search query. This means that variants can be included in the result also for which the search query does not match. To determine which ProductVariants match the search query, the returned ProductProjections include the additional field isMatchingVariant.
+get:
+  description: Search Product Projection
+  queryParameters:
+    fuzzy:
+      type: boolean
+      description: Whether to apply fuzzy search on the text to analyze.
+      required: false
+    fuzzyLevel:
+      type: number
+      description: Provide explicitly the fuzzy level desired if fuzzy is enabled. This value can not be higher than the one chosen by the platform by default.
+      required: false
+    staged:
+      type: boolean
+      description: Whether to query for the current or staged projections.
+      required: false
+    filter:
+      type: string
+      required: false
+    filter.facets:
+      type: string
+      required: false
+    filter.query:
+      type: string
+      required: false
+    facet:
+      type: string
+      required: false
+    priceCurrency:
+      type: string
+      required: false
+    priceCountry:
+      type: string
+      required: false
+    priceCustomerGroup:
+      type: string
+      required: false
+    priceChannel:
+      type: string
+      required: false
+  is:
+    - sortable:
+        sortExample: createdAt asc
+    - pagging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/product-projections.example.json
+          schema: !include schemas/product-projections.schema.json

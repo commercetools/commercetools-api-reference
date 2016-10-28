@@ -1,0 +1,24 @@
+type: base
+displayName: Product Projection Suggestion
+description: The source of data for suggestions is the searchKeyword field in a product
+get:
+  queryParameters:
+    fuzzy:
+      type: boolean
+      description: Whether to apply fuzzy search on the text to analyze.
+      required: false
+    staged:
+      type: boolean
+      description: Whether to query for the current or staged projections.
+      required: false
+  is:
+    - sortable:
+        sortExample: createdAt asc
+    - pagging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/product-projections.example.json
+          schema: !include schemas/product-projections.schema.json
