@@ -1,0 +1,63 @@
+type: base
+displayName: discount code
+description: Discount codes can be added to a cart to enable certain cart discounts.
+get:
+  description: Query discount-codes
+  is:
+    - query:
+        whereExample: code = "summersale"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/discount-codes.example.json
+post:
+  description: Create a discount-code
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/discount-code-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/discount-code.example.json
+/{ID}:
+  type: base
+  displayName: discount-code
+  get:
+    description: Get discount-code by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/discount-code.example.json
+  post:
+    description: Update a discount-code
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/discount-code-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/discount-code.example.json
+  delete:
+    description: Delete a discount-code
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/discount-code.example.json

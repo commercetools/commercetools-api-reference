@@ -1,0 +1,63 @@
+type: base
+displayName: channel
+description: Channels represent a source or destination of different entities. They can be used to model warehouses or stores.
+get:
+  description: Query channels
+  is:
+    - query:
+        whereExample: key = "berlin-store"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/channels.example.json
+post:
+  description: Create a channel
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/channel-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/channel.example.json
+/{ID}:
+  type: base
+  displayName: channel
+  get:
+    description: Get channel by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/channel.example.json
+  post:
+    description: Update a channel
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/channel-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/channel.example.json
+  delete:
+    description: Delete a channel
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/channel.example.json

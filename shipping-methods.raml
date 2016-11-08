@@ -1,0 +1,80 @@
+type: base
+displayName: Shipping method
+description: Shipping Methods define where orders can be shipped and what the costs are.
+get:
+  description: Query shipping-methods
+  is:
+    - query:
+        whereExample: name = "DHL"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+  queryParameters:
+    cartId:
+      type: string
+      description: Get ShippingMethods for a Cart
+      required: false
+    country:
+      type: string
+      description: Get ShippingMethods for a Location
+      required: false
+    state:
+      type: string
+      description: Get ShippingMethods for a Location
+      required: false
+    currency:
+      type: string
+      description: Get ShippingMethods for a Location
+      required: false
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/shipping-methods.example.json
+post:
+  description: Create a shipping-method
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/shipping-method-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/shipping-method.example.json
+/{ID}:
+  type: base
+  displayName: shipping-method
+  get:
+    description: Get shipping-method by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/shipping-method.example.json
+  post:
+    description: Update a shipping-method
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/shipping-method-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/shipping-method.example.json
+  delete:
+    description: Delete a shipping-method
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/shipping-method.example.json

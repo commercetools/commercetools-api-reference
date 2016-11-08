@@ -1,0 +1,63 @@
+type: base
+displayName: payment
+description: Payments hold information about the current state of receiving and/or refunding money
+get:
+  description: Query payments
+  is:
+    - query:
+        whereExample: externalId = "1234567890"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_payments:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/payments.example.json
+post:
+  description: Create a payment
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_payments:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/payment-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/payment.example.json
+/{ID}:
+  type: base
+  displayName: payment
+  get:
+    description: Get payment by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_payments:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/payment.example.json
+  post:
+    description: Update a payment
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_payments:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/payment-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/payment.example.json
+  delete:
+    description: Delete a payment
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_payments:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/payment.example.json

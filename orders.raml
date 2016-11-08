@@ -1,0 +1,77 @@
+type: base
+displayName: order
+description: An order can be created from a cart, usually after a checkout process has been completed.
+get:
+  description: Query orders
+  is:
+    - query:
+        whereExample: customerEmail = "john.doe@example.com"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/orders.example.json
+post:
+  description: Create a order
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/order-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/order.example.json
+/{ID}:
+  type: base
+  displayName: order
+  get:
+    description: Get order by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/order.example.json
+  post:
+    description: Update a order
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/order-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/order.example.json
+  delete:
+    description: Delete a order
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/order.example.json
+/import:
+  type: base
+  displayName: import orders
+  post:
+    description: Create an Order by Import
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/order-create.example.json
+    responses:
+      201:
+        body:
+          application/json:
+            example: !include examples/order.example.json

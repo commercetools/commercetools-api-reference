@@ -1,0 +1,98 @@
+type: base
+displayName: subscription
+description: subscriptions define custom fields that are used to enhance resources as you need.
+get:
+  description: Query subscriptions
+  is:
+    - query:
+        whereExample: key = "product-subscription"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_subscriptions:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/subscriptions.example.json
+post:
+  description: Create a subscription
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_subscriptions:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/subscription-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/subscription.example.json
+/key={key}:
+  type: base
+  displayName: subscription
+  get:
+    description: Get subscription by key
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_subscriptions:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/subscription.example.json
+  post:
+    description: Update a subscription by key
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_subscriptions:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/subscription-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/subscription.example.json
+  delete:
+    description: Delete a subscription by key
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_subscriptions:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/subscription.example.json
+/{ID}:
+  type: base
+  displayName: subscription
+  get:
+    description: Get subscription by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_subscriptions:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/subscription.example.json
+  post:
+    description: Update a subscription
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_subscriptions:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/subscription-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/subscription.example.json
+  delete:
+    description: Delete a subscription
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_subscriptions:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/subscription.example.json
