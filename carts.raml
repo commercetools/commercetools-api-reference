@@ -1,0 +1,63 @@
+type: base
+displayName: cart
+description: carts are used to evaluate products and channels.
+get:
+  description: Query carts
+  is:
+    - query:
+        whereExample: customerEmail = "john.doe@example.com"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/carts.example.json
+post:
+  description: Create a cart
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/cart-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/cart.example.json
+/{ID}:
+  type: base
+  displayName: cart
+  get:
+    description: Get cart by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/cart.example.json
+  post:
+    description: Update a cart
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/cart-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/cart.example.json
+  delete:
+    description: Delete a cart
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/cart.example.json

@@ -1,0 +1,63 @@
+type: base
+displayName: Review
+description: Reviews are used to evaluate products and channels.
+get:
+  description: Query reviews
+  is:
+    - query:
+        whereExample: title = "ABC123"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/reviews.example.json
+post:
+  description: Create a review
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/review-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/review.example.json
+/{ID}:
+  type: base
+  displayName: Review
+  get:
+    description: Get review by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/review.example.json
+  post:
+    description: Update a review
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/review-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/review.example.json
+  delete:
+    description: Delete a review
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/review.example.json

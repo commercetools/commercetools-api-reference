@@ -1,0 +1,63 @@
+type: base
+displayName: Tax categories
+description: Tax Categories define how products are to be taxed in different countries.
+get:
+  description: Query tax categories
+  is:
+    - query:
+        whereExample: name = "MwSt"
+    - sortable:
+        sortExample: name asc
+    - paging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/tax-categories.example.json
+post:
+  description: Create a tax category
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/category-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/tax-category.example.json
+/{ID}:
+  type: base
+  displayName: Tax Category
+  get:
+    description: Get Tax Category by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/tax-category.example.json
+  post:
+    description: Update a Tax Category
+    is:
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/tax-category-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/tax-category.example.json
+  delete:
+    description: Delete a Tax Category
+    is:
+      - versioned
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/tax-category.example.json
