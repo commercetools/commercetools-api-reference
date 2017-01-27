@@ -14,8 +14,8 @@
 
 var fs = require('fs');
 var traverse = require('traverse');
-var raml = require('raml-parser');
-var toRAML = require('raml-object-to-raml');
+var raml = require('raml-1-parser');
+// var toRAML = require('raml-object-to-raml');
 var jsonlint = require("jsonlint");
 var jsonSchemaDeref = require('json-schema-deref-sync');
 var JSCK = require('jsck');
@@ -28,6 +28,7 @@ var markdownLintDefaults = {
         // TODO agree on markdown style and ruleset
         // find the rules and their well-written rationale here: https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md
         "default": true,
+        "MD041": false,  // First line must not necessarily be a top level header because the markdown is a document fragment and not a document.
         "MD002": false, // first heading must not necessarily be a H1 because the markdown is a document fragment and not a document.
         "MD013": {
             "line_length": 120
@@ -43,15 +44,17 @@ var numErrors = 0;
 // * _inline_ the RAML file references ("!include" statements)
 console.log("\n# RAML consistency check and explosion\n");
 
-raml.loadFile('project.raml').then( function(raml) {
+raml.loadApi('project.raml').then(function (api) {
+    return api.expand(true).toJSON();
+}).then( function(raml) {
 
         var outputFilename = 'project-exploded';
 
-        var lintedRaml = traverse.clone(raml);
+        var lintedRaml = raml;
 
         // dereference the schemata in the RAML (sometimes called "schema inlining", too)
         // and write out two more files
-        var dereferencedRaml = traverse.clone(lintedRaml);
+        var dereferencedRaml = lintedRaml;
         derefSchemata(dereferencedRaml);
 
         // validates all schemata against the "metaschema / schema schema"
@@ -68,8 +71,8 @@ raml.loadFile('project.raml').then( function(raml) {
 
         // write out the RAML
         // FYI: the "writeRAML" implies "linting" the RAML
-        writeRAML(lintedRaml, outputFilename);
-        writeRAML(dereferencedRaml, outputFilename+"-dereferencedSchemata");
+        // writeRAML(lintedRaml, outputFilename);
+        // writeRAML(dereferencedRaml, outputFilename+"-dereferencedSchemata");
 
         // write a JSON version to have a programatically more approachable version at hand.
         // FYI: this is not a 1:1 representation of the JSON view on the RAML YAML,
@@ -170,7 +173,6 @@ function validateExamples(rootNode){
     console.log("\n## Example Validity Check\n");
     traverse(rootNode).forEach(function (node) {
         if (this.key == "example" && this.parent.key == "application/json" && this.parent.node.hasOwnProperty("schema")){
-
             try{
                 var schemaObj = JSON.parse(this.parent.node.schema);
             } catch (ex){
@@ -188,14 +190,15 @@ function validateExamples(rootNode){
                 return;
             }
 
+            var jsonStr = JSON.stringify(node);
             try{
-                var exampleObj = JSON.parse(node);
+                var exampleObj = JSON.parse(jsonStr);
             } catch (ex){
                 numErrors++;
                 console.log(" * **could not parse JSON of this example: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
                 console.log("```");
                 try{
-                    jsonlint.parse(node);
+                    jsonlint.parse(jsonStr);
                 }catch(ex){
                     console.log(ex);
                     console.log("```");
