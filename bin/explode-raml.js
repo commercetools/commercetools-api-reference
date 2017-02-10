@@ -44,7 +44,7 @@ var numErrors = 0;
 // * _inline_ the RAML file references ("!include" statements)
 console.log("\n# RAML consistency check and explosion\n");
 
-raml.loadApi('project.raml').then(function (api) {
+raml.loadApi('api.raml').then(function (api) {
     return api.expand(true).toJSON();
 }).then( function(raml) {
 
