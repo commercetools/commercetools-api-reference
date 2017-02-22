@@ -42,18 +42,15 @@ RUN adduser -D -u 1000 node \
     && rm -Rf "node-v$NODE_VERSION" \
     && rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
 
-COPY console/client-oauth2.js /tmp/client-oauth2.js
+COPY client-oauth2.js /tmp/client-oauth2.js
 
 RUN apk update \
     && apk add ca-certificates wget git \
     && update-ca-certificates \
     && gem install sass \
     && npm install -g grunt-cli bower --save-dev \
-    && git clone https://github.com/mulesoft/api-console.git /api-console
-
-WORKDIR /api-console
-
-RUN git checkout ${API_CONSOLE_VERSION:-v3.0.14} \
+    && git clone -b ${API_CONSOLE_VERSION:-v3.0.14} --depth 1 --single-branch https://github.com/mulesoft/api-console.git  /api-console \
+    && cd /api-console \
     && mv /tmp/client-oauth2.js /api-console/src/vendor/client-oauth2/client-oauth2.js \
     && npm install \
     && bower --allow-root install \
@@ -62,6 +59,8 @@ RUN git checkout ${API_CONSOLE_VERSION:-v3.0.14} \
     && mv /api-console/dist/examples/simple.raml /api-console/dist/apis/api.raml \
     && sed -i 's/<raml-initializer><\/raml-initializer>/<raml-console-loader src="apis\/api.raml" options="{ disableRamlClientGenerator: true }"><\/raml-console-loader>/g' /api-console/dist/index.html \
     && ln -sf /api-console/dist/apis /apis
+
+WORKDIR /api-console
 
 # for live reload
 EXPOSE 35729

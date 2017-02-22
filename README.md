@@ -15,7 +15,7 @@ node bin/explode-raml.js -> consistency-validation-results.md
 ### Building the API console image
 
 ```bash
-docker build . -t api_console
+docker build console -t api_console
 ```
 
 ### Running the API Console image
