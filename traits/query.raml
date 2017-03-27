@@ -1,0 +1,63 @@
+#%RAML 1.0 Trait
+
+queryParameters:
+  where:
+    type: string
+    required: false
+    description: |
+      If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query
+      parameter that accepts a single (possibly compound) predicate to determine whether a specific resource
+      representation should be included in the result.
+
+      The structure of predicates and the names of the fields follow the structure and naming of the fields in the
+      documented response representation of the query results.
+
+      Examples of predicates:
+
+          // Compare a field's value to a given value
+          name = "Peter"
+          age < 42
+          age > 42
+          age <= 42
+          age >= 42
+          age <> 42
+
+          // Combine any two conditional expressions in a logical conjunction / disjunction
+          name = "Peter" and age < 42
+          name = "Peter" or age < 42
+
+          // Negate any other conditional expression
+          not (name = "Peter" and age < 42)
+
+          // Check whether a field's value is or is not contained in
+          // a specified set of values.
+          age in (42, 43, 44)
+          age not in (42, 43, 44)
+
+          // Check whether an array contains all or any of a set of values
+          tags contains all ("a", "b", "c")
+          tags contains any ("a", "b", "c")
+
+          // Check whether an array is empty
+          tags is empty
+
+          // Check whether a field exists & has a non-null value
+          name is defined
+          name is not defined
+
+          // Descend into nested objects
+          dog(age < 7 and name = "Beethoven")
+
+          // Descend into nested arrays of objects
+          cities(zip > 10000 and zip < 20000)
+
+      A query endpoint usually restricts predicates to only be allowed on a specified subset of a resource
+      representation's fields. The documentation of the endpoint will therefore list fields that can be used
+      for constructing predicates.
+
+      If multiple predicates are specified via multiple where query parameters, the individual predicates are
+      combined in a logical conjunction, just as if they had been specified in a single where query parameter
+      and combined with and.
+
+      Note: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.
+    example: <<whereExample>>

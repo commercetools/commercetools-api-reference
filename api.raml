@@ -4,60 +4,23 @@ title: Commercetools
 baseUri: https://api.sphere.io
 version: v1
 securitySchemes:
-  oauth_2_0:
-      description: |
-        HTTP API authorization uses [OAuth2](http://tools.ietf.org/html/rfc6750){:target="_blank"}.
-
-        Clients must obtain an access token from the auth service using one of
-        the authorization flows described below, before they are able to make authorized requests
-        to other SPHERE.IO services. On successful completion of an authorization flow,
-        a client will be given an `access_token`, which they need to include in requests
-        to authorized service endpoints via the HTTP `Authorization` header like this:
-      type: OAuth 2.0
-      describedBy:
-        headers:
-          Authorization:
-            description: |
-              On successful completion of an authorization flow,
-              a client will be given an `access_token`, which they need to include in requests
-              to authorized service endpoints via the HTTP `Authorization` header like this:
-
-                  Authorization: Bearer {access_token}
-            type: string
-        responses:
-          401:
-            description: Unauthorized
-      settings:
-        authorizationUri: https://auth.sphere.io/oauth/token
-        accessTokenUri: https://auth.sphere.io/oauth/token
-        authorizationGrants: [ client_credentials ]
-        scopes:
-          - "manage_project:{projectKey}"
-          - "manage_products:{projectKey}"
-          - "view_products:{projectKey}"
-          - "manage_orders:{projectKey}"
-          - "view_orders:{projectKey}"
-          - "manage_customers:{projectKey}"
-          - "view_customers:{projectKey}"
-          - "manage_payments:{projectKey}"
-          - "view_payments:{projectKey}"
-          - "manage_subscriptions:{projectKey}"
-          - "view_subscriptions:{projectKey}"
-          - "manage_customers:{projectKey}"
-          - "view_customers:{projectKey}"
-          - "manage_types:{projectKey}"
-          - "view_types:{projectKey}"
-securedBy: [ oauth_2_0]
-traits: !include traits.raml
+  oauth_2_0: !include securitySchemes/oauth2.raml
+securedBy: [ oauth_2_0 ]
+traits:
+    query: !include traits/query.raml
+    sortable: !include traits/sortable.raml
+    paging: !include traits/paging.raml
+    conflicting: !include traits/conflicting.raml
+    versioned: !include traits/versioned.raml
+    priceSelecting: !include traits/price-selecting.raml
 annotationTypes: !include types/annotations.raml
 types: !include types/types.raml
 mediaType: application/json
 resourceTypes:
   base:
       uriParameters:
-        projectKey: string
-        ID: string
-        key: string
+        projectKey:
+            type: string
       get?:
         responses:
           200: !include deprecation.raml
@@ -80,6 +43,16 @@ resourceTypes:
           404: !include 404-error.raml
           500: !include 500-error.raml
           503: !include 503-error.raml
+  baseById:
+    type: base
+    uriParameters:
+        ID:
+            type: string
+  baseByKey:
+    type: base
+    uriParameters:
+        key:
+            type: string
 /{projectKey}:
   type: base
   displayName: Project
