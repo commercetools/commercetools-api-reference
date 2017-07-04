@@ -1,0 +1,77 @@
+type: base
+displayName: zone
+description: Zones allow defining ShippingRates for specific Locations.
+get:
+  description: Query zones
+  is:
+    - query:
+        whereExample: name = "Berlin"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/zones.example.json
+          type: ZonePagedQueryResponse
+post:
+  description: Create a zone
+  is:
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/zone-create.example.json
+      type: ZoneDraft
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/zone.example.json
+          type: Zone
+/{ID}:
+  type: baseById
+  displayName: zone
+  get:
+    description: Get zone by ID
+    is:
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/zone.example.json
+            type: Zone
+  post:
+    description: Update a zone
+    is:
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/zone-update.example.json
+        type: Update
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/zone.example.json
+            type: Zone
+  delete:
+    description: Delete a zone
+    is:
+      - versioned
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/zone.example.json
+            type: Zone

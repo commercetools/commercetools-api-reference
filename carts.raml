@@ -1,0 +1,80 @@
+type: base
+displayName: cart
+description: carts are used to evaluate products and channels.
+get:
+  description: Query carts
+  is:
+    - expandable
+    - query:
+        whereExample: customerEmail = "john.doe@example.com"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+  queryParameters:
+    customerId?:
+        type: string
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/carts.example.json
+          type: CartPagedQueryResponse | Customer
+post:
+  description: Create a cart
+  is:
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/cart-create.example.json
+      type: CartDraft
+  responses:
+    201:
+      body:
+        application/json:
+            example: !include examples/cart.example.json
+            type: Cart
+/{ID}:
+  type: baseById
+  displayName: cart
+  get:
+    description: Get cart by ID
+    is:
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/cart.example.json
+            type: Cart
+  post:
+    description: Update a cart
+    is:
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/cart-update.example.json
+        type: Update
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/cart.example.json
+            type: Cart
+  delete:
+    description: Delete a cart
+    is:
+      - versioned
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/cart.example.json
+            type: Cart

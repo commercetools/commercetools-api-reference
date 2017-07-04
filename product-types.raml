@@ -8,63 +8,113 @@ get:
         whereExample: slug(en = "long-sleeves")
     - sortable:
         sortExample: createdAt asc
-    - pagging
+    - paging
+    - expandable
   securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
   responses:
     200:
       body:
         application/json:
           example: !include examples/product-types.example.json
-          schema: !include schemas/product-types.schema.json
+          type: ProductTypePagedQueryResponse
 post:
   description: Create a Product Type
+  is:
+    - expandable
   securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
   body:
     application/json:
       example: !include examples/product-type-create.example.json
-      schema: !include schemas/product-type-create.schema.json
+      type: ProductTypeDraft
   responses:
     201:
       body:
         application/json:
           example: !include examples/product-type.example.json
-          schema: !include schemas/product-type.schema.json
-/{ID}:
-  type: base
+          type: ProductType
+/key={key}:
+  type: baseByKey
   displayName: Product Type
   get:
-    description: Get Product Type by ID
+    description: Get Product Type by key
+    is:
+      - expandable
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
     responses:
       200:
         body:
           application/json:
             example: !include examples/product-type.example.json
-            schema: !include schemas/product-type.schema.json
+            type: ProductType
   post:
-    description: Update a Product Type
+    description: Update a Product Type by key
     is:
       - conflicting
+      - expandable
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
     body:
       application/json:
         example: !include examples/product-type-update.example.json
-        schema: !include schemas/product-type-update.schema.json
+        type: Update
     responses:
       200:
         body:
           application/json:
             example: !include examples/product-type.example.json
-            schema: !include schemas/product-type.schema.json
+            type: ProductType
+  delete:
+    description: Delete a Product Type by key
+    is:
+      - versioned
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product-type.example.json
+            type: ProductType
+/{ID}:
+  type: baseById
+  displayName: Product Type
+  get:
+    description: Get Product Type by ID
+    is:
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product-type.example.json
+            type: ProductType
+  post:
+    description: Update a Product Type
+    is:
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/product-type-update.example.json
+        type: Update
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product-type.example.json
+            type: ProductType
   delete:
     description: Delete a Product Type
     is:
       - versioned
       - conflicting
+      - expandable
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
     responses:
       200:
         body:
           application/json:
             example: !include examples/product-type.example.json
-            schema: !include schemas/product-type.schema.json
+            type: ProductType

@@ -1,0 +1,77 @@
+type: base
+displayName: Inventory
+description: Inventory allows you to track stock quantities.
+get:
+  description: Query inventories
+  is:
+    - query:
+        whereExample: sku = "ABC123"
+    - sortable:
+        sortExample: sku asc
+    - paging
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/inventories.example.json
+          type: InventoryPagedQueryResponse
+post:
+  description: Create a inventory
+  is:
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/inventory-create.example.json
+      type: InventoryDraft
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/inventory.example.json
+          type: Inventory
+/{ID}:
+  type: baseById
+  displayName: inventory
+  get:
+    description: Get inventory by ID
+    is:
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/inventory.example.json
+            type: Inventory
+  post:
+    description: Update a inventory
+    is:
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/inventory-update.example.json
+        type: Update
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/inventory.example.json
+            type: Inventory
+  delete:
+    description: Delete a inventory
+    is:
+      - versioned
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/inventory.example.json
+            type: Inventory

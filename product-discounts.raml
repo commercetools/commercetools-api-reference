@@ -1,0 +1,77 @@
+type: base
+displayName: product discounts
+description: Product discounts are used to change certain product prices.
+get:
+  description: Query product discounts
+  is:
+    - query:
+        whereExample: name(en = "Summer Sale")
+    - sortable:
+        sortExample: name.en asc
+    - paging
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/product-discounts.example.json
+          type: ProductDiscountPagedQueryResponse
+post:
+  description: Create a product discount
+  is:
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/product-discount-create.example.json
+      type: ProductDiscountDraft
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/product-discount.example.json
+          type: ProductDiscount
+/{ID}:
+  type: baseById
+  displayName: product discount
+  get:
+    description: Get product discount by ID
+    is:
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product-discount.example.json
+            type: ProductDiscount
+  post:
+    description: Update a product discount
+    is:
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/product-discount-update.example.json
+        type: Update
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product-discount.example.json
+            type: ProductDiscount
+  delete:
+    description: Delete a product discount
+    is:
+      - versioned
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/product-discount.example.json
+            type: ProductDiscount

@@ -1,0 +1,93 @@
+type: base
+displayName: order
+description: An order can be created from a cart, usually after a checkout process has been completed.
+get:
+  description: Query orders
+  is:
+    - query:
+        whereExample: customerEmail = "john.doe@example.com"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include examples/orders.example.json
+          type: OrderPagedQueryResponse
+post:
+  description: Create a order
+  is:
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include examples/order-create.example.json
+      type: OrderFromCartDraft
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include examples/order.example.json
+          type: Order
+/import:
+  type: base
+  displayName: import orders
+  post:
+    description: Create an Order by Import
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/order-import.example.json
+        type: OrderImportDraft
+    responses:
+      201:
+        body:
+          application/json:
+            example: !include examples/order.example.json
+            type: Order
+/{ID}:
+  type: baseById
+  displayName: order
+  get:
+    description: Get order by ID
+    is:
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/order.example.json
+            type: Order
+  post:
+    description: Update a order
+    is:
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/order-update.example.json
+        type: Update
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/order.example.json
+            type: Order
+  delete:
+    description: Delete a order
+    is:
+      - versioned
+      - expandable
+      - conflicting
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/order.example.json
+            type: Order

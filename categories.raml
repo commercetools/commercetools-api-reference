@@ -4,35 +4,83 @@ description: Categories are used to organize products in a hierarchical structur
 get:
   description: Query Categories
   is:
+    - expandable
     - query:
         whereExample: slug(en = "long-sleeves")
     - sortable:
         sortExample: name.en asc
-    - pagging
+    - paging
   securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
   responses:
     200:
       body:
         application/json:
           example: !include examples/categories.example.json
-          schema: !include schemas/categories.schema.json
+          type: CategoryPagedQueryResponse
 post:
   description: Create a Category
+  is:
+    - expandable
   securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
   body:
     application/json:
       example: !include examples/category-create.example.json
-      schema: !include schemas/category-create.schema.json
+      type: CategoryDraft
   responses:
     201:
       body:
         application/json:
           example: !include examples/category.example.json
-          schema: !include schemas/category.schema.json
-/{ID}:
-  type: base
+          type: Category
+/key={key}:
+  type: baseByKey
   displayName: Category
   get:
+    is:
+      - expandable
+    description: Get Category by key
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/category.example.json
+            type: Category
+  post:
+    description: Update a Category
+    is:
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include examples/category-update.example.json
+        type: Update
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/category.example.json
+            type: Category
+  delete:
+    description: Delete a Category
+    is:
+      - versioned
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/category.example.json
+            type: Category
+/{ID}:
+  type: baseById
+  displayName: Category
+  get:
+    is:
+      - expandable
     description: Get Category by ID
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
     responses:
@@ -40,31 +88,33 @@ post:
         body:
           application/json:
             example: !include examples/category.example.json
-            schema: !include schemas/category.schema.json
+            type: Category
   post:
     description: Update a Category
     is:
       - conflicting
+      - expandable
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
     body:
       application/json:
         example: !include examples/category-update.example.json
-        schema: !include schemas/category-update.schema.json
+        type: Update
     responses:
       200:
         body:
           application/json:
             example: !include examples/category.example.json
-            schema: !include schemas/category.schema.json
+            type: Category
   delete:
     description: Delete a Category
     is:
       - versioned
       - conflicting
+      - expandable
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
     responses:
       200:
         body:
           application/json:
             example: !include examples/category.example.json
-            schema: !include schemas/category.schema.json
+            type: Category
