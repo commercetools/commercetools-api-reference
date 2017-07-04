@@ -16,44 +16,6 @@ var metaValidator = new JSCK.draft4(jsonSchemaSchema);
 // go!
 var hasErrors = 0;
 
-console.log("\n# Source JSON validation\n");
-
-console.log("\n## Schema File Validation (JSON validity and schema validity)\n");
-var schemata = fs.readdirSync('schemas');
-for(var index in schemata){
-    var path = "schemas/"+schemata[index];
-    if(path.substr(path.length - 5) == ".json"){
-        var schemaString = fs.readFileSync(path, "utf8");
-        try{
-            var schemaObj = JSON.parse(schemaString);
-        } catch (ex){
-            hasErrors++;
-            console.log(" * **could not parse JSON of this schema: " + path + "**");
-            console.log("```");
-            try{
-                jsonlint.parse(exampleString);
-            }catch(ex){
-                console.log(ex);
-                console.log("```");
-                continue;
-            }
-            console.log("```");
-            continue;
-        }
-        var schemaErrors = metaValidator.validate(schemaObj);
-        if(!schemaErrors.valid){
-            hasErrors++;
-            console.log(" * **schema NOT OK: "+ path + "**");
-            console.log("```json");
-            console.log(JSON.stringify(schemaErrors.errors, null, 2));
-            console.log("```");
-        }else{
-            console.log(" * schema OK: "+ path);
-        }
-
-    }
-}
-
 console.log("\n## Example File Validation (just JSON, check against schema happens in RAML validation)\n");
 var examples = fs.readdirSync('examples');
 for(var index in examples){
