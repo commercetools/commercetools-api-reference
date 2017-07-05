@@ -1,14 +1,17 @@
-# sphere-api-reference
+# commercetools-api-reference
 Commercetools Platform API reference documentation
 
 ## run internal consistency test
 ```
 npm install
 node bin/validate-sources.js > source-validation-results.md
-node bin/explode-raml.js -> consistency-validation-results.md
+node bin/explode-raml.js > consistency-validation-results.md
 ```
-
-## run validation against SPHERE API
+## run converter to OAS format
+```
+npm install
+node bin/oas-convert.js
+```
 
 ## Using RAML API Console
 
