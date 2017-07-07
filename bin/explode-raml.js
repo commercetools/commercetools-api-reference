@@ -19,8 +19,6 @@ var raml = require('raml-1-parser');
 var jsonlint = require("jsonlint");
 var jsonSchemaDeref = require('json-schema-deref-sync');
 var JSCK = require('jsck');
-var jsonSchemaSchema = JSON.parse(fs.readFileSync('json-schema-draft4.json', 'utf8'));
-var metaValidator = new JSCK.draft4(jsonSchemaSchema);
 var markdownlint = require("markdownlint");
 
 var markdownLintDefaults = {
@@ -56,10 +54,6 @@ raml.loadApi('api.raml').then(function (api) {
         // and write out two more files
         var dereferencedRaml = lintedRaml;
         derefSchemata(dereferencedRaml);
-
-        // validates all schemata against the "metaschema / schema schema"
-        // and writes "linted" JSON back into the tree
-        validateSchemata(dereferencedRaml);
 
         // validates all examples against the matching schema
         // and writes "linted" JSON back into the tree
@@ -131,44 +125,6 @@ function derefSchemata(rootNode){
     });
 }
 
-function validateSchemata(rootNode){
-    console.log("\n## Schemata Validity Check\n");
-    traverse(rootNode).forEach(function (node) {
-        if (this.key == "schema" && this.parent.key == "application/json" && this.isLeaf){
-
-            try{
-                var schemaObj = JSON.parse(this.parent.node.schema);
-            } catch (ex){
-                numErrors++;
-                console.log(" * **could not parse JSON of this schema: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
-                console.log("```");
-                try{
-                    jsonlint.parse(this.parent.node.schema);
-                }catch(ex){
-                    console.log(ex);
-                    console.log("```");
-                    return;
-                }
-                console.log("```");
-                return;
-            }
-
-            var schemaErrors = metaValidator.validate(schemaObj);
-            if(!schemaErrors.valid){
-                numErrors++;
-                console.log(" * **schema NOT OK: "+ prettifyRamlPath(this.parent).join(" -> ") + "**");
-                console.log("```json");
-                console.log(JSON.stringify(schemaErrors.errors, null, 2));
-                console.log("```");
-            }else{
-                console.log(" * schema OK: "+ prettifyRamlPath(this.parent).join(" -> "));
-            }
-            // "lint":
-            this.update(JSON.stringify(schemaObj, null, 4));
-        }
-    });
-}
-
 function validateExamples(rootNode){
     console.log("\n## Example Validity Check\n");
     traverse(rootNode).forEach(function (node) {
@@ -177,7 +133,7 @@ function validateExamples(rootNode){
                 var schemaObj = JSON.parse(this.parent.node.schema);
             } catch (ex){
                 numErrors++;
-                console.log(" * **could not parse JSON of this schema: " + prettifyRamlPath(this.parent).join(" -> ") * "**");
+                console.log(" * \x1b[31m**could not parse JSON of this schema: " + prettifyRamlPath(this.parent).join(" -> ") * "**\x1b[0m");
                 console.log("```");
                 try{
                     jsonlint.parse(this.parent.node.schema);
@@ -195,7 +151,7 @@ function validateExamples(rootNode){
                 var exampleObj = JSON.parse(jsonStr);
             } catch (ex){
                 numErrors++;
-                console.log(" * **could not parse JSON of this example: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
+                console.log(" * \x1b[31m**could not parse JSON of this example: " + prettifyRamlPath(this.parent).join(" -> ") + "**\x1b[0m");
                 console.log("```");
                 try{
                     jsonlint.parse(jsonStr);
@@ -214,7 +170,7 @@ function validateExamples(rootNode){
                 var validator = new JSCK.draft4(schemaObj);
             } catch (ex) {
                 numErrors++;
-                console.log(" * **could not instantiate validator for schema: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
+                console.log(" * \x1b[31m**could not instantiate validator for schema: " + prettifyRamlPath(this.parent).join(" -> ") + "**\x1b[0m");
                 console.log("```");
                 console.log(ex);
                 console.log("```");
@@ -224,12 +180,12 @@ function validateExamples(rootNode){
             var schemaErrors = validator.validate(exampleObj);
             if(!schemaErrors.valid){
                 numErrors++;
-                console.log(" * **example NOT OK: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
+                console.log(" * **example \x1b[31mNOT OK\x1b[0m: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
                 console.log("```json");
                 console.log(JSON.stringify(schemaErrors.errors, null, 2));
                 console.log("```");
             }else{
-                console.log(" * example OK: " + prettifyRamlPath(this.parent).join(" -> "));
+                console.log(" * example \x1b[32mOK\x1b[0m: " + prettifyRamlPath(this.parent).join(" -> "));
             }
 
             // "lint":
@@ -250,7 +206,7 @@ function validateMarkdown(rootNode){
             if (mdLintResultString) {
                 // FYI: the markdown lint does currently not break the test, it's just for warning purpose.
                 // numErrors++;
-                console.log(" * **description markdown NOT OK: " + prettifyRamlPath(this).join(" -> ") + "**");
+                console.log(" * **description markdown \x1b[31mNOT OK\x1b[0m: " + prettifyRamlPath(this).join(" -> ") + "**");
                 console.log("```");
                 console.log(mdLintResultString);
                 console.log("```");
@@ -258,7 +214,7 @@ function validateMarkdown(rootNode){
                 console.log(this.node);
                 console.log("```");
             }else{
-                console.log(" * description markdown OK: " + prettifyRamlPath(this).join(" -> "));
+                console.log(" * description markdown \x1b[32mOK\x1b[0m: " + prettifyRamlPath(this).join(" -> "));
             }
 
         }
