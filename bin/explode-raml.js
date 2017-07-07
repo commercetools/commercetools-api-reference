@@ -15,10 +15,6 @@
 var fs = require('fs');
 var traverse = require('traverse');
 var raml = require('raml-1-parser');
-// var toRAML = require('raml-object-to-raml');
-var jsonlint = require("jsonlint");
-var jsonSchemaDeref = require('json-schema-deref-sync');
-var JSCK = require('jsck');
 var markdownlint = require("markdownlint");
 
 var markdownLintDefaults = {
@@ -50,16 +46,7 @@ raml.loadApi('api.raml').then(function (api) {
 
         var lintedRaml = raml;
 
-        // dereference the schemata in the RAML (sometimes called "schema inlining", too)
-        // and write out two more files
-        var dereferencedRaml = lintedRaml;
-        derefSchemata(dereferencedRaml);
-
-        // validates all examples against the matching schema
-        // and writes "linted" JSON back into the tree
-        validateExamples(dereferencedRaml);
-
-        validateMarkdown(dereferencedRaml);
+        validateMarkdown(lintedRaml);
 
         console.log("\n## Writing exploded files\n");
 
@@ -87,112 +74,9 @@ raml.loadApi('api.raml').then(function (api) {
 
 // ####  helpers ###:
 
-function writeRAML(rootNode, filePath){
-    fs.writeFileSync(filePath+".raml", toRAML(rootNode));
-    console.log(" * RAML (yaml) saved to " + filePath+".raml");
-}
-
 function writeJSON(rootNode, filePath){
     fs.writeFileSync(filePath+".json", JSON.stringify(rootNode, null, 4));
     console.log(" * RAML (json) saved to " + filePath+".json");
-}
-
-function derefSchemata(rootNode){
-    console.log("\n## Schemata Dereferencing\n");
-    traverse(rootNode).forEach(function (node) {
-        if (this.key == "schema" && this.parent.key == "application/json" && this.isLeaf){
-
-            try{
-                var schemaObj = JSON.parse(this.parent.node.schema);
-            } catch (ex){
-                numErrors++;
-                console.log(" * **could not parse JSON of this schema: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
-                console.log("```");
-                try{
-                    jsonlint.parse(this.parent.node.schema);
-                }catch(ex){
-                    console.log(ex);
-                    console.log("```");
-                    return;
-                }
-                console.log("```");
-                return;
-            }
-
-            var derefSchemaObj = jsonSchemaDeref(schemaObj, {baseFolder: process.cwd()+"/schemas/"});
-            this.update(JSON.stringify(derefSchemaObj, null, 4));
-        }
-    });
-}
-
-function validateExamples(rootNode){
-    console.log("\n## Example Validity Check\n");
-    traverse(rootNode).forEach(function (node) {
-        if (this.key == "example" && this.parent.key == "application/json" && this.parent.node.hasOwnProperty("schema")){
-            try{
-                var schemaObj = JSON.parse(this.parent.node.schema);
-            } catch (ex){
-                numErrors++;
-                console.log(" * \x1b[31m**could not parse JSON of this schema: " + prettifyRamlPath(this.parent).join(" -> ") * "**\x1b[0m");
-                console.log("```");
-                try{
-                    jsonlint.parse(this.parent.node.schema);
-                }catch(ex){
-                    console.log(ex);
-                    console.log("```");
-                    return;
-                }
-                console.log("```");
-                return;
-            }
-
-            var jsonStr = JSON.stringify(node);
-            try{
-                var exampleObj = JSON.parse(jsonStr);
-            } catch (ex){
-                numErrors++;
-                console.log(" * \x1b[31m**could not parse JSON of this example: " + prettifyRamlPath(this.parent).join(" -> ") + "**\x1b[0m");
-                console.log("```");
-                try{
-                    jsonlint.parse(jsonStr);
-                }catch(ex){
-                    console.log(ex);
-                    console.log("```");
-                    return;
-                }
-                console.log("```");
-                return;
-            }
-
-            schemaObj = jsonSchemaDeref(schemaObj, {baseFolder: process.cwd()+"/schemas/"});
-
-            try {
-                var validator = new JSCK.draft4(schemaObj);
-            } catch (ex) {
-                numErrors++;
-                console.log(" * \x1b[31m**could not instantiate validator for schema: " + prettifyRamlPath(this.parent).join(" -> ") + "**\x1b[0m");
-                console.log("```");
-                console.log(ex);
-                console.log("```");
-                return;
-            }
-
-            var schemaErrors = validator.validate(exampleObj);
-            if(!schemaErrors.valid){
-                numErrors++;
-                console.log(" * **example \x1b[31mNOT OK\x1b[0m: " + prettifyRamlPath(this.parent).join(" -> ") + "**");
-                console.log("```json");
-                console.log(JSON.stringify(schemaErrors.errors, null, 2));
-                console.log("```");
-            }else{
-                console.log(" * example \x1b[32mOK\x1b[0m: " + prettifyRamlPath(this.parent).join(" -> "));
-            }
-
-            // "lint":
-            this.update(JSON.stringify(exampleObj, null, 4));
-
-        }
-    });
 }
 
 function validateMarkdown(rootNode){
@@ -257,12 +141,4 @@ function prettifyRamlPath(traverseContext, outputArray){
     // recurse:
     prettifyRamlPath(traverseContext.parent, outputArray);
     return outputArray;
-}
-
-function printNodeProps(node){
-    var out = "";
-    for (var key in node){
-        out += key + " ,";
-    }
-    return out;
 }
