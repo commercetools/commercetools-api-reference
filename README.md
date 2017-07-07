@@ -1,6 +1,8 @@
 # commercetools-api-reference
 Commercetools Platform API reference documentation
 
+[![Build Status](https://travis-ci.org/commercetools/commercetools-api-reference.svg?branch=master)](https://travis-ci.org/commercetools/commercetools-api-reference)
+
 ## run internal consistency test
 ```
 npm install
