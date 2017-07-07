@@ -59,7 +59,6 @@ raml.loadApi('api.raml').then(function (api) {
         // FYI: this is not a 1:1 representation of the JSON view on the RAML YAML,
         //      it's the internal representation of the  RAML library.
         writeJSON(lintedRaml, outputFilename+"-ast");
-        writeJSON(dereferencedRaml, outputFilename+"-dereferencedSchemata-ast");
 
         // confirm that the traversal hasn't eaten some error:
         console.log("\n# done!\n");
@@ -89,7 +88,7 @@ function validateMarkdown(rootNode){
             var mdLintResultString = mdLintResult.toString();
             if (mdLintResultString) {
                 // FYI: the markdown lint does currently not break the test, it's just for warning purpose.
-                // numErrors++;
+                numErrors++;
                 console.log(" * **description markdown \x1b[31mNOT OK\x1b[0m: " + prettifyRamlPath(this).join(" -> ") + "**");
                 console.log("```");
                 console.log(mdLintResultString);
