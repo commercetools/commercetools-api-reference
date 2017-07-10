@@ -1,0 +1,182 @@
+type: base
+displayName: Customers
+description: A customer is a person purchasing products. Carts, Orders, Comments and Reviews can be associated to a customer.
+get:
+  description: Query Customers
+  is:
+    - query:
+        whereExample: email = "foo@bar.com"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+    - expandable
+  queryParameters:
+    token?:
+        type: string
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          # schema: !include schemas/customers.schema.json
+post:
+  description: Create a Customer
+  is:
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include ../examples/customer-create.example.json
+      type: CustomerDraft
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../examples/customer-sign-in.example.json
+          type: CustomerSignInResult
+/email-token:
+  type: base
+  displayName: Customer's Email Verification
+  description: |
+    To verify a customer's email, an email token can be created. This should be embedded in a link and sent to the
+    customer via email. When the customer clicks on the link, the "verify customer's email" endpoint should be called,
+    which sets customer's isVerifiedEmail field to true.
+  post:
+    description: Create a Token for verifying the Customer's Email
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
+    body:
+      application/json:
+        type: CustomerCreateEmailToken
+    responses:
+      200:
+        body:
+          application/json:
+            type: CustomerToken
+/email:
+  /confirm:
+    type: base
+    displayName: Verify Customer's Email
+    post:
+      description: Verifies customer's email using a token.
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
+      body:
+        application/json:
+          type: CustomerEmailVerify
+      responses:
+        200:
+          description: The email was verified.
+/password:
+  type: base
+  displayName: Change Customers Password
+  post:
+    description: Change a customers password
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
+    body:
+      application/json:
+        type: CustomerChangePassword
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customer.example.json
+            type: Customer
+  /reset:
+    type: base
+    displayName: Reset Customer's Password
+    post:
+      description: Set a new password using a token.
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
+      body:
+        application/json:
+          type: CustomerResetPassword
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/customer.example.json
+              type: Customer
+/password-token:
+  type: base
+  displayName: Create a Token for Resetting the Customer's Password
+  description: |
+    The following workflow can be used to reset the customer's password:
+
+    * Create a password reset token and send it embedded in a link to the customer.
+    * When the customer clicks on the link, the customer is retrieved with the token.
+    * The customer enters a new password and the "reset customer's password" endpoint is called.
+  post:
+    description: The token value is used to reset the password of the customer with the given email. The token is valid only for 10 minutes.
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
+    body:
+      application/json:
+        type: CustomerCreatePasswordResetToken
+    responses:
+      201:
+        body:
+          application/json:
+            type: CustomerToken
+/{ID}:
+  type: baseById
+  displayName: Customer
+  get:
+    is:
+      - expandable
+    description: Get Customer by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customer.example.json
+            type: Customer
+  post:
+    description: Update a Customer
+    is:
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include ../examples/customer-update.example.json
+        type: Update
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customer-update-response.example.json
+            type: Customer
+  delete:
+    description: Delete a Customer
+    is:
+      - versioned
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customer.example.json
+            type: Customer
+/password-token={token}:
+  type: baseByToken
+  description: Query Customer by password token
+  get:
+    description: Query Customer by token
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            type: Customer
+/email-token={token}:
+  type: baseByToken
+  description: Query Customer by email token
+  get:
+    description: Query Customer by token
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            type: Customer

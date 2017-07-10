@@ -1,0 +1,33 @@
+type: base
+displayName: message
+description: messages are used to evaluate products and channels.
+get:
+  description: Query messages
+  is:
+    - query:
+        whereExample: type = "ProductCreated"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../examples/messages.example.json
+          type: MessagePagedQueryResponse
+/{ID}:
+  type: baseById
+  displayName: message
+  get:
+    description: Get message by ID
+    is:
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/message.example.json
+            type: Message

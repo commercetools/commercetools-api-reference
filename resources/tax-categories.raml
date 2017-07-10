@@ -1,0 +1,77 @@
+type: base
+displayName: Tax categories
+description: Tax Categories define how products are to be taxed in different countries.
+get:
+  description: Query tax categories
+  is:
+    - query:
+        whereExample: name = "MwSt"
+    - sortable:
+        sortExample: name asc
+    - paging
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../examples/tax-categories.example.json
+          type: TaxCategoryPagedQueryResponse
+post:
+  description: Create a tax category
+  is:
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include ../examples/tax-category-create.example.json
+      type: TaxCategoryDraft
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../examples/tax-category.example.json
+          type: TaxCategory
+/{ID}:
+  type: baseById
+  displayName: Tax Category
+  get:
+    description: Get Tax Category by ID
+    is:
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/tax-category.example.json
+            type: TaxCategory
+  post:
+    description: Update a Tax Category
+    is:
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include ../examples/tax-category-update.example.json
+        type: Update
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/tax-category.example.json
+            type: TaxCategory
+  delete:
+    description: Delete a Tax Category
+    is:
+      - versioned
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/tax-category.example.json
+            type: TaxCategory

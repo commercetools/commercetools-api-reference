@@ -1,0 +1,79 @@
+type: base
+displayName: state
+description: |
+  The commercetools platform allows you to model states of certain objects, such as orders, line items, products,
+  reviews, and payments in order to define finite state machines reflecting the business logic you’d like to implement.
+get:
+  description: Query states
+  is:
+    - query:
+        whereExample: key = "new-order"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../examples/states.example.json
+          type: StatePagedQueryResponse
+post:
+  description: Create a state
+  is:
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include ../examples/state-create.example.json
+      type: StateDraft
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../examples/state.example.json
+          type: State
+/{ID}:
+  type: baseById
+  displayName: state
+  get:
+    description: Get state by ID
+    is:
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/state.example.json
+            type: State
+  post:
+    description: Update a state
+    is:
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include ../examples/state-update.example.json
+        type: Update
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/state.example.json
+            type: State
+  delete:
+    description: Delete a state
+    is:
+      - versioned
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/state.example.json
+            type: State

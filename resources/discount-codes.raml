@@ -1,0 +1,77 @@
+type: base
+displayName: discount code
+description: Discount codes can be added to a cart to enable certain cart discounts.
+get:
+  description: Query discount-codes
+  is:
+    - query:
+        whereExample: code = "summersale"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../examples/discount-codes.example.json
+          type: DiscountCodePagedQueryResponse
+post:
+  description: Create a discount-code
+  is:
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include ../examples/discount-code-create.example.json
+      type: DiscountCodeDraft
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../examples/discount-code.example.json
+          type: DiscountCode
+/{ID}:
+  type: baseById
+  displayName: discount-code
+  get:
+    is:
+      - expandable
+    description: Get discount-code by ID
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/discount-code.example.json
+            type: DiscountCode
+  post:
+    description: Update a discount-code
+    is:
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include ../examples/discount-code-update.example.json
+        type: Update
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/discount-code.example.json
+            type: DiscountCode
+  delete:
+    description: Delete a discount-code
+    is:
+      - versioned
+      - conflicting
+      - expandable
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/discount-code.example.json
+            type: DiscountCode
