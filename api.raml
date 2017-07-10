@@ -20,6 +20,100 @@ annotationTypes: !include types/annotations.raml
 types: !include types/types.raml
 mediaType: application/json
 resourceTypes:
+  baseType:
+      uriParameters:
+        projectKey:
+            type: string
+  baseDomain:
+      type: baseType
+      description: <<resourcePathName>>
+      get:
+        securedBy: [oauth_2_0: {scopes: <<readScopes>>}]
+        is:
+          - errorable
+          - deprecatable
+          - expandable
+          - query:
+              whereExample: <<whereExample>>
+          - sortable:
+              sortExample: <<sortExample>>
+          - paging
+        description: Query <<resourcePathName>>
+        responses:
+          200:
+            body:
+              application/json:
+                example: <<resourceQueryExample>>
+                type: <<resourceQueryType>>
+      post?:
+        securedBy: [oauth_2_0: {scopes: <<writeScopes>>}]
+        is:
+          - errorable
+          - deprecatable
+          - expandable
+        description: Create <<resourceType>>
+        body:
+          application/json:
+            example: <<resourceCreateExample>>
+            type: <<resourceDraft>>
+        responses:
+          201:
+            body:
+              application/json:
+                example: <<resourceExample>>
+                type: <<resourceType>>
+  baseResource:
+      uriParameters:
+        <<uriParameterName>>:
+          type: string
+      type: baseType
+      displayName: <<resourceType>>
+      get:
+        securedBy: [oauth_2_0: {scopes: <<readScopes>>}]
+        is:
+          - errorable
+          - deprecatable
+          - expandable
+        description: Get <<resourceType>> by <<uriParameterName>>
+        responses:
+          200:
+            body:
+              application/json:
+                example: <<resourceExample>>
+                type: <<resourceType>>
+      post?:
+        securedBy: [oauth_2_0: {scopes: <<writeScopes>>}]
+        is:
+          - errorable
+          - deprecatable
+          - conflicting
+          - expandable
+        description: Update <<resourceType>> by <<uriParameterName>>
+        body:
+          application/json:
+            example: <<resourceUpdateExample>>
+            type: <<resourceUpdateType>>
+        responses:
+          200:
+            body:
+              application/json:
+                example: <<resourceExample>>
+                type: <<resourceType>>
+      delete?:
+        securedBy: [oauth_2_0: {scopes: <<writeScopes>>}]
+        is:
+          - errorable
+          - deprecatable
+          - versioned
+          - conflicting
+          - expandable
+        description: Delete <<resourceType>> by <<uriParameterName>>
+        responses:
+          200:
+            body:
+              application/json:
+                example: <<resourceExample>>
+                type: <<resourceType>>
   base:
       uriParameters:
         projectKey:
