@@ -81,7 +81,10 @@ function writeJSON(rootNode, filePath){
 function validateMarkdown(rootNode){
     console.log("\n## Description Markdown Check\n");
     traverse(rootNode).forEach(function (node) {
-        if (this.key == "description" && typeof this.node == "string"){
+        if (this.key === "description" && typeof this.node === "string" ){
+            if (this.path && this.path.indexOf('resourceTypes') === 0) {
+                return;
+            }
             var mdLintOptions = traverse.clone(markdownLintDefaults);
             mdLintOptions.strings =  { "" : this.node };
             var mdLintResult = markdownlint.sync(mdLintOptions);
