@@ -20,13 +20,7 @@ annotationTypes: !include types/annotations.raml
 types: !include types/types.raml
 mediaType: application/json
 resourceTypes:
-  baseType:
-      uriParameters:
-        projectKey:
-            type: string
   baseDomain:
-      type: baseType
-      description: <<resourcePathName>>
       get:
         securedBy: [oauth_2_0: {scopes: <<readScopes>>}]
         is:
@@ -66,8 +60,6 @@ resourceTypes:
       uriParameters:
         <<uriParameterName>>:
           type: string
-      type: baseType
-      displayName: <<resourceType>>
       get:
         securedBy: [oauth_2_0: {scopes: <<readScopes>>}]
         is:
@@ -115,9 +107,6 @@ resourceTypes:
                 example: <<resourceExample>>
                 type: <<resourceType>>
   base:
-      uriParameters:
-        projectKey:
-            type: string
       get?:
         is:
           - errorable
@@ -147,7 +136,9 @@ resourceTypes:
         token:
             type: string
 /{projectKey}:
-  type: base
+  uriParameters:
+    projectKey:
+        type: string
   displayName: Project
   description: The Project endpoint is used to retrieve certain information from a project.
   get:
