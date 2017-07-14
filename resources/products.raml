@@ -1,145 +1,63 @@
-type: base
-displayName: Products
+type:
+  baseDomain:
+    resourceType: Product
+    resourceQueryType: ProductPagedQueryResponse
+    resourceDraft: ProductDraft
+    resourceExample: !include ../examples/product.example.json
+    resourceQueryExample: !include ../examples/products.example.json
+    resourceCreateExample: !include ../examples/product-create.example.json
+    readScopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]
+    writeScopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]
+    whereExample: masterData(current (name = "jeans"))
+    sortExample: createdAt asc
 description: |
-  Products are the sellable goods in an e-commerce project on SPHERE.IO. This document explains some design concepts
-  of products on SPHERE.IO and describes the available HTTP APIs for working with them.
+  Products are the sellable goods in an e-commerce project on CTP. This document explains some design concepts
+  of products on CTP and describes the available HTTP APIs for working with them.
 get:
-  description: Query Product
   is:
-    - query:
-        whereExample: masterData(current (name = "jeans"))
-    - sortable:
-        sortExample: createdAt asc
-    - paging
     - priceSelecting
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
-  responses:
-    200:
-      body:
-        application/json:
-          example: !include ../examples/products.example.json
-          type: ProductPagedQueryResponse
 post:
   is:
     - priceSelecting
-    - expandable
-  description: Create a Product
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
-  body:
-    application/json:
-      example: !include ../examples/product-create.example.json
-      type: ProductDraft
-  responses:
-    201:
-      body:
-        application/json:
-          example: !include ../examples/product.example.json
-          type: Product
 /key={key}:
-  type: baseByKey
-  displayName: Product
+  type:
+    baseResource:
+      uriParameterName: key
+      resourceType: Product
+      resourceUpdateType: Update
+      resourceUpdateExample: !include ../examples/product-update.example.json
+      resourceExample: !include ../examples/product.example.json
+      readScopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]
+      writeScopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]
   get:
     is:
       - priceSelecting
-      - expandable
-    description: Get Product by key
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/product.example.json
-            type: Product
   post:
-    description: Update a Product by key
     is:
-      - conflicting
       - priceSelecting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
-    body:
-      application/json:
-        example: !include ../examples/product-update.example.json
-        type: Update
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/product.example.json
-            type: Product
-      400:
-        body:
-          application/json:
-            example: !include ../examples/error.example.json
-            type: ErrorResponse
   delete:
-    description: Delete a Product by key
     is:
-      - versioned
-      - conflicting
       - priceSelecting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/product.example.json
-            type: Product
 /{ID}:
-  type: baseById
-  displayName: Product
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: Product
+      resourceUpdateType: Update
+      resourceUpdateExample: !include ../examples/product-update.example.json
+      resourceExample: !include ../examples/product.example.json
+      readScopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]
+      writeScopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]
   get:
     is:
       - priceSelecting
-      - expandable
-    description: Get Product by ID
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/product.example.json
-            type: Product
   post:
-    description: Update a Product
     is:
-      - conflicting
       - priceSelecting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
-    body:
-      application/json:
-        example: !include ../examples/product-update.example.json
-#         schema: !include schemas/product-update.schema.json
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/product.example.json
-            type: Product
-      400:
-        body:
-          application/json:
-            example: !include ../examples/error.example.json
-            type: ErrorResponse
   delete:
-    description: Delete a Product
     is:
-      - versioned
-      - conflicting
       - priceSelecting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/product.example.json
-            type: Product
   /images:
-    type: baseById
     displayName: Upload a product image
     post:
       queryParameters:

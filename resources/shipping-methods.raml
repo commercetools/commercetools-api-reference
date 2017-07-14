@@ -1,16 +1,17 @@
-type: base
-displayName: Shipping method
+type:
+  baseDomain:
+    resourceType: ShippingMethod
+    resourceQueryType: ShippingMethodPagedQueryResponse
+    resourceDraft: ShippingMethodDraft
+    resourceExample: !include ../examples/shipping-method.example.json
+    resourceQueryExample: !include ../examples/shipping-methods.example.json
+    resourceCreateExample: !include ../examples/shipping-method-create.example.json
+    readScopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]
+    writeScopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]
+    whereExample: name = "DHL"
+    sortExample: createdAt asc
 description: Shipping Methods define where orders can be shipped and what the costs are.
 get:
-  description: Query shipping-methods
-  is:
-    - query:
-        whereExample: name = "DHL"
-    - sortable:
-        sortExample: createdAt asc
-    - paging
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
   queryParameters:
     cartId?:
       type: string
@@ -24,67 +25,17 @@ get:
     currency?:
       type: string
       description: Get ShippingMethods for a Location
-  responses:
-    200:
-      body:
-        application/json:
-          example: !include ../examples/shipping-methods.example.json
-          type: ShippingMethodPagedQueryResponse
 post:
-  description: Create a shipping-method
-  is:
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
-  body:
-    application/json:
-      example: !include ../examples/shipping-method-create.example.json
-      type: ShippingMethodDraft
-  responses:
-    201:
-      body:
-        application/json:
-          example: !include ../examples/shipping-method.example.json
-          type: ShippingMethod
 /{ID}:
-  type: baseById
-  displayName: shipping-method
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: ShippingMethod
+      resourceUpdateType: Update
+      resourceUpdateExample: !include ../examples/shipping-method-update.example.json
+      resourceExample: !include ../examples/shipping-method.example.json
+      readScopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]
+      writeScopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]
   get:
-    description: Get shipping-method by ID
-    is:
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/shipping-method.example.json
-            type: ShippingMethod
   post:
-    description: Update a shipping-method
-    is:
-      - conflicting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
-    body:
-      application/json:
-        example: !include ../examples/shipping-method-update.example.json
-        type: Update
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/shipping-method.example.json
-            type: ShippingMethod
   delete:
-    description: Delete a shipping-method
-    is:
-      - versioned
-      - conflicting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/shipping-method.example.json
-            type: ShippingMethod

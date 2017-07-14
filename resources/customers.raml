@@ -1,39 +1,39 @@
-type: base
-displayName: Customers
+type:
+  baseDomain:
+    resourceType: Customer
+    resourceQueryType: CustomerPagedQueryResponse | object
+    resourceDraft: CustomerDraft
+    resourceExample: !include ../examples/customer.example.json
+    resourceQueryExample: !include ../examples/customers.example.json
+    resourceCreateExample: !include ../examples/customer-create.example.json
+    readScopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]
+    writeScopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]
+    whereExample: email = "foo@bar.com"
+    sortExample: createdAt asc
 description: A customer is a person purchasing products. Carts, Orders, Comments and Reviews can be associated to a customer.
 get:
-  description: Query Customers
-  is:
-    - query:
-        whereExample: email = "foo@bar.com"
-    - sortable:
-        sortExample: createdAt asc
-    - paging
-    - expandable
   queryParameters:
     token?:
         type: string
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
-  responses:
-    200:
-      body:
-        application/json:
-          # schema: !include schemas/customers.schema.json
 post:
-  description: Create a Customer
-  is:
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
-  body:
-    application/json:
-      example: !include ../examples/customer-create.example.json
-      type: CustomerDraft
-  responses:
-    201:
-      body:
-        application/json:
-          example: !include ../examples/customer-sign-in.example.json
-          type: CustomerSignInResult
+/password-token={token}:
+  type:
+    baseResource:
+      uriParameterName: token
+      resourceType: Customer
+      resourceExample: !include ../examples/customer.example.json
+      readScopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]
+      writeScopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]
+  get:
+/email-token={token}:
+  type:
+    baseResource:
+      uriParameterName: token
+      resourceType: Customer
+      resourceExample: !include ../examples/customer.example.json
+      readScopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]
+      writeScopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]
+  get:
 /email-token:
   type: base
   displayName: Customer's Email Verification
@@ -116,67 +116,15 @@ post:
           application/json:
             type: CustomerToken
 /{ID}:
-  type: baseById
-  displayName: Customer
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: Customer
+      resourceUpdateType: Update
+      resourceUpdateExample: !include ../examples/customer-update.example.json
+      resourceExample: !include ../examples/customer.example.json
+      readScopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]
+      writeScopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]
   get:
-    is:
-      - expandable
-    description: Get Customer by ID
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/customer.example.json
-            type: Customer
   post:
-    description: Update a Customer
-    is:
-      - conflicting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
-    body:
-      application/json:
-        example: !include ../examples/customer-update.example.json
-        type: Update
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/customer-update-response.example.json
-            type: Customer
   delete:
-    description: Delete a Customer
-    is:
-      - versioned
-      - conflicting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/customer.example.json
-            type: Customer
-/password-token={token}:
-  type: baseByToken
-  description: Query Customer by password token
-  get:
-    description: Query Customer by token
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            type: Customer
-/email-token={token}:
-  type: baseByToken
-  description: Query Customer by email token
-  get:
-    description: Query Customer by token
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            type: Customer

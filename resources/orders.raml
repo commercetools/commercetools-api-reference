@@ -1,37 +1,17 @@
-type: base
-displayName: order
+type:
+  baseDomain:
+    resourceType: Order
+    resourceQueryType: OrderPagedQueryResponse
+    resourceDraft: OrderFromCartDraft
+    resourceExample: !include ../examples/order.example.json
+    resourceQueryExample: !include ../examples/orders.example.json
+    resourceCreateExample: !include ../examples/order-create.example.json
+    readScopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]
+    writeScopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]
+    whereExample: customerEmail = "john.doe@example.com"
+    sortExample: createdAt asc
 description: An order can be created from a cart, usually after a checkout process has been completed.
-get:
-  description: Query orders
-  is:
-    - query:
-        whereExample: customerEmail = "john.doe@example.com"
-    - sortable:
-        sortExample: createdAt asc
-    - paging
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
-  responses:
-    200:
-      body:
-        application/json:
-          example: !include ../examples/orders.example.json
-          type: OrderPagedQueryResponse
 post:
-  description: Create a order
-  is:
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
-  body:
-    application/json:
-      example: !include ../examples/order-create.example.json
-      type: OrderFromCartDraft
-  responses:
-    201:
-      body:
-        application/json:
-          example: !include ../examples/order.example.json
-          type: Order
 /import:
   type: base
   displayName: import orders
@@ -49,45 +29,15 @@ post:
             example: !include ../examples/order.example.json
             type: Order
 /{ID}:
-  type: baseById
-  displayName: order
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: Order
+      resourceUpdateType: Update
+      resourceUpdateExample: !include ../examples/order-update.example.json
+      resourceExample: !include ../examples/order.example.json
+      readScopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]
+      writeScopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]
   get:
-    description: Get order by ID
-    is:
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/order.example.json
-            type: Order
   post:
-    description: Update a order
-    is:
-      - conflicting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
-    body:
-      application/json:
-        example: !include ../examples/order-update.example.json
-        type: Update
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/order.example.json
-            type: Order
   delete:
-    description: Delete a order
-    is:
-      - versioned
-      - expandable
-      - conflicting
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/order.example.json
-            type: Order
