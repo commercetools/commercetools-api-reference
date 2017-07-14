@@ -83,7 +83,7 @@
         }
       ],
       "post": {
-        "description": "Create a cart",
+        "description": "Create Cart",
         "parameters": [
           {
             "name": "body",
@@ -132,12 +132,6 @@
         "description": "Query carts",
         "parameters": [
           {
-            "name": "customerId",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "where",
             "in": "query",
             "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
@@ -148,6 +142,12 @@
             "name": "sort",
             "in": "query",
             "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "customerId",
+            "in": "query",
             "required": false,
             "type": "string"
           },
@@ -208,7 +208,7 @@
         }
       ],
       "delete": {
-        "description": "Delete a cart",
+        "description": "Delete Cart by ID",
         "parameters": [
           {
             "$ref": "#/parameters/trait:versioned:version"
@@ -247,7 +247,7 @@
         ]
       },
       "get": {
-        "description": "Get cart by ID",
+        "description": "Get Cart by ID",
         "parameters": [
           {
             "$ref": "#/parameters/trait:expandable:expand"
@@ -280,7 +280,7 @@
         ]
       },
       "post": {
-        "description": "Update a cart",
+        "description": "Update Cart by ID",
         "parameters": [
           {
             "name": "body",
@@ -334,8 +334,15 @@
         }
       ],
       "post": {
-        "description": "Create a cart-discount",
+        "description": "Create CartDiscount",
         "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CartDiscountDraft"
+            }
+          },
           {
             "$ref": "#/parameters/trait:expandable:expand"
           }
@@ -390,6 +397,9 @@
             "type": "string"
           },
           {
+            "$ref": "#/parameters/trait:expandable:expand"
+          },
+          {
             "$ref": "#/parameters/trait:paging:limit"
           },
           {
@@ -397,9 +407,6 @@
           },
           {
             "$ref": "#/parameters/trait:paging:withTotal"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
         "responses": {
@@ -446,13 +453,13 @@
         }
       ],
       "delete": {
-        "description": "Delete a cart-discount",
+        "description": "Delete CartDiscount by ID",
         "parameters": [
           {
-            "$ref": "#/parameters/trait:expandable:expand"
+            "$ref": "#/parameters/trait:versioned:version"
           },
           {
-            "$ref": "#/parameters/trait:versioned:version"
+            "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
         "responses": {
@@ -485,7 +492,7 @@
         ]
       },
       "get": {
-        "description": "Get cart-discount by ID",
+        "description": "Get CartDiscount by ID",
         "parameters": [
           {
             "$ref": "#/parameters/trait:expandable:expand"
@@ -518,7 +525,7 @@
         ]
       },
       "post": {
-        "description": "Update a cart-discount",
+        "description": "Update CartDiscount by ID",
         "parameters": [
           {
             "name": "body",
@@ -2063,7 +2070,7 @@
         }
       ],
       "post": {
-        "description": "Create a order",
+        "description": "Create Order",
         "parameters": [
           {
             "name": "body",
@@ -2126,6 +2133,9 @@
             "type": "string"
           },
           {
+            "$ref": "#/parameters/trait:expandable:expand"
+          },
+          {
             "$ref": "#/parameters/trait:paging:limit"
           },
           {
@@ -2133,9 +2143,6 @@
           },
           {
             "$ref": "#/parameters/trait:paging:withTotal"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
         "responses": {
@@ -2182,7 +2189,7 @@
         }
       ],
       "delete": {
-        "description": "Delete a order",
+        "description": "Delete Order by ID",
         "parameters": [
           {
             "$ref": "#/parameters/trait:versioned:version"
@@ -2221,7 +2228,7 @@
         ]
       },
       "get": {
-        "description": "Get order by ID",
+        "description": "Get Order by ID",
         "parameters": [
           {
             "$ref": "#/parameters/trait:expandable:expand"
@@ -2254,7 +2261,7 @@
         ]
       },
       "post": {
-        "description": "Update a order",
+        "description": "Update Order by ID",
         "parameters": [
           {
             "name": "body",
@@ -2362,7 +2369,7 @@
         }
       ],
       "post": {
-        "description": "Create a Product",
+        "description": "Create Product",
         "parameters": [
           {
             "name": "body",
@@ -2420,7 +2427,7 @@
         ]
       },
       "get": {
-        "description": "Query Product",
+        "description": "Query products",
         "parameters": [
           {
             "name": "where",
@@ -2435,6 +2442,9 @@
             "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
             "required": false,
             "type": "string"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
           },
           {
             "$ref": "#/parameters/trait:paging:limit"
@@ -2456,9 +2466,6 @@
           },
           {
             "$ref": "#/parameters/trait:priceSelecting:priceChannel"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
         "responses": {
@@ -2505,11 +2512,8 @@
         }
       ],
       "delete": {
-        "description": "Delete a Product",
+        "description": "Delete Product by ID",
         "parameters": [
-          {
-            "$ref": "#/parameters/trait:versioned:version"
-          },
           {
             "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
           },
@@ -2521,6 +2525,9 @@
           },
           {
             "$ref": "#/parameters/trait:priceSelecting:priceChannel"
+          },
+          {
+            "$ref": "#/parameters/trait:versioned:version"
           },
           {
             "$ref": "#/parameters/trait:expandable:expand"
@@ -2559,6 +2566,9 @@
         "description": "Get Product by ID",
         "parameters": [
           {
+            "$ref": "#/parameters/trait:expandable:expand"
+          },
+          {
             "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
           },
           {
@@ -2569,9 +2579,6 @@
           },
           {
             "$ref": "#/parameters/trait:priceSelecting:priceChannel"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
         "responses": {
@@ -2601,7 +2608,7 @@
         ]
       },
       "post": {
-        "description": "Update a Product",
+        "description": "Update Product by ID",
         "parameters": [
           {
             "name": "body",
@@ -2609,6 +2616,9 @@
             "schema": {
               "$ref": "#/definitions/ProductUpdate"
             }
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
           },
           {
             "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
@@ -2621,9 +2631,6 @@
           },
           {
             "$ref": "#/parameters/trait:priceSelecting:priceChannel"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
         "responses": {
@@ -2668,7 +2675,6 @@
         {
           "name": "ID",
           "in": "path",
-          "description": "ID",
           "required": true,
           "type": "string"
         }
@@ -2714,19 +2720,10 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
           }
         },
         "security": [
@@ -2757,11 +2754,8 @@
         }
       ],
       "delete": {
-        "description": "Delete a Product by key",
+        "description": "Delete Product by key",
         "parameters": [
-          {
-            "$ref": "#/parameters/trait:versioned:version"
-          },
           {
             "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
           },
@@ -2773,6 +2767,9 @@
           },
           {
             "$ref": "#/parameters/trait:priceSelecting:priceChannel"
+          },
+          {
+            "$ref": "#/parameters/trait:versioned:version"
           },
           {
             "$ref": "#/parameters/trait:expandable:expand"
@@ -2808,7 +2805,7 @@
         ]
       },
       "post": {
-        "description": "Update a Product by key",
+        "description": "Update Product by key",
         "parameters": [
           {
             "name": "body",
@@ -3786,7 +3783,7 @@
         }
       ],
       "post": {
-        "description": "Create a shipping-method",
+        "description": "Create ShippingMethod",
         "parameters": [
           {
             "name": "body",
@@ -3835,6 +3832,20 @@
         "description": "Query shipping-methods",
         "parameters": [
           {
+            "name": "where",
+            "in": "query",
+            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "cartId",
             "in": "query",
             "description": "Get ShippingMethods for a Cart",
@@ -3863,18 +3874,7 @@
             "type": "string"
           },
           {
-            "name": "where",
-            "in": "query",
-            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
-            "required": false,
-            "type": "string"
+            "$ref": "#/parameters/trait:expandable:expand"
           },
           {
             "$ref": "#/parameters/trait:paging:limit"
@@ -3884,9 +3884,6 @@
           },
           {
             "$ref": "#/parameters/trait:paging:withTotal"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
         "responses": {
@@ -3933,7 +3930,7 @@
         }
       ],
       "delete": {
-        "description": "Delete a shipping-method",
+        "description": "Delete ShippingMethod by ID",
         "parameters": [
           {
             "$ref": "#/parameters/trait:versioned:version"
@@ -3972,7 +3969,7 @@
         ]
       },
       "get": {
-        "description": "Get shipping-method by ID",
+        "description": "Get ShippingMethod by ID",
         "parameters": [
           {
             "$ref": "#/parameters/trait:expandable:expand"
@@ -4005,7 +4002,7 @@
         ]
       },
       "post": {
-        "description": "Update a shipping-method",
+        "description": "Update ShippingMethod by ID",
         "parameters": [
           {
             "name": "body",
@@ -5683,8 +5680,15 @@
         }
       ],
       "post": {
-        "description": "Create a type",
+        "description": "Create Type",
         "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/TypeDraft"
+            }
+          },
           {
             "$ref": "#/parameters/trait:expandable:expand"
           }
@@ -5694,7 +5698,10 @@
             "$ref": "#/responses/trait:deprecatable:200"
           },
           "201": {
-            "description": ""
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Type"
+            }
           },
           "400": {
             "$ref": "#/responses/trait:errorable:400"
@@ -5736,6 +5743,9 @@
             "type": "string"
           },
           {
+            "$ref": "#/parameters/trait:expandable:expand"
+          },
+          {
             "$ref": "#/parameters/trait:paging:limit"
           },
           {
@@ -5743,9 +5753,6 @@
           },
           {
             "$ref": "#/parameters/trait:paging:withTotal"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
         "responses": {
@@ -5792,7 +5799,7 @@
         }
       ],
       "delete": {
-        "description": "Delete a type",
+        "description": "Delete Type by ID",
         "parameters": [
           {
             "$ref": "#/parameters/trait:versioned:version"
@@ -5831,7 +5838,7 @@
         ]
       },
       "get": {
-        "description": "Get type by ID",
+        "description": "Get Type by ID",
         "parameters": [
           {
             "$ref": "#/parameters/trait:expandable:expand"
@@ -5864,7 +5871,7 @@
         ]
       },
       "post": {
-        "description": "Update a type",
+        "description": "Update Type by ID",
         "parameters": [
           {
             "name": "body",
@@ -5925,7 +5932,7 @@
         }
       ],
       "delete": {
-        "description": "Delete a type by key",
+        "description": "Delete Type by key",
         "parameters": [
           {
             "$ref": "#/parameters/trait:versioned:version"
@@ -5964,7 +5971,7 @@
         ]
       },
       "post": {
-        "description": "Update Type by Key",
+        "description": "Update Type by key",
         "parameters": [
           {
             "name": "body",
@@ -6007,7 +6014,7 @@
         ]
       },
       "get": {
-        "description": "Get type by key",
+        "description": "Get Type by key",
         "parameters": [
           {
             "$ref": "#/parameters/trait:expandable:expand"
@@ -6296,7 +6303,7 @@
         }
       ],
       "post": {
-        "description": "Create a Customer",
+        "description": "Create Customer",
         "parameters": [
           {
             "name": "body",
@@ -6316,7 +6323,7 @@
           "201": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/CustomerSignInResult"
+              "$ref": "#/definitions/Customer"
             }
           },
           "400": {
@@ -6342,7 +6349,7 @@
         ]
       },
       "get": {
-        "description": "Query Customers",
+        "description": "Query customers",
         "parameters": [
           {
             "name": "token",
@@ -6365,6 +6372,9 @@
             "type": "string"
           },
           {
+            "$ref": "#/parameters/trait:expandable:expand"
+          },
+          {
             "$ref": "#/parameters/trait:paging:limit"
           },
           {
@@ -6372,7 +6382,106 @@
           },
           {
             "$ref": "#/parameters/trait:paging:withTotal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
           },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_customers:{projectKey}"
+            ]
+          }
+        ]
+      }
+    },
+    "/{projectKey}/customers/password-token={token}": {
+      "parameters": [
+        {
+          "name": "projectKey",
+          "in": "path",
+          "description": "projectKey",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "token",
+          "in": "path",
+          "description": "token",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "description": "Get Customer by token",
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_customers:{projectKey}"
+            ]
+          }
+        ]
+      }
+    },
+    "/{projectKey}/customers/email-token={token}": {
+      "parameters": [
+        {
+          "name": "projectKey",
+          "in": "path",
+          "description": "projectKey",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "token",
+          "in": "path",
+          "description": "token",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "description": "Get Customer by token",
+        "parameters": [
           {
             "$ref": "#/parameters/trait:expandable:expand"
           }
@@ -6669,7 +6778,7 @@
         }
       ],
       "delete": {
-        "description": "Delete a Customer",
+        "description": "Delete Customer by ID",
         "parameters": [
           {
             "$ref": "#/parameters/trait:versioned:version"
@@ -6708,7 +6817,7 @@
         ]
       },
       "post": {
-        "description": "Update a Customer",
+        "description": "Update Customer by ID",
         "parameters": [
           {
             "name": "body",
@@ -6757,98 +6866,6 @@
             "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_customers:{projectKey}"
-            ]
-          }
-        ]
-      }
-    },
-    "/{projectKey}/customers/password-token={token}": {
-      "parameters": [
-        {
-          "name": "projectKey",
-          "in": "path",
-          "description": "projectKey",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "token",
-          "in": "path",
-          "description": "token",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "get": {
-        "description": "Query Customer by token",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_customers:{projectKey}"
-            ]
-          }
-        ]
-      }
-    },
-    "/{projectKey}/customers/email-token={token}": {
-      "parameters": [
-        {
-          "name": "projectKey",
-          "in": "path",
-          "description": "projectKey",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "token",
-          "in": "path",
-          "description": "token",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "get": {
-        "description": "Query Customer by token",
         "responses": {
           "200": {
             "$ref": "#/responses/trait:deprecatable:200"
@@ -7377,7 +7394,7 @@
         }
       ],
       "get": {
-        "description": "Query Product Projection",
+        "description": "Query product-projections",
         "parameters": [
           {
             "name": "staged",
@@ -7401,6 +7418,21 @@
             "type": "string"
           },
           {
+            "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCountry"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCustomerGroup"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceChannel"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          },
+          {
             "$ref": "#/parameters/trait:paging:limit"
           },
           {
@@ -7408,91 +7440,6 @@
           },
           {
             "$ref": "#/parameters/trait:paging:withTotal"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCountry"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCustomerGroup"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceChannel"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_products:{projectKey}"
-            ]
-          }
-        ]
-      }
-    },
-    "/{projectKey}/product-projections/key={key}": {
-      "parameters": [
-        {
-          "name": "projectKey",
-          "in": "path",
-          "description": "projectKey",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "key",
-          "in": "path",
-          "description": "key",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "get": {
-        "description": "Get Product Projection by key",
-        "parameters": [
-          {
-            "name": "staged",
-            "in": "query",
-            "description": "Whether to query for the current or staged projections.",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCountry"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCustomerGroup"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceChannel"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
         "responses": {
@@ -7746,6 +7693,76 @@
         ]
       }
     },
+    "/{projectKey}/product-projections/key={key}": {
+      "parameters": [
+        {
+          "name": "projectKey",
+          "in": "path",
+          "description": "projectKey",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "key",
+          "in": "path",
+          "description": "key",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "description": "Get ProductProjection by key",
+        "parameters": [
+          {
+            "name": "staged",
+            "in": "query",
+            "description": "Whether to query for the current or staged projections.",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCountry"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCustomerGroup"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceChannel"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_products:{projectKey}"
+            ]
+          }
+        ]
+      }
+    },
     "/{projectKey}/product-projections/{ID}": {
       "parameters": [
         {
@@ -7764,7 +7781,7 @@
         }
       ],
       "get": {
-        "description": "Get Product Projection by ID",
+        "description": "Get ProductProjection by ID",
         "parameters": [
           {
             "name": "staged",
@@ -13544,6 +13561,27 @@
       "required": [
         "tokenValue",
         "newPassword"
+      ]
+    },
+    "CustomerPagedQueryResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/PagedQueryResponse"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Customer"
+              }
+            }
+          },
+          "required": [
+            "results"
+          ]
+        }
       ]
     },
     "CustomerGroup": {
@@ -20849,6 +20887,39 @@
       ],
       "x-annotation-generate-collection": true
     },
+    "TypeDraft": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "name": {
+          "$ref": "#/definitions/LocalizedString"
+        },
+        "description": {
+          "$ref": "#/definitions/LocalizedString"
+        },
+        "resourceTypeIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResourceTypeId"
+          },
+          "x-annotation-generator-type": "string[]"
+        },
+        "fieldDefinitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FieldDefinition"
+          }
+        }
+      },
+      "required": [
+        "key",
+        "name",
+        "resourceTypeIds"
+      ],
+      "x-annotation-generate-collection": true
+    },
     "FieldDefinition": {
       "type": "object",
       "properties": {
@@ -20917,6 +20988,27 @@
       },
       "required": [
         "type"
+      ]
+    },
+    "TypePagedQueryResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/PagedQueryResponse"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Type"
+              }
+            }
+          },
+          "required": [
+            "results"
+          ]
+        }
       ]
     },
     "TypeAddEnumValueAction": {
