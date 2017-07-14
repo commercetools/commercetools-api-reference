@@ -1,33 +1,18 @@
-type: base
-displayName: message
-description: messages are used to evaluate products and channels.
-get:
-  description: Query messages
-  is:
-    - query:
-        whereExample: type = "ProductCreated"
-    - sortable:
-        sortExample: createdAt asc
-    - paging
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
-  responses:
-    200:
-      body:
-        application/json:
-          example: !include ../examples/messages.example.json
-          type: MessagePagedQueryResponse
+type:
+  baseDomain:
+    resourceType: Message
+    resourceQueryType: MessagePagedQueryResponse
+    resourceDraft: MessageDraft
+    resourceExample: !include ../examples/message.example.json
+    resourceQueryExample: !include ../examples/messages.example.json
+    readScopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]
+    whereExample: type = "ProductCreated"
+    sortExample: createdAt asc
+description: A message represents a change or an action performed on a resource (like an Order or a Product).
 /{ID}:
-  type: baseById
-  displayName: message
-  get:
-    description: Get message by ID
-    is:
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/message.example.json
-            type: Message
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: Message
+      resourceExample: !include ../examples/message.example.json
+      readScopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]

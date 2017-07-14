@@ -1,77 +1,27 @@
-type: base
-displayName: Inventory
+type:
+  baseDomain:
+    resourceType: InventoryEntry
+    resourceQueryType: InventoryPagedQueryResponse
+    resourceDraft: InventoryEntryDraft
+    resourceExample: !include ../examples/inventory.example.json
+    resourceQueryExample: !include ../examples/inventories.example.json
+    resourceCreateExample: !include ../examples/inventory-create.example.json
+    readScopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]
+    writeScopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]
+    whereExample: key = "berlin-store"
+    sortExample: createdAt asc
 description: Inventory allows you to track stock quantities.
-get:
-  description: Query inventories
-  is:
-    - query:
-        whereExample: sku = "ABC123"
-    - sortable:
-        sortExample: sku asc
-    - paging
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
-  responses:
-    200:
-      body:
-        application/json:
-          example: !include ../examples/inventories.example.json
-          type: InventoryPagedQueryResponse
 post:
-  description: Create a inventory
-  is:
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
-  body:
-    application/json:
-      example: !include ../examples/inventory-create.example.json
-      type: InventoryEntryDraft
-  responses:
-    201:
-      body:
-        application/json:
-          example: !include ../examples/inventory.example.json
-          type: InventoryEntry
 /{ID}:
-  type: baseById
-  displayName: inventory
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: InventoryEntry
+      resourceUpdateType: Update
+      resourceUpdateExample: !include ../examples/inventory-update.example.json
+      resourceExample: !include ../examples/inventory.example.json
+      readScopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]
+      writeScopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]
   get:
-    description: Get inventory by ID
-    is:
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/inventory.example.json
-            type: InventoryEntry
   post:
-    description: Update a inventory
-    is:
-      - conflicting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
-    body:
-      application/json:
-        example: !include ../examples/inventory-update.example.json
-        type: Update
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/inventory.example.json
-            type: InventoryEntry
   delete:
-    description: Delete a inventory
-    is:
-      - versioned
-      - conflicting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/inventory.example.json
-            type: InventoryEntry

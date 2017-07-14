@@ -1,77 +1,27 @@
-#%RAML 1.0 Resource
-type: base
-displayName: channel
+type:
+  baseDomain:
+    resourceType: Channel
+    resourceQueryType: ChannelPagedQueryResponse
+    resourceDraft: ChannelDraft
+    resourceExample: !include ../examples/channel.example.json
+    resourceQueryExample: !include ../examples/channels.example.json
+    resourceCreateExample: !include ../examples/channel-create.example.json
+    readScopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]
+    writeScopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]
+    whereExample: key = "berlin-store"
+    sortExample: createdAt asc
 description: Channels represent a source or destination of different entities. They can be used to model warehouses or stores.
-get:
-  description: Query channels
-  is:
-    - query:
-        whereExample: key = "berlin-store"
-    - sortable:
-        sortExample: createdAt asc
-    - paging
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
-  responses:
-    200:
-      body:
-        application/json:
-          example: !include ../examples/channels.example.json
 post:
-  description: Create a channel
-  is:
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
-  body:
-    application/json:
-      example: !include ../examples/channel-create.example.json
-      type: ChannelDraft
-  responses:
-    201:
-      body:
-        application/json:
-          example: !include ../examples/channel.example.json
-          type: Channel
 /{ID}:
-  type: baseById
-  displayName: channel
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: Channel
+      resourceUpdateType: Update
+      resourceUpdateExample: !include ../examples/channel-update.example.json
+      resourceExample: !include ../examples/channel.example.json
+      readScopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]
+      writeScopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]
   get:
-    is:
-      - expandable
-    description: Get channel by ID
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_products:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/channel.example.json
-            type: Channel
   post:
-    description: Update a channel
-    is:
-      - conflicting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
-    body:
-      application/json:
-        example: !include ../examples/channel-update.example.json
-        type: Update
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/channel.example.json
-            type: Channel
   delete:
-    description: Delete a channel
-    is:
-      - versioned
-      - conflicting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_products:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/channel.example.json
-            type: Channel

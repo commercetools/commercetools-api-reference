@@ -1,76 +1,27 @@
-type: base
-displayName: payment
+type:
+  baseDomain:
+    resourceType: Payment
+    resourceQueryType: PaymentPagedQueryResponse
+    resourceDraft: PaymentDraft
+    resourceExample: !include ../examples/payment.example.json
+    resourceQueryExample: !include ../examples/payments.example.json
+    resourceCreateExample: !include ../examples/payment-create.example.json
+    readScopes: ["manage_project:{projectKey}", "view_payments:{projectKey}"]
+    writeScopes: ["manage_project:{projectKey}", "manage_payments:{projectKey}"]
+    whereExample: externalId = "1234567890"
+    sortExample: createdAt asc
 description: Payments hold information about the current state of receiving and/or refunding money
-get:
-  description: Query payments
-  is:
-    - query:
-        whereExample: externalId = "1234567890"
-    - sortable:
-        sortExample: createdAt asc
-    - paging
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_payments:{projectKey}"]}]
-  responses:
-    200:
-      body:
-        application/json:
-          example: !include ../examples/payments.example.json
-          type: PaymentPagedQueryResponse
 post:
-  description: Create a payment
-  is:
-    - expandable
-  securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_payments:{projectKey}"]}]
-  body:
-    application/json:
-      example: !include ../examples/payment-create.example.json
-      type: PaymentDraft
-  responses:
-    201:
-      body:
-        application/json:
-          example: !include ../examples/payment.example.json
-          type: Payment
 /{ID}:
-  type: baseById
-  displayName: payment
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: Payment
+      resourceUpdateType: Update
+      resourceUpdateExample: !include ../examples/payment-update.example.json
+      resourceExample: !include ../examples/payment.example.json
+      readScopes: ["manage_project:{projectKey}", "view_payments:{projectKey}"]
+      writeScopes: ["manage_project:{projectKey}", "manage_payments:{projectKey}"]
   get:
-    description: Get payment by ID
-    is:
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_payments:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/payment.example.json
-            type: Payment
   post:
-    description: Update a payment
-    is:
-      - conflicting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_payments:{projectKey}"]}]
-    body:
-      application/json:
-        example: !include ../examples/payment-update.example.json
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/payment.example.json
-            type: Payment
   delete:
-    description: Delete a payment
-    is:
-      - versioned
-      - conflicting
-      - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_payments:{projectKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/payment.example.json
-            type: Payment
