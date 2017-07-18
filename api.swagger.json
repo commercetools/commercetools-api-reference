@@ -6903,51 +6903,6 @@
           "type": "string"
         }
       ],
-      "post": {
-        "description": "Create or update a custom-object",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/CustomObjectDraft"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "201": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/CustomObject"
-            }
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_products:{projectKey}",
-              "manage_orders:{projectKey}",
-              "manage_orders:{projectKey}"
-            ]
-          }
-        ]
-      },
       "get": {
         "description": "Query custom-objects",
         "parameters": [
@@ -6964,6 +6919,9 @@
             "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
             "required": false,
             "type": "string"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
           },
           {
             "$ref": "#/parameters/trait:paging:limit"
@@ -6996,7 +6954,57 @@
           {
             "oauth_2_0": [
               "manage_project:{projectKey}",
-              "view_orders:{projectKey}"
+              "view_products:{projectKey}",
+              "view_orders:{projectKey}",
+              "view_customers:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "description": "Create CustomObject",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CustomObjectDraft"
+            }
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CustomObject"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_products:{projectKey}",
+              "manage_orders:{projectKey}",
+              "manage_customers:{projectKey}"
             ]
           }
         ]
@@ -7020,10 +7028,13 @@
         }
       ],
       "delete": {
-        "description": "Delete a custom-object",
+        "description": "Delete CustomObject by container",
         "parameters": [
           {
             "$ref": "#/parameters/trait:versioned:version"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
         "responses": {
@@ -7052,13 +7063,18 @@
               "manage_project:{projectKey}",
               "manage_products:{projectKey}",
               "manage_orders:{projectKey}",
-              "manage_orders:{projectKey}"
+              "manage_customers:{projectKey}"
             ]
           }
         ]
       },
       "get": {
-        "description": "Get custom-object by ID",
+        "description": "Get CustomObject by container",
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/responses/trait:deprecatable:200"
@@ -7113,10 +7129,13 @@
         }
       ],
       "delete": {
-        "description": "Delete a custom-object",
+        "description": "Delete CustomObject by key",
         "parameters": [
           {
             "$ref": "#/parameters/trait:versioned:version"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
         "responses": {
@@ -7145,13 +7164,18 @@
               "manage_project:{projectKey}",
               "manage_products:{projectKey}",
               "manage_orders:{projectKey}",
-              "manage_orders:{projectKey}"
+              "manage_customers:{projectKey}"
             ]
           }
         ]
       },
       "get": {
-        "description": "Get custom-object by ID",
+        "description": "Get CustomObject by key",
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/responses/trait:deprecatable:200"
@@ -20939,7 +20963,7 @@
       "type": "object",
       "properties": {
         "type": {
-          "$ref": "#/definitions/FieldType"
+          "type": "object"
         },
         "name": {
           "type": "string"
