@@ -100,107 +100,58 @@ delete:
                     application/json:
                         type: Cart
 /carts:
-    type: base
+  type:
+    baseDomain:
+      resourceType: Cart
+      resourceQueryType: CartPagedQueryResponse
+      resourceDraft: MyCartDraft
+      resourceExample: !include ../examples/cart.example.json
+      resourceQueryExample: !include ../examples/carts.example.json
+      resourceCreateExample: !include ../examples/cart-create.example.json
+      readScopes: ["manage_my_orders:{projectKey}"]
+      writeScopes: ["manage_my_orders:{projectKey}"]
+      whereExample: customerEmail = "john.doe@example.com"
+      sortExample: createdAt asc
+  description: A shopping cart holds product variants and can be ordered.
+  post:
+  /{ID}:
+    type:
+      baseResource:
+        uriParameterName: ID
+        resourceType: Cart
+        resourceUpdateType: Update
+        resourceUpdateExample: !include ../examples/cart-update.example.json
+        resourceExample: !include ../examples/cart.example.json
+        readScopes: ["manage_my_orders:{projectKey}"]
+        writeScopes: ["manage_my_orders:{projectKey}"]
     get:
-        is:
-            - query:
-                whereExample: customerEmail = "foo@bar.com"
-            - sortable:
-                sortExample: createdAt asc
-            - paging
-            - expandable
-        securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
-        responses:
-            200:
-                body:
-                    application/json:
-                        type: CartPagedQueryResponse
     post:
-        securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
-        body:
-            application/json:
-                type: MyCartDraft
-        responses:
-            200:
-                body:
-                    application/json:
-                        type: Cart
-    /{ID}:
-        type: baseById
-        get:
-            securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
-            responses:
-                200:
-                    body:
-                        application/json:
-                            type: Cart
-        post:
-            securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
-            is:
-              - conflicting
-            body:
-                application/json:
-                    type: Update
-            responses:
-                200:
-                    body:
-                        application/json:
-                            type: Cart
-        delete:
-            securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
-            is:
-                - conflicting
-                - versioned
-            responses:
-                200:
-                    body:
-                        application/json:
-                            type: Cart
+    delete:
 /orders:
-    type: base
+  type:
+    baseDomain:
+      resourceType: Order
+      resourceQueryType: OrderPagedQueryResponse
+      resourceDraft: MyOrderFromCartDraft
+      resourceExample: !include ../examples/order.example.json
+      resourceQueryExample: !include ../examples/orders.example.json
+      resourceCreateExample: !include ../examples/order-create.example.json
+      readScopes: ["manage_my_orders:{projectKey}"]
+      writeScopes: ["manage_my_orders:{projectKey}"]
+      whereExample: customerEmail = "john.doe@example.com"
+      sortExample: createdAt asc
+  description: An order can be created from a cart, usually after a checkout process has been completed.
+  post:
+  /{ID}:
+    type:
+      baseResource:
+        uriParameterName: ID
+        resourceType: Order
+        resourceUpdateType: Update
+        resourceUpdateExample: !include ../examples/order-update.example.json
+        resourceExample: !include ../examples/order.example.json
+        readScopes: ["manage_my_orders:{projectKey}"]
+        writeScopes: ["manage_my_orders:{projectKey}"]
     get:
-        is:
-            - query:
-                whereExample: customerEmail = "foo@bar.com"
-            - sortable:
-                sortExample: createdAt asc
-            - paging
-            - expandable
-        securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
-        responses:
-            200:
-                body:
-                    application/json:
-                        type: OrderPagedQueryResponse
     post:
-        securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
-        body:
-            application/json:
-                type: MyOrderFromCartDraft
-        responses:
-            200:
-                body:
-                    application/json:
-                        type: Order
-    /{ID}:
-        type: baseById
-        get:
-            securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
-            responses:
-                200:
-                    body:
-                        application/json:
-                            type: Order
-        post:
-            securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
-            is:
-              - conflicting
-            body:
-                application/json:
-                    type: Update
-            responses:
-                200:
-                    body:
-                        application/json:
-                            type: Order
 
