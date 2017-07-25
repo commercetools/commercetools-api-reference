@@ -15,7 +15,23 @@ npm install
 node bin/oas-convert.js
 ```
 
-## Using RAML API Console
+
+## Using RAML API Console 4
+
+### Building the API console image
+
+```bash
+docker build . -t api_console
+```
+
+### Running the API Console image
+
+```bash
+docker run --rm -p8081:8081 api_console
+```
+
+
+## Using RAML API Console 3
 
 ### Building the API console image
 
