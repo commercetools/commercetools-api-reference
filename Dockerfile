@@ -18,4 +18,4 @@ RUN apk add --no-cache --virtual .build-deps-api-console git \
 
 EXPOSE 8081
 
-CMD ["api-console", "serve", "build"]
+CMD ["node_modules/.bin/api-console", "serve", "-H", "0.0.0.0", "build"]
