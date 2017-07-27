@@ -6,7 +6,6 @@ Commercetools Platform API reference documentation
 ## run internal consistency test
 ```
 npm install
-node bin/validate-sources.js > source-validation-results.md
 node bin/explode-raml.js > consistency-validation-results.md
 ```
 ## run converter to OAS format
