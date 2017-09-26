@@ -54,6 +54,36 @@
           "type": "string"
         }
       ],
+      "post": {
+        "description": "Update project",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ProjectUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}"
+            ]
+          }
+        ]
+      },
       "get": {
         "description": "The Endpoint is responding a limited set of information about settings and configuration of the project.",
         "responses": {
@@ -9142,6 +9172,12 @@
       "pattern": "^[A-Z]{2}$",
       "x-annotation-package": "Common"
     },
+    "Locale": {
+      "type": "string",
+      "description": "A locale of [IETF language tag](https://en.wikipedia.org/wiki/IETF_language_tag).\n",
+      "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+      "x-annotation-package": "Common"
+    },
     "Reference": {
       "discriminator": "typeId",
       "allOf": [
@@ -17726,19 +17762,19 @@
         "countries": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/CountryCode"
           }
         },
         "currencies": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/CurrencyCode"
           }
         },
         "languages": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/Locale"
           }
         },
         "createdAt": {
@@ -17763,6 +17799,137 @@
         "messages"
       ],
       "x-annotation-package": "Project"
+    },
+    "ProjectChangeCountriesAction": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ProductUpdateAction"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "countries": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CountryCode"
+              }
+            }
+          },
+          "required": [
+            "countries"
+          ]
+        }
+      ],
+      "x-annotation-package": "Product"
+    },
+    "ProjectChangeCurrenciesAction": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ProductUpdateAction"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "currencies": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CurrencyCode"
+              }
+            }
+          },
+          "required": [
+            "currencies"
+          ]
+        }
+      ],
+      "x-annotation-package": "Product"
+    },
+    "ProjectChangeLanguagesAction": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ProductUpdateAction"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "languages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Locale"
+              }
+            }
+          },
+          "required": [
+            "languages"
+          ]
+        }
+      ],
+      "x-annotation-package": "Product"
+    },
+    "ProjectChangeMessagesEnabledAction": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ProductUpdateAction"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "messagesEnabled": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "messagesEnabled"
+          ]
+        }
+      ],
+      "x-annotation-package": "Product"
+    },
+    "ProjectChangeNameAction": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ProductUpdateAction"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        }
+      ],
+      "x-annotation-package": "Product"
+    },
+    "ProjectUpdate": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Update"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "actions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProjectUpdateAction"
+              }
+            }
+          },
+          "required": [
+            "actions"
+          ]
+        }
+      ],
+      "x-annotation-package": "Project"
+    },
+    "ProjectUpdateAction": {
+      "discriminator": "action",
+      "x-annotation-package": "Project",
+      "$ref": "#/definitions/UpdateAction"
     },
     "Attribute": {
       "type": "object",
