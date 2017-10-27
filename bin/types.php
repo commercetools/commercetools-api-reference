@@ -17,7 +17,7 @@ function camelize($scored)
                 'ucfirst',
                 array_map(
                     'strtolower',
-                    explode('-', $scored)
+                    explode('-', preg_replace('/(?<!^)([A-Z])/', '-\\1', $scored))
                 )
             )
     );
