@@ -60,7 +60,7 @@ foreach ($types as $type) {
     $newTypes[] = $type['displayName'] . ': !include ' . str_replace($typeDir . '/' , '', $type['fileName']);
 }
 
-echo implode(PHP_EOL, $newTypes) . PHP_EOL;
+//echo implode(PHP_EOL, $newTypes) . PHP_EOL;
 
 file_put_contents($baseDir . '/' . $typeDir . '/types.raml', implode(PHP_EOL, $newTypes) . PHP_EOL);
 
