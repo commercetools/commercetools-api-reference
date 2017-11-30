@@ -14,6 +14,9 @@ npm install
 node bin/oas-convert.js
 ```
 
+## Using postman
+
+See [postman documentation](postman/README)
 
 ## Using RAML API Console 4
 
