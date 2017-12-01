@@ -56,8 +56,14 @@ docker run --rm -p9000:9000 -p35729:35729 -v$(pwd):/apis api_console grunt conne
 npm install
 node bin/explode-raml.js > consistency-validation-results.md
 ```
+
 ### run converter to OAS format
 ```
 npm install
 node bin/oas-convert.js
+```
+
+### update the RAML types definition
+```
+docker run --rm -v${PWD}:/app -w /app php:7.1-alpine php bin/types.php
 ```
