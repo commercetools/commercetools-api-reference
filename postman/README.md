@@ -13,8 +13,8 @@ To use this collection in Postman please perform the following steps:
 1. Download and install the Postman Client
 2. Click the "Run in Postman"-button in the header of the [collection's documentation page](https://documenter.getpostman.com/view/2267334/commercetools-platform-api/6fR3nEb) to clone this collection to your Postman client
 3. Duplicate the environment "commercetools Platform.template"
-4. Configure the authorization in Postman using [OAuth 2.0](https://www.getpostman.com/docs/postman/sending_api_requests/authorization) with client credentials
-![oauth settings](./oauth_settings.png)
+4. Obtain an access token by sending the "Authorization/Obtain access token" request. Please fill in your client credentials at the Authorization pane.
+  ![oauth settings](./connection_settings.png)
 5. Feel free to clone and modify this collection to your needs.
 
 To automate frequent tasks the collection automatically manages commonly required values and parameters such as resource ids, keys and versions in Postman environment variables for you.
