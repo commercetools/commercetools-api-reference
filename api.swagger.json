@@ -7524,6 +7524,16 @@
         "consumes": [
           "application/graphql"
         ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "string",
+              "example": "query Sphere {\n    products(limit: 1) {\n        ...StagedProduct,\n        ...CurrentProduct\n    }\n}\n\nfragment Product on ProductData {\n    skus, name(locale: \"en\")\n}\n\nfragment StagedProduct on ProductQueryResult {\n    results {\n        id, masterData { staged { ...Product } }\n    }\n}\n\nfragment CurrentProduct on ProductQueryResult {\n    results {\n        id, masterData { current { ...Product } }\n    }\n}\n"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/responses/trait:deprecatable:200"
@@ -8361,6 +8371,15 @@
         }
       ],
       "post": {
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/responses/trait:deprecatable:200"
@@ -8490,6 +8509,15 @@
         }
       ],
       "post": {
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/responses/trait:deprecatable:200"
@@ -13170,28 +13198,25 @@
       "x-annotation-package": "Cart"
     },
     "CartSetShippingAddressAction": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/CartUpdateAction"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "address": {
-              "$ref": "#/definitions/Address"
-            }
-          }
-        }
-      ],
-      "x-annotation-package": "Cart"
+      "example": "",
+      "x-annotation-package": "Cart",
+      "$ref": "#/definitions/CartUpdateAction"
     },
     "CartSetCustomerIdAction": {
+      "example": {
+        "action": "setCustomerId",
+        "customerId": "0c2eaad4-833c-43c1-98a4-5d03f57e9329"
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setCustomerId",
+            "customerId": "0c2eaad4-833c-43c1-98a4-5d03f57e9329"
+          },
           "properties": {
             "customerId": {
               "type": "string"
@@ -13202,12 +13227,28 @@
       "x-annotation-package": "Cart"
     },
     "CartSetLineItemCustomTypeAction": {
+      "example": {
+        "action": "setLineItemCustomType",
+        "lineItemId": "{{lineItemId}}",
+        "type": {
+          "id": "96a0e2f6-1369-4359-ad9e-99132482f214",
+          "typeId": "type"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setLineItemCustomType",
+            "lineItemId": "{{lineItemId}}",
+            "type": {
+              "id": "96a0e2f6-1369-4359-ad9e-99132482f214",
+              "typeId": "type"
+            }
+          },
           "properties": {
             "fields": {
               "type": "string"
@@ -13227,12 +13268,46 @@
       "x-annotation-package": "Cart"
     },
     "CartAddCustomLineItemAction": {
+      "example": {
+        "action": "addCustomLineItem",
+        "name": {
+          "en": "Name EN",
+          "de": "Name DE"
+        },
+        "quantity": 1,
+        "money": {
+          "currencyCode": "EUR",
+          "centAmount": 4200
+        },
+        "slug": "mySlug",
+        "taxCategory": {
+          "typeId": "tax-category",
+          "id": "5786eba8-d448-4b7a-84fd-07fd1d612696"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "addCustomLineItem",
+            "name": {
+              "en": "Name EN",
+              "de": "Name DE"
+            },
+            "quantity": 1,
+            "money": {
+              "currencyCode": "EUR",
+              "centAmount": 4200
+            },
+            "slug": "mySlug",
+            "taxCategory": {
+              "typeId": "tax-category",
+              "id": "5786eba8-d448-4b7a-84fd-07fd1d612696"
+            }
+          },
           "properties": {
             "custom": {
               "$ref": "#/definitions/CustomFieldsDraft"
@@ -13267,12 +13342,28 @@
       "x-annotation-package": "Cart"
     },
     "CartSetBillingAddressAction": {
+      "example": {
+        "action": "setBillingAddress",
+        "address": {
+          "firstName": "Max",
+          "lastName": "Mustermann",
+          "country": "DE"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setBillingAddress",
+            "address": {
+              "firstName": "Max",
+              "lastName": "Mustermann",
+              "country": "DE"
+            }
+          },
           "properties": {
             "address": {
               "$ref": "#/definitions/Address"
@@ -13340,12 +13431,20 @@
       "x-annotation-package": "Cart"
     },
     "CartChangeTaxRoundingModeAction": {
+      "example": {
+        "action": "changeTaxRoundingMode",
+        "taxRoundingMode": "HalfUp"
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "changeTaxRoundingMode",
+            "taxRoundingMode": "HalfUp"
+          },
           "properties": {
             "taxRoundingMode": {
               "$ref": "#/definitions/RoundingMode"
@@ -13420,12 +13519,22 @@
       "x-annotation-package": "Cart"
     },
     "CartChangeLineItemQuantityAction": {
+      "example": {
+        "action": "changeLineItemQuantity",
+        "lineItemId": "{{lineItemId}}",
+        "quantity": 1
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "changeLineItemQuantity",
+            "lineItemId": "{{lineItemId}}",
+            "quantity": 1
+          },
           "properties": {
             "lineItemId": {
               "type": "string"
@@ -13449,12 +13558,20 @@
       "x-annotation-package": "Cart"
     },
     "CartAddDiscountCodeAction": {
+      "example": {
+        "action": "addDiscountCode",
+        "code": "mydiscountcode"
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "addDiscountCode",
+            "code": "mydiscountcode"
+          },
           "properties": {
             "code": {
               "type": "string"
@@ -13468,12 +13585,20 @@
       "x-annotation-package": "Cart"
     },
     "CartRemoveLineItemAction": {
+      "example": {
+        "action": "removeLineItem",
+        "lineItemId": "{{lineItemId}}"
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "removeLineItem",
+            "lineItemId": "{{lineItemId}}"
+          },
           "properties": {
             "lineItemId": {
               "type": "string"
@@ -13554,12 +13679,22 @@
       "x-annotation-package": "Cart"
     },
     "CartAddLineItemAction": {
+      "example": {
+        "action": "addLineItem",
+        "productId": "e6b98eaa-631d-422b-9fc0-af67c18ff48d",
+        "variantId": 1
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "addLineItem",
+            "productId": "e6b98eaa-631d-422b-9fc0-af67c18ff48d",
+            "variantId": 1
+          },
           "properties": {
             "custom": {
               "$ref": "#/definitions/CustomFieldsDraft"
@@ -13599,12 +13734,14 @@
       "x-annotation-package": "Cart"
     },
     "CartSetLineItemCustomFieldAction": {
+      "example": "myNewValue",
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": "myNewValue",
           "properties": {
             "lineItemId": {
               "type": "string"
@@ -13697,12 +13834,28 @@
       "x-annotation-package": "Cart"
     },
     "CartSetCustomLineItemCustomTypeAction": {
+      "example": {
+        "action": "setCustomLineItemCustomType",
+        "customLineItemId": "{{customLineItemId}}",
+        "type": {
+          "id": "7c30f10f-db54-418d-b62f-6ab4a4216222",
+          "typeId": "type"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setCustomLineItemCustomType",
+            "customLineItemId": "{{customLineItemId}}",
+            "type": {
+              "id": "7c30f10f-db54-418d-b62f-6ab4a4216222",
+              "typeId": "type"
+            }
+          },
           "properties": {
             "customLineItemId": {
               "type": "string"
@@ -13732,12 +13885,28 @@
       "x-annotation-package": "Cart"
     },
     "CartSetShippingMethodTaxRateAction": {
+      "example": {
+        "action": "setShippingMethodTaxRate",
+        "externalTaxRate": {
+          "name": "myTaxRate",
+          "amount": 0.19,
+          "country": "DE"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setShippingMethodTaxRate",
+            "externalTaxRate": {
+              "name": "myTaxRate",
+              "amount": 0.19,
+              "country": "DE"
+            }
+          },
           "properties": {
             "externalTaxRate": {
               "$ref": "#/definitions/ExternalTaxRateDraft"
@@ -13828,12 +13997,22 @@
       "x-annotation-package": "Cart"
     },
     "CartChangeCustomLineItemQuantityAction": {
+      "example": {
+        "action": "changeCustomLineItemQuantity",
+        "customLineItemId": "{{customLineItemId}}",
+        "quantity": 1
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "changeCustomLineItemQuantity",
+            "customLineItemId": "{{customLineItemId}}",
+            "quantity": 1
+          },
           "properties": {
             "customLineItemId": {
               "type": "string"
@@ -13860,12 +14039,40 @@
       "x-annotation-package": "Cart"
     },
     "CartSetCustomShippingMethodAction": {
+      "example": {
+        "action": "setCustomShippingMethod",
+        "shippingMethodName": "myCustomShippingMethod",
+        "shippingRate": {
+          "price": {
+            "currencyCode": "EUR",
+            "centAmount": 4200
+          }
+        },
+        "taxCategory": {
+          "id": "5786eba8-d448-4b7a-84fd-07fd1d612696",
+          "typeId": "tax-category"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setCustomShippingMethod",
+            "shippingMethodName": "myCustomShippingMethod",
+            "shippingRate": {
+              "price": {
+                "currencyCode": "EUR",
+                "centAmount": 4200
+              }
+            },
+            "taxCategory": {
+              "id": "5786eba8-d448-4b7a-84fd-07fd1d612696",
+              "typeId": "tax-category"
+            }
+          },
           "properties": {
             "externalTaxRate": {
               "$ref": "#/definitions/ExternalTaxRateDraft"
@@ -13889,12 +14096,28 @@
       "x-annotation-package": "Cart"
     },
     "CartChangeCustomLineItemMoneyAction": {
+      "example": {
+        "action": "changeCustomLineItemMoney",
+        "customLineItemId": "{{customLineItemId}}",
+        "money": {
+          "currencyCode": "EUR",
+          "centAmount": 4200
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "changeCustomLineItemMoney",
+            "customLineItemId": "{{customLineItemId}}",
+            "money": {
+              "currencyCode": "EUR",
+              "centAmount": 4200
+            }
+          },
           "properties": {
             "customLineItemId": {
               "type": "string"
@@ -13912,12 +14135,26 @@
       "x-annotation-package": "Cart"
     },
     "CartSetCustomerGroupAction": {
+      "example": {
+        "action": "setCustomerGroup",
+        "customerGroup": {
+          "typeId": "customer-group",
+          "id": "0c2eaad4-833c-43c1-98a4-5d03f57e9329"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setCustomerGroup",
+            "customerGroup": {
+              "typeId": "customer-group",
+              "id": "0c2eaad4-833c-43c1-98a4-5d03f57e9329"
+            }
+          },
           "properties": {
             "customerGroup": {
               "$ref": "#/definitions/CustomerGroupReference"
@@ -13998,12 +14235,14 @@
       "x-annotation-package": "Cart"
     },
     "CartSetLineItemPriceAction": {
+      "example": {},
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {},
           "properties": {
             "externalPrice": {
               "$ref": "#/definitions/Money"
@@ -14020,12 +14259,20 @@
       "x-annotation-package": "Cart"
     },
     "CartSetDeleteDaysAfterLastModificationAction": {
+      "example": {
+        "action": "setDeleteDaysAfterLastModification",
+        "deleteDaysAfterLastModification": 90
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setDeleteDaysAfterLastModification",
+            "deleteDaysAfterLastModification": 90
+          },
           "properties": {
             "deleteDaysAfterLastModification": {
               "type": "integer"
@@ -14052,12 +14299,26 @@
       "x-annotation-package": "Cart"
     },
     "CartAddPaymentAction": {
+      "example": {
+        "action": "addPayment",
+        "payment": {
+          "id": "d45b6f23-76a0-459f-bf55-591dfe8a4ade",
+          "typeId": "payment"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "addPayment",
+            "payment": {
+              "id": "d45b6f23-76a0-459f-bf55-591dfe8a4ade",
+              "typeId": "payment"
+            }
+          },
           "properties": {
             "payment": {
               "$ref": "#/definitions/PaymentReference"
@@ -14071,12 +14332,26 @@
       "x-annotation-package": "Cart"
     },
     "CartSetCustomTypeAction": {
+      "example": {
+        "action": "setCustomType",
+        "type": {
+          "id": "089eaa2e-b54b-42d7-811e-23e180fe8dcc",
+          "typeId": "type"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setCustomType",
+            "type": {
+              "id": "089eaa2e-b54b-42d7-811e-23e180fe8dcc",
+              "typeId": "type"
+            }
+          },
           "properties": {
             "fields": {
               "type": "string"
@@ -14090,12 +14365,30 @@
       "x-annotation-package": "Cart"
     },
     "CartSetLineItemTaxRateAction": {
+      "example": {
+        "action": "setLineItemTaxRate",
+        "lineItemId": "{{lineItemId}}",
+        "externalTaxRate": {
+          "name": "myTaxRate",
+          "amount": 0.19,
+          "country": "DE"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setLineItemTaxRate",
+            "lineItemId": "{{lineItemId}}",
+            "externalTaxRate": {
+              "name": "myTaxRate",
+              "amount": 0.19,
+              "country": "DE"
+            }
+          },
           "properties": {
             "externalTaxRate": {
               "$ref": "#/definitions/ExternalTaxRateDraft"
@@ -14112,12 +14405,26 @@
       "x-annotation-package": "Cart"
     },
     "CartSetShippingMethodAction": {
+      "example": {
+        "action": "setShippingMethod",
+        "shippingMethod": {
+          "id": "5fb8a475-9fb7-4f65-a08c-4a26c26c56b8",
+          "typeId": "shipping-method"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setShippingMethod",
+            "shippingMethod": {
+              "id": "5fb8a475-9fb7-4f65-a08c-4a26c26c56b8",
+              "typeId": "shipping-method"
+            }
+          },
           "properties": {
             "shippingMethod": {
               "$ref": "#/definitions/ShippingMethodReference"
@@ -14128,12 +14435,20 @@
       "x-annotation-package": "Cart"
     },
     "CartRecalculateAction": {
+      "example": {
+        "action": "recalculate",
+        "updateProductData": false
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "recalculate",
+            "updateProductData": false
+          },
           "properties": {
             "updateProductData": {
               "type": "boolean"
@@ -14144,12 +14459,26 @@
       "x-annotation-package": "Cart"
     },
     "CartRemoveDiscountCodeAction": {
+      "example": {
+        "action": "removeDiscountCode",
+        "discountCode": {
+          "typeId": "discount-code",
+          "id": "{{discountCodeId}}"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "removeDiscountCode",
+            "discountCode": {
+              "typeId": "discount-code",
+              "id": "{{discountCodeId}}"
+            }
+          },
           "properties": {
             "discountCode": {
               "$ref": "#/definitions/DiscountCodeReference"
@@ -14163,12 +14492,20 @@
       "x-annotation-package": "Cart"
     },
     "CartSetCustomerEmailAction": {
+      "example": {
+        "action": "setCustomerEmail",
+        "email": "foo@bar.com"
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setCustomerEmail",
+            "email": "foo@bar.com"
+          },
           "properties": {
             "email": {
               "type": "string"
@@ -14198,12 +14535,14 @@
       "x-annotation-package": "Cart"
     },
     "CartSetCustomFieldAction": {
+      "example": "myValue",
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": "myValue",
           "properties": {
             "name": {
               "type": "string"
@@ -14251,12 +14590,40 @@
       "x-annotation-package": "Cart"
     },
     "CartSetLineItemTotalPriceAction": {
+      "example": {
+        "action": "setLineItemTotalPrice",
+        "lineItemId": "{{lineItemId}}",
+        "externalTotalPrice": {
+          "price": {
+            "currencyCode": "EUR",
+            "centAmount": 4200
+          },
+          "totalPrice": {
+            "currencyCode": "EUR",
+            "centAmount": 4200
+          }
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setLineItemTotalPrice",
+            "lineItemId": "{{lineItemId}}",
+            "externalTotalPrice": {
+              "price": {
+                "currencyCode": "EUR",
+                "centAmount": 4200
+              },
+              "totalPrice": {
+                "currencyCode": "EUR",
+                "centAmount": 4200
+              }
+            }
+          },
           "properties": {
             "externalTotalPrice": {
               "$ref": "#/definitions/ExternalLineItemTotalPrice"
@@ -14282,12 +14649,30 @@
       "x-annotation-package": "Cart"
     },
     "CartSetCustomLineItemTaxRateAction": {
+      "example": {
+        "action": "setCustomLineItemTaxRate",
+        "customLineItemId": "{{customLineItemId}}",
+        "externalTaxRate": {
+          "name": "myTaxRate",
+          "amount": 0.19,
+          "country": "DE"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setCustomLineItemTaxRate",
+            "customLineItemId": "{{customLineItemId}}",
+            "externalTaxRate": {
+              "name": "myTaxRate",
+              "amount": 0.19,
+              "country": "DE"
+            }
+          },
           "properties": {
             "customLineItemId": {
               "type": "string"
@@ -14304,12 +14689,26 @@
       "x-annotation-package": "Cart"
     },
     "CartRemovePaymentAction": {
+      "example": {
+        "action": "removePayment",
+        "payment": {
+          "id": "d45b6f23-76a0-459f-bf55-591dfe8a4ade",
+          "typeId": "payment"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "removePayment",
+            "payment": {
+              "id": "d45b6f23-76a0-459f-bf55-591dfe8a4ade",
+              "typeId": "payment"
+            }
+          },
           "properties": {
             "payment": {
               "$ref": "#/definitions/PaymentReference"
@@ -14323,12 +14722,20 @@
       "x-annotation-package": "Cart"
     },
     "CartSetLocaleAction": {
+      "example": {
+        "action": "setLocale",
+        "locale": "de-DE"
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setLocale",
+            "locale": "de-DE"
+          },
           "properties": {
             "locale": {
               "type": "string"
@@ -14339,12 +14746,20 @@
       "x-annotation-package": "Cart"
     },
     "CartRemoveCustomLineItemAction": {
+      "example": {
+        "action": "removeCustomLineItem",
+        "customLineItemId": "{{customLineItemId}}"
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "removeCustomLineItem",
+            "customLineItemId": "{{customLineItemId}}"
+          },
           "properties": {
             "customLineItemId": {
               "type": "string"
@@ -14377,12 +14792,20 @@
       "x-annotation-package": "Cart"
     },
     "CartSetCountryAction": {
+      "example": {
+        "action": "setCountry",
+        "country": "DE"
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setCountry",
+            "country": "DE"
+          },
           "properties": {
             "country": {
               "$ref": "#/definitions/CountryCode"
@@ -14393,12 +14816,20 @@
       "x-annotation-package": "Cart"
     },
     "CartChangeTaxModeAction": {
+      "example": {
+        "action": "changeTaxMode",
+        "taxMode": "Platform"
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "changeTaxMode",
+            "taxMode": "Platform"
+          },
           "properties": {
             "taxMode": {
               "$ref": "#/definitions/TaxMode"
@@ -14469,12 +14900,26 @@
       "x-annotation-package": "Cart"
     },
     "CartAddShoppingListAction": {
+      "example": {
+        "action": "addShoppingList",
+        "shoppingList": {
+          "id": "e7ca6063-4f17-42d0-8b84-822029105ffb",
+          "typeId": "shopping-list"
+        }
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "addShoppingList",
+            "shoppingList": {
+              "id": "e7ca6063-4f17-42d0-8b84-822029105ffb",
+              "typeId": "shopping-list"
+            }
+          },
           "properties": {
             "distributionChannel": {
               "$ref": "#/definitions/ChannelReference"
@@ -14624,12 +15069,14 @@
       "x-annotation-package": "Cart"
     },
     "CartSetCustomLineItemCustomFieldAction": {
+      "example": "myNewValue",
       "allOf": [
         {
           "$ref": "#/definitions/CartUpdateAction"
         },
         {
           "type": "object",
+          "example": "myNewValue",
           "properties": {
             "customLineItemId": {
               "type": "string"
@@ -20775,12 +21222,20 @@
       "x-annotation-package": "CartDiscount"
     },
     "CartDiscountChangeCartPredicateAction": {
+      "example": {
+        "action": "setDescription",
+        "description": "new Description"
+      },
       "allOf": [
         {
           "$ref": "#/definitions/CartDiscountUpdateAction"
         },
         {
           "type": "object",
+          "example": {
+            "action": "setDescription",
+            "description": "new Description"
+          },
           "properties": {
             "cartPredicate": {
               "type": "string"
