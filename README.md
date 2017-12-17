@@ -67,3 +67,10 @@ node bin/oas-convert.js
 ```
 docker run --rm -v${PWD}:/app -w /app php:7.1-alpine php bin/types.php
 ```
+
+### run Postman collection generator
+To generate the postman collection in `./postman/collection.json` perform the following tasks:
+```
+docker pull vrapio/rmf-generator
+docker run --rm -v"$PWD":/api -v"$PWD":/out vrapio/rmf-generator -l postman /api/postman.raml
+```
