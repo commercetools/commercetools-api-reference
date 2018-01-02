@@ -57,10 +57,11 @@ foreach ($types as $type) {
     if ($type['originalName'] !== $type['fileName']) {
         exec('git mv ' . $type['originalName'] . ' ' . $type['fileName']);
     }
-    $newTypes[] = $type['displayName'] . ': !include ' . str_replace($typeDir . '/' , '', $type['fileName']);
+    $newTypes[$type['fileName']] = $type['displayName'] . ': !include ' . str_replace($typeDir . '/' , '', $type['fileName']);
 }
 
-//echo implode(PHP_EOL, $newTypes) . PHP_EOL;
+ksort($newTypes);
+$newTypes = array_values($newTypes);
 
 file_put_contents($baseDir . '/' . $typeDir . '/types.raml', implode(PHP_EOL, $newTypes) . PHP_EOL);
 
