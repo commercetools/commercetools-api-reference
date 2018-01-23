@@ -7197,6 +7197,384 @@
         ]
       }
     },
+    "/{projectKey}/extensions": {
+      "parameters": [
+        {
+          "name": "projectKey",
+          "in": "path",
+          "description": "projectKey",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "post": {
+        "description": "Create Extension",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ExtensionDraft"
+            }
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Extension"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_extensions:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "description": "Query extensions",
+        "parameters": [
+          {
+            "name": "where",
+            "in": "query",
+            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:limit"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:offset"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:withTotal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_extensions:{projectKey}"
+            ]
+          }
+        ]
+      }
+    },
+    "/{projectKey}/extensions/{ID}": {
+      "parameters": [
+        {
+          "name": "projectKey",
+          "in": "path",
+          "description": "projectKey",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "ID",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "delete": {
+        "description": "Delete Extension by ID",
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:versioned:version"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_extensions:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "description": "Get Extension by ID",
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_extensions:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "description": "Update Extension by ID",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ExtensionUpdate"
+            }
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_extensions:{projectKey}"
+            ]
+          }
+        ]
+      }
+    },
+    "/{projectKey}/extensions/key={key}": {
+      "parameters": [
+        {
+          "name": "projectKey",
+          "in": "path",
+          "description": "projectKey",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "key",
+          "in": "path",
+          "description": "key",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "delete": {
+        "description": "Delete Extension by key",
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:versioned:version"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_extensions:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "description": "Update Extension by key",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Update"
+            }
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_extensions:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "description": "Get Extension by key",
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_extensions:{projectKey}"
+            ]
+          }
+        ]
+      }
+    },
     "/{projectKey}/custom-objects": {
       "parameters": [
         {
@@ -15414,6 +15792,261 @@
         "attributes"
       ],
       "x-annotation-package": "Error"
+    },
+    "AzureFunctionsAuthentication": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/HttpDestinationAuthentication"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "key"
+          ]
+        }
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "Extension": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Resource"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string"
+            },
+            "destination": {
+              "$ref": "#/definitions/ExtensionDestination"
+            },
+            "triggers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ExtensionTrigger"
+              }
+            }
+          },
+          "required": [
+            "destination",
+            "triggers"
+          ]
+        }
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "ExtensionAction": {
+      "type": "string",
+      "enum": [
+        "Create",
+        "Update"
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "ExtensionChangeDestinationAction": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ExtensionUpdateAction"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "destination": {
+              "$ref": "#/definitions/ExtensionDestination"
+            }
+          },
+          "required": [
+            "destination"
+          ]
+        }
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "ExtensionChangeTriggersAction": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ExtensionUpdateAction"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "messages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ExtensionTrigger"
+              }
+            }
+          }
+        }
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "ExtensionDestination": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      },
+      "discriminator": "type",
+      "required": [
+        "type"
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "ExtensionDraft": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "destination": {
+          "$ref": "#/definitions/ExtensionDestination"
+        },
+        "triggers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExtensionTrigger"
+          }
+        }
+      },
+      "required": [
+        "destination",
+        "triggers"
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "ExtensionHttpDestination": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ExtensionDestination"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "authentication": {
+              "$ref": "#/definitions/HttpDestinationAuthentication"
+            }
+          },
+          "required": [
+            "url"
+          ]
+        }
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "ExtensionPagedQueryResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/PagedQueryResponse"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Extension"
+              }
+            }
+          },
+          "required": [
+            "results"
+          ]
+        }
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "ExtensionResourceTypeId": {
+      "type": "string",
+      "enum": [
+        "cart"
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "ExtensionSetKeyAction": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ExtensionUpdateAction"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "ExtensionTrigger": {
+      "type": "object",
+      "properties": {
+        "resourceTypeId": {
+          "$ref": "#/definitions/ExtensionResourceTypeId"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExtensionAction"
+          }
+        }
+      },
+      "required": [
+        "resourceTypeId",
+        "actions"
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "ExtensionUpdate": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Update"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "actions": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "required": [
+            "actions"
+          ]
+        }
+      ],
+      "x-annotation-package": "Extension"
+    },
+    "ExtensionUpdateAction": {
+      "discriminator": "action",
+      "x-annotation-package": "Extension",
+      "$ref": "#/definitions/UpdateAction"
+    },
+    "HttpDestinationAuthentication": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      },
+      "discriminator": "type",
+      "required": [
+        "type"
+      ],
+      "x-annotation-package": "Extension"
     },
     "InventoryAddQuantityAction": {
       "allOf": [
