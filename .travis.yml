@@ -1,5 +1,7 @@
 language: python
 
+services:
+  - docker
 python:
   - "3.5"
 node_js:
@@ -10,6 +12,7 @@ install:
 script:
 - node bin/explode-raml.js
 - find . -iname '*.raml' | xargs yamllint -c yamllint.conf
+- docker run -v$(pwd):/api -p5050:5050 vrapio/vrap -c /api/update-actions.raml
 branches:
   except:
 notifications:
