@@ -7,113 +7,114 @@ securitySchemes:
   oauth_2_0: !include securitySchemes/oauth2.raml
 securedBy: [ oauth_2_0 ]
 traits:
-    errorable: !include traits/errorable.raml
-    deprecatable: !include traits/deprecatable.raml
-    expandable: !include traits/expandable.raml
-    query: !include traits/query.raml
-    sortable: !include traits/sortable.raml
-    paging: !include traits/paging.raml
-    conflicting: !include traits/conflicting.raml
-    versioned: !include traits/versioned.raml
-    priceSelecting: !include traits/price-selecting.raml
+  errorable: !include traits/errorable.raml
+  deprecatable: !include traits/deprecatable.raml
+  expandable: !include traits/expandable.raml
+  query: !include traits/query.raml
+  sortable: !include traits/sortable.raml
+  paging: !include traits/paging.raml
+  conflicting: !include traits/conflicting.raml
+  versioned: !include traits/versioned.raml
+  priceSelecting: !include traits/price-selecting.raml
 annotationTypes: !include types/annotations.raml
 types: !include types/types.raml
 mediaType: application/json
 resourceTypes:
   baseDomain:
-      type: base
-      get:
-        is:
-          - expandable
-          - query:
-              whereExample: <<whereExample>>
-          - sortable:
-              sortExample: <<sortExample>>
-          - paging
-        description: Query <<resourcePathName>>
-        responses:
-          200:
-            body:
-              application/json:
-                example: <<resourceQueryExample>>
-                type: <<resourceQueryType>>
-      post?:
-        is:
-          - expandable
-        description: Create <<resourceType>>
-        body:
-          application/json:
-            example: <<resourceCreateExample>>
-            type: <<resourceDraft>>
-        responses:
-          201:
-            body:
-              application/json:
-                example: <<resourceExample>>
-                type: <<resourceType>>
+    type: base
+    get:
+      is:
+        - expandable
+        - query:
+            whereExample: <<whereExample>>
+        - sortable:
+            sortExample: <<sortExample>>
+        - paging
+      description: Query <<resourcePathName>>
+      responses:
+        200:
+          body:
+            application/json:
+              example: <<resourceQueryExample>>
+              type: <<resourceQueryType>>
+    post?:
+      is:
+        - expandable
+      description: Create <<resourceType>>
+      body:
+        application/json:
+          example: <<resourceCreateExample>>
+          type: <<resourceDraft>>
+      responses:
+        201:
+          body:
+            application/json:
+              example: <<resourceExample>>
+              type: <<resourceType>>
   baseResource:
-      type: base
-      uriParameters:
-        <<uriParameterName>>:
-          type: string
-      get:
-        is:
-          - expandable
-        description: Get <<resourceType>> by <<uriParameterName>>
-        responses:
-          200:
-            body:
-              application/json:
-                example: <<resourceExample>>
-                type: <<resourceType>>
-      post?:
-        is:
-          - conflicting
-          - expandable
-        description: Update <<resourceType>> by <<uriParameterName>>
-        body:
-          application/json:
-            example: <<resourceUpdateExample>>
-            type: <<resourceUpdateType>>
-        responses:
-          200:
-            body:
-              application/json:
-                example: <<resourceExample>>
-                type: <<resourceType>>
-      delete?:
-        is:
-          - versioned
-          - conflicting
-          - expandable
-        description: Delete <<resourceType>> by <<uriParameterName>>
-        responses:
-          200:
-            body:
-              application/json:
-                example: <<resourceExample>>
-                type: <<resourceType>>
+    type: base
+    uriParameters:
+      <<uriParameterName>>:
+        type: string
+    get:
+      is:
+        - expandable
+      description: Get <<resourceType>> by <<uriParameterName>>
+      responses:
+        200:
+          body:
+            application/json:
+              example: <<resourceExample>>
+              type: <<resourceType>>
+    post?:
+      is:
+        - conflicting
+        - expandable
+      description: Update <<resourceType>> by <<uriParameterName>>
+      body:
+        application/json:
+          example: <<resourceUpdateExample>>
+          type: <<resourceUpdateType>>
+      responses:
+        200:
+          body:
+            application/json:
+              example: <<resourceExample>>
+              type: <<resourceType>>
+    delete?:
+      is:
+        - versioned
+        - conflicting
+        - expandable
+      description: Delete <<resourceType>> by <<uriParameterName>>
+      responses:
+        200:
+          body:
+            application/json:
+              example: <<resourceExample>>
+              type: <<resourceType>>
   base:
-      get?:
-        is:
-          - errorable
-          - deprecatable
-      post?:
-        is:
-          - errorable
-          - deprecatable
-      delete?:
-        is:
-          - errorable
-          - deprecatable
+    get?:
+      is:
+        - errorable
+        - deprecatable
+    post?:
+      is:
+        - errorable
+        - deprecatable
+    delete?:
+      is:
+        - errorable
+        - deprecatable
 /{projectKey}:
   uriParameters:
     projectKey:
-        type: string
+      type: string
   displayName: Project
   description: The Project endpoint is used to retrieve certain information from a project.
   get:
-    description: The Endpoint is responding a limited set of information about settings and configuration of the project.
+    description: |
+      The Endpoint is responding a limited set of information about settings and configuration of the project.
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}"]}]
     responses:
       200:
@@ -161,4 +162,3 @@ resourceTypes:
   /zones: !include resources/zones.raml
   /me: !include resources/me.raml
   /extensions: !include resources/extensions.raml
-

@@ -1,104 +1,104 @@
 type: base
 get:
-    is:
-        - query:
-            whereExample: customerEmail = "foo@bar.com"
-        - sortable:
-            sortExample: createdAt asc
-        - paging
-        - expandable
-    securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
-    responses:
-        200:
-            body:
-                application/json:
-                    type: Customer
+  is:
+    - query:
+        whereExample: customerEmail = "foo@bar.com"
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+    - expandable
+  securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          type: Customer
 post:
-    description: Create a customer
+  description: Create a customer
+  securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include ../examples/customer-update.example.json
+      type: Update
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../examples/customer-update-response.example.json
+          type: Customer
+delete:
+  description: Delete a Customer
+  is:
+    - versioned
+    - conflicting
+  securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../examples/customer.example.json
+          type: Customer
+/email:
+  /confirm:
+    type: base
+    post:
+      securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
+/password:
+  type: base
+  post:
+    is:
+      - conflicting
     securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
     body:
-        application/json:
-            example: !include ../examples/customer-update.example.json
-            type: Update
+      application/json:
     responses:
-        200:
-            body:
-                application/json:
-                    example: !include ../examples/customer-update-response.example.json
-                    type: Customer
-delete:
-    description: Delete a Customer
-    is:
-        - versioned
-        - conflicting
-    securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
-    responses:
-        200:
-            body:
-                application/json:
-                    example: !include ../examples/customer.example.json
-                    type: Customer
-/email:
-    /confirm:
-        type: base
-        post:
-            securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
-/password:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customer.example.json
+            type: Customer
+  /reset:
     type: base
     post:
-        is:
-            - conflicting
-        securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
-        body:
+      securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
+      responses:
+        200:
+          body:
             application/json:
-        responses:
-            200:
-                body:
-                    application/json:
-                        example: !include ../examples/customer.example.json
-                        type: Customer
-    /reset:
-        type: base
-        post:
-            securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
-            responses:
-                200:
-                    body:
-                        application/json:
-                            example: !include ../examples/customer.example.json
-                            type: Customer
+              example: !include ../examples/customer.example.json
+              type: Customer
 /signup:
-    type: base
-    post:
-        securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
+  type: base
+  post:
+    securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
+    body:
+      application/json:
+        type: MyCustomerDraft
+    responses:
+      201:
         body:
-            application/json:
-                type: MyCustomerDraft
-        responses:
-            201:
-                body:
-                    application/json:
-                        type: CustomerSignInResult
+          application/json:
+            type: CustomerSignInResult
 /login:
-    type: base
-    post:
-        securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
+  type: base
+  post:
+    securedBy: [oauth_2_0: {scopes: ["manage_my_profile:{projectKey}"]}]
+    body:
+      application/json:
+    responses:
+      200:
         body:
-            application/json:
-        responses:
-            200:
-                body:
-                    application/json:
-                        type: CustomerSignInResult
+          application/json:
+            type: CustomerSignInResult
 /active-cart:
-    type: base
-    get:
-        securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
-        responses:
-            200:
-                body:
-                    application/json:
-                        type: Cart
+  type: base
+  get:
+    securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            type: Cart
 /carts:
   type:
     baseDomain:
@@ -157,4 +157,3 @@ delete:
       securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
     post:
       securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
-
