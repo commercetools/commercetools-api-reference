@@ -61,8 +61,15 @@ foreach ($types as $type) {
 }
 
 ksort($newTypes);
-$newTypes = array_values($newTypes);
 
-file_put_contents($baseDir . '/' . $typeDir . '/types.raml', implode(PHP_EOL, $newTypes) . PHP_EOL);
+$lintTypes = [];
+foreach ($newTypes as $newType) {
+    if (strlen($newType) > 120) {
+        $lintTypes[] = '# yamllint disable-line rule:line-length';
+    }
+    $lintTypes[] = $newType;
+}
+
+file_put_contents($baseDir . '/' . $typeDir . '/types.raml', implode(PHP_EOL, $lintTypes) . PHP_EOL);
 
 echo PHP_EOL;
