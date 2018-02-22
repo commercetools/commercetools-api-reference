@@ -30813,6 +30813,73 @@
                         "description": ""
                     },
                     "response": []
+                },{
+                    "name": "SetKey",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "tests[\"Status code \" + responseCode.code] = responseCode.code === 200 || responseCode.code === 201;",
+                                    "var data = JSON.parse(responseBody);",
+                                    "if(data.version){",
+                                    "    postman.setEnvironmentVariable(\"tax-category-version\", data.version);",
+                                    "}",
+                                    "if(data.id){",
+                                    "    postman.setEnvironmentVariable(\"tax-category-id\", data.id); ",
+                                    "}",
+                                    "if(data.key){",
+                                    "    postman.setEnvironmentVariable(\"tax-category-key\", data.key); ",
+                                    "}",
+                                    ""
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth":
+                            {
+                                "type": "oauth2",
+                                "oauth2": {
+                                    "accessToken": "{{ctp_access_token}}",
+                                    "addTokenTo": "header",
+                                    "tokenType": "Bearer"
+                                }
+                            },
+                        "method": "POST",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"version\": {{tax-category-version}},\n  \"actions\": [{\n    \"action\" : \"setKey\",\n    \"key\" : \"new Key\"\n  }]\n}"
+                        },
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{host}}/{{projectKey}}//tax-categories/{{tax-category-id}}",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "{{projectKey}}",
+                                "tax-categories",
+                                "{{tax-category-id}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "expand",
+                                    "value": "",
+                                    "equals": true,
+                                    "disabled": true
+                                }
+                            ]
+                        },
+                        "description": ""
+                    },
+                    "response": []
                 }
             ],
             "event": [

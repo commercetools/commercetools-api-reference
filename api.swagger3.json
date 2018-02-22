@@ -19954,11 +19954,6 @@
             "format": "int64",
             "type": "number"
           },
-          "availableQuantity": {
-            "title": "availableQuantity",
-            "format": "int64",
-            "type": "number"
-          },
           "restockableInDays": {
             "title": "restockableInDays",
             "format": "int64",
@@ -27259,6 +27254,37 @@
         "x-annotation-package": "Product",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#product-search-keywords-suggest-examples"
       },
+      "Suggestion": {
+        "title": "Suggestion",
+        "includePath": "types/product/Suggestion.raml",
+        "type": "object",
+        "properties": {
+          "text": {
+            "title": "text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "x-annotation-package": "Product",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products-suggestions.html#suggestion"
+      },
+      "SuggestionResult": {
+        "title": "SuggestionResult",
+        "includePath": "types/product/SuggestionResult.raml",
+        "type": "object",
+        "additionalProperties": {
+          "title": "/searchKeywords.[a-z]{2}(-[A-Z]{2})?/",
+          "required": true,
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Suggestion"
+          }
+        },
+        "x-annotation-package": "Product",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products-suggestions.html#suggestionresult"
+      },
       "TermFacetResult": {
         "title": "TermFacetResult",
         "includePath": "types/product/TermFacetResult.raml",
@@ -29792,6 +29818,52 @@
         "x-annotation-package": "Subscription",
         "type": "string"
       },
+      "MessageDelivery": {
+        "title": "MessageDelivery",
+        "includePath": "types/subscription/MessageDelivery.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SubscriptionDelivery"
+          },
+          {
+            "properties": {
+              "id": {
+                "title": "id",
+                "type": "string"
+              },
+              "version": {
+                "title": "version",
+                "format": "int64",
+                "type": "number"
+              },
+              "createdAt": {
+                "title": "createdAt",
+                "type": "string",
+                "format": "date-time"
+              },
+              "lastModifiedAt": {
+                "title": "lastModifiedAt",
+                "type": "string",
+                "format": "date-time"
+              },
+              "sequenceNumber": {
+                "title": "sequenceNumber",
+                "format": "int64",
+                "type": "number"
+              },
+              "resourceVersion": {
+                "title": "resourceVersion",
+                "format": "int64",
+                "type": "number"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Subscription",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#message-subscription-payload",
+        "type": "string"
+      },
       "MessageSubscription": {
         "title": "MessageSubscription",
         "includePath": "types/subscription/MessageSubscription.raml",
@@ -29813,6 +29885,77 @@
           "resourceTypeId"
         ],
         "x-annotation-package": "Subscription"
+      },
+      "ResourceCreatedDelivery": {
+        "title": "ResourceCreatedDelivery",
+        "includePath": "types/subscription/ResourceCreatedDelivery.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SubscriptionDelivery"
+          },
+          {
+            "properties": {
+              "version": {
+                "title": "version",
+                "format": "int64",
+                "type": "number"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Subscription",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#resourcecreated-payload",
+        "type": "string"
+      },
+      "ResourceDeletedDelivery": {
+        "title": "ResourceDeletedDelivery",
+        "includePath": "types/subscription/ResourceDeletedDelivery.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SubscriptionDelivery"
+          },
+          {
+            "properties": {
+              "version": {
+                "title": "version",
+                "format": "int64",
+                "type": "number"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Subscription",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#resourcedeleted-payload",
+        "type": "string"
+      },
+      "ResourceUpdatedDelivery": {
+        "title": "ResourceUpdatedDelivery",
+        "includePath": "types/subscription/ResourceUpdatedDelivery.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SubscriptionDelivery"
+          },
+          {
+            "properties": {
+              "version": {
+                "title": "version",
+                "format": "int64",
+                "type": "number"
+              },
+              "oldVersion": {
+                "title": "oldVersion",
+                "format": "int64",
+                "type": "number"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Subscription",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#resourceupdated-payload",
+        "type": "string"
       },
       "SnsDestination": {
         "title": "SnsDestination",
@@ -29912,6 +30055,35 @@
         "x-annotation-package": "Subscription",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#subscription",
         "type": "string"
+      },
+      "SubscriptionDelivery": {
+        "title": "SubscriptionDelivery",
+        "includePath": "types/subscription/SubscriptionDelivery.raml",
+        "type": "object",
+        "discriminator": {
+          "propertyName": "notificationType"
+        },
+        "properties": {
+          "projectKey": {
+            "title": "projectKey",
+            "type": "string"
+          },
+          "notificationType": {
+            "title": "notificationType",
+            "type": "string"
+          },
+          "resource": {
+            "title": "resource",
+            "$ref": "#/components/schemas/Reference"
+          }
+        },
+        "required": [
+          "projectKey",
+          "notificationType",
+          "resource"
+        ],
+        "x-annotation-package": "Subscription",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#delivery"
       },
       "SubscriptionDraft": {
         "title": "SubscriptionDraft",
@@ -30315,6 +30487,30 @@
             "properties": {
               "description": {
                 "title": "description",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "TaxCategory",
+        "type": "string"
+      },
+      "TaxCategorySetKeyAction": {
+        "title": "TaxCategorySetKeyAction",
+        "example": {
+          "action": "setKey",
+          "key": "new Key"
+        },
+        "includePath": "types/tax-category/TaxCategorySetKeyAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TaxCategoryUpdateAction"
+          },
+          {
+            "properties": {
+              "key": {
+                "title": "key",
                 "type": "string"
               }
             },

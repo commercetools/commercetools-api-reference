@@ -7439,11 +7439,6 @@
           "format": "int64",
           "type": "number"
         },
-        "availableQuantity": {
-          "title": "availableQuantity",
-          "format": "int64",
-          "type": "number"
-        },
         "restockableInDays": {
           "title": "restockableInDays",
           "format": "int64",
@@ -14805,6 +14800,35 @@
       "x-annotation-package": "Product",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#product-search-keywords-suggest-examples"
     },
+    "Suggestion": {
+      "title": "Suggestion",
+      "type": "object",
+      "properties": {
+        "text": {
+          "title": "text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "x-annotation-package": "Product",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products-suggestions.html#suggestion"
+    },
+    "SuggestionResult": {
+      "title": "SuggestionResult",
+      "type": "object",
+      "additionalProperties": {
+        "title": "/searchKeywords.[a-z]{2}(-[A-Z]{2})?/",
+        "required": true,
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Suggestion"
+        }
+      },
+      "x-annotation-package": "Product",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products-suggestions.html#suggestionresult"
+    },
     "TermFacetResult": {
       "title": "TermFacetResult",
       "allOf": [
@@ -17334,6 +17358,58 @@
       ],
       "x-annotation-package": "Subscription"
     },
+    "MessageDelivery": {
+      "title": "MessageDelivery",
+      "allOf": [
+        {
+          "$ref": "#/definitions/SubscriptionDelivery"
+        },
+        {
+          "properties": {
+            "id": {
+              "title": "id",
+              "type": "string"
+            },
+            "version": {
+              "title": "version",
+              "format": "int64",
+              "type": "number"
+            },
+            "createdAt": {
+              "title": "createdAt",
+              "type": "string",
+              "format": "date-time"
+            },
+            "lastModifiedAt": {
+              "title": "lastModifiedAt",
+              "type": "string",
+              "format": "date-time"
+            },
+            "sequenceNumber": {
+              "title": "sequenceNumber",
+              "format": "int64",
+              "type": "number"
+            },
+            "resourceVersion": {
+              "title": "resourceVersion",
+              "format": "int64",
+              "type": "number"
+            }
+          },
+          "required": [
+            "id",
+            "version",
+            "createdAt",
+            "lastModifiedAt",
+            "sequenceNumber",
+            "resourceVersion"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Subscription",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#message-subscription-payload"
+    },
     "MessageSubscription": {
       "title": "MessageSubscription",
       "type": "object",
@@ -17354,6 +17430,81 @@
         "resourceTypeId"
       ],
       "x-annotation-package": "Subscription"
+    },
+    "ResourceCreatedDelivery": {
+      "title": "ResourceCreatedDelivery",
+      "allOf": [
+        {
+          "$ref": "#/definitions/SubscriptionDelivery"
+        },
+        {
+          "properties": {
+            "version": {
+              "title": "version",
+              "format": "int64",
+              "type": "number"
+            }
+          },
+          "required": [
+            "version"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Subscription",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#resourcecreated-payload"
+    },
+    "ResourceDeletedDelivery": {
+      "title": "ResourceDeletedDelivery",
+      "allOf": [
+        {
+          "$ref": "#/definitions/SubscriptionDelivery"
+        },
+        {
+          "properties": {
+            "version": {
+              "title": "version",
+              "format": "int64",
+              "type": "number"
+            }
+          },
+          "required": [
+            "version"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Subscription",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#resourcedeleted-payload"
+    },
+    "ResourceUpdatedDelivery": {
+      "title": "ResourceUpdatedDelivery",
+      "allOf": [
+        {
+          "$ref": "#/definitions/SubscriptionDelivery"
+        },
+        {
+          "properties": {
+            "version": {
+              "title": "version",
+              "format": "int64",
+              "type": "number"
+            },
+            "oldVersion": {
+              "title": "oldVersion",
+              "format": "int64",
+              "type": "number"
+            }
+          },
+          "required": [
+            "version",
+            "oldVersion"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Subscription",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#resourceupdated-payload"
     },
     "SnsDestination": {
       "title": "SnsDestination",
@@ -17463,6 +17614,32 @@
       ],
       "x-annotation-package": "Subscription",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#subscription"
+    },
+    "SubscriptionDelivery": {
+      "title": "SubscriptionDelivery",
+      "discriminator": "notificationType",
+      "type": "object",
+      "properties": {
+        "projectKey": {
+          "title": "projectKey",
+          "type": "string"
+        },
+        "notificationType": {
+          "title": "notificationType",
+          "type": "string"
+        },
+        "resource": {
+          "title": "resource",
+          "$ref": "#/definitions/Reference"
+        }
+      },
+      "required": [
+        "projectKey",
+        "notificationType",
+        "resource"
+      ],
+      "x-annotation-package": "Subscription",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#delivery"
     },
     "SubscriptionDraft": {
       "title": "SubscriptionDraft",
@@ -17861,6 +18038,28 @@
           "properties": {
             "description": {
               "title": "description",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "TaxCategory"
+    },
+    "TaxCategorySetKeyAction": {
+      "title": "TaxCategorySetKeyAction",
+      "example": {
+        "action": "setKey",
+        "key": "new Key"
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/TaxCategoryUpdateAction"
+        },
+        {
+          "properties": {
+            "key": {
+              "title": "key",
               "type": "string"
             }
           },
