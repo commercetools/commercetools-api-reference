@@ -172,6 +172,10 @@
               "title": "stackingMode",
               "description": "Specifies whether the application of this discount causes the following discounts to be ignored.\nDefaults to Stacking.\n",
               "$ref": "#/definitions/StackingMode"
+            },
+            "custom": {
+              "title": "custom",
+              "$ref": "#/definitions/CustomFields"
             }
           },
           "required": [
@@ -483,6 +487,10 @@
           "title": "stackingMode",
           "description": "Specifies whether the application of this discount causes the following discounts to be ignored.\nDefaults to Stacking.\n",
           "$ref": "#/definitions/StackingMode"
+        },
+        "custom": {
+          "title": "custom",
+          "$ref": "#/definitions/CustomFields"
         }
       },
       "required": [
@@ -1058,6 +1066,10 @@
               "items": {
                 "$ref": "#/definitions/CartDiscountReference"
               }
+            },
+            "origin": {
+              "title": "origin",
+              "$ref": "#/definitions/CartOrigin"
             }
           },
           "required": [
@@ -1065,7 +1077,8 @@
             "customLineItems",
             "totalPrice",
             "cartState",
-            "refusedGifts"
+            "refusedGifts",
+            "origin"
           ],
           "type": "object"
         }
@@ -1194,6 +1207,15 @@
               "title": "productId",
               "type": "string"
             },
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
+            },
+            "sku": {
+              "title": "sku",
+              "type": "string"
+            },
             "quantity": {
               "title": "quantity",
               "default": 1,
@@ -1202,10 +1224,6 @@
             "supplyChannel": {
               "title": "supplyChannel",
               "$ref": "#/definitions/ChannelReference"
-            },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
             },
             "externalPrice": {
               "title": "externalPrice",
@@ -1216,10 +1234,6 @@
               "$ref": "#/definitions/ExternalLineItemTotalPrice"
             }
           },
-          "required": [
-            "productId",
-            "variantId"
-          ],
           "type": "object"
         }
       ],
@@ -1557,6 +1571,10 @@
           "title": "deleteDaysAfterLastModification",
           "format": "int64",
           "type": "number"
+        },
+        "origin": {
+          "title": "origin",
+          "$ref": "#/definitions/CartOrigin"
         }
       },
       "required": [
@@ -1564,6 +1582,16 @@
       ],
       "x-annotation-package": "Cart",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#cartdraft"
+    },
+    "CartOrigin": {
+      "title": "CartOrigin",
+      "enum": [
+        "Customer",
+        "Merchant"
+      ],
+      "type": "string",
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#cartorigin"
     },
     "CartPagedQueryResponse": {
       "title": "CartPagedQueryResponse",
@@ -3155,15 +3183,30 @@
         "discountedPrice": {
           "title": "discountedPrice",
           "$ref": "#/definitions/DiscountedLineItemPrice"
+        },
+        "shippingMethodState": {
+          "title": "shippingMethodState",
+          "$ref": "#/definitions/ShippingMethodState"
         }
       },
       "required": [
         "shippingMethodName",
         "price",
-        "shippingRate"
+        "shippingRate",
+        "shippingMethodState"
       ],
       "x-annotation-package": "Cart",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#shippinginfo"
+    },
+    "ShippingMethodState": {
+      "title": "ShippingMethodState",
+      "enum": [
+        "DoesNotMatchCart",
+        "MatchesCart"
+      ],
+      "type": "string",
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#shippingmethodstate"
     },
     "TaxCalculationMode": {
       "title": "TaxCalculationMode",
@@ -3347,6 +3390,11 @@
             "asset": {
               "title": "asset",
               "$ref": "#/definitions/AssetDraft"
+            },
+            "position": {
+              "title": "position",
+              "format": "int64",
+              "type": "number"
             }
           },
           "required": [
@@ -3366,6 +3414,10 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
@@ -3376,7 +3428,6 @@
             }
           },
           "required": [
-            "assetId",
             "name"
           ],
           "type": "object"
@@ -3617,14 +3668,15 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
             }
           },
-          "required": [
-            "assetId"
-          ],
           "type": "object"
         }
       ],
@@ -3639,6 +3691,10 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
@@ -3653,7 +3709,6 @@
             }
           },
           "required": [
-            "assetId",
             "name"
           ],
           "type": "object"
@@ -3670,6 +3725,10 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
@@ -3684,7 +3743,6 @@
             }
           },
           "required": [
-            "assetId",
             "type",
             "fields"
           ],
@@ -3702,6 +3760,10 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
@@ -3711,9 +3773,6 @@
               "$ref": "#/definitions/LocalizedString"
             }
           },
-          "required": [
-            "assetId"
-          ],
           "type": "object"
         }
       ],
@@ -3728,6 +3787,10 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
@@ -3741,7 +3804,6 @@
             }
           },
           "required": [
-            "assetId",
             "sources"
           ],
           "type": "object"
@@ -3758,6 +3820,10 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
@@ -3771,7 +3837,6 @@
             }
           },
           "required": [
-            "assetId",
             "tags"
           ],
           "type": "object"
@@ -4533,6 +4598,10 @@
         "custom": {
           "title": "custom",
           "$ref": "#/definitions/CustomFields"
+        },
+        "key": {
+          "title": "key",
+          "type": "string"
         }
       },
       "required": [
@@ -4590,6 +4659,10 @@
         "custom": {
           "title": "custom",
           "$ref": "#/definitions/CustomFieldsDraft"
+        },
+        "key": {
+          "title": "key",
+          "type": "string"
         }
       },
       "required": [
@@ -5169,6 +5242,10 @@
             "name": {
               "title": "name",
               "type": "string"
+            },
+            "custom": {
+              "title": "custom",
+              "$ref": "#/definitions/CustomFields"
             }
           },
           "required": [
@@ -5213,6 +5290,10 @@
         "groupName": {
           "title": "groupName",
           "type": "string"
+        },
+        "custom": {
+          "title": "custom",
+          "$ref": "#/definitions/CustomFields"
         }
       },
       "required": [
@@ -5422,6 +5503,10 @@
             },
             "salutation": {
               "title": "salutation",
+              "type": "string"
+            },
+            "key": {
+              "title": "key",
               "type": "string"
             }
           },
@@ -5725,6 +5810,10 @@
         },
         "salutation": {
           "title": "salutation",
+          "type": "string"
+        },
+        "key": {
+          "title": "key",
           "type": "string"
         }
       },
@@ -6390,6 +6479,27 @@
               "title": "maxApplicationsPerCustomer",
               "format": "int64",
               "type": "number"
+            },
+            "custom": {
+              "title": "custom",
+              "$ref": "#/definitions/CustomFields"
+            },
+            "groups": {
+              "title": "groups",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "validFrom": {
+              "title": "validFrom",
+              "type": "string",
+              "format": "date-time"
+            },
+            "validUntil": {
+              "title": "validUntil",
+              "type": "string",
+              "format": "date-time"
             }
           },
           "required": [
@@ -6469,6 +6579,27 @@
           "title": "maxApplicationsPerCustomer",
           "format": "int64",
           "type": "number"
+        },
+        "custom": {
+          "title": "custom",
+          "$ref": "#/definitions/CustomFields"
+        },
+        "groups": {
+          "title": "groups",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validFrom": {
+          "title": "validFrom",
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "title": "validUntil",
+          "type": "string",
+          "format": "date-time"
         }
       },
       "required": [
@@ -8869,11 +9000,16 @@
             "productProjection": {
               "title": "productProjection",
               "$ref": "#/definitions/ProductProjection"
+            },
+            "scope": {
+              "title": "scope",
+              "$ref": "#/definitions/ProductPublishScope"
             }
           },
           "required": [
             "removedImageUrls",
-            "productProjection"
+            "productProjection",
+            "scope"
           ],
           "type": "object"
         }
@@ -9117,6 +9253,10 @@
           "items": {
             "$ref": "#/definitions/Parcel"
           }
+        },
+        "address": {
+          "title": "address",
+          "$ref": "#/definitions/Address"
         }
       },
       "required": [
@@ -9361,6 +9501,14 @@
             "inventoryMode": {
               "title": "inventoryMode",
               "$ref": "#/definitions/InventoryMode"
+            },
+            "origin": {
+              "title": "origin",
+              "$ref": "#/definitions/CartOrigin"
+            },
+            "taxCalculationMode": {
+              "title": "taxCalculationMode",
+              "$ref": "#/definitions/TaxCalculationMode"
             }
           },
           "required": [
@@ -9369,7 +9517,8 @@
             "totalPrice",
             "orderState",
             "syncInfo",
-            "lastMessageSequenceNumber"
+            "lastMessageSequenceNumber",
+            "origin"
           ],
           "type": "object"
         }
@@ -9398,6 +9547,10 @@
               "items": {
                 "$ref": "#/definitions/Parcel"
               }
+            },
+            "address": {
+              "title": "address",
+              "$ref": "#/definitions/Address"
             }
           },
           "required": [
@@ -9429,6 +9582,13 @@
             "trackingData": {
               "title": "trackingData",
               "$ref": "#/definitions/TrackingData"
+            },
+            "items": {
+              "title": "items",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DeliveryItem"
+              }
             }
           },
           "required": [
@@ -10325,6 +10485,13 @@
         "trackingData": {
           "title": "trackingData",
           "$ref": "#/definitions/TrackingData"
+        },
+        "items": {
+          "title": "items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DeliveryItem"
+          }
         }
       },
       "required": [
@@ -11317,6 +11484,10 @@
             "state": {
               "title": "state",
               "$ref": "#/definitions/StateReference"
+            },
+            "force": {
+              "title": "force",
+              "type": "boolean"
             }
           },
           "type": "object"
@@ -11487,6 +11658,16 @@
               "items": {
                 "$ref": "#/definitions/Reference"
               }
+            },
+            "validFrom": {
+              "title": "validFrom",
+              "type": "string",
+              "format": "date-time"
+            },
+            "validUntil": {
+              "title": "validUntil",
+              "type": "string",
+              "format": "date-time"
             }
           },
           "required": [
@@ -11640,6 +11821,16 @@
         "isActive": {
           "title": "isActive",
           "type": "boolean"
+        },
+        "validFrom": {
+          "title": "validFrom",
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "title": "validUntil",
+          "type": "string",
+          "format": "date-time"
         }
       },
       "required": [
@@ -11678,7 +11869,20 @@
     },
     "ProductDiscountReference": {
       "title": "ProductDiscountReference",
-      "$ref": "#/definitions/Reference",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Reference"
+        },
+        {
+          "properties": {
+            "obj": {
+              "title": "obj",
+              "$ref": "#/definitions/ProductDiscount"
+            }
+          },
+          "type": "object"
+        }
+      ],
       "x-annotation-package": "ProductDiscount",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-productDiscounts.html#productdiscount"
     },
@@ -12943,10 +13147,20 @@
             "variantId": {
               "title": "variantId",
               "type": "integer"
+            },
+            "staged": {
+              "title": "staged",
+              "type": "boolean"
+            },
+            "position": {
+              "title": "position",
+              "format": "int64",
+              "type": "number"
             }
           },
           "required": [
-            "asset"
+            "asset",
+            "position"
           ],
           "type": "object"
         }
@@ -13142,6 +13356,10 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
@@ -13164,7 +13382,6 @@
             }
           },
           "required": [
-            "assetId",
             "name"
           ],
           "type": "object"
@@ -13711,9 +13928,32 @@
     },
     "ProductPublishAction": {
       "title": "ProductPublishAction",
-      "$ref": "#/definitions/ProductUpdateAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ProductUpdateAction"
+        },
+        {
+          "properties": {
+            "scope": {
+              "title": "scope",
+              "$ref": "#/definitions/ProductPublishScope"
+            }
+          },
+          "type": "object"
+        }
+      ],
       "x-annotation-package": "Product",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#publish"
+    },
+    "ProductPublishScope": {
+      "title": "ProductPublishScope",
+      "enum": [
+        "All",
+        "Prices"
+      ],
+      "type": "string",
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#cartorigin"
     },
     "ProductReference": {
       "title": "ProductReference",
@@ -13742,6 +13982,10 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
@@ -13759,9 +14003,6 @@
               "type": "boolean"
             }
           },
-          "required": [
-            "assetId"
-          ],
           "type": "object"
         }
       ],
@@ -13895,6 +14136,10 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
@@ -13921,7 +14166,6 @@
             }
           },
           "required": [
-            "assetId",
             "name"
           ],
           "type": "object"
@@ -13938,6 +14182,10 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
@@ -13963,9 +14211,6 @@
               "type": "integer"
             }
           },
-          "required": [
-            "assetId"
-          ],
           "type": "object"
         }
       ],
@@ -13980,6 +14225,10 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
@@ -14001,9 +14250,6 @@
               "type": "boolean"
             }
           },
-          "required": [
-            "assetId"
-          ],
           "type": "object"
         }
       ],
@@ -14018,6 +14264,10 @@
         },
         {
           "properties": {
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "assetId": {
               "title": "assetId",
               "type": "string"
@@ -14042,9 +14292,6 @@
               "type": "boolean"
             }
           },
-          "required": [
-            "assetId"
-          ],
           "type": "object"
         }
       ],
@@ -14235,6 +14482,10 @@
             "metaDescription": {
               "title": "metaDescription",
               "$ref": "#/definitions/LocalizedString"
+            },
+            "staged": {
+              "title": "staged",
+              "type": "boolean"
             }
           },
           "type": "object"
@@ -14254,6 +14505,10 @@
             "metaKeywords": {
               "title": "metaKeywords",
               "$ref": "#/definitions/LocalizedString"
+            },
+            "staged": {
+              "title": "staged",
+              "type": "boolean"
             }
           },
           "type": "object"
@@ -14273,6 +14528,10 @@
             "metaTitle": {
               "title": "metaTitle",
               "$ref": "#/definitions/LocalizedString"
+            },
+            "staged": {
+              "title": "staged",
+              "type": "boolean"
             }
           },
           "type": "object"
@@ -14723,6 +14982,51 @@
       "x-annotation-package": "Product",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#productvariantdraft"
     },
+    "ProductsSetAssetSourcesAction": {
+      "title": "ProductsSetAssetSourcesAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ProductUpdateAction"
+        },
+        {
+          "properties": {
+            "variantId": {
+              "title": "variantId",
+              "type": "integer"
+            },
+            "sku": {
+              "title": "sku",
+              "type": "string"
+            },
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
+            "assetId": {
+              "title": "assetId",
+              "type": "string"
+            },
+            "staged": {
+              "title": "staged",
+              "type": "boolean"
+            },
+            "sources": {
+              "title": "sources",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AssetSource"
+              }
+            }
+          },
+          "required": [
+            "sources"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Products",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#set-asset-sources"
+    },
     "RangeFacetResult": {
       "title": "RangeFacetResult",
       "allOf": [
@@ -14898,6 +15202,11 @@
       "title": "Project",
       "type": "object",
       "properties": {
+        "version": {
+          "title": "version",
+          "format": "int64",
+          "type": "number"
+        },
         "key": {
           "title": "key",
           "type": "string"
@@ -14943,6 +15252,7 @@
         }
       },
       "required": [
+        "version",
         "key",
         "name",
         "countries",
@@ -15590,6 +15900,10 @@
             "isDefault": {
               "title": "isDefault",
               "type": "boolean"
+            },
+            "predicate": {
+              "title": "predicate",
+              "type": "string"
             }
           },
           "required": [
@@ -15749,6 +16063,10 @@
         "isDefault": {
           "title": "isDefault",
           "type": "boolean"
+        },
+        "predicate": {
+          "title": "predicate",
+          "type": "string"
         }
       },
       "required": [
@@ -15786,7 +16104,20 @@
     },
     "ShippingMethodReference": {
       "title": "ShippingMethodReference",
-      "$ref": "#/definitions/Reference",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Reference"
+        },
+        {
+          "properties": {
+            "obj": {
+              "title": "obj",
+              "$ref": "#/definitions/ShippingMethod"
+            }
+          },
+          "type": "object"
+        }
+      ],
       "x-annotation-package": "ShippingMethod",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-shippingMethods.html#shippingmethod"
     },
@@ -16031,22 +16362,24 @@
               "title": "custom",
               "$ref": "#/definitions/CustomFieldsDraft"
             },
+            "sku": {
+              "title": "sku",
+              "type": "string"
+            },
             "productId": {
               "title": "productId",
               "type": "string"
             },
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
+            },
             "quantity": {
               "title": "quantity",
               "type": "number"
-            },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
             }
           },
-          "required": [
-            "productId"
-          ],
           "type": "object"
         }
       ],
@@ -16076,6 +16409,11 @@
             "quantity": {
               "title": "quantity",
               "type": "number"
+            },
+            "addedAt": {
+              "title": "addedAt",
+              "type": "string",
+              "format": "date-time"
             }
           },
           "required": [
@@ -17832,6 +18170,10 @@
               "items": {
                 "$ref": "#/definitions/TaxRate"
               }
+            },
+            "key": {
+              "title": "key",
+              "type": "string"
             }
           },
           "required": [
@@ -17914,6 +18256,10 @@
           "items": {
             "$ref": "#/definitions/TaxRateDraft"
           }
+        },
+        "key": {
+          "title": "key",
+          "type": "string"
         }
       },
       "required": [
@@ -19333,6 +19679,7 @@
             "description": "",
             "examples": {
               "application/json": {
+                "version": 1,
                 "key": "test-project",
                 "name": "Some project name",
                 "countries": [
@@ -19389,6 +19736,7 @@
             "description": "",
             "examples": {
               "application/json": {
+                "version": 1,
                 "key": "test-project",
                 "name": "Some project name",
                 "countries": [
@@ -19588,7 +19936,8 @@
                 "inventoryMode": "None",
                 "taxMode": "Platform",
                 "taxRoundingMode": "HalfEven",
-                "refusedGifts": []
+                "refusedGifts": [],
+                "origin": "Customer"
               }
             },
             "schema": {
@@ -22757,7 +23106,8 @@
                 ],
                 "customLineItems": [],
                 "discountCodes": [],
-                "lastMessageSequenceNumber": 1
+                "lastMessageSequenceNumber": 1,
+                "origin": "Customer"
               }
             },
             "schema": {
@@ -23082,7 +23432,8 @@
                 ],
                 "customLineItems": [],
                 "discountCodes": [],
-                "lastMessageSequenceNumber": 1
+                "lastMessageSequenceNumber": 1,
+                "origin": "Customer"
               }
             },
             "schema": {
@@ -30761,7 +31112,8 @@
                 "inventoryMode": "None",
                 "taxMode": "Platform",
                 "taxRoundingMode": "HalfEven",
-                "refusedGifts": []
+                "refusedGifts": [],
+                "origin": "Customer"
               }
             },
             "schema": {
@@ -31162,7 +31514,8 @@
                 ],
                 "customLineItems": [],
                 "discountCodes": [],
-                "lastMessageSequenceNumber": 1
+                "lastMessageSequenceNumber": 1,
+                "origin": "Customer"
               }
             },
             "schema": {
