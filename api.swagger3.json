@@ -517,6 +517,162 @@
       ],
       "x-annotation-methodName": "withId"
     },
+    "/{projectKey}/carts/replicate": {
+      "post": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "example": {
+                  "type": "Cart",
+                  "id": "2a3baa00-44fa-4ab8-bec7-933c31e18dcc",
+                  "version": 5,
+                  "createdAt": "2015-09-22T15:36:17.510Z",
+                  "lastModifiedAt": "2015-09-22T15:41:55.816Z",
+                  "lineItems": [
+                    {
+                      "id": "b925a817-d5ad-48bb-a407-29ad8e0649b5",
+                      "productId": "9f10dcfb-5cc9-4a18-843a-c07f7e22d01f",
+                      "name": {
+                        "en": "SAPPHIRE"
+                      },
+                      "productType": {
+                        "typeId": "product-type",
+                        "id": "2543e1d8-4915-4f72-a3c9-1df9b1b0082d",
+                        "version": 8
+                      },
+                      "productSlug": {
+                        "en": "sapphire1421832124423"
+                      },
+                      "variant": {
+                        "id": 1,
+                        "sku": "sku_SAPPHIRE_variant1_1421832124423",
+                        "prices": [
+                          {
+                            "value": {
+                              "type": "centPrecision",
+                              "fractionDigits": 2,
+                              "currencyCode": "EUR",
+                              "centAmount": 2800
+                            },
+                            "id": "8da659ef-9e54-447d-9c36-84912db1848f"
+                          }
+                        ],
+                        "images": [
+                          {
+                            "url": "https://www.commercetools.com/cli/data/252542005_1.jpg",
+                            "dimensions": {
+                              "w": 1400,
+                              "h": 1400
+                            }
+                          }
+                        ],
+                        "attributes": [],
+                        "assets": []
+                      },
+                      "price": {
+                        "value": {
+                          "type": "centPrecision",
+                          "fractionDigits": 2,
+                          "currencyCode": "EUR",
+                          "centAmount": 2800
+                        },
+                        "id": "8da659ef-9e54-447d-9c36-84912db1848f"
+                      },
+                      "quantity": 2,
+                      "discountedPricePerQuantity": [],
+                      "state": [
+                        {
+                          "quantity": 2,
+                          "state": {
+                            "typeId": "state",
+                            "id": "7c2e2694-aefe-43d7-888e-6a99514caaca"
+                          }
+                        }
+                      ],
+                      "priceMode": "Platform",
+                      "lineItemMode": "Standard",
+                      "totalPrice": {
+                        "type": "centPrecision",
+                        "fractionDigits": 2,
+                        "currencyCode": "EUR",
+                        "centAmount": 5600
+                      }
+                    }
+                  ],
+                  "cartState": "Active",
+                  "totalPrice": {
+                    "type": "centPrecision",
+                    "fractionDigits": 2,
+                    "currencyCode": "EUR",
+                    "centAmount": 5600
+                  },
+                  "customLineItems": [],
+                  "discountCodes": [],
+                  "inventoryMode": "None",
+                  "taxMode": "Platform",
+                  "taxRoundingMode": "HalfEven",
+                  "refusedGifts": [],
+                  "origin": "Customer"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "operationId": "POST_projectKey-carts-replicate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "application/json",
+                "includePath": "resources/carts.raml",
+                "$ref": "#/components/schemas/ReplicaCartDraft"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_orders:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "projectKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "includePath": "api.raml",
+            "type": "string"
+          },
+          "description": "projectKey"
+        }
+      ]
+    },
     "/{projectKey}/cart-discounts": {
       "get": {
         "responses": {
@@ -16040,6 +16196,22 @@
         "type": "string",
         "x-annotation-package": "Cart"
       },
+      "ReplicaCartDraft": {
+        "title": "ReplicaCartDraft",
+        "includePath": "types/cart/ReplicaCartDraft.raml",
+        "type": "object",
+        "properties": {
+          "reference": {
+            "title": "reference",
+            "$ref": "#/components/schemas/Reference"
+          }
+        },
+        "required": [
+          "reference"
+        ],
+        "x-annotation-package": "Cart",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#replicacartdraft"
+      },
       "RoundingMode": {
         "title": "RoundingMode",
         "enum": [
@@ -17878,7 +18050,11 @@
           "type": "string"
         },
         "x-annotation-package": "Common",
-        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-types.html#localizedstring"
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-types.html#localizedstring",
+        "x-annotation-asMap": {
+          "key": "string",
+          "value": "string"
+        }
       },
       "Money": {
         "title": "Money",
@@ -21348,6 +21524,90 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#customlineitemstatetransition-message",
         "type": "string"
       },
+      "CustomerAddressAddedMessage": {
+        "title": "CustomerAddressAddedMessage",
+        "includePath": "types/message/CustomerAddressAddedMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "address": {
+                "title": "address",
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#customeraddressadded-message",
+        "type": "string"
+      },
+      "CustomerAddressChangedMessage": {
+        "title": "CustomerAddressChangedMessage",
+        "includePath": "types/message/CustomerAddressChangedMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "address": {
+                "title": "address",
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#customeraddresschanged-message",
+        "type": "string"
+      },
+      "CustomerAddressRemovedMessage": {
+        "title": "CustomerAddressRemovedMessage",
+        "includePath": "types/message/CustomerAddressRemovedMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "address": {
+                "title": "address",
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#customeraddressremoved-message",
+        "type": "string"
+      },
+      "CustomerCompanyNameSetMessage": {
+        "title": "CustomerCompanyNameSetMessage",
+        "includePath": "types/message/CustomerCompanyNameSetMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "companyName": {
+                "title": "companyName",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#customercompanynameset-message",
+        "type": "string"
+      },
       "CustomerCreatedMessage": {
         "title": "CustomerCreatedMessage",
         "includePath": "types/message/CustomerCreatedMessage.raml",
@@ -21367,6 +21627,77 @@
         ],
         "x-annotation-package": "Message",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#customercreated-message",
+        "type": "string"
+      },
+      "CustomerDateOfBirthSetMessage": {
+        "title": "CustomerDateOfBirthSetMessage",
+        "includePath": "types/message/CustomerDateOfBirthSetMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "dateOfBirth": {
+                "title": "dateOfBirth",
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#customerdateofbirthset-message",
+        "type": "string"
+      },
+      "CustomerEmailChangedMessage": {
+        "title": "CustomerEmailChangedMessage",
+        "includePath": "types/message/CustomerEmailChangedMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "email": {
+                "title": "email",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#customeremailchanged-message",
+        "type": "string"
+      },
+      "CustomerEmailVerifiedMessage": {
+        "title": "CustomerEmailVerifiedMessage",
+        "includePath": "types/message/CustomerEmailVerifiedMessage.raml",
+        "$ref": "#/components/schemas/Message",
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#customeremailverified-message"
+      },
+      "CustomerGroupSetMessage": {
+        "title": "CustomerGroupSetMessage",
+        "includePath": "types/message/CustomerGroupSetMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "customerGroup": {
+                "title": "customerGroup",
+                "$ref": "#/components/schemas/CustomerGroupReference"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#customergroupset-message",
         "type": "string"
       },
       "DeliveryAddedMessage": {
@@ -26457,11 +26788,13 @@
         "properties": {
           "name": {
             "title": "name",
-            "type": "string"
+            "type": "string",
+            "x-annotation-identifier": true,
+            "x-annotation-elementIdentifier": true
           },
           "value": {
             "title": "value",
-            "type": "string"
+            "type": "object"
           }
         },
         "required": [
@@ -26480,7 +26813,11 @@
           "required": true,
           "type": "string"
         },
-        "x-annotation-package": "Product"
+        "x-annotation-package": "Product",
+        "x-annotation-asMap": {
+          "key": "string",
+          "value": "string"
+        }
       },
       "CustomTokenizer": {
         "title": "CustomTokenizer",
@@ -32745,8 +33082,17 @@
         "title": "FieldContainer",
         "includePath": "types/type/FieldContainer.raml",
         "type": "object",
+        "additionalProperties": {
+          "title": "//",
+          "required": true,
+          "type": "string"
+        },
         "x-annotation-package": "Type",
-        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-custom-fields.html#customfields"
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-custom-fields.html#customfields",
+        "x-annotation-asMap": {
+          "key": "string",
+          "value": "any"
+        }
       },
       "FieldDefinition": {
         "title": "FieldDefinition",
