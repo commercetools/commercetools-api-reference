@@ -905,7 +905,8 @@
           "properties": {
             "customerId": {
               "title": "customerId",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasUpdateAction": "setCustomerId"
             },
             "customerEmail": {
               "title": "customerEmail",
@@ -913,7 +914,8 @@
             },
             "anonymousId": {
               "title": "anonymousId",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasUpdateAction": "setAnonymousId"
             },
             "lineItems": {
               "title": "lineItems",
@@ -955,23 +957,31 @@
             },
             "taxMode": {
               "title": "taxMode",
-              "$ref": "#/definitions/TaxMode"
+              "$ref": "#/definitions/TaxMode",
+              "x-annotation-hasUpdateAction": "changeTaxMode",
+              "x-annotation-docsActionAnchor": "change-taxmode"
             },
             "taxRoundingMode": {
               "title": "taxRoundingMode",
-              "$ref": "#/definitions/RoundingMode"
+              "$ref": "#/definitions/RoundingMode",
+              "x-annotation-hasUpdateAction": "changeTaxRoundingMode",
+              "x-annotation-docsActionAnchor": "change-tax-roundingmode"
             },
             "taxCalculationMode": {
               "title": "taxCalculationMode",
-              "$ref": "#/definitions/TaxCalculationMode"
+              "$ref": "#/definitions/TaxCalculationMode",
+              "x-annotation-hasUpdateAction": "changeTaxCalculationMode",
+              "x-annotation-docsActionAnchor": "change-taxcalculationmode"
             },
             "customerGroup": {
               "title": "customerGroup",
-              "$ref": "#/definitions/CustomerGroupReference"
+              "$ref": "#/definitions/CustomerGroupReference",
+              "x-annotation-hasUpdateAction": "setCustomerGroup"
             },
             "country": {
               "title": "country",
-              "type": "string"
+              "$ref": "#/definitions/CountryCode",
+              "x-annotation-hasUpdateAction": "setCountry"
             },
             "shippingInfo": {
               "title": "shippingInfo",
@@ -994,12 +1004,14 @@
             },
             "locale": {
               "title": "locale",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasUpdateAction": "setLocale"
             },
             "deleteDaysAfterLastModification": {
               "title": "deleteDaysAfterLastModification",
-              "format": "int64",
-              "type": "number"
+              "type": "integer",
+              "x-annotation-hasUpdateAction": "setDeleteDaysAfterLastModification",
+              "x-annotation-docsActionAnchor": "set-deletedaysafterlastmodification-beta"
             },
             "refusedGifts": {
               "title": "refusedGifts",
@@ -1029,6 +1041,9 @@
             "customLineItems",
             "totalPrice",
             "cartState",
+            "taxMode",
+            "taxRoundingMode",
+            "taxCalculationMode",
             "refusedGifts",
             "origin"
           ],
@@ -1405,69 +1420,6 @@
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#change-lineitem-quantity",
       "x-annotation-postman-example": "{\n  \"action\": \"changeLineItemQuantity\",\n  \"lineItemId\": \"{{lineItemId}}\",\n  \"quantity\": 1\n}\n"
     },
-    "CartChangeTaxCalculationModeAction": {
-      "title": "CartChangeTaxCalculationModeAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/CartUpdateAction"
-        },
-        {
-          "properties": {
-            "taxCalculationMode": {
-              "title": "taxCalculationMode",
-              "$ref": "#/definitions/TaxCalculationMode"
-            }
-          },
-          "required": [
-            "taxCalculationMode"
-          ],
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Cart",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#change-tax-calculationmode",
-      "x-annotation-postman-example": "{\n  \"action\": \"changeTaxCalculationMode\",\n  \"taxCalculationMode\": \"UnitPriceLevel\"\n}\n"
-    },
-    "CartChangeTaxModeAction": {
-      "title": "CartChangeTaxModeAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/CartUpdateAction"
-        },
-        {
-          "properties": {
-            "taxMode": {
-              "title": "taxMode",
-              "$ref": "#/definitions/TaxMode"
-            }
-          },
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Cart",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#change-taxmode",
-      "x-annotation-postman-example": "{\n  \"action\": \"changeTaxMode\",\n  \"taxMode\": \"Platform\"\n}\n"
-    },
-    "CartChangeTaxRoundingModeAction": {
-      "title": "CartChangeTaxRoundingModeAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/CartUpdateAction"
-        },
-        {
-          "properties": {
-            "taxRoundingMode": {
-              "title": "taxRoundingMode",
-              "$ref": "#/definitions/RoundingMode"
-            }
-          },
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Cart",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#change-tax-roundingmode",
-      "x-annotation-postman-example": "{\n  \"action\": \"changeTaxRoundingMode\",\n  \"taxRoundingMode\": \"HalfUp\"\n}\n"
-    },
     "CartDraft": {
       "title": "CartDraft",
       "type": "object",
@@ -1781,26 +1733,6 @@
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#remove-payment",
       "x-annotation-postman-example": "{\n  \"action\": \"removePayment\",\n  \"payment\": {\n    \"id\": \"d45b6f23-76a0-459f-bf55-591dfe8a4ade\",\n    \"typeId\": \"payment\"\n  }\n}\n"
     },
-    "CartSetAnonymousIdAction": {
-      "title": "CartSetAnonymousIdAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/CartUpdateAction"
-        },
-        {
-          "properties": {
-            "anonymousId": {
-              "title": "anonymousId",
-              "type": "string"
-            }
-          },
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Cart",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#set-anonymous-id",
-      "x-annotation-postman-example": "{\n  \"action\": \"setAnonymousId\",\n  \"anonymousId\": \"myAnonymousId\"\n}\n"
-    },
     "CartSetBillingAddressAction": {
       "title": "CartSetBillingAddressAction",
       "allOf": [
@@ -1849,26 +1781,6 @@
       ],
       "x-annotation-package": "Cart",
       "x-annotation-postman-example": "{\n  \"action\": \"setCartTotalTax\",\n  \"externalTotalGross\": {\n    \"currencyCode\": \"EUR\",\n    \"centAmount\": 4000000\n  },\n  \"externalTaxPortions\": [\n    {\n      \"name\": \"taxPortion\",\n      \"rate\": 0.18,\n      \"amount\": {\n        \"centAmount\": 5000000,\n        \"currencyCode\": \"EUR\"\n      }\n    }\n  ]\n}\n"
-    },
-    "CartSetCountryAction": {
-      "title": "CartSetCountryAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/CartUpdateAction"
-        },
-        {
-          "properties": {
-            "country": {
-              "title": "country",
-              "$ref": "#/definitions/CountryCode"
-            }
-          },
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Cart",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#set-country",
-      "x-annotation-postman-example": "{\n  \"action\": \"setCountry\",\n  \"country\": \"DE\"\n}\n"
     },
     "CartSetCustomFieldAction": {
       "title": "CartSetCustomFieldAction",
@@ -2122,65 +2034,6 @@
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#set-customer-email",
       "x-annotation-postman-example": "{\n  \"action\": \"setCustomerEmail\",\n  \"email\": \"foo@bar.com\"\n}\n"
     },
-    "CartSetCustomerGroupAction": {
-      "title": "CartSetCustomerGroupAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/CartUpdateAction"
-        },
-        {
-          "properties": {
-            "customerGroup": {
-              "title": "customerGroup",
-              "$ref": "#/definitions/CustomerGroupReference"
-            }
-          },
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Cart",
-      "x-annotation-postman-example": "{\n  \"action\": \"setCustomerGroup\",\n  \"customerGroup\": {\n    \"typeId\": \"customer-group\",\n    \"id\": \"0c2eaad4-833c-43c1-98a4-5d03f57e9329\"\n  }\n}\n"
-    },
-    "CartSetCustomerIdAction": {
-      "title": "CartSetCustomerIdAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/CartUpdateAction"
-        },
-        {
-          "properties": {
-            "customerId": {
-              "title": "customerId",
-              "type": "string"
-            }
-          },
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Cart",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#set-customer-id",
-      "x-annotation-postman-example": "{\n  \"action\": \"setCustomerId\",\n  \"customerId\": \"0c2eaad4-833c-43c1-98a4-5d03f57e9329\"\n}\n"
-    },
-    "CartSetDeleteDaysAfterLastModificationAction": {
-      "title": "CartSetDeleteDaysAfterLastModificationAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/CartUpdateAction"
-        },
-        {
-          "properties": {
-            "deleteDaysAfterLastModification": {
-              "title": "deleteDaysAfterLastModification",
-              "type": "integer"
-            }
-          },
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Cart",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#set-deletedaysafterlastmodification-beta",
-      "x-annotation-postman-example": "{\n  \"action\": \"setDeleteDaysAfterLastModification\",\n  \"deleteDaysAfterLastModification\": 90\n}\n"
-    },
     "CartSetLineItemCustomFieldAction": {
       "title": "CartSetLineItemCustomFieldAction",
       "allOf": [
@@ -2377,25 +2230,6 @@
       "x-annotation-package": "Cart",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#set-lineitem-totalprice",
       "x-annotation-postman-example": "{\n  \"action\": \"setLineItemTotalPrice\",\n  \"lineItemId\": \"{{lineItemId}}\",\n  \"externalTotalPrice\": {\n    \"price\": {\n      \"currencyCode\": \"EUR\",\n      \"centAmount\":4200\n    },\n    \"totalPrice\": {\n      \"currencyCode\": \"EUR\",\n      \"centAmount\":4200\n    }\n  }\n}\n"
-    },
-    "CartSetLocaleAction": {
-      "title": "CartSetLocaleAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/CartUpdateAction"
-        },
-        {
-          "properties": {
-            "locale": {
-              "title": "locale",
-              "type": "string"
-            }
-          },
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Cart",
-      "x-annotation-postman-example": "{\n  \"action\": \"setLocale\",\n  \"locale\": \"de-DE\"\n}\n"
     },
     "CartSetShippingAddressAction": {
       "title": "CartSetShippingAddressAction",
@@ -3427,6 +3261,186 @@
       "x-annotation-package": "Cart",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#taxedprice"
     },
+    "CartChangeTaxCalculationModeAction": {
+      "title": "CartChangeTaxCalculationModeAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CartUpdateAction"
+        },
+        {
+          "properties": {
+            "taxCalculationMode": {
+              "title": "taxCalculationMode",
+              "$ref": "#/definitions/TaxCalculationMode"
+            }
+          },
+          "required": [
+            "taxCalculationMode"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#change-taxcalculationmode"
+    },
+    "CartChangeTaxModeAction": {
+      "title": "CartChangeTaxModeAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CartUpdateAction"
+        },
+        {
+          "properties": {
+            "taxMode": {
+              "title": "taxMode",
+              "$ref": "#/definitions/TaxMode"
+            }
+          },
+          "required": [
+            "taxMode"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#change-taxmode"
+    },
+    "CartChangeTaxRoundingModeAction": {
+      "title": "CartChangeTaxRoundingModeAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CartUpdateAction"
+        },
+        {
+          "properties": {
+            "taxRoundingMode": {
+              "title": "taxRoundingMode",
+              "$ref": "#/definitions/RoundingMode"
+            }
+          },
+          "required": [
+            "taxRoundingMode"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#change-tax-roundingmode"
+    },
+    "CartSetAnonymousIdAction": {
+      "title": "CartSetAnonymousIdAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CartUpdateAction"
+        },
+        {
+          "properties": {
+            "anonymousId": {
+              "title": "anonymousId",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#set-anonymous-id"
+    },
+    "CartSetCountryAction": {
+      "title": "CartSetCountryAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CartUpdateAction"
+        },
+        {
+          "properties": {
+            "country": {
+              "title": "country",
+              "$ref": "#/definitions/CountryCode"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#set-country"
+    },
+    "CartSetCustomerGroupAction": {
+      "title": "CartSetCustomerGroupAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CartUpdateAction"
+        },
+        {
+          "properties": {
+            "customerGroup": {
+              "title": "customerGroup",
+              "$ref": "#/definitions/CustomerGroupReference"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#set-customer-group"
+    },
+    "CartSetCustomerIdAction": {
+      "title": "CartSetCustomerIdAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CartUpdateAction"
+        },
+        {
+          "properties": {
+            "customerId": {
+              "title": "customerId",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#set-customer-id"
+    },
+    "CartSetDeleteDaysAfterLastModificationAction": {
+      "title": "CartSetDeleteDaysAfterLastModificationAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CartUpdateAction"
+        },
+        {
+          "properties": {
+            "deleteDaysAfterLastModification": {
+              "title": "deleteDaysAfterLastModification",
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#set-deletedaysafterlastmodification-beta"
+    },
+    "CartSetLocaleAction": {
+      "title": "CartSetLocaleAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CartUpdateAction"
+        },
+        {
+          "properties": {
+            "locale": {
+              "title": "locale",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#set-locale"
+    },
     "Category": {
       "title": "Category",
       "allOf": [
@@ -3598,51 +3612,6 @@
       ],
       "x-annotation-package": "Category"
     },
-    "CategoryChangeNameAction": {
-      "title": "CategoryChangeNameAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/CategoryUpdateAction"
-        },
-        {
-          "properties": {
-            "name": {
-              "title": "name",
-              "$ref": "#/definitions/LocalizedString"
-            }
-          },
-          "required": [
-            "name"
-          ],
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Category",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-categories.html#change-name",
-      "x-annotation-postman-example": "{\n  \"action\": \"changeName\",\n  \"name\": {\n    \"en\": \"new category name\"\n  }\n}\n"
-    },
-    "CategoryChangeOrderHintAction": {
-      "title": "CategoryChangeOrderHintAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/CategoryUpdateAction"
-        },
-        {
-          "properties": {
-            "orderHint": {
-              "title": "orderHint",
-              "type": "string"
-            }
-          },
-          "required": [
-            "orderHint"
-          ],
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Category",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-categories.html#change-orderhint"
-    },
     "CategoryChangeParentAction": {
       "title": "CategoryChangeParentAction",
       "allOf": [
@@ -3664,28 +3633,6 @@
       ],
       "x-annotation-package": "Category",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-categories.html#change-parent"
-    },
-    "CategoryChangeSlugAction": {
-      "title": "CategoryChangeSlugAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/CategoryUpdateAction"
-        },
-        {
-          "properties": {
-            "slug": {
-              "title": "slug",
-              "$ref": "#/definitions/LocalizedString"
-            }
-          },
-          "required": [
-            "slug"
-          ],
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Category",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-categories.html#change-slug"
     },
     "CategoryDraft": {
       "title": "CategoryDraft",
@@ -4051,6 +3998,103 @@
       ],
       "x-annotation-package": "Category"
     },
+    "CategoryUpdate": {
+      "title": "CategoryUpdate",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Update"
+        },
+        {
+          "properties": {
+            "actions": {
+              "title": "actions",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CategoryUpdateAction"
+              }
+            }
+          },
+          "required": [
+            "actions"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Category"
+    },
+    "CategoryUpdateAction": {
+      "title": "CategoryUpdateAction",
+      "discriminator": "action",
+      "$ref": "#/definitions/UpdateAction",
+      "x-annotation-package": "Category"
+    },
+    "CategoryChangeNameAction": {
+      "title": "CategoryChangeNameAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CategoryUpdateAction"
+        },
+        {
+          "properties": {
+            "name": {
+              "title": "name",
+              "$ref": "#/definitions/LocalizedString"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Category",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-categories.html#change-name",
+      "x-annotation-postman-example": "{\n  \"action\": \"changeName\",\n  \"name\": {\n    \"en\": \"new category name\"\n  }\n}\n"
+    },
+    "CategoryChangeOrderHintAction": {
+      "title": "CategoryChangeOrderHintAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CategoryUpdateAction"
+        },
+        {
+          "properties": {
+            "orderHint": {
+              "title": "orderHint",
+              "type": "string"
+            }
+          },
+          "required": [
+            "orderHint"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Category",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-categories.html#change-orderhint"
+    },
+    "CategoryChangeSlugAction": {
+      "title": "CategoryChangeSlugAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CategoryUpdateAction"
+        },
+        {
+          "properties": {
+            "slug": {
+              "title": "slug",
+              "$ref": "#/definitions/LocalizedString"
+            }
+          },
+          "required": [
+            "slug"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Category",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-categories.html#change-slug"
+    },
     "CategorySetDescriptionAction": {
       "title": "CategorySetDescriptionAction",
       "allOf": [
@@ -4165,36 +4209,6 @@
       "x-annotation-package": "Category",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-categories.html#set-meta-title"
     },
-    "CategoryUpdate": {
-      "title": "CategoryUpdate",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Update"
-        },
-        {
-          "properties": {
-            "actions": {
-              "title": "actions",
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/CategoryUpdateAction"
-              }
-            }
-          },
-          "required": [
-            "actions"
-          ],
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Category"
-    },
-    "CategoryUpdateAction": {
-      "title": "CategoryUpdateAction",
-      "discriminator": "action",
-      "$ref": "#/definitions/UpdateAction",
-      "x-annotation-package": "Category"
-    },
     "Channel": {
       "title": "Channel",
       "allOf": [
@@ -4301,28 +4315,6 @@
       ],
       "x-annotation-package": "Channel",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-channels.html#change-description"
-    },
-    "ChannelChangeKeyAction": {
-      "title": "ChannelChangeKeyAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/ChannelUpdateAction"
-        },
-        {
-          "properties": {
-            "key": {
-              "title": "key",
-              "type": "string"
-            }
-          },
-          "required": [
-            "key"
-          ],
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Channel",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-channels.html#change-key"
     },
     "ChannelChangeNameAction": {
       "title": "ChannelChangeNameAction",
@@ -4469,25 +4461,6 @@
       "x-annotation-package": "Channel",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-channels.html#channelroleenum"
     },
-    "ChannelSetAddressAction": {
-      "title": "ChannelSetAddressAction",
-      "allOf": [
-        {
-          "$ref": "#/definitions/ChannelUpdateAction"
-        },
-        {
-          "properties": {
-            "address": {
-              "title": "address",
-              "$ref": "#/definitions/Address"
-            }
-          },
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Channel",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-channels.html#set-address"
-    },
     "ChannelSetCustomFieldAction": {
       "title": "ChannelSetCustomFieldAction",
       "allOf": [
@@ -4535,6 +4508,77 @@
       ],
       "x-annotation-package": "Channel"
     },
+    "ChannelUpdate": {
+      "title": "ChannelUpdate",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Update"
+        },
+        {
+          "properties": {
+            "actions": {
+              "title": "actions",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ChannelUpdateAction"
+              }
+            }
+          },
+          "required": [
+            "actions"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Channel"
+    },
+    "ChannelUpdateAction": {
+      "title": "ChannelUpdateAction",
+      "discriminator": "action",
+      "$ref": "#/definitions/UpdateAction",
+      "x-annotation-package": "Channel"
+    },
+    "ChannelChangeKeyAction": {
+      "title": "ChannelChangeKeyAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ChannelUpdateAction"
+        },
+        {
+          "properties": {
+            "key": {
+              "title": "key",
+              "type": "string"
+            }
+          },
+          "required": [
+            "key"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Channel",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-channels.html#change-key"
+    },
+    "ChannelSetAddressAction": {
+      "title": "ChannelSetAddressAction",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ChannelUpdateAction"
+        },
+        {
+          "properties": {
+            "address": {
+              "title": "address",
+              "$ref": "#/definitions/Address"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Channel",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-channels.html#set-address"
+    },
     "ChannelSetGeoLocationAction": {
       "title": "ChannelSetGeoLocationAction",
       "allOf": [
@@ -4578,36 +4622,6 @@
       ],
       "x-annotation-package": "Channel",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-channels.html#set-roles"
-    },
-    "ChannelUpdate": {
-      "title": "ChannelUpdate",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Update"
-        },
-        {
-          "properties": {
-            "actions": {
-              "title": "actions",
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/ChannelUpdateAction"
-              }
-            }
-          },
-          "required": [
-            "actions"
-          ],
-          "type": "object"
-        }
-      ],
-      "x-annotation-package": "Channel"
-    },
-    "ChannelUpdateAction": {
-      "title": "ChannelUpdateAction",
-      "discriminator": "action",
-      "$ref": "#/definitions/UpdateAction",
-      "x-annotation-package": "Channel"
     },
     "Address": {
       "title": "Address",
@@ -21673,6 +21687,7 @@
                 "inventoryMode": "None",
                 "taxMode": "Platform",
                 "taxRoundingMode": "HalfEven",
+                "taxCalculationMode": "LineItemLevel",
                 "refusedGifts": [],
                 "origin": "Customer"
               }
@@ -21986,6 +22001,7 @@
                 "inventoryMode": "None",
                 "taxMode": "Platform",
                 "taxRoundingMode": "HalfEven",
+                "taxCalculationMode": "LineItemLevel",
                 "refusedGifts": [],
                 "origin": "Customer"
               }
@@ -33293,6 +33309,7 @@
                 "inventoryMode": "None",
                 "taxMode": "Platform",
                 "taxRoundingMode": "HalfEven",
+                "taxCalculationMode": "LineItemLevel",
                 "refusedGifts": [],
                 "origin": "Customer"
               }
