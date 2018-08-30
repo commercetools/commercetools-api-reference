@@ -118,11 +118,12 @@ class RamlModelParser
         $domainName = ucfirst($domain);
         $displayName = $this->getDisplayName($domain, $field);
         $exampleFileName = 'examples/' . $domain . '/' . $displayName . '.json';
-        $exampleExists = file_exists(__DIR__ . '/../' . $exampleFileName) ? '(postman-example): !include ../../' . $exampleFileName : '';
+        $exampleExists = file_exists(__DIR__ . '/../' . $exampleFileName) ? '(postman-example): !include ../../../' . $exampleFileName : '';
         $docsUri = $docsUri . '#' . (isset($field['docsActionAnchor']) ? $field['docsActionAnchor'] : $this->camel2dashed($field['discriminatorValue']));
 
         return <<<EOF
 #%RAML 1.0 DataType
+# This file is auto-generated. Do not touch!
 (package): $domainName
 (docs-uri): $docsUri
 
@@ -150,7 +151,7 @@ EOF;
         foreach ($types as $type) {
             foreach ($type['fields'] as $field) {
                 $output = $this->getUpdateCommand($type['domain'], $field, $type['docsUri']);
-                $outputFileName = __DIR__ . '/../types/' . $this->camel2dashed($type['domain']) . '/' . $this->getDisplayName($type['domain'], $field) . '.raml';
+                $outputFileName = __DIR__ . '/../types/' . $this->camel2dashed($type['domain']) . '/updates/' . $this->getDisplayName($type['domain'], $field) . '.raml';
                 $this->ensureDirectory($outputFileName);
                 file_put_contents($outputFileName, $output);
             }
