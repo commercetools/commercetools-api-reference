@@ -75,7 +75,7 @@ class UpdateAction
     /**
      * @var
      */
-    public $value;
+    public $action;
     /**
      * @var string
      */
@@ -99,16 +99,16 @@ class UpdateAction
     /**
      * UpdateAction constructor.
      * @param string $domain
-     * @param string $value
+     * @param string $action
      * @param Field[] $fields
      * @param string $docsUri
      */
-    public function __construct($domain, $value, array $fields, $docsUri)
+    public function __construct($domain, $action, array $fields, $docsUri)
     {
-        $this->value = $value;
+        $this->action = $action;
         $this->fields = $fields;
         $this->domain = $domain;
-        $this->displayName = ucfirst($domain) . ucfirst($value) . 'Action';
+        $this->displayName = ucfirst($domain) . ucfirst($action) . 'Action';
         $this->docsUri = $docsUri;
     }
 }
@@ -173,15 +173,7 @@ class RamlModelParser
         }
         if (isset($ramlType['properties'])) {
             $properties = array_map(
-                function ($key, $property) {
-                    $name = str_replace('?', '', $key);
-                    if (!is_array($property)) {
-                        $property = ['type' => $property];
-                    }
-                    $property['name'] = $name;
-                    $property['key'] = $key;
-                    return $property;
-                },
+                [$this, 'parseProperty'],
                 array_keys($ramlType['properties']),
                 $ramlType['properties']
             );
@@ -189,6 +181,18 @@ class RamlModelParser
             $properties = [];
         }
         return array_merge($parentProperties, $properties);
+    }
+
+    private function parseProperty($key, $property)
+    {
+        $name = str_replace('?', '', $key);
+        if (!is_array($property)) {
+            $property = ['type' => $property];
+        }
+        $property['name'] = $name;
+        $optional = strpos($key, '?') > 0;
+        $property['required'] = isset($property['required']) ? ($property['required'] == true) : !$optional;
+        return $property;
     }
 
     private function getUpdateCommand(UpdateAction $action)
@@ -204,7 +208,7 @@ class RamlModelParser
 
 type: {$domainName}UpdateAction
 displayName: {$action->displayName}
-discriminatorValue: {$action->value}
+discriminatorValue: {$action->action}
 $exampleExists
 properties:
 
@@ -230,7 +234,12 @@ EOF;
     {
         $actions = [];
         foreach ($types as $type) {
-            $actions = array_merge($actions, $this->getSimpleActions($type));
+            $actions = array_merge(
+                $actions,
+                $this->getSimpleActions($type),
+                $this->getSimpleRequireAction($type),
+                $this->getComplexAction($type)
+            );
         }
 
         return $actions;
@@ -248,13 +257,61 @@ EOF;
         return array_map(
             function ($field) use ($type){
                 $docsUri = $type['docsUri'] . '#' . (isset($field['(docsActionAnchor)']) ? $field['(docsActionAnchor)'] : camel2dashed($field['(hasSimpleUpdateAction)']));
-                $optional = strpos($field['key'], '?') > 0 || (isset($field['required']) && $field['required'] !== 'true');
                 $fields = [
-                    new Field($field['name'], !$optional, $field['type'], $field['format'] ?? null)
+                    new Field($field['name'], $field['required'], $field['type'], $field['format'] ?? null)
                 ];
                 return new UpdateAction($type['domain'], $field['(hasSimpleUpdateAction)'], $fields, $docsUri);
             },
             $simpleActionFields
+        );
+    }
+
+    /**
+     * @param $type
+     * @return UpdateAction[]
+     */
+    private function getSimpleRequireAction($type)
+    {
+        $actionFields = array_filter($type['fields'], function ($field) {
+            return strpos($field['name'], '/') === false
+                && isset($field['(hasUpdateAction)']['action'])
+                && isset($field['(hasUpdateAction)']['required'])
+                && !isset($field['(hasUpdateAction)']['fields']);
+        });
+        return array_map(
+            function ($field) use ($type){
+                $docsUri = $type['docsUri'] . '#' . (isset($field['(docsActionAnchor)']) ? $field['(docsActionAnchor)'] : camel2dashed($field['(hasUpdateAction)']['action']));
+                $fields = [
+                    new Field($field['name'], $field['(hasUpdateAction)']['required'], $field['type'], $field['format'] ?? null)
+                ];
+                return new UpdateAction($type['domain'], $field['(hasUpdateAction)']['action'], $fields, $docsUri);
+            },
+            $actionFields
+        );
+    }
+
+    /**
+     * @param $type
+     * @return UpdateAction[]
+     */
+    private function getComplexAction($type)
+    {
+        $actionFields = array_filter($type['fields'], function ($field) {
+            return strpos($field['name'], '/') === false
+                && isset($field['(hasUpdateAction)']['action'])
+                && isset($field['(hasUpdateAction)']['fields']);
+        });
+        return array_map(
+            function ($field) use ($type){
+                $docsUri = $type['docsUri'] . '#' . (isset($field['(docsActionAnchor)']) ? $field['(docsActionAnchor)'] : camel2dashed($field['(hasUpdateAction)']['action']));
+                $fields = [];
+                foreach ($field['(hasUpdateAction)']['fields'] as $actionFieldName => $actionField) {
+                    $property = $this->parseProperty($actionFieldName, $actionField);
+                    $fields[] = new Field($property['name'], $property['required'], $property['type'], $property['format'] ?? null);
+                }
+                return new UpdateAction($type['domain'], $field['(hasUpdateAction)']['action'], $fields, $docsUri);
+            },
+            $actionFields
         );
     }
 
