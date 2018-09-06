@@ -6,6 +6,113 @@ namespace Commercetools;
 use GuzzleHttp\Psr7\Uri;
 use Symfony\Component\Yaml\Yaml;
 
+function pascalcase($scored)
+{
+    return ucfirst(
+        implode(
+            '',
+            array_map(
+                'ucfirst',
+                array_map(
+                    'strtolower',
+                    explode('-', $scored)
+                )
+            )
+        )
+    );
+}
+
+function camel2dashed($scored) {
+    return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $scored));
+}
+
+class Field
+{
+    /**
+     * @var string
+     */
+    public $name;
+    /**
+     * @var string
+     */
+    public $jsonName;
+    /**
+     * @var bool
+     */
+    public $required;
+
+    /**
+     * @var string
+     */
+    public $type;
+
+    public $format;
+
+    /**
+     * Field constructor.
+     * @param string $name
+     * @param bool $required
+     * @param string $type
+     * @param string $format
+     * @param string $jsonName
+     */
+    public function __construct($name, $required, $type, $format = null, $jsonName = null)
+    {
+        $this->name = $name;
+        $this->required = $required;
+        $this->type = $type;
+        $this->format = $format;
+        $this->jsonName = !is_null($jsonName) ? $jsonName : $name;
+    }
+}
+
+class UpdateAction
+{
+    /**
+     * @var string
+     */
+    public $domain;
+    /**
+     * @var
+     */
+    public $value;
+    /**
+     * @var string
+     */
+    public $docsUri;
+    /**
+     * @var string
+     */
+    public $displayName;
+
+    /**
+     * @var Field[]
+     */
+    public $fields;
+
+    /**
+     * UpdateAction constructor.
+     * @param $value
+     * @param Field[] $fields
+     * @param $docsAnchor
+     */
+    /**
+     * UpdateAction constructor.
+     * @param string $domain
+     * @param string $value
+     * @param Field[] $fields
+     * @param string $docsUri
+     */
+    public function __construct($domain, $value, array $fields, $docsUri)
+    {
+        $this->value = $value;
+        $this->fields = $fields;
+        $this->domain = $domain;
+        $this->displayName = ucfirst($domain) . ucfirst($value) . 'Action';
+        $this->docsUri = $docsUri;
+    }
+}
+
 class RamlModelParser
 {
     const RAML_MODEL_PATH = __DIR__ . '/../types/';
@@ -35,18 +142,12 @@ class RamlModelParser
             $ramlInfos = [];
             foreach ($ramlTypes as $typeName => $ramlType) {
                 $ramlFile = trim(str_replace('!include', '', $types[$typeName]));
-                $package = $this->pascalcase(dirname($ramlFile));
+                $package = pascalcase(dirname($ramlFile));
                 $docsUri = '';
                 if (isset($ramlType['(docs-uri)'])) {
                     $docsUri = (new Uri($ramlType['(docs-uri)']))->withFragment('')->__toString();
                 }
                 $fields = $this->resolveProperties($ramlTypes, $ramlType);
-                $fields = array_filter(
-                    $fields,
-                    function ($field) {
-                        return strpos($field['name'], '/') === false && $field['hasSimpleUpdateAction'] === true;
-                    }
-                );
                 if (count($fields) > 0) {
                     $ramlInfos[$typeName] = [
                         'fields' => $fields,
@@ -74,16 +175,12 @@ class RamlModelParser
             $properties = array_map(
                 function ($key, $property) {
                     $name = str_replace('?', '', $key);
-                    return [
-                        'name' => $name,
-                        'key' => $key,
-                        'type' => isset($property['type']) ? $property['type'] : $property,
-                        'format' => isset($property['format']) ? $property['format'] : null,
-                        'optional' => strpos($key, '?') > 0,
-                        'discriminatorValue' => isset($property['(hasSimpleUpdateAction)']) ? $property['(hasSimpleUpdateAction)'] : '',
-                        'hasSimpleUpdateAction' => isset($property['(hasSimpleUpdateAction)']) ? true : false,
-                        'docsActionAnchor' => isset($property['(docsActionAnchor)']) ? $property['(docsActionAnchor)'] : null,
-                    ];
+                    if (!is_array($property)) {
+                        $property = ['type' => $property];
+                    }
+                    $property['name'] = $name;
+                    $property['key'] = $key;
+                    return $property;
                 },
                 array_keys($ramlType['properties']),
                 $ramlType['properties']
@@ -94,68 +191,86 @@ class RamlModelParser
         return array_merge($parentProperties, $properties);
     }
 
-    protected function pascalcase($scored)
+    private function getUpdateCommand(UpdateAction $action)
     {
-        return ucfirst(
-            implode(
-                '',
-                array_map(
-                    'ucfirst',
-                    array_map(
-                        'strtolower',
-                        explode('-', $scored)
-                    )
-                )
-            )
-        );
-    }
-
-    protected function camel2dashed($scored) {
-        return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $scored));
-    }
-
-    private function getUpdateCommand($domain, $field, $docsUri)
-    {
-        $domainName = ucfirst($domain);
-        $displayName = $this->getDisplayName($domain, $field);
-        $exampleFileName = 'examples/' . $domain . '/' . $displayName . '.json';
+        $domainName = ucfirst($action->domain);
+        $exampleFileName = 'examples/' . $action->domain . '/' . $action->displayName . '.json';
         $exampleExists = file_exists(__DIR__ . '/../' . $exampleFileName) ? '(postman-example): !include ../../../' . $exampleFileName : '';
-        $docsUri = $docsUri . '#' . (isset($field['docsActionAnchor']) ? $field['docsActionAnchor'] : $this->camel2dashed($field['discriminatorValue']));
-        $format = isset($field['format']) ? '        format: ' . $field['format'] . PHP_EOL : '';
-        return <<<EOF
+        $command = <<<EOF
 #%RAML 1.0 DataType
 # This file is auto-generated. Do not touch!
 (package): $domainName
-(docs-uri): $docsUri
+(docs-uri): {$action->docsUri}
 
 type: {$domainName}UpdateAction
-displayName: $displayName
-discriminatorValue: {$field['discriminatorValue']}
+displayName: {$action->displayName}
+discriminatorValue: {$action->value}
 $exampleExists
 properties:
-    {$field['key']}:
-        type: {$field['type']}
+
+EOF;
+        foreach ($action->fields as $field) {
+            $required = $field->required ? '' : '?';
+            $format = $field->format ? '        format: ' . $field->format . PHP_EOL : '';
+            $command .= <<<EOF
+    {$field->name}{$required}:
+        type: {$field->type}
 $format
 EOF;
+        }
+
+        return $command;
     }
 
-    private function getDisplayName($domain, $field)
+    /**
+     * @param $types
+     * @return UpdateAction[]
+     */
+    private function getUpdateActions($types)
     {
-        $domainName = ucfirst($domain);
-        return $domainName . ucfirst($field['discriminatorValue']) . 'Action';
+        $actions = [];
+        foreach ($types as $type) {
+            $actions = array_merge($actions, $this->getSimpleActions($type));
+        }
+
+        return $actions;
+    }
+
+    /**
+     * @param $type
+     * @return UpdateAction[]
+     */
+    private function getSimpleActions($type)
+    {
+        $simpleActionFields = array_filter($type['fields'], function ($field) {
+            return strpos($field['name'], '/') === false && isset($field['(hasSimpleUpdateAction)']);
+        });
+        return array_map(
+            function ($field) use ($type){
+                $docsUri = $type['docsUri'] . '#' . (isset($field['(docsActionAnchor)']) ? $field['(docsActionAnchor)'] : camel2dashed($field['(hasSimpleUpdateAction)']));
+                $optional = strpos($field['key'], '?') > 0 || (isset($field['required']) && $field['required'] !== 'true');
+                $fields = [
+                    new Field($field['name'], !$optional, $field['type'], $field['format'] ?? null)
+                ];
+                return new UpdateAction($type['domain'], $field['(hasSimpleUpdateAction)'], $fields, $docsUri);
+            },
+            $simpleActionFields
+        );
     }
 
     public function generateUpdateCommands()
     {
         $types = $this->getRamlTypes();
+        /**
+         * @var UpdateAction[] $actions
+         */
+        $actions = $this->getUpdateActions($types);
 
-        foreach ($types as $type) {
-            foreach ($type['fields'] as $field) {
-                $output = $this->getUpdateCommand($type['domain'], $field, $type['docsUri']);
-                $outputFileName = __DIR__ . '/../types/' . $this->camel2dashed($type['domain']) . '/updates/' . $this->getDisplayName($type['domain'], $field) . '.raml';
-                $this->ensureDirectory($outputFileName);
-                file_put_contents($outputFileName, $output);
-            }
+        foreach ($actions as $action) {
+            $output = $this->getUpdateCommand($action);
+            $outputFileName = __DIR__ . '/../types/' . camel2dashed($action->domain) . '/updates/' . $action->displayName . '.raml';
+            $this->ensureDirectory($outputFileName);
+            file_put_contents($outputFileName, $output);
         }
     }
 
