@@ -44,7 +44,7 @@ class RamlModelParser
                 $fields = array_filter(
                     $fields,
                     function ($field) {
-                        return strpos($field['name'], '/') === false && $field['hasUpdateAction'] === true;
+                        return strpos($field['name'], '/') === false && $field['hasSimpleUpdateAction'] === true;
                     }
                 );
                 if (count($fields) > 0) {
@@ -78,9 +78,10 @@ class RamlModelParser
                         'name' => $name,
                         'key' => $key,
                         'type' => isset($property['type']) ? $property['type'] : $property,
+                        'format' => isset($property['format']) ? $property['format'] : null,
                         'optional' => strpos($key, '?') > 0,
-                        'discriminatorValue' => isset($property['(hasUpdateAction)']) ? $property['(hasUpdateAction)'] : '',
-                        'hasUpdateAction' => isset($property['(hasUpdateAction)']) ? true : false,
+                        'discriminatorValue' => isset($property['(hasSimpleUpdateAction)']) ? $property['(hasSimpleUpdateAction)'] : '',
+                        'hasSimpleUpdateAction' => isset($property['(hasSimpleUpdateAction)']) ? true : false,
                         'docsActionAnchor' => isset($property['(docsActionAnchor)']) ? $property['(docsActionAnchor)'] : null,
                     ];
                 },
@@ -120,7 +121,7 @@ class RamlModelParser
         $exampleFileName = 'examples/' . $domain . '/' . $displayName . '.json';
         $exampleExists = file_exists(__DIR__ . '/../' . $exampleFileName) ? '(postman-example): !include ../../../' . $exampleFileName : '';
         $docsUri = $docsUri . '#' . (isset($field['docsActionAnchor']) ? $field['docsActionAnchor'] : $this->camel2dashed($field['discriminatorValue']));
-
+        $format = isset($field['format']) ? '        format: ' . $field['format'] . PHP_EOL : '';
         return <<<EOF
 #%RAML 1.0 DataType
 # This file is auto-generated. Do not touch!
@@ -134,7 +135,7 @@ $exampleExists
 properties:
     {$field['key']}:
         type: {$field['type']}
-
+$format
 EOF;
     }
 
