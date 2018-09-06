@@ -18843,6 +18843,73 @@
                     },
                     "response": []
                 },{
+                    "name": "SetAnonymousId",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "tests[\"Status code \" + responseCode.code] = responseCode.code === 200 || responseCode.code === 201;",
+                                    "var data = JSON.parse(responseBody);",
+                                    "if(data.version){",
+                                    "    postman.setEnvironmentVariable(\"payment-version\", data.version);",
+                                    "}",
+                                    "if(data.id){",
+                                    "    postman.setEnvironmentVariable(\"payment-id\", data.id); ",
+                                    "}",
+                                    "if(data.key){",
+                                    "    postman.setEnvironmentVariable(\"payment-key\", data.key); ",
+                                    "}",
+                                    ""
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth":
+                            {
+                                "type": "oauth2",
+                                "oauth2": {
+                                    "accessToken": "{{ctp_access_token}}",
+                                    "addTokenTo": "header",
+                                    "tokenType": "Bearer"
+                                }
+                            },
+                        "method": "POST",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"version\": {{payment-version}},\n  \"actions\": [{\n    \"action\": \"setAnonymousId\"\n  }]\n}"
+                        },
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{host}}/{{projectKey}}//payments/{{payment-id}}",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "{{projectKey}}",
+                                "payments",
+                                "{{payment-id}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "expand",
+                                    "value": "",
+                                    "equals": true,
+                                    "disabled": true
+                                }
+                            ]
+                        },
+                        "description": "PaymentSetAnonymousIdAction"
+                    },
+                    "response": []
+                },{
                     "name": "SetAuthorization",
                     "event": [
                         {
