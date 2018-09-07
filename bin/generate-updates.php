@@ -237,8 +237,8 @@ EOF;
             $actions = array_merge(
                 $actions,
                 $this->getSimpleActions($type),
-                $this->getSimpleRequireAction($type),
-                $this->getComplexAction($type)
+                $this->getFieldActions($type),
+                $this->getComplexActions($type)
             );
         }
 
@@ -270,49 +270,60 @@ EOF;
      * @param $type
      * @return UpdateAction[]
      */
-    private function getSimpleRequireAction($type)
+    private function getFieldActions($type)
     {
         $actionFields = array_filter($type['fields'], function ($field) {
-            return strpos($field['name'], '/') === false
-                && isset($field['(hasUpdateAction)']['action'])
-                && !isset($field['(hasUpdateAction)']['fields']);
+            return strpos($field['name'], '/') === false && isset($field['(hasUpdateAction)']);
         });
         return array_map(
             function ($field) use ($type){
-                $docsUri = $type['docsUri'] . '#' . (isset($field['(hasUpdateAction)']['docsAnchor']) ? $field['(hasUpdateAction)']['docsAnchor'] : camel2dashed($field['(hasUpdateAction)']['action']));
-                $required = isset($field['(hasUpdateAction)']['required']) ? ($field['(hasUpdateAction)']['required'] == true) : $field['required'];
-                $fields = [
-                    new Field($field['name'], $required, $field['type'], $field['format'] ?? null)
-                ];
-                return new UpdateAction($type['domain'], $field['(hasUpdateAction)']['action'], $fields, $docsUri);
+                $actionInfo = $this->enrich($field, $field['(hasUpdateAction)']);
+                return $this->getUpdateAction($type, $actionInfo);
             },
             $actionFields
         );
+    }
+
+    private function enrich($field, $actionInfo)
+    {
+        if (!isset($actionInfo['fields'])) {
+            $required = isset($actionInfo['required']) ? ($actionInfo['required'] == true) : $field['required'];
+            $actionInfo['fields'] = [
+                $field['name'] => ['name' => $field['name'], 'required' => $required, 'type' => $field['type'], 'format' => $field['format'] ?? null]
+            ];
+        }
+        return $actionInfo;
     }
 
     /**
      * @param $type
      * @return UpdateAction[]
      */
-    private function getComplexAction($type)
+    private function getComplexActions($type)
     {
         $actionFields = array_filter($type['fields'], function ($field) {
-            return strpos($field['name'], '/') === false
-                && isset($field['(hasUpdateAction)']['action'])
-                && isset($field['(hasUpdateAction)']['fields']);
+            return strpos($field['name'], '/') === false && isset($field['(hasUpdateActions)']);
         });
-        return array_map(
-            function ($field) use ($type){
-                $docsUri = $type['docsUri'] . '#' . (isset($field['(hasUpdateAction)']['docsAnchor']) ? $field['(hasUpdateAction)']['docsAnchor'] : camel2dashed($field['(hasUpdateAction)']['action']));
-                $fields = [];
-                foreach ($field['(hasUpdateAction)']['fields'] as $actionFieldName => $actionField) {
-                    $property = $this->parseProperty($actionFieldName, $actionField);
-                    $fields[] = new Field($property['name'], $property['required'], $property['type'], $property['format'] ?? null);
-                }
-                return new UpdateAction($type['domain'], $field['(hasUpdateAction)']['action'], $fields, $docsUri);
-            },
-            $actionFields
-        );
+
+        $actions = [];
+        foreach ($actionFields as $field) {
+            foreach ($field['(hasUpdateActions)'] as $actionInfo) {
+                $actionInfo = $this->enrich($field, $actionInfo);
+                $actions[] = $this->getUpdateAction($type, $actionInfo);
+            }
+        }
+        return $actions;
+    }
+
+    private function getUpdateAction($type, $actionInfo)
+    {
+        $docsUri = $type['docsUri'] . '#' . (isset($actionInfo['docsAnchor']) ? $actionInfo['docsAnchor'] : camel2dashed($actionInfo['action']));
+        $fields = [];
+        foreach ($actionInfo['fields'] as $actionFieldName => $actionField) {
+            $property = $this->parseProperty($actionFieldName, $actionField);
+            $fields[] = new Field($property['name'], $property['required'], $property['type'], $property['format'] ?? null);
+        }
+        return new UpdateAction($type['domain'], $actionInfo['action'], $fields, $docsUri);
     }
 
     public function generateUpdateCommands()
