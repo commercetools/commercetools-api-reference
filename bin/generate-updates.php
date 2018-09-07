@@ -215,10 +215,10 @@ properties:
 EOF;
         foreach ($action->fields as $field) {
             $required = $field->required ? '' : '?';
-            $format = $field->format ? '        format: ' . $field->format . PHP_EOL : '';
+            $format = $field->format ? '    format: ' . $field->format . PHP_EOL : '';
             $command .= <<<EOF
-    {$field->name}{$required}:
-        type: {$field->type}
+  {$field->name}{$required}:
+    type: {$field->type}
 $format
 EOF;
         }
@@ -256,7 +256,7 @@ EOF;
         });
         return array_map(
             function ($field) use ($type){
-                $docsUri = $type['docsUri'] . '#' . (isset($field['(docsActionAnchor)']) ? $field['(docsActionAnchor)'] : camel2dashed($field['(hasSimpleUpdateAction)']));
+                $docsUri = $type['docsUri'] . '#' . camel2dashed($field['(hasSimpleUpdateAction)']);
                 $fields = [
                     new Field($field['name'], $field['required'], $field['type'], $field['format'] ?? null)
                 ];
@@ -275,14 +275,14 @@ EOF;
         $actionFields = array_filter($type['fields'], function ($field) {
             return strpos($field['name'], '/') === false
                 && isset($field['(hasUpdateAction)']['action'])
-                && isset($field['(hasUpdateAction)']['required'])
                 && !isset($field['(hasUpdateAction)']['fields']);
         });
         return array_map(
             function ($field) use ($type){
-                $docsUri = $type['docsUri'] . '#' . (isset($field['(docsActionAnchor)']) ? $field['(docsActionAnchor)'] : camel2dashed($field['(hasUpdateAction)']['action']));
+                $docsUri = $type['docsUri'] . '#' . (isset($field['(hasUpdateAction)']['docsAnchor']) ? $field['(hasUpdateAction)']['docsAnchor'] : camel2dashed($field['(hasUpdateAction)']['action']));
+                $required = isset($field['(hasUpdateAction)']['required']) ? ($field['(hasUpdateAction)']['required'] == true) : $field['required'];
                 $fields = [
-                    new Field($field['name'], $field['(hasUpdateAction)']['required'], $field['type'], $field['format'] ?? null)
+                    new Field($field['name'], $required, $field['type'], $field['format'] ?? null)
                 ];
                 return new UpdateAction($type['domain'], $field['(hasUpdateAction)']['action'], $fields, $docsUri);
             },
@@ -303,7 +303,7 @@ EOF;
         });
         return array_map(
             function ($field) use ($type){
-                $docsUri = $type['docsUri'] . '#' . (isset($field['(docsActionAnchor)']) ? $field['(docsActionAnchor)'] : camel2dashed($field['(hasUpdateAction)']['action']));
+                $docsUri = $type['docsUri'] . '#' . (isset($field['(hasUpdateAction)']['docsAnchor']) ? $field['(hasUpdateAction)']['docsAnchor'] : camel2dashed($field['(hasUpdateAction)']['action']));
                 $fields = [];
                 foreach ($field['(hasUpdateAction)']['fields'] as $actionFieldName => $actionField) {
                     $property = $this->parseProperty($actionFieldName, $actionField);
