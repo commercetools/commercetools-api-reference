@@ -147,13 +147,18 @@ class RamlModelParser
                 if (isset($ramlType['(docs-uri)'])) {
                     $docsUri = (new Uri($ramlType['(docs-uri)']))->withFragment('')->__toString();
                 }
+                $updates = [];
+                if (isset($ramlType['(hasUpdateActions)'])) {
+                    $updates = $ramlType['(hasUpdateActions)'];
+                }
                 $fields = $this->resolveProperties($ramlTypes, $ramlType);
                 if (count($fields) > 0) {
                     $ramlInfos[$typeName] = [
                         'fields' => $fields,
                         'domain' => $package,
                         'model' => $typeName,
-                        'docsUri' => $docsUri
+                        'docsUri' => $docsUri,
+                        'updates' => $updates,
                     ];
                 }
             }
@@ -238,7 +243,8 @@ EOF;
                 $actions,
                 $this->getSimpleActions($type),
                 $this->getFieldActions($type),
-                $this->getComplexActions($type)
+                $this->getComplexActions($type),
+                $this->getCustomActions($type)
             );
         }
 
@@ -311,6 +317,19 @@ EOF;
                 $actionInfo = $this->enrich($field, $actionInfo);
                 $actions[] = $this->getUpdateAction($type, $actionInfo);
             }
+        }
+        return $actions;
+    }
+
+    /**
+     * @param $type
+     * @return UpdateAction[]
+     */
+    private function getCustomActions($type)
+    {
+        $actions = [];
+        foreach ($type['updates'] as $actionInfo) {
+            $actions[] = $this->getUpdateAction($type, $actionInfo);
         }
         return $actions;
     }
