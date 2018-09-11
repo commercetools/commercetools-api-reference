@@ -10,11 +10,128 @@ properties:
     (hasSimpleUpdateAction): setCustomerId
     type: string
   customerEmail?:
+    (hasUpdateAction):
+      action: setCustomerEmail
+      fields:
+        email: string
     type: string
   anonymousId?:
     (hasSimpleUpdateAction): setAnonymousId
     type: string
-  lineItems: LineItem[]
+  lineItems:
+    type: LineItem[]
+    (hasUpdateActions):
+      - action: addLineItem
+        docsAnchor: add-lineitem
+        fields:
+          custom?:
+            type: CustomFieldsDraft
+          distributionChannel?:
+            type: ChannelReference
+          externalTaxRate?:
+            type: ExternalTaxRateDraft
+          productId?:
+            type: string
+          variantId?:
+            type: number
+            format: int64
+          sku?:
+            type: string
+          quantity?:
+            type: number
+            default: 1
+          supplyChannel?:
+            type: ChannelReference
+          externalPrice?:
+            type: Money
+          externalTotalPrice?:
+            type: ExternalLineItemTotalPrice
+          shippingDetails?:
+            type: ItemShippingDetailsDraft
+      - action: removeLineItem
+        docsAnchor: remove-lineitem
+        fields:
+          lineItemId:
+            type: string
+          quantity?:
+            type: number
+          externalPrice?:
+            type: Money
+          externalTotalPrice?:
+            type: ExternalLineItemTotalPrice
+          shippingDetailsToRemove?:
+            type: ItemShippingDetailsDraft
+      - action: changeLineItemQuantity
+        docsAnchor: change-lineitem-quantity
+        fields:
+          lineItemId:
+            type: string
+          quantity:
+            type: number
+          externalPrice?:
+            type: Money
+          externalTotalPrice?:
+            type: ExternalLineItemTotalPrice
+      - action: setLineItemTaxRate
+        docsAnchor: set-lineitem-taxrate
+        fields:
+          lineItemId:
+            type: string
+          externalTaxRate?:
+            type: ExternalTaxRateDraft
+      - action: setLineItemTaxAmount
+        docsAnchor: set-lineitem-taxamount
+        fields:
+          lineItemId:
+            type: string
+          externalTaxAmount?:
+            type: ExternalTaxAmountDraft
+      - action: setLineItemTotalPrice
+        docsAnchor: set-lineitem-totalprice
+        fields:
+          lineItemId:
+            type: string
+          externalTotalPrice?:
+            type: ExternalLineItemTotalPrice
+      - action: setLineItemPrice
+        docsAnchor: set-lineitem-price
+        fields:
+          lineItemId:
+            type: string
+          externalPrice?:
+            type: Money
+      - action: setLineItemCustomType
+        docsAnchor: set-lineitem-custom-type
+        fields:
+          lineItemId:
+            type: string
+          type?:
+            type: TypeReference
+          fields?:
+            type: string
+      - action: setLineItemCustomField
+        docsAnchor: set-lineitem-customfield
+        fields:
+          lineItemId:
+            type: string
+          name:
+            type: string
+          value?:
+            type: any
+      - action: applyDeltaToLineItemShippingDetailsTargets
+        docsAnchor: apply-deltatolineitemshippingdetailstargets
+        fields:
+          lineItemId:
+            type: string
+          targetsDelta:
+            type: ItemShippingTarget[]
+      - action: setLineItemShippingDetails
+        docsAnchor: set-lineitemshippingdetails
+        fields:
+          lineItemId:
+            type: string
+          shippingDetails?:
+            type: ItemShippingDetailsDraft
   customLineItems: CustomLineItem[]
   totalPrice: TypedMoney
   taxedPrice?:
