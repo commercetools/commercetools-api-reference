@@ -5,6 +5,18 @@
 displayName: Cart
 (updateType): CartUpdate
 type: Resource
+(hasUpdateActions):
+  - action: addShoppingList
+    fields:
+      shoppingList:
+        type: ShoppingListReference
+      supplyChannel?:
+        type: ChannelReference
+      distributionChannel?:
+        type: ChannelReference
+  - action: recalculate
+    fields:
+      updateProductData?: boolean
 properties:
   customerId?:
     (hasSimpleUpdateAction): setCustomerId
@@ -136,12 +148,25 @@ properties:
   totalPrice: TypedMoney
   taxedPrice?:
     type: TaxedPrice
+    (hasUpdateAction):
+      action: setCartTotalTax
+      fields:
+        externalTotalGross: Money
+        externalTaxPortions?: TaxPortion[]
   cartState:
     type: CartState
   shippingAddress?:
     type: Address
+    (hasUpdateAction):
+      action: setShippingAddress
+      fields:
+        address?: Address
   billingAddress?:
     type: Address
+    (hasUpdateAction):
+      action: setBillingAddress
+      fields:
+        address?: Address
   inventoryMode?:
     type: InventoryMode
   taxMode:
@@ -167,11 +192,59 @@ properties:
     type: CountryCode
   shippingInfo?:
     type: ShippingInfo
-  discountCodes?: DiscountCodeInfo[]
+    (hasUpdateActions):
+      - action: setShippingMethod
+        fields:
+          shippingMethod?: TypeReference
+          externalTaxRate?: ExternalTaxRateDraft
+      - action: setCustomShippingMethod
+        fields:
+          shippingMethodName:
+            type: string
+          shippingRate:
+            type: ShippingRateDraft
+          taxCategory?:
+            type: TaxCategoryReference
+          externalTaxRate?:
+            type: ExternalTaxRateDraft
+      - action: setShippingMethodTaxAmount
+        fields:
+          externalTaxAmount?: ExternalTaxAmountDraft
+      - action: setShippingMethodTaxRate
+        fields:
+          externalTaxRate?: ExternalTaxRateDraft
+  discountCodes?:
+    type: DiscountCodeInfo[]
+    (hasUpdateActions):
+      - action: addDiscountCode
+        docsAnchor: add-discountcode
+        fields:
+          code: string
+      - action: removeDiscountCode
+        docsAnchor: remove-discountcode
+        fields:
+          discountCode: DiscountCodeReference
   custom?:
     type: CustomFields
+    (hasUpdateActions):
+      - action: setCustomType
+        fields:
+          type?: TypeReference
+          fields?: object
+      - action: setCustomField
+        docsAnchor: set-customfield
+        fields:
+          name: string
+          value?: any
   paymentInfo?:
     type: PaymentInfo
+    (hasUpdateActions):
+      - action: addPayment
+        fields:
+          payment: PaymentReference
+      - action: removePayment
+        fields:
+          payment: PaymentReference
   locale?:
     (hasSimpleUpdateAction): setLocale
     type: string
@@ -186,5 +259,23 @@ properties:
     type: CartOrigin
   shippingRateInput?:
     type: ShippingRateInput
+    (hasUpdateAction):
+      action: setShippingRateInput
+      docsAnchor: set-shippingrateinput-1
+      fields:
+        shippingRateInput?: ShippingRateInputDraft
   itemShippingAddresses?:
     type: Address[]
+    (hasUpdateActions):
+      - action: addItemShippingAddress
+        docsAnchor: add-itemshippingaddress
+        fields:
+          address: Address
+      - action: removeItemShippingAddress
+        docsAnchor: remove-itemshippingaddress
+        fields:
+          addressKey: string
+      - action: updateItemShippingAddress
+        docsAnchor: update-itemshippingaddress
+        fields:
+          address: Address
