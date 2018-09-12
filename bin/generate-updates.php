@@ -204,12 +204,16 @@ class RamlModelParser
     {
         $domainName = ucfirst($action->domain);
         $exampleFileName = 'examples/' . $action->domain . '/' . $action->displayName . '.json';
+        $docsUri = '(docs-uri): ' . $action->docsUri;
+        if (strlen($docsUri) > 120) {
+            $docsUri = '# yamllint disable-line rule:line-length' . PHP_EOL . $docsUri;
+        }
         $exampleExists = file_exists(__DIR__ . '/../' . $exampleFileName) ? '(postman-example): !include ../../../' . $exampleFileName : '';
         $command = <<<EOF
 #%RAML 1.0 DataType
 # This file is auto-generated. Do not touch!
 (package): $domainName
-(docs-uri): {$action->docsUri}
+{$docsUri}
 
 type: {$domainName}UpdateAction
 displayName: {$action->displayName}
