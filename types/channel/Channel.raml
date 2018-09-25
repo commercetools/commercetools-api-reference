@@ -11,12 +11,27 @@ properties:
     (hasSimpleUpdateAction): changeKey
     type: string
   roles:
-    (hasSimpleUpdateAction): setRoles
     type: ChannelRoleEnum[]
+    (hasUpdateActions):
+      - action: setRoles
+        fields:
+          roles: ChannelRoleEnum[]
+      - action: addRoles
+        fields:
+          roles: ChannelRoleEnum[]
+      - action: removeRoles
+        fields:
+          roles: ChannelRoleEnum[]
   name?:
     type: LocalizedString
+    (hasUpdateAction):
+      action: changeName
+      required: true
   description?:
     type: LocalizedString
+    (hasUpdateAction):
+      action: changeDescription
+      required: true
   address?:
     (hasSimpleUpdateAction): setAddress
     type: Address
@@ -24,6 +39,16 @@ properties:
     type: ReviewRatingStatistics
   custom?:
     type: CustomFields
+    (hasUpdateActions):
+      - action: setCustomType
+        fields:
+          type?: TypeReference
+          fields?: object
+      - action: setCustomField
+        docsAnchor: set-customfield
+        fields:
+          name: string
+          value?: any
   geoLocation?:
     (hasUpdateAction):
       action: setGeoLocation
