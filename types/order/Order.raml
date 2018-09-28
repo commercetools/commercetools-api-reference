@@ -10,22 +10,119 @@ properties:
     type: datetime
   orderNumber?:
     type: string
+    (hasSimpleUpdateAction): setOrderNumber
   customerId?:
     (hasSimpleUpdateAction): setCustomerId
     type: string
   customerEmail?:
     type: string
+    (hasUpdateAction):
+      action: setCustomerEmail
+      fields:
+        email?: string
   anonymousId?:
     type: string
-  lineItems: LineItem[]
-  customLineItems: CustomLineItem[]
+  lineItems:
+    type: LineItem[]
+    (hasUpdateActions):
+      - action: transitionLineItemState
+        docsAnchor: change-the-state-of-lineitem-according-to-allowed-transitions
+        fields:
+          lineItemId: string
+          quantity:
+            type: number
+            format: int64
+          fromState: StateReference
+          toState: StateReference
+          actualTransitionDate?: datetime
+      - action: importLineItemState
+        docsAnchor: import-state-for-lineitems
+        fields:
+          lineItemId: string
+          state: ItemState[]
+      - action: setLineItemCustomType
+        docsAnchor: set-lineitem-custom-type
+        fields:
+          lineItemId:
+            type: string
+          type?:
+            type: TypeReference
+          fields?:
+            type: string
+      - action: setLineItemCustomField
+        docsAnchor: set-lineitem-customfield
+        fields:
+          lineItemId:
+            type: string
+          name:
+            type: string
+          value?:
+            type: any
+      - action: setLineItemShippingDetails
+        docsAnchor: set-lineitemshippingdetails
+        fields:
+          lineItemId:
+            type: string
+          shippingDetails?:
+            type: ItemShippingDetailsDraft
+  customLineItems:
+    type: CustomLineItem[]
+    (hasUpdateActions):
+      - action: importCustomLineItemState
+        docsAnchor: import-state-for-customlineitems
+        fields:
+          customLineItemId: string
+          state: ItemState[]
+      - action: setCustomLineItemCustomType
+        docsAnchor: set-customlineitem-custom-type
+        fields:
+          customLineItemId:
+            type: string
+          type?:
+            type: TypeReference
+          fields?:
+            type: string
+      - action: setCustomLineItemCustomField
+        docsAnchor: set-customlineitem-customfield
+        fields:
+          customLineItemId:
+            type: string
+          name:
+            type: string
+          value?:
+            type: any
+      - action: setCustomLineItemShippingDetails
+        docsAnchor: set-customlineitemshippingdetails
+        fields:
+          customLineItemId:
+            type: string
+          shippingDetails?:
+            type: ItemShippingDetailsDraft
+      - action: transitionCustomLineItemState
+        docsAnchor: change-the-state-of-customlineitem-according-to-allowed-transitions
+        fields:
+          customLineItemId: string
+          quantity:
+            type: number
+            format: int64
+          fromState: StateReference
+          toState: StateReference
+          actualTransitionDate?: datetime
   totalPrice: Money
   taxedPrice?:
     type: TaxedPrice
   shippingAddress?:
     type: Address
+    (hasUpdateAction):
+      action: setShippingAddress
+      fields:
+        address?: Address
   billingAddress?:
     type: Address
+    (hasUpdateAction):
+      action: setBillingAddress
+      fields:
+        address?: Address
   taxMode?:
     type: TaxMode
   taxRoundingMode?:
@@ -35,19 +132,96 @@ properties:
   country?:
     type: string
   orderState:
+    (hasUpdateAction):
+      action: changeOrderState
+      docsAnchor: change-orderstate
     type: OrderState
   state?:
     type: StateReference
+    (hasUpdateAction):
+      action: transitionState
+      fields:
+        state: StateReference
+        force?: boolean
   shipmentState?:
     type: ShipmentState
+    (hasUpdateAction):
+      action: changeShipmentState
+      docsAnchor: change-shipmentstate
   paymentState?:
     type: PaymentState
+    (hasUpdateAction):
+      action: changePaymentState
+      docsAnchor: change-paymentstate
   shippingInfo?:
     type: ShippingInfo
+    (hasUpdateActions):
+      - action: addDelivery
+        fields:
+          items?: DeliveryItem[]
+          address?: Address
+          parcels?: ParcelDraft[]
+      - action: setDeliveryAddress
+        fields:
+          deliveryId: string
+          address?: Address
+      - action: addParcelToDelivery
+        docsAnchor: add-parcel
+        fields:
+          deliveryId: string
+          measurements?: ParcelMeasurements
+          trackingData?: TrackingData
+          items?: DeliveryItem[]
+      - action: setDeliveryItems
+        fields:
+          deliveryId: string
+          items: DeliveyItem[]
+      - action: removeParcelFromDelivery
+        fields:
+          parcelId: string
+      - action: removeDelivery
+        fields:
+          deliveryId: string
+      - action: setParcelMeasurements
+        fields:
+          parcelId: string
+          measurements?: ParcelMeasurements
+      - action: setParcelTrackingData
+        fields:
+          parcelId: string
+          trackingData?: TrackingData
+      - action: setParcelItems
+        fields:
+          parcelId: string
+          items: DeliveryItem[]
   syncInfo:
     type: SyncInfo[]
+    (hasUpdateAction):
+      action: updateSyncInfo
+      docsAnchor: update-syncinfo
+      fields:
+        channel: ChannelReference
+        externalId?: string
+        syncedAt?: datetime
   returnInfo?:
     type: ReturnInfo[]
+    (hasUpdateActions):
+      - action: addReturnInfo
+        docsAnchor: add-returninfo
+        fields:
+          returnTrackingId: string
+          items: ReturnItemDraft[]
+          returnDate?: datetime
+      - action: setReturnShipmentState
+        docsAnchor: set-returnshipmentstate
+        fields:
+          returnItemId: string
+          shipmentState: ReturnShipmentState
+      - action: setReturnPaymentState
+        docsAnchor: set-returnpaymentstate
+        fields:
+          returnItemId: string
+          paymentState: ReturnPaymentState
   discountCodes?: DiscountCodeInfo[]
   lastMessageSequenceNumber:
     type: number
@@ -56,10 +230,28 @@ properties:
     type: CartReference
   custom?:
     type: CustomFields
+    (hasUpdateActions):
+      - action: setCustomType
+        fields:
+          type?: TypeReference
+          fields?: object
+      - action: setCustomField
+        docsAnchor: set-customfield
+        fields:
+          name: string
+          value?: any
   paymentInfo?:
     type: PaymentInfo
+    (hasUpdateActions):
+      - action: addPayment
+        fields:
+          payment: PaymentReference
+      - action: removePayment
+        fields:
+          payment: PaymentReference
   locale?:
     type: string
+    (hasSimpleUpdateAction): setLocale
   inventoryMode?:
     type: InventoryMode
   origin:
@@ -70,3 +262,16 @@ properties:
     type: ShippingRateInput
   itemShippingAddresses?:
     type: Address[]
+    (hasUpdateActions):
+      - action: addItemShippingAddress
+        docsAnchor: add-itemshippingaddress
+        fields:
+          address: Address
+      - action: removeItemShippingAddress
+        docsAnchor: remove-itemshippingaddress
+        fields:
+          addressKey: string
+      - action: updateItemShippingAddress
+        docsAnchor: update-itemshippingaddress
+        fields:
+          address: Address
