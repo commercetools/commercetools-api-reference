@@ -11067,7 +11067,8 @@
             },
             "orderNumber": {
               "title": "orderNumber",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "setOrderNumber"
             },
             "customerId": {
               "title": "customerId",
@@ -11076,7 +11077,13 @@
             },
             "customerEmail": {
               "title": "customerEmail",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasUpdateAction": {
+                "action": "setCustomerEmail",
+                "fields": {
+                  "email?": "string"
+                }
+              }
             },
             "anonymousId": {
               "title": "anonymousId",
@@ -11087,14 +11094,146 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/LineItem"
-              }
+              },
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "transitionLineItemState",
+                  "docsAnchor": "change-the-state-of-lineitem-according-to-allowed-transitions",
+                  "fields": {
+                    "lineItemId": "string",
+                    "quantity": {
+                      "type": "number",
+                      "format": "int64"
+                    },
+                    "fromState": "StateReference",
+                    "toState": "StateReference",
+                    "actualTransitionDate?": "datetime"
+                  }
+                },
+                {
+                  "action": "importLineItemState",
+                  "docsAnchor": "import-state-for-lineitems",
+                  "fields": {
+                    "lineItemId": "string",
+                    "state": "ItemState[]"
+                  }
+                },
+                {
+                  "action": "setLineItemCustomType",
+                  "docsAnchor": "set-lineitem-custom-type",
+                  "fields": {
+                    "lineItemId": {
+                      "type": "string"
+                    },
+                    "type?": {
+                      "type": "TypeReference"
+                    },
+                    "fields?": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "action": "setLineItemCustomField",
+                  "docsAnchor": "set-lineitem-customfield",
+                  "fields": {
+                    "lineItemId": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "value?": {
+                      "type": "any"
+                    }
+                  }
+                },
+                {
+                  "action": "setLineItemShippingDetails",
+                  "docsAnchor": "set-lineitemshippingdetails",
+                  "fields": {
+                    "lineItemId": {
+                      "type": "string"
+                    },
+                    "shippingDetails?": {
+                      "type": "ItemShippingDetailsDraft"
+                    }
+                  }
+                }
+              ]
             },
             "customLineItems": {
               "title": "customLineItems",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/CustomLineItem"
-              }
+              },
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "importCustomLineItemState",
+                  "docsAnchor": "import-state-for-customlineitems",
+                  "fields": {
+                    "customLineItemId": "string",
+                    "state": "ItemState[]"
+                  }
+                },
+                {
+                  "action": "setCustomLineItemCustomType",
+                  "docsAnchor": "set-customlineitem-custom-type",
+                  "fields": {
+                    "customLineItemId": {
+                      "type": "string"
+                    },
+                    "type?": {
+                      "type": "TypeReference"
+                    },
+                    "fields?": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "action": "setCustomLineItemCustomField",
+                  "docsAnchor": "set-customlineitem-customfield",
+                  "fields": {
+                    "customLineItemId": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "value?": {
+                      "type": "any"
+                    }
+                  }
+                },
+                {
+                  "action": "setCustomLineItemShippingDetails",
+                  "docsAnchor": "set-customlineitemshippingdetails",
+                  "fields": {
+                    "customLineItemId": {
+                      "type": "string"
+                    },
+                    "shippingDetails?": {
+                      "type": "ItemShippingDetailsDraft"
+                    }
+                  }
+                },
+                {
+                  "action": "transitionCustomLineItemState",
+                  "docsAnchor": "change-the-state-of-customlineitem-according-to-allowed-transitions",
+                  "fields": {
+                    "customLineItemId": "string",
+                    "quantity": {
+                      "type": "number",
+                      "format": "int64"
+                    },
+                    "fromState": "StateReference",
+                    "toState": "StateReference",
+                    "actualTransitionDate?": "datetime"
+                  }
+                }
+              ]
             },
             "totalPrice": {
               "title": "totalPrice",
@@ -11106,11 +11245,23 @@
             },
             "shippingAddress": {
               "title": "shippingAddress",
-              "$ref": "#/definitions/Address"
+              "$ref": "#/definitions/Address",
+              "x-annotation-hasUpdateAction": {
+                "action": "setShippingAddress",
+                "fields": {
+                  "address?": "Address"
+                }
+              }
             },
             "billingAddress": {
               "title": "billingAddress",
-              "$ref": "#/definitions/Address"
+              "$ref": "#/definitions/Address",
+              "x-annotation-hasUpdateAction": {
+                "action": "setBillingAddress",
+                "fields": {
+                  "address?": "Address"
+                }
+              }
             },
             "taxMode": {
               "title": "taxMode",
@@ -11130,29 +11281,124 @@
             },
             "orderState": {
               "title": "orderState",
-              "$ref": "#/definitions/OrderState"
+              "$ref": "#/definitions/OrderState",
+              "x-annotation-hasUpdateAction": {
+                "action": "changeOrderState",
+                "docsAnchor": "change-orderstate"
+              }
             },
             "state": {
               "title": "state",
-              "$ref": "#/definitions/StateReference"
+              "$ref": "#/definitions/StateReference",
+              "x-annotation-hasUpdateAction": {
+                "action": "transitionState",
+                "fields": {
+                  "state": "StateReference",
+                  "force?": "boolean"
+                }
+              }
             },
             "shipmentState": {
               "title": "shipmentState",
-              "$ref": "#/definitions/ShipmentState"
+              "$ref": "#/definitions/ShipmentState",
+              "x-annotation-hasUpdateAction": {
+                "action": "changeShipmentState",
+                "docsAnchor": "change-shipmentstate"
+              }
             },
             "paymentState": {
               "title": "paymentState",
-              "$ref": "#/definitions/PaymentState"
+              "$ref": "#/definitions/PaymentState",
+              "x-annotation-hasUpdateAction": {
+                "action": "changePaymentState",
+                "docsAnchor": "change-paymentstate"
+              }
             },
             "shippingInfo": {
               "title": "shippingInfo",
-              "$ref": "#/definitions/ShippingInfo"
+              "$ref": "#/definitions/ShippingInfo",
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "addDelivery",
+                  "fields": {
+                    "items?": "DeliveryItem[]",
+                    "address?": "Address",
+                    "parcels?": "ParcelDraft[]"
+                  }
+                },
+                {
+                  "action": "setDeliveryAddress",
+                  "fields": {
+                    "deliveryId": "string",
+                    "address?": "Address"
+                  }
+                },
+                {
+                  "action": "addParcelToDelivery",
+                  "docsAnchor": "add-parcel",
+                  "fields": {
+                    "deliveryId": "string",
+                    "measurements?": "ParcelMeasurements",
+                    "trackingData?": "TrackingData",
+                    "items?": "DeliveryItem[]"
+                  }
+                },
+                {
+                  "action": "setDeliveryItems",
+                  "fields": {
+                    "deliveryId": "string",
+                    "items": "DeliveyItem[]"
+                  }
+                },
+                {
+                  "action": "removeParcelFromDelivery",
+                  "fields": {
+                    "parcelId": "string"
+                  }
+                },
+                {
+                  "action": "removeDelivery",
+                  "fields": {
+                    "deliveryId": "string"
+                  }
+                },
+                {
+                  "action": "setParcelMeasurements",
+                  "fields": {
+                    "parcelId": "string",
+                    "measurements?": "ParcelMeasurements"
+                  }
+                },
+                {
+                  "action": "setParcelTrackingData",
+                  "fields": {
+                    "parcelId": "string",
+                    "trackingData?": "TrackingData"
+                  }
+                },
+                {
+                  "action": "setParcelItems",
+                  "fields": {
+                    "parcelId": "string",
+                    "items": "DeliveryItem[]"
+                  }
+                }
+              ]
             },
             "syncInfo": {
               "title": "syncInfo",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/SyncInfo"
+              },
+              "x-annotation-hasUpdateAction": {
+                "action": "updateSyncInfo",
+                "docsAnchor": "update-syncinfo",
+                "fields": {
+                  "channel": "ChannelReference",
+                  "externalId?": "string",
+                  "syncedAt?": "datetime"
+                }
               }
             },
             "returnInfo": {
@@ -11160,7 +11406,34 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/ReturnInfo"
-              }
+              },
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "addReturnInfo",
+                  "docsAnchor": "add-returninfo",
+                  "fields": {
+                    "returnTrackingId": "string",
+                    "items": "ReturnItemDraft[]",
+                    "returnDate?": "datetime"
+                  }
+                },
+                {
+                  "action": "setReturnShipmentState",
+                  "docsAnchor": "set-returnshipmentstate",
+                  "fields": {
+                    "returnItemId": "string",
+                    "shipmentState": "ReturnShipmentState"
+                  }
+                },
+                {
+                  "action": "setReturnPaymentState",
+                  "docsAnchor": "set-returnpaymentstate",
+                  "fields": {
+                    "returnItemId": "string",
+                    "paymentState": "ReturnPaymentState"
+                  }
+                }
+              ]
             },
             "discountCodes": {
               "title": "discountCodes",
@@ -11180,15 +11453,47 @@
             },
             "custom": {
               "title": "custom",
-              "$ref": "#/definitions/CustomFields"
+              "$ref": "#/definitions/CustomFields",
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "setCustomType",
+                  "fields": {
+                    "type?": "TypeReference",
+                    "fields?": "object"
+                  }
+                },
+                {
+                  "action": "setCustomField",
+                  "docsAnchor": "set-customfield",
+                  "fields": {
+                    "name": "string",
+                    "value?": "any"
+                  }
+                }
+              ]
             },
             "paymentInfo": {
               "title": "paymentInfo",
-              "$ref": "#/definitions/PaymentInfo"
+              "$ref": "#/definitions/PaymentInfo",
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "addPayment",
+                  "fields": {
+                    "payment": "PaymentReference"
+                  }
+                },
+                {
+                  "action": "removePayment",
+                  "fields": {
+                    "payment": "PaymentReference"
+                  }
+                }
+              ]
             },
             "locale": {
               "title": "locale",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "setLocale"
             },
             "inventoryMode": {
               "title": "inventoryMode",
@@ -11211,7 +11516,30 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Address"
-              }
+              },
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "addItemShippingAddress",
+                  "docsAnchor": "add-itemshippingaddress",
+                  "fields": {
+                    "address": "Address"
+                  }
+                },
+                {
+                  "action": "removeItemShippingAddress",
+                  "docsAnchor": "remove-itemshippingaddress",
+                  "fields": {
+                    "addressKey": "string"
+                  }
+                },
+                {
+                  "action": "updateItemShippingAddress",
+                  "docsAnchor": "update-itemshippingaddress",
+                  "fields": {
+                    "address": "Address"
+                  }
+                }
+              ]
             }
           },
           "required": [
@@ -11896,16 +12224,16 @@
                 "$ref": "#/definitions/DeliveryItem"
               }
             },
+            "address": {
+              "title": "address",
+              "$ref": "#/definitions/Address"
+            },
             "parcels": {
               "title": "parcels",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/ParcelDraft"
               }
-            },
-            "address": {
-              "title": "address",
-              "$ref": "#/definitions/Address"
             }
           },
           "type": "object"
@@ -11934,8 +12262,7 @@
         }
       ],
       "x-annotation-package": "Order",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#add-itemshippingaddress",
-      "x-annotation-postman-example": "{\n  \"action\": \"addItemShippingAddress\",\n  \"address\": {\n    \"firstName\": \"Max\",\n    \"lastName\": \"Mustermann\",\n    \"country\": \"DE\"\n  }\n}\n"
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#add-itemshippingaddress"
     },
     "OrderAddParcelToDeliveryAction": {
       "title": "OrderAddParcelToDeliveryAction",
@@ -12004,6 +12331,10 @@
         },
         {
           "properties": {
+            "returnTrackingId": {
+              "title": "returnTrackingId",
+              "type": "string"
+            },
             "items": {
               "title": "items",
               "type": "array",
@@ -12015,20 +12346,17 @@
               "title": "returnDate",
               "type": "string",
               "format": "date-time"
-            },
-            "returnTrackingId": {
-              "title": "returnTrackingId",
-              "type": "string"
             }
           },
           "required": [
+            "returnTrackingId",
             "items"
           ],
           "type": "object"
         }
       ],
       "x-annotation-package": "Order",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#addreturninfo"
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#add-returninfo"
     },
     "OrderChangeOrderStateAction": {
       "title": "OrderChangeOrderStateAction",
@@ -12065,9 +12393,6 @@
               "$ref": "#/definitions/PaymentState"
             }
           },
-          "required": [
-            "paymentState"
-          ],
           "type": "object"
         }
       ],
@@ -12087,9 +12412,6 @@
               "$ref": "#/definitions/ShipmentState"
             }
           },
-          "required": [
-            "shipmentState"
-          ],
           "type": "object"
         }
       ],
@@ -12175,7 +12497,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#remove-delivery"
     },
     "OrderRemoveItemShippingAddressAction": {
       "title": "OrderRemoveItemShippingAddressAction",
@@ -12197,8 +12520,7 @@
         }
       ],
       "x-annotation-package": "Order",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#remove-itemshippingaddress",
-      "x-annotation-postman-example": "{\n  \"action\": \"removeItemShippingAddress\",\n  \"addressKey\": \"{{addressKey}}\"\n}\n"
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#remove-itemshippingaddress"
     },
     "OrderRemoveParcelFromDeliveryAction": {
       "title": "OrderRemoveParcelFromDeliveryAction",
@@ -12219,7 +12541,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#remove-parcel-from-delivery"
     },
     "OrderRemovePaymentAction": {
       "title": "OrderRemovePaymentAction",
@@ -12259,7 +12582,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-billing-address"
     },
     "OrderSetCustomFieldAction": {
       "title": "OrderSetCustomFieldAction",
@@ -12284,7 +12608,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-customfield"
     },
     "OrderSetCustomLineItemCustomFieldAction": {
       "title": "OrderSetCustomLineItemCustomFieldAction",
@@ -12314,7 +12639,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-customlineitem-customfield"
     },
     "OrderSetCustomLineItemCustomTypeAction": {
       "title": "OrderSetCustomLineItemCustomTypeAction",
@@ -12328,13 +12654,13 @@
               "title": "customLineItemId",
               "type": "string"
             },
-            "fields": {
-              "title": "fields",
-              "type": "string"
-            },
             "type": {
               "title": "type",
               "$ref": "#/definitions/TypeReference"
+            },
+            "fields": {
+              "title": "fields",
+              "type": "string"
             }
           },
           "required": [
@@ -12343,7 +12669,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-customlineitem-custom-type"
     },
     "OrderSetCustomLineItemShippingDetailsAction": {
       "title": "OrderSetCustomLineItemShippingDetailsAction",
@@ -12369,8 +12696,7 @@
         }
       ],
       "x-annotation-package": "Order",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-customlineitemshippingdetails",
-      "x-annotation-postman-example": "{\n  \"action\": \"setCustomLineItemShippingDetails\",\n  \"customLineItemId\": \"{{customLineItemId}}\",\n  \"shippingDetails\": {\n    \"targets\": [\n      {\n        \"addressKey\": \"{{addressKey}}\",\n        \"quantity\": 1\n      }\n    ]\n  }\n}\n"
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-customlineitemshippingdetails"
     },
     "OrderSetCustomTypeAction": {
       "title": "OrderSetCustomTypeAction",
@@ -12380,19 +12706,20 @@
         },
         {
           "properties": {
-            "fields": {
-              "title": "fields",
-              "type": "string"
-            },
             "type": {
               "title": "type",
               "$ref": "#/definitions/TypeReference"
+            },
+            "fields": {
+              "title": "fields",
+              "type": "object"
             }
           },
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-custom-type"
     },
     "OrderSetCustomerEmailAction": {
       "title": "OrderSetCustomerEmailAction",
@@ -12407,13 +12734,11 @@
               "type": "string"
             }
           },
-          "required": [
-            "email"
-          ],
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-customer-email"
     },
     "OrderSetCustomerIdAction": {
       "title": "OrderSetCustomerIdAction",
@@ -12457,7 +12782,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-delivery-address"
     },
     "OrderSetDeliveryItemsAction": {
       "title": "OrderSetDeliveryItemsAction",
@@ -12475,7 +12801,7 @@
               "title": "items",
               "type": "array",
               "items": {
-                "$ref": "#/definitions/DeliveryItem"
+                "$ref": "#/definitions/DeliveyItem"
               }
             }
           },
@@ -12486,7 +12812,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-delivery-items"
     },
     "OrderSetLineItemCustomFieldAction": {
       "title": "OrderSetLineItemCustomFieldAction",
@@ -12516,7 +12843,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-lineitem-customfield"
     },
     "OrderSetLineItemCustomTypeAction": {
       "title": "OrderSetLineItemCustomTypeAction",
@@ -12526,10 +12854,6 @@
         },
         {
           "properties": {
-            "fields": {
-              "title": "fields",
-              "type": "string"
-            },
             "lineItemId": {
               "title": "lineItemId",
               "type": "string"
@@ -12537,6 +12861,10 @@
             "type": {
               "title": "type",
               "$ref": "#/definitions/TypeReference"
+            },
+            "fields": {
+              "title": "fields",
+              "type": "string"
             }
           },
           "required": [
@@ -12545,7 +12873,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-lineitem-custom-type"
     },
     "OrderSetLineItemShippingDetailsAction": {
       "title": "OrderSetLineItemShippingDetailsAction",
@@ -12571,8 +12900,7 @@
         }
       ],
       "x-annotation-package": "Order",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-lineitemshippingdetails",
-      "x-annotation-postman-example": "{\n  \"action\": \"setLineItemShippingDetails\",\n  \"lineItemId\": \"{{lineItemId}}\",\n  \"shippingDetails\": {\n    \"targets\": [\n      {\n        \"addressKey\": \"{{addressKey}}\",\n        \"quantity\": 1\n      }\n    ]\n  }\n}\n"
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-lineitemshippingdetails"
     },
     "OrderSetLocaleAction": {
       "title": "OrderSetLocaleAction",
@@ -12590,7 +12918,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-locale"
     },
     "OrderSetOrderNumberAction": {
       "title": "OrderSetOrderNumberAction",
@@ -12605,9 +12934,6 @@
               "type": "string"
             }
           },
-          "required": [
-            "orderNumber"
-          ],
           "type": "object"
         }
       ],
@@ -12641,7 +12967,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-parcel-items"
     },
     "OrderSetParcelMeasurementsAction": {
       "title": "OrderSetParcelMeasurementsAction",
@@ -12687,13 +13014,13 @@
             }
           },
           "required": [
-            "parcelId",
-            "trackingData"
+            "parcelId"
           ],
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-parcel-tracking-data"
     },
     "OrderSetReturnPaymentStateAction": {
       "title": "OrderSetReturnPaymentStateAction",
@@ -12703,18 +13030,18 @@
         },
         {
           "properties": {
-            "paymentState": {
-              "title": "paymentState",
-              "$ref": "#/definitions/ReturnPaymentState"
-            },
             "returnItemId": {
               "title": "returnItemId",
               "type": "string"
+            },
+            "paymentState": {
+              "title": "paymentState",
+              "$ref": "#/definitions/ReturnPaymentState"
             }
           },
           "required": [
-            "paymentState",
-            "returnItemId"
+            "returnItemId",
+            "paymentState"
           ],
           "type": "object"
         }
@@ -12765,7 +13092,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Order"
+      "x-annotation-package": "Order",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-shipping-address"
     },
     "OrderTransitionCustomLineItemStateAction": {
       "title": "OrderTransitionCustomLineItemStateAction",
@@ -12775,32 +13103,33 @@
         },
         {
           "properties": {
-            "actualTransitionDate": {
-              "title": "actualTransitionDate",
-              "type": "string",
-              "format": "date-time"
-            },
             "customLineItemId": {
               "title": "customLineItemId",
               "type": "string"
+            },
+            "quantity": {
+              "title": "quantity",
+              "format": "int64",
+              "type": "number"
             },
             "fromState": {
               "title": "fromState",
               "$ref": "#/definitions/StateReference"
             },
-            "quantity": {
-              "title": "quantity",
-              "type": "number"
-            },
             "toState": {
               "title": "toState",
               "$ref": "#/definitions/StateReference"
+            },
+            "actualTransitionDate": {
+              "title": "actualTransitionDate",
+              "type": "string",
+              "format": "date-time"
             }
           },
           "required": [
             "customLineItemId",
-            "fromState",
             "quantity",
+            "fromState",
             "toState"
           ],
           "type": "object"
@@ -12817,32 +13146,33 @@
         },
         {
           "properties": {
-            "actualTransitionDate": {
-              "title": "actualTransitionDate",
-              "type": "string",
-              "format": "date-time"
-            },
-            "fromState": {
-              "title": "fromState",
-              "$ref": "#/definitions/StateReference"
-            },
             "lineItemId": {
               "title": "lineItemId",
               "type": "string"
             },
             "quantity": {
               "title": "quantity",
+              "format": "int64",
               "type": "number"
+            },
+            "fromState": {
+              "title": "fromState",
+              "$ref": "#/definitions/StateReference"
             },
             "toState": {
               "title": "toState",
               "$ref": "#/definitions/StateReference"
+            },
+            "actualTransitionDate": {
+              "title": "actualTransitionDate",
+              "type": "string",
+              "format": "date-time"
             }
           },
           "required": [
-            "fromState",
             "lineItemId",
             "quantity",
+            "fromState",
             "toState"
           ],
           "type": "object"
@@ -12861,13 +13191,16 @@
           "properties": {
             "state": {
               "title": "state",
-              "$ref": "#/definitions/ResourceIdentifier"
+              "$ref": "#/definitions/StateReference"
             },
             "force": {
               "title": "force",
               "type": "boolean"
             }
           },
+          "required": [
+            "state"
+          ],
           "type": "object"
         }
       ],
@@ -12894,8 +13227,7 @@
         }
       ],
       "x-annotation-package": "Order",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#update-itemshippingaddress",
-      "x-annotation-postman-example": "{\n  \"action\": \"updateItemShippingAddress\",\n  \"address\": {\n    \"firstName\": \"Max\",\n    \"lastName\": \"Mustermann\",\n    \"country\": \"DE\"\n  }\n}\n"
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#update-itemshippingaddress"
     },
     "OrderUpdateSyncInfoAction": {
       "title": "OrderUpdateSyncInfoAction",
