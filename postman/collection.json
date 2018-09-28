@@ -34757,6 +34757,73 @@
                     },
                     "response": []
                 },{
+                    "name": "ChangeDestination",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "tests[\"Status code \" + responseCode.code] = responseCode.code === 200 || responseCode.code === 201;",
+                                    "var data = JSON.parse(responseBody);",
+                                    "if(data.version){",
+                                    "    postman.setEnvironmentVariable(\"subscription-version\", data.version);",
+                                    "}",
+                                    "if(data.id){",
+                                    "    postman.setEnvironmentVariable(\"subscription-id\", data.id); ",
+                                    "}",
+                                    "if(data.key){",
+                                    "    postman.setEnvironmentVariable(\"subscription-key\", data.key); ",
+                                    "}",
+                                    ""
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth":
+                            {
+                                "type": "oauth2",
+                                "oauth2": {
+                                    "accessToken": "{{ctp_access_token}}",
+                                    "addTokenTo": "header",
+                                    "tokenType": "Bearer"
+                                }
+                            },
+                        "method": "POST",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"version\": {{subscription-version}},\n  \"actions\": [{\n    \"action\": \"changeDestination\"\n  }]\n}"
+                        },
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{host}}/{{projectKey}}//subscriptions/{{subscription-id}}",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "{{projectKey}}",
+                                "subscriptions",
+                                "{{subscription-id}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "expand",
+                                    "value": "",
+                                    "equals": true,
+                                    "disabled": true
+                                }
+                            ]
+                        },
+                        "description": "SubscriptionChangeDestinationAction"
+                    },
+                    "response": []
+                },{
                     "name": "SetChanges",
                     "event": [
                         {
