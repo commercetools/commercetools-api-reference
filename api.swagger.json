@@ -13287,11 +13287,23 @@
             },
             "interfaceId": {
               "title": "interfaceId",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasUpdateAction": {
+                "action": "setInterfaceId",
+                "docsAnchor": "set-interfaceid",
+                "required": true
+              }
             },
             "amountPlanned": {
               "title": "amountPlanned",
-              "$ref": "#/definitions/TypedMoney"
+              "$ref": "#/definitions/TypedMoney",
+              "x-annotation-hasUpdateAction": {
+                "action": "changeAmountPlanned",
+                "docsAnchor": "change-amountplanned",
+                "fields": {
+                  "amount": "Money"
+                }
+              }
             },
             "amountAuthorized": {
               "title": "amountAuthorized",
@@ -13315,29 +13327,126 @@
             },
             "paymentMethodInfo": {
               "title": "paymentMethodInfo",
-              "$ref": "#/definitions/PaymentMethodInfo"
+              "$ref": "#/definitions/PaymentMethodInfo",
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "setMethodInfoInterface",
+                  "docsAnchor": "set-methodinfointerface",
+                  "fields": {
+                    "interface": "string"
+                  }
+                },
+                {
+                  "action": "setMethodInfoMethod",
+                  "docsAnchor": "set-methodinfomethod",
+                  "fields": {
+                    "method?": "string"
+                  }
+                },
+                {
+                  "action": "setMethodInfoName",
+                  "docsAnchor": "set-methodinfoname",
+                  "fields": {
+                    "name?": "LocalizedString"
+                  }
+                }
+              ]
             },
             "paymentStatus": {
               "title": "paymentStatus",
-              "$ref": "#/definitions/PaymentStatus"
+              "$ref": "#/definitions/PaymentStatus",
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "setStatusInterfaceCode",
+                  "docsAnchor": "set-statusinterfacecode",
+                  "fields": {
+                    "interfaceCode?": "string"
+                  }
+                },
+                {
+                  "action": "setStatusInterfaceText",
+                  "docsAnchor": "set-statusinterfacetext",
+                  "fields": {
+                    "interfaceText": "string"
+                  }
+                },
+                {
+                  "action": "transitionState",
+                  "fields": {
+                    "state": "StateReference",
+                    "force?": "boolean"
+                  }
+                }
+              ]
             },
             "transactions": {
               "title": "transactions",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Transaction"
-              }
+              },
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "addTransaction",
+                  "fields": {
+                    "transaction": "TransactionDraft"
+                  }
+                },
+                {
+                  "action": "changeTransactionState",
+                  "docsAnchor": "change-transactionstate",
+                  "fields": {
+                    "transactionId": "string",
+                    "state": "TransactionState"
+                  }
+                },
+                {
+                  "action": "changeTransactionInteractionId",
+                  "docsAnchor": "change-transactioninteractionid",
+                  "fields": {
+                    "transactionId": "string",
+                    "interactionId": "string"
+                  }
+                }
+              ]
             },
             "interfaceInteractions": {
               "title": "interfaceInteractions",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/CustomFields"
-              }
+              },
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "addInterfaceInteraction",
+                  "docsAnchor": "add-interfaceinteraction",
+                  "fields": {
+                    "type": "TypeReference",
+                    "fields?": "FieldContainer"
+                  }
+                }
+              ]
             },
             "custom": {
               "title": "custom",
-              "$ref": "#/definitions/CustomFields"
+              "$ref": "#/definitions/CustomFields",
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "setCustomType",
+                  "fields": {
+                    "type?": "TypeReference",
+                    "fields?": "object"
+                  }
+                },
+                {
+                  "action": "setCustomField",
+                  "docsAnchor": "set-customfield",
+                  "fields": {
+                    "name": "string",
+                    "value?": "any"
+                  }
+                }
+              ]
             },
             "key": {
               "title": "key",
@@ -13652,15 +13761,18 @@
         },
         {
           "properties": {
-            "fields": {
-              "title": "fields",
-              "type": "string"
-            },
             "type": {
               "title": "type",
               "$ref": "#/definitions/TypeReference"
+            },
+            "fields": {
+              "title": "fields",
+              "$ref": "#/definitions/FieldContainer"
             }
           },
+          "required": [
+            "type"
+          ],
           "type": "object"
         }
       ],
@@ -13702,6 +13814,9 @@
               "$ref": "#/definitions/Money"
             }
           },
+          "required": [
+            "amount"
+          ],
           "type": "object"
         }
       ],
@@ -13716,18 +13831,18 @@
         },
         {
           "properties": {
-            "interactionId": {
-              "title": "interactionId",
-              "type": "string"
-            },
             "transactionId": {
               "title": "transactionId",
+              "type": "string"
+            },
+            "interactionId": {
+              "title": "interactionId",
               "type": "string"
             }
           },
           "required": [
-            "interactionId",
-            "transactionId"
+            "transactionId",
+            "interactionId"
           ],
           "type": "object"
         }
@@ -13743,18 +13858,18 @@
         },
         {
           "properties": {
-            "state": {
-              "title": "state",
-              "$ref": "#/definitions/TransactionState"
-            },
             "transactionId": {
               "title": "transactionId",
               "type": "string"
+            },
+            "state": {
+              "title": "state",
+              "$ref": "#/definitions/TransactionState"
             }
           },
           "required": [
-            "state",
-            "transactionId"
+            "transactionId",
+            "state"
           ],
           "type": "object"
         }
@@ -13905,13 +14020,13 @@
         },
         {
           "properties": {
-            "fields": {
-              "title": "fields",
-              "type": "string"
-            },
             "type": {
               "title": "type",
               "$ref": "#/definitions/TypeReference"
+            },
+            "fields": {
+              "title": "fields",
+              "type": "object"
             }
           },
           "type": "object"
@@ -14091,6 +14206,9 @@
               "type": "string"
             }
           },
+          "required": [
+            "interfaceText"
+          ],
           "type": "object"
         }
       ],
@@ -14114,6 +14232,9 @@
               "type": "boolean"
             }
           },
+          "required": [
+            "state"
+          ],
           "type": "object"
         }
       ],
