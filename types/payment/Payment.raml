@@ -20,8 +20,17 @@ properties:
     type: string
   interfaceId?:
     type: string
+    (hasUpdateAction):
+      action: setInterfaceId
+      docsAnchor: set-interfaceid
+      required: true
   amountPlanned:
     type: TypedMoney
+    (hasUpdateAction):
+      action: changeAmountPlanned
+      docsAnchor: change-amountplanned
+      fields:
+        amount: Money
   amountAuthorized?:
     (deprecated): true
     type: TypedMoney
@@ -36,12 +45,70 @@ properties:
     type: TypedMoney
   paymentMethodInfo:
     type: PaymentMethodInfo
+    (hasUpdateActions):
+      - action: setMethodInfoInterface
+        docsAnchor: set-methodinfointerface
+        fields:
+          interface: string
+      - action: setMethodInfoMethod
+        docsAnchor: set-methodinfomethod
+        fields:
+          method?: string
+      - action: setMethodInfoName
+        docsAnchor: set-methodinfoname
+        fields:
+          name?: LocalizedString
   paymentStatus:
     type: PaymentStatus
-  transactions: Transaction[]
-  interfaceInteractions: CustomFields[]
+    (hasUpdateActions):
+      - action: setStatusInterfaceCode
+        docsAnchor: set-statusinterfacecode
+        fields:
+          interfaceCode?: string
+      - action: setStatusInterfaceText
+        docsAnchor: set-statusinterfacetext
+        fields:
+          interfaceText: string
+      - action: transitionState
+        fields:
+          state: StateReference
+          force?: boolean
+  transactions:
+    type: Transaction[]
+    (hasUpdateActions):
+      - action: addTransaction
+        fields:
+          transaction: TransactionDraft
+      - action: changeTransactionState
+        docsAnchor: change-transactionstate
+        fields:
+          transactionId: string
+          state: TransactionState
+      - action: changeTransactionInteractionId
+        docsAnchor: change-transactioninteractionid
+        fields:
+          transactionId: string
+          interactionId: string
+  interfaceInteractions:
+    type: CustomFields[]
+    (hasUpdateActions):
+      - action: addInterfaceInteraction
+        docsAnchor: add-interfaceinteraction
+        fields:
+          type: TypeReference
+          fields?: FieldContainer
   custom?:
     type: CustomFields
+    (hasUpdateActions):
+      - action: setCustomType
+        fields:
+          type?: TypeReference
+          fields?: object
+      - action: setCustomField
+        docsAnchor: set-customfield
+        fields:
+          name: string
+          value?: any
   key?:
     (hasSimpleUpdateAction): setKey
     type: string
