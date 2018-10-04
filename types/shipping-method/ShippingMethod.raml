@@ -2,20 +2,48 @@
 (package): ShippingMethod
 (docs-uri): https://docs.commercetools.com/http-api-projects-shippingMethods.html#shippingmethod
 
-
 type: Resource
 displayName: ShippingMethod
 (updateType): ShippingMethodUpdate
 properties:
-    key?:
-        type: string
-    name:
-        type: string
-    description?:
-        type: string
-    taxCategory:
-        type: TaxCategoryReference
-    zoneRates: ZoneRate[]
-    isDefault: boolean
-    predicate?:
-        type: string
+  key?:
+    type: string
+    (hasSimpleUpdateAction): setKey
+  name:
+    type: string
+    (hasSimpleUpdateAction): changeName
+  description?:
+    type: string
+    (hasSimpleUpdateAction): setDescription
+  taxCategory:
+    type: TaxCategoryReference
+    (hasUpdateAction):
+      action: changeTaxCategory
+      docsAnchor: change-taxcategory
+  zoneRates:
+    type: ZoneRate[]
+    (hasUpdateActions):
+      - action: addShippingRate
+        docsAnchor: add-shippingrate
+        fields:
+          zone: ZoneReference
+          shippingRate: ShippingRateDraft
+      - action: removeShippingRate
+        docsAnchor: remove-shippingrate
+        fields:
+          zone: ZoneReference
+          shippingRate: ShippingRateDraft
+      - action: addZone
+        fields:
+          zone: ZoneReference
+      - action: removeZone
+        fields:
+          zone: ZoneReference
+  isDefault:
+    type: boolean
+    (hasUpdateAction):
+      action: changeIsDefault
+      docsAnchor: change-isdefault
+  predicate?:
+    type: string
+    (hasSimpleUpdateAction): setPredicate
