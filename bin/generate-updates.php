@@ -73,6 +73,14 @@ class UpdateAction
      */
     public $domain;
     /**
+     * @var string
+     */
+    public $prefix;
+    /**
+     * @var string
+     */
+    public $type;
+    /**
      * @var
      */
     public $action;
@@ -99,16 +107,20 @@ class UpdateAction
     /**
      * UpdateAction constructor.
      * @param string $domain
+     * @param string $prefix
+     * @param string $type
      * @param string $action
      * @param Field[] $fields
      * @param string $docsUri
      */
-    public function __construct($domain, $action, array $fields, $docsUri)
+    public function __construct($domain, $prefix, $type, $action, array $fields, $docsUri)
     {
         $this->action = $action;
         $this->fields = $fields;
+        $this->prefix = $prefix;
         $this->domain = $domain;
-        $this->displayName = ucfirst($domain) . ucfirst($action) . 'Action';
+        $this->type = $type;
+        $this->displayName = ucfirst($prefix) . ucfirst($action) . 'Action';
         $this->docsUri = $docsUri;
     }
 }
@@ -152,10 +164,14 @@ class RamlModelParser
                     $updates = $ramlType['(hasUpdateActions)'];
                 }
                 $fields = $this->resolveProperties($ramlTypes, $ramlType);
+                $displayName = isset($ramlType['displayName']) ? $ramlType['displayName'] : $package;
+                $actionType = isset($ramlType['(actionType)']) ? $ramlType['(actionType)'] : $package . 'UpdateAction';
                 if (count($fields) > 0) {
                     $ramlInfos[$typeName] = [
                         'fields' => $fields,
                         'domain' => $package,
+                        'displayName' => $displayName,
+                        'actionType' => $actionType,
                         'model' => $typeName,
                         'docsUri' => $docsUri,
                         'updates' => $updates,
@@ -215,7 +231,7 @@ class RamlModelParser
 (package): $domainName
 {$docsUri}
 
-type: {$domainName}UpdateAction
+type: {$action->type}
 displayName: {$action->displayName}
 discriminatorValue: {$action->action}
 $exampleExists
@@ -270,7 +286,8 @@ EOF;
                 $fields = [
                     new Field($field['name'], $field['required'], $field['type'], $field['format'] ?? null)
                 ];
-                return new UpdateAction($type['domain'], $field['(hasSimpleUpdateAction)'], $fields, $docsUri);
+                $prefix = isset($type['displayName']) ? $type['displayName'] : $type['domain'];
+                return new UpdateAction($type['domain'], $prefix, $type['actionType'], $field['(hasSimpleUpdateAction)'], $fields, $docsUri);
             },
             $simpleActionFields
         );
@@ -346,7 +363,9 @@ EOF;
             $property = $this->parseProperty($actionFieldName, $actionField);
             $fields[] = new Field($property['name'], $property['required'], $property['type'], $property['format'] ?? null);
         }
-        return new UpdateAction($type['domain'], $actionInfo['action'], $fields, $docsUri);
+        $typeName = isset($actionInfo['type']) ? $actionInfo['type'] : $type['actionType'];
+        $prefix = isset($actionInfo['prefix']) ? $actionInfo['prefix'] : $type['displayName'];
+        return new UpdateAction($type['domain'], $prefix, $typeName, $actionInfo['action'], $fields, $docsUri);
     }
 
     public function generateUpdateCommands()
