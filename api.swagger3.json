@@ -31290,28 +31290,32 @@
           },
           "name": {
             "title": "name",
-            "type": "string"
+            "type": "string",
+            "x-annotation-hasSimpleUpdateAction": "changeName"
           },
           "countries": {
             "title": "countries",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CountryCode"
-            }
+            },
+            "x-annotation-hasSimpleUpdateAction": "changeCountries"
           },
           "currencies": {
             "title": "currencies",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CurrencyCode"
-            }
+            },
+            "x-annotation-hasSimpleUpdateAction": "changeCurrencies"
           },
           "languages": {
             "title": "languages",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Locale"
-            }
+            },
+            "x-annotation-hasSimpleUpdateAction": "changeLanguages"
           },
           "createdAt": {
             "title": "createdAt",
@@ -31324,11 +31328,21 @@
           },
           "messages": {
             "title": "messages",
-            "$ref": "#/components/schemas/MessageConfiguration"
+            "$ref": "#/components/schemas/MessageConfiguration",
+            "x-annotation-hasUpdateAction": {
+              "action": "changeMessagesEnabled",
+              "fields": {
+                "messagesEnabled": "boolean"
+              }
+            }
           },
           "shippingRateInputType": {
             "title": "shippingRateInputType",
-            "$ref": "#/components/schemas/ShippingRateInputType"
+            "$ref": "#/components/schemas/ShippingRateInputType",
+            "x-annotation-hasUpdateAction": {
+              "action": "setShippingRateInputType",
+              "docsAnchor": "set-shippingrateinputtype"
+            }
           }
         },
         "required": [
@@ -31542,7 +31556,8 @@
             "properties": {
               "key": {
                 "title": "key",
-                "type": "string"
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setKey"
               },
               "uniquenessValue": {
                 "title": "uniquenessValue",
@@ -31550,23 +31565,28 @@
               },
               "locale": {
                 "title": "locale",
-                "type": "string"
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setLocale"
               },
               "authorName": {
                 "title": "authorName",
-                "type": "string"
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setAuthorName"
               },
               "title": {
                 "title": "title",
-                "type": "string"
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setTitle"
               },
               "text": {
                 "title": "text",
-                "type": "string"
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setText"
               },
               "target": {
                 "title": "target",
-                "type": "object"
+                "type": "object",
+                "x-annotation-hasSimpleUpdateAction": "setTarget"
               },
               "includedInStatistics": {
                 "title": "includedInStatistics",
@@ -31577,19 +31597,45 @@
                 "minimum": -100,
                 "maximum": 100,
                 "format": "int8",
-                "type": "number"
+                "type": "number",
+                "x-annotation-hasSimpleUpdateAction": "setRating"
               },
               "state": {
                 "title": "state",
-                "$ref": "#/components/schemas/StateReference"
+                "$ref": "#/components/schemas/StateReference",
+                "x-annotation-hasUpdateAction": {
+                  "action": "transitionState",
+                  "fields": {
+                    "state": "StateReference",
+                    "force?": "boolean"
+                  }
+                }
               },
               "customer": {
                 "title": "customer",
-                "$ref": "#/components/schemas/CustomerReference"
+                "$ref": "#/components/schemas/CustomerReference",
+                "x-annotation-hasSimpleUpdateAction": "setCustomer"
               },
               "custom": {
                 "title": "custom",
-                "$ref": "#/components/schemas/CustomFields"
+                "$ref": "#/components/schemas/CustomFields",
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "setCustomType",
+                    "fields": {
+                      "type?": "TypeReference",
+                      "fields?": "object"
+                    }
+                  },
+                  {
+                    "action": "setCustomField",
+                    "docsAnchor": "set-customfield",
+                    "fields": {
+                      "name": "string",
+                      "value?": "any"
+                    }
+                  }
+                ]
               }
             },
             "type": "object"
@@ -31810,6 +31856,7 @@
           }
         ],
         "x-annotation-package": "Review",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-reviews.html#set-customfield",
         "type": "string"
       },
       "ReviewSetCustomTypeAction": {
@@ -31821,19 +31868,20 @@
           },
           {
             "properties": {
-              "fields": {
-                "title": "fields",
-                "type": "string"
-              },
               "type": {
                 "title": "type",
-                "$ref": "#/components/schemas/ResourceIdentifier"
+                "$ref": "#/components/schemas/TypeReference"
+              },
+              "fields": {
+                "title": "fields",
+                "type": "object"
               }
             },
             "type": "object"
           }
         ],
         "x-annotation-package": "Review",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-reviews.html#set-custom-type",
         "type": "string"
       },
       "ReviewSetCustomerAction": {
@@ -31847,7 +31895,7 @@
             "properties": {
               "customer": {
                 "title": "customer",
-                "$ref": "#/components/schemas/ResourceIdentifier"
+                "$ref": "#/components/schemas/CustomerReference"
               }
             },
             "type": "object"
@@ -31910,7 +31958,8 @@
             "properties": {
               "rating": {
                 "title": "rating",
-                "type": "integer"
+                "format": "int8",
+                "type": "number"
               }
             },
             "type": "object"
@@ -31931,7 +31980,7 @@
             "properties": {
               "target": {
                 "title": "target",
-                "$ref": "#/components/schemas/ResourceIdentifier"
+                "type": "object"
               }
             },
             "type": "object"
@@ -31994,7 +32043,7 @@
             "properties": {
               "state": {
                 "title": "state",
-                "$ref": "#/components/schemas/ResourceIdentifier"
+                "$ref": "#/components/schemas/StateReference"
               },
               "force": {
                 "title": "force",
@@ -32132,34 +32181,76 @@
             "properties": {
               "key": {
                 "title": "key",
-                "type": "string"
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setKey"
               },
               "name": {
                 "title": "name",
-                "type": "string"
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "changeName"
               },
               "description": {
                 "title": "description",
-                "type": "string"
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setDescription"
               },
               "taxCategory": {
                 "title": "taxCategory",
-                "$ref": "#/components/schemas/TaxCategoryReference"
+                "$ref": "#/components/schemas/TaxCategoryReference",
+                "x-annotation-hasUpdateAction": {
+                  "action": "changeTaxCategory",
+                  "docsAnchor": "change-taxcategory"
+                }
               },
               "zoneRates": {
                 "title": "zoneRates",
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/ZoneRate"
-                }
+                },
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "addShippingRate",
+                    "docsAnchor": "add-shippingrate",
+                    "fields": {
+                      "zone": "ZoneReference",
+                      "shippingRate": "ShippingRateDraft"
+                    }
+                  },
+                  {
+                    "action": "removeShippingRate",
+                    "docsAnchor": "remove-shippingrate",
+                    "fields": {
+                      "zone": "ZoneReference",
+                      "shippingRate": "ShippingRateDraft"
+                    }
+                  },
+                  {
+                    "action": "addZone",
+                    "fields": {
+                      "zone": "ZoneReference"
+                    }
+                  },
+                  {
+                    "action": "removeZone",
+                    "fields": {
+                      "zone": "ZoneReference"
+                    }
+                  }
+                ]
               },
               "isDefault": {
                 "title": "isDefault",
-                "type": "boolean"
+                "type": "boolean",
+                "x-annotation-hasUpdateAction": {
+                  "action": "changeIsDefault",
+                  "docsAnchor": "change-isdefault"
+                }
               },
               "predicate": {
                 "title": "predicate",
-                "type": "string"
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setPredicate"
               }
             },
             "type": "object"
@@ -32439,13 +32530,13 @@
           },
           {
             "properties": {
-              "shippingRate": {
-                "title": "shippingRate",
-                "$ref": "#/components/schemas/ShippingRateDraft"
-              },
               "zone": {
                 "title": "zone",
                 "$ref": "#/components/schemas/ZoneReference"
+              },
+              "shippingRate": {
+                "title": "shippingRate",
+                "$ref": "#/components/schemas/ShippingRateDraft"
               }
             },
             "type": "object"
@@ -32453,7 +32544,6 @@
         ],
         "x-annotation-package": "ShippingMethod",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-shippingMethods.html#add-shippingrate",
-        "x-annotation-postman-example": "{\n  \"action\": \"addShippingRate\",\n  \"zone\": {\n    \"typeId\": \"zone\",\n    \"id\": \"668e5783-73c8-4f2d-91f4-3c90b872c700\"\n  },\n  \"shippingRate\": {\n    \"price\": {\n      \"currencyCode\": \"USD\",\n      \"centAmount\": 299\n    }\n  }\n}\n",
         "type": "string"
       },
       "ShippingMethodAddZoneAction": {
@@ -32549,13 +32639,13 @@
           },
           {
             "properties": {
-              "shippingRate": {
-                "title": "shippingRate",
-                "$ref": "#/components/schemas/ShippingRateDraft"
-              },
               "zone": {
                 "title": "zone",
                 "$ref": "#/components/schemas/ZoneReference"
+              },
+              "shippingRate": {
+                "title": "shippingRate",
+                "$ref": "#/components/schemas/ShippingRateDraft"
               }
             },
             "type": "object"
@@ -32563,7 +32653,6 @@
         ],
         "x-annotation-package": "ShippingMethod",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-shippingMethods.html#remove-shippingrate",
-        "x-annotation-postman-example": "{\n  \"action\": \"removeShippingRate\",\n  \"zone\": {\n    \"typeId\": \"zone\",\n    \"id\": \"668e5783-73c8-4f2d-91f4-3c90b872c700\"\n  },\n  \"shippingRate\": {\n    \"price\": {\n      \"currencyCode\": \"USD\",\n      \"centAmount\": 299\n    }\n  }\n}\n",
         "type": "string"
       },
       "ShippingMethodRemoveZoneAction": {
@@ -35422,15 +35511,18 @@
             "properties": {
               "key": {
                 "title": "key",
-                "type": "string"
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "changeKey"
               },
               "name": {
                 "title": "name",
-                "$ref": "#/components/schemas/LocalizedString"
+                "$ref": "#/components/schemas/LocalizedString",
+                "x-annotation-hasSimpleUpdateAction": "changeName"
               },
               "description": {
                 "title": "description",
-                "$ref": "#/components/schemas/LocalizedString"
+                "$ref": "#/components/schemas/LocalizedString",
+                "x-annotation-hasSimpleUpdateAction": "setDescription"
               },
               "resourceTypeIds": {
                 "title": "resourceTypeIds",
@@ -35444,7 +35536,69 @@
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/FieldDefinition"
-                }
+                },
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "addFieldDefinition",
+                    "docsAnchor": "add-fielddefinition",
+                    "fields": {
+                      "fieldDefinition": "FieldDefinition"
+                    }
+                  },
+                  {
+                    "action": "removeFieldDefinition",
+                    "docsAnchor": "remove-fielddefinition",
+                    "fields": {
+                      "fieldName": "string"
+                    }
+                  },
+                  {
+                    "action": "changeLabel",
+                    "fields": {
+                      "fieldName": "string",
+                      "label": "LocalizedString"
+                    }
+                  },
+                  {
+                    "action": "addEnumValue",
+                    "docsAnchor": "add-enumvalue-to-fielddefinition",
+                    "fields": {
+                      "fieldName": "string",
+                      "value": "CustomFieldEnumValue"
+                    }
+                  },
+                  {
+                    "action": "addLocalizedEnumValue",
+                    "docsAnchor": "add-localizedenumvalue-to-fielddefinition",
+                    "fields": {
+                      "fieldName": "string",
+                      "value": "CustomFieldLocalizedEnumValue"
+                    }
+                  },
+                  {
+                    "action": "changeFieldDefinitionOrder",
+                    "docsAnchor": "change-the-order-of-fielddefinitions",
+                    "fields": {
+                      "fieldNames": "string[]"
+                    }
+                  },
+                  {
+                    "action": "changeEnumValueOrder",
+                    "docsAnchor": "change-the-order-of-enumvalues",
+                    "fields": {
+                      "fieldName": "string",
+                      "keys": "string[]"
+                    }
+                  },
+                  {
+                    "action": "changeLocalizedEnumValueOrder",
+                    "docsAnchor": "change-the-order-of-localizedenumvalues",
+                    "fields": {
+                      "fieldName": "string",
+                      "keys": "string[]"
+                    }
+                  }
+                ]
               }
             },
             "type": "object"

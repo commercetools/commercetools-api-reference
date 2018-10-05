@@ -18228,28 +18228,32 @@
         },
         "name": {
           "title": "name",
-          "type": "string"
+          "type": "string",
+          "x-annotation-hasSimpleUpdateAction": "changeName"
         },
         "countries": {
           "title": "countries",
           "type": "array",
           "items": {
             "$ref": "#/definitions/CountryCode"
-          }
+          },
+          "x-annotation-hasSimpleUpdateAction": "changeCountries"
         },
         "currencies": {
           "title": "currencies",
           "type": "array",
           "items": {
             "$ref": "#/definitions/CurrencyCode"
-          }
+          },
+          "x-annotation-hasSimpleUpdateAction": "changeCurrencies"
         },
         "languages": {
           "title": "languages",
           "type": "array",
           "items": {
             "$ref": "#/definitions/Locale"
-          }
+          },
+          "x-annotation-hasSimpleUpdateAction": "changeLanguages"
         },
         "createdAt": {
           "title": "createdAt",
@@ -18262,11 +18266,21 @@
         },
         "messages": {
           "title": "messages",
-          "$ref": "#/definitions/MessageConfiguration"
+          "$ref": "#/definitions/MessageConfiguration",
+          "x-annotation-hasUpdateAction": {
+            "action": "changeMessagesEnabled",
+            "fields": {
+              "messagesEnabled": "boolean"
+            }
+          }
         },
         "shippingRateInputType": {
           "title": "shippingRateInputType",
-          "$ref": "#/definitions/ShippingRateInputType"
+          "$ref": "#/definitions/ShippingRateInputType",
+          "x-annotation-hasUpdateAction": {
+            "action": "setShippingRateInputType",
+            "docsAnchor": "set-shippingrateinputtype"
+          }
         }
       },
       "required": [
@@ -18477,7 +18491,8 @@
           "properties": {
             "key": {
               "title": "key",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "setKey"
             },
             "uniquenessValue": {
               "title": "uniquenessValue",
@@ -18485,23 +18500,28 @@
             },
             "locale": {
               "title": "locale",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "setLocale"
             },
             "authorName": {
               "title": "authorName",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "setAuthorName"
             },
             "title": {
               "title": "title",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "setTitle"
             },
             "text": {
               "title": "text",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "setText"
             },
             "target": {
               "title": "target",
-              "type": "object"
+              "type": "object",
+              "x-annotation-hasSimpleUpdateAction": "setTarget"
             },
             "includedInStatistics": {
               "title": "includedInStatistics",
@@ -18512,19 +18532,45 @@
               "minimum": -100,
               "maximum": 100,
               "format": "int8",
-              "type": "number"
+              "type": "number",
+              "x-annotation-hasSimpleUpdateAction": "setRating"
             },
             "state": {
               "title": "state",
-              "$ref": "#/definitions/StateReference"
+              "$ref": "#/definitions/StateReference",
+              "x-annotation-hasUpdateAction": {
+                "action": "transitionState",
+                "fields": {
+                  "state": "StateReference",
+                  "force?": "boolean"
+                }
+              }
             },
             "customer": {
               "title": "customer",
-              "$ref": "#/definitions/CustomerReference"
+              "$ref": "#/definitions/CustomerReference",
+              "x-annotation-hasSimpleUpdateAction": "setCustomer"
             },
             "custom": {
               "title": "custom",
-              "$ref": "#/definitions/CustomFields"
+              "$ref": "#/definitions/CustomFields",
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "setCustomType",
+                  "fields": {
+                    "type?": "TypeReference",
+                    "fields?": "object"
+                  }
+                },
+                {
+                  "action": "setCustomField",
+                  "docsAnchor": "set-customfield",
+                  "fields": {
+                    "name": "string",
+                    "value?": "any"
+                  }
+                }
+              ]
             }
           },
           "required": [
@@ -18741,7 +18787,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Review"
+      "x-annotation-package": "Review",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-reviews.html#set-customfield"
     },
     "ReviewSetCustomTypeAction": {
       "title": "ReviewSetCustomTypeAction",
@@ -18751,19 +18798,20 @@
         },
         {
           "properties": {
-            "fields": {
-              "title": "fields",
-              "type": "string"
-            },
             "type": {
               "title": "type",
-              "$ref": "#/definitions/ResourceIdentifier"
+              "$ref": "#/definitions/TypeReference"
+            },
+            "fields": {
+              "title": "fields",
+              "type": "object"
             }
           },
           "type": "object"
         }
       ],
-      "x-annotation-package": "Review"
+      "x-annotation-package": "Review",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-reviews.html#set-custom-type"
     },
     "ReviewSetCustomerAction": {
       "title": "ReviewSetCustomerAction",
@@ -18775,7 +18823,7 @@
           "properties": {
             "customer": {
               "title": "customer",
-              "$ref": "#/definitions/ResourceIdentifier"
+              "$ref": "#/definitions/CustomerReference"
             }
           },
           "type": "object"
@@ -18832,7 +18880,8 @@
           "properties": {
             "rating": {
               "title": "rating",
-              "type": "integer"
+              "format": "int8",
+              "type": "number"
             }
           },
           "type": "object"
@@ -18851,7 +18900,7 @@
           "properties": {
             "target": {
               "title": "target",
-              "$ref": "#/definitions/ResourceIdentifier"
+              "type": "object"
             }
           },
           "type": "object"
@@ -18908,13 +18957,16 @@
           "properties": {
             "state": {
               "title": "state",
-              "$ref": "#/definitions/ResourceIdentifier"
+              "$ref": "#/definitions/StateReference"
             },
             "force": {
               "title": "force",
               "type": "boolean"
             }
           },
+          "required": [
+            "state"
+          ],
           "type": "object"
         }
       ],
@@ -19048,34 +19100,76 @@
           "properties": {
             "key": {
               "title": "key",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "setKey"
             },
             "name": {
               "title": "name",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "changeName"
             },
             "description": {
               "title": "description",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "setDescription"
             },
             "taxCategory": {
               "title": "taxCategory",
-              "$ref": "#/definitions/TaxCategoryReference"
+              "$ref": "#/definitions/TaxCategoryReference",
+              "x-annotation-hasUpdateAction": {
+                "action": "changeTaxCategory",
+                "docsAnchor": "change-taxcategory"
+              }
             },
             "zoneRates": {
               "title": "zoneRates",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/ZoneRate"
-              }
+              },
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "addShippingRate",
+                  "docsAnchor": "add-shippingrate",
+                  "fields": {
+                    "zone": "ZoneReference",
+                    "shippingRate": "ShippingRateDraft"
+                  }
+                },
+                {
+                  "action": "removeShippingRate",
+                  "docsAnchor": "remove-shippingrate",
+                  "fields": {
+                    "zone": "ZoneReference",
+                    "shippingRate": "ShippingRateDraft"
+                  }
+                },
+                {
+                  "action": "addZone",
+                  "fields": {
+                    "zone": "ZoneReference"
+                  }
+                },
+                {
+                  "action": "removeZone",
+                  "fields": {
+                    "zone": "ZoneReference"
+                  }
+                }
+              ]
             },
             "isDefault": {
               "title": "isDefault",
-              "type": "boolean"
+              "type": "boolean",
+              "x-annotation-hasUpdateAction": {
+                "action": "changeIsDefault",
+                "docsAnchor": "change-isdefault"
+              }
             },
             "predicate": {
               "title": "predicate",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "setPredicate"
             }
           },
           "required": [
@@ -19347,25 +19441,24 @@
         },
         {
           "properties": {
-            "shippingRate": {
-              "title": "shippingRate",
-              "$ref": "#/definitions/ShippingRateDraft"
-            },
             "zone": {
               "title": "zone",
               "$ref": "#/definitions/ZoneReference"
+            },
+            "shippingRate": {
+              "title": "shippingRate",
+              "$ref": "#/definitions/ShippingRateDraft"
             }
           },
           "required": [
-            "shippingRate",
-            "zone"
+            "zone",
+            "shippingRate"
           ],
           "type": "object"
         }
       ],
       "x-annotation-package": "ShippingMethod",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-shippingMethods.html#add-shippingrate",
-      "x-annotation-postman-example": "{\n  \"action\": \"addShippingRate\",\n  \"zone\": {\n    \"typeId\": \"zone\",\n    \"id\": \"668e5783-73c8-4f2d-91f4-3c90b872c700\"\n  },\n  \"shippingRate\": {\n    \"price\": {\n      \"currencyCode\": \"USD\",\n      \"centAmount\": 299\n    }\n  }\n}\n"
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-shippingMethods.html#add-shippingrate"
     },
     "ShippingMethodAddZoneAction": {
       "title": "ShippingMethodAddZoneAction",
@@ -19463,25 +19556,24 @@
         },
         {
           "properties": {
-            "shippingRate": {
-              "title": "shippingRate",
-              "$ref": "#/definitions/ShippingRateDraft"
-            },
             "zone": {
               "title": "zone",
               "$ref": "#/definitions/ZoneReference"
+            },
+            "shippingRate": {
+              "title": "shippingRate",
+              "$ref": "#/definitions/ShippingRateDraft"
             }
           },
           "required": [
-            "shippingRate",
-            "zone"
+            "zone",
+            "shippingRate"
           ],
           "type": "object"
         }
       ],
       "x-annotation-package": "ShippingMethod",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-shippingMethods.html#remove-shippingrate",
-      "x-annotation-postman-example": "{\n  \"action\": \"removeShippingRate\",\n  \"zone\": {\n    \"typeId\": \"zone\",\n    \"id\": \"668e5783-73c8-4f2d-91f4-3c90b872c700\"\n  },\n  \"shippingRate\": {\n    \"price\": {\n      \"currencyCode\": \"USD\",\n      \"centAmount\": 299\n    }\n  }\n}\n"
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-shippingMethods.html#remove-shippingrate"
     },
     "ShippingMethodRemoveZoneAction": {
       "title": "ShippingMethodRemoveZoneAction",
@@ -22336,15 +22428,18 @@
           "properties": {
             "key": {
               "title": "key",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "changeKey"
             },
             "name": {
               "title": "name",
-              "$ref": "#/definitions/LocalizedString"
+              "$ref": "#/definitions/LocalizedString",
+              "x-annotation-hasSimpleUpdateAction": "changeName"
             },
             "description": {
               "title": "description",
-              "$ref": "#/definitions/LocalizedString"
+              "$ref": "#/definitions/LocalizedString",
+              "x-annotation-hasSimpleUpdateAction": "setDescription"
             },
             "resourceTypeIds": {
               "title": "resourceTypeIds",
@@ -22358,7 +22453,69 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/FieldDefinition"
-              }
+              },
+              "x-annotation-hasUpdateActions": [
+                {
+                  "action": "addFieldDefinition",
+                  "docsAnchor": "add-fielddefinition",
+                  "fields": {
+                    "fieldDefinition": "FieldDefinition"
+                  }
+                },
+                {
+                  "action": "removeFieldDefinition",
+                  "docsAnchor": "remove-fielddefinition",
+                  "fields": {
+                    "fieldName": "string"
+                  }
+                },
+                {
+                  "action": "changeLabel",
+                  "fields": {
+                    "fieldName": "string",
+                    "label": "LocalizedString"
+                  }
+                },
+                {
+                  "action": "addEnumValue",
+                  "docsAnchor": "add-enumvalue-to-fielddefinition",
+                  "fields": {
+                    "fieldName": "string",
+                    "value": "CustomFieldEnumValue"
+                  }
+                },
+                {
+                  "action": "addLocalizedEnumValue",
+                  "docsAnchor": "add-localizedenumvalue-to-fielddefinition",
+                  "fields": {
+                    "fieldName": "string",
+                    "value": "CustomFieldLocalizedEnumValue"
+                  }
+                },
+                {
+                  "action": "changeFieldDefinitionOrder",
+                  "docsAnchor": "change-the-order-of-fielddefinitions",
+                  "fields": {
+                    "fieldNames": "string[]"
+                  }
+                },
+                {
+                  "action": "changeEnumValueOrder",
+                  "docsAnchor": "change-the-order-of-enumvalues",
+                  "fields": {
+                    "fieldName": "string",
+                    "keys": "string[]"
+                  }
+                },
+                {
+                  "action": "changeLocalizedEnumValueOrder",
+                  "docsAnchor": "change-the-order-of-localizedenumvalues",
+                  "fields": {
+                    "fieldName": "string",
+                    "keys": "string[]"
+                  }
+                }
+              ]
             }
           },
           "required": [
