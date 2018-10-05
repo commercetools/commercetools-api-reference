@@ -198,10 +198,28 @@ class RamlModelParser
                 array_keys($ramlType['properties']),
                 $ramlType['properties']
             );
+            $properties = array_combine(array_map(function ($property) { return $property['name'];}, $properties), $properties);
         } else {
             $properties = [];
         }
-        return array_merge($parentProperties, $properties);
+        foreach ($properties as $name => $property) {
+            $parentProperty = isset($parentProperties[$name]) ? $parentProperties[$name] : [];
+            $parentProperties[$name] = $this->mergeProperty($parentProperty, $property);
+        }
+        return $parentProperties;
+    }
+
+    private function mergeProperty($parentProperty, $property) {
+        foreach ($property as $key => $value) {
+            if (is_array($property[$key])) {
+                $parentPropertyValue = isset($parentProperty[$key]) ? $parentProperty[$key] : [];
+                $parentProperty[$key] = array_merge($parentPropertyValue, $property[$key]);
+            } else if (isset($property[$key])) {
+                $parentProperty[$key] = $property[$key];
+            }
+        }
+
+        return $parentProperty;
     }
 
     private function parseProperty($key, $property)
@@ -289,7 +307,7 @@ EOF;
                 $prefix = isset($type['displayName']) ? $type['displayName'] : $type['domain'];
                 return new UpdateAction($type['domain'], $prefix, $type['actionType'], $field['(hasSimpleUpdateAction)'], $fields, $docsUri);
             },
-            $simpleActionFields
+            array_values($simpleActionFields)
         );
     }
 
@@ -305,9 +323,10 @@ EOF;
         return array_map(
             function ($field) use ($type){
                 $actionInfo = $this->enrich($field, $field['(hasUpdateAction)']);
-                return $this->getUpdateAction($type, $actionInfo);
+                $action =  $this->getUpdateAction($type, $actionInfo);
+                return $action;
             },
-            $actionFields
+            array_values($actionFields)
         );
     }
 
