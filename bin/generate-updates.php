@@ -186,7 +186,7 @@ class RamlModelParser
 
     private function resolveProperties($ramlTypes, $ramlType)
     {
-        if (isset($ramlType['type'])) {
+        if (isset($ramlType['type']) && !is_array($ramlType['type'])) {
             $parentType = isset($ramlTypes[$ramlType['type']]) ? $ramlTypes[$ramlType['type']] : [];
             $parentProperties = $this->resolveProperties($ramlTypes, $parentType);
         } else {
