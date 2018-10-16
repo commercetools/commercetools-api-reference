@@ -219,21 +219,19 @@ type: {$domainName}UpdateAction
 displayName: {$action->displayName}
 discriminatorValue: {$action->action}
 $exampleExists
-
 EOF;
         if (count($action->fields)) {
-            $command .= 'properties:' . PHP_EOL;
-        }
-        foreach ($action->fields as $field) {
-            $required = $field->required ? '' : '?';
-            $format = $field->format ? '    format: ' . $field->format . PHP_EOL : '';
-            $command .= <<<EOF
+            $command .= PHP_EOL . 'properties:' . PHP_EOL;
+            foreach ($action->fields as $field) {
+                $required = $field->required ? '' : '?';
+                $format = $field->format ? '    format: ' . $field->format . PHP_EOL : '';
+                $command .= <<<EOF
   {$field->name}{$required}:
     type: {$field->type}
 $format
 EOF;
+            }
         }
-
         return $command;
     }
 
