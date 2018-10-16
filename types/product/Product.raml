@@ -6,13 +6,29 @@ displayName: Product
 
 type: Resource
 (updateType): ProductUpdate
+(hasUpdateActions):
+  - action: revertStagedChanges
+  - action: revertStagedVariantChanges
+    fields:
+      variantId:
+        type: number
+        format: int64
+  - action: publish
+    fields:
+      scope?: ProductPublishScope
+  - action: unpublish
 properties:
     key?:
         type: string
+        (hasSimpleUpdateAction): setKey
     productType: ProductTypeReference
     masterData:
         type: ProductCatalogData
-    taxCategory?: TaxCategoryReference
+    taxCategory?:
+        type: TaxCategoryReference
+        (hasUpdateAction):
+          action: setTaxCategory
+          docsAnchor: set-taxcategory
     state?: StateReference
     reviewRatingStatistics?:
         type: ReviewRatingStatistics

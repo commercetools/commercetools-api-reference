@@ -219,9 +219,11 @@ type: {$domainName}UpdateAction
 displayName: {$action->displayName}
 discriminatorValue: {$action->action}
 $exampleExists
-properties:
 
 EOF;
+        if (count($action->fields)) {
+            $command .= 'properties:' . PHP_EOL;
+        }
         foreach ($action->fields as $field) {
             $required = $field->required ? '' : '?';
             $format = $field->format ? '    format: ' . $field->format . PHP_EOL : '';
@@ -342,9 +344,11 @@ EOF;
     {
         $docsUri = $type['docsUri'] . '#' . (isset($actionInfo['docsAnchor']) ? $actionInfo['docsAnchor'] : camel2dashed($actionInfo['action']));
         $fields = [];
-        foreach ($actionInfo['fields'] as $actionFieldName => $actionField) {
-            $property = $this->parseProperty($actionFieldName, $actionField);
-            $fields[] = new Field($property['name'], $property['required'], $property['type'], $property['format'] ?? null);
+        if (isset($actionInfo['fields'])) {
+            foreach ($actionInfo['fields'] as $actionFieldName => $actionField) {
+                $property = $this->parseProperty($actionFieldName, $actionField);
+                $fields[] = new Field($property['name'], $property['required'], $property['type'], $property['format'] ?? null);
+            }
         }
         return new UpdateAction($type['domain'], $actionInfo['action'], $fields, $docsUri);
     }
