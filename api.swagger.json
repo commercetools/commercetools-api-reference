@@ -16095,7 +16095,8 @@
           "properties": {
             "key": {
               "title": "key",
-              "type": "string"
+              "type": "string",
+              "x-annotation-hasSimpleUpdateAction": "setKey"
             },
             "productType": {
               "title": "productType",
@@ -16107,7 +16108,11 @@
             },
             "taxCategory": {
               "title": "taxCategory",
-              "$ref": "#/definitions/TaxCategoryReference"
+              "$ref": "#/definitions/TaxCategoryReference",
+              "x-annotation-hasUpdateAction": {
+                "action": "setTaxCategory",
+                "docsAnchor": "set-taxcategory"
+              }
             },
             "state": {
               "title": "state",
@@ -16127,7 +16132,30 @@
       ],
       "x-annotation-package": "Product",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#product",
-      "x-annotation-updateType": "ProductUpdate"
+      "x-annotation-updateType": "ProductUpdate",
+      "x-annotation-hasUpdateActions": [
+        {
+          "action": "revertStagedChanges"
+        },
+        {
+          "action": "revertStagedVariantChanges",
+          "fields": {
+            "variantId": {
+              "type": "number",
+              "format": "int64"
+            }
+          }
+        },
+        {
+          "action": "publish",
+          "fields": {
+            "scope?": "ProductPublishScope"
+          }
+        },
+        {
+          "action": "unpublish"
+        }
+      ]
     },
     "ProductCatalogData": {
       "title": "ProductCatalogData",
@@ -16165,53 +16193,165 @@
       "properties": {
         "name": {
           "title": "name",
-          "$ref": "#/definitions/LocalizedString"
+          "$ref": "#/definitions/LocalizedString",
+          "x-annotation-hasUpdateAction": {
+            "action": "changeName",
+            "fields": {
+              "name": "LocalizedString",
+              "staged?": "boolean"
+            }
+          }
         },
         "categories": {
           "title": "categories",
           "type": "array",
           "items": {
             "$ref": "#/definitions/CategoryReference"
-          }
+          },
+          "x-annotation-hasUpdateActions": [
+            {
+              "action": "addToCategory",
+              "fields": {
+                "category": "CategoryReference",
+                "orderHint?": "string",
+                "staged?": "boolean"
+              }
+            },
+            {
+              "action": "removeFromCategory",
+              "fields": {
+                "category": "CategoryReference",
+                "staged?": "boolean"
+              }
+            }
+          ]
         },
         "categoryOrderHints": {
           "title": "categoryOrderHints",
-          "$ref": "#/definitions/CategoryOrderHints"
+          "$ref": "#/definitions/CategoryOrderHints",
+          "x-annotation-hasUpdateAction": {
+            "action": "setCategoryOrderHint",
+            "fields": {
+              "categoryId": "string",
+              "orderHint?": "string",
+              "staged?": "boolean"
+            }
+          }
         },
         "description": {
           "title": "description",
-          "$ref": "#/definitions/LocalizedString"
+          "$ref": "#/definitions/LocalizedString",
+          "x-annotation-hasUpdateAction": {
+            "action": "setDescription",
+            "fields": {
+              "description?": "LocalizedString",
+              "staged?": "boolean"
+            }
+          }
         },
         "slug": {
           "title": "slug",
-          "$ref": "#/definitions/LocalizedString"
+          "$ref": "#/definitions/LocalizedString",
+          "x-annotation-hasUpdateAction": {
+            "action": "changeSlug",
+            "fields": {
+              "slug": "LocalizedString",
+              "staged?": "boolean"
+            }
+          }
         },
         "metaTitle": {
           "title": "metaTitle",
-          "$ref": "#/definitions/LocalizedString"
+          "$ref": "#/definitions/LocalizedString",
+          "x-annotation-hasUpdateAction": {
+            "action": "setMetaTitle",
+            "fields": {
+              "metaTitle?": "LocalizedString",
+              "staged?": "boolean"
+            }
+          }
         },
         "metaDescription": {
           "title": "metaDescription",
-          "$ref": "#/definitions/LocalizedString"
+          "$ref": "#/definitions/LocalizedString",
+          "x-annotation-hasUpdateAction": {
+            "action": "setMetaDescription",
+            "fields": {
+              "metaDescription?": "LocalizedString",
+              "staged?": "boolean"
+            }
+          }
         },
         "metaKeywords": {
           "title": "metaKeywords",
-          "$ref": "#/definitions/LocalizedString"
+          "$ref": "#/definitions/LocalizedString",
+          "x-annotation-hasUpdateAction": {
+            "action": "setMetaKeywords",
+            "fields": {
+              "metaKeywords?": "LocalizedString",
+              "staged?": "boolean"
+            }
+          }
         },
         "masterVariant": {
           "title": "masterVariant",
-          "$ref": "#/definitions/ProductVariant"
+          "$ref": "#/definitions/ProductVariant",
+          "x-annotation-hasUpdateAction": {
+            "action": "changeMasterVariant",
+            "fields": {
+              "variantId?": {
+                "type": "number",
+                "format": "int64"
+              },
+              "sku": "string",
+              "staged?": "boolean"
+            }
+          }
         },
         "variants": {
           "title": "variants",
           "type": "array",
           "items": {
             "$ref": "#/definitions/ProductVariant"
-          }
+          },
+          "x-annotation-hasUpdateActions": [
+            {
+              "action": "addVariant",
+              "docsAnchor": "add-productvariant",
+              "fields": {
+                "sku?": "string",
+                "key?": "string",
+                "prices?": "PriceDraft[]",
+                "images?": "Image[]",
+                "attributes?": "Attribute[]",
+                "staged?": "boolean"
+              }
+            },
+            {
+              "action": "removeVariant",
+              "docsAnchor": "remove-productvariant",
+              "fields": {
+                "id?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "staged?": "boolean"
+              }
+            }
+          ]
         },
         "searchKeywords": {
           "title": "searchKeywords",
-          "$ref": "#/definitions/SearchKeywords"
+          "$ref": "#/definitions/SearchKeywords",
+          "x-annotation-hasUpdateAction": {
+            "action": "setSearchKeywords",
+            "docsAnchor": "set-searchkeywords",
+            "fields": {
+              "searchKeywords": "SearchKeywords",
+              "staged?": "boolean"
+            }
+          }
         }
       },
       "required": [
@@ -16555,25 +16695,140 @@
         },
         "sku": {
           "title": "sku",
-          "type": "string"
+          "type": "string",
+          "x-annotation-hasUpdateAction": {
+            "action": "setSku",
+            "fields": {
+              "variantId": {
+                "type": "number",
+                "format": "int64"
+              },
+              "sku?": "string",
+              "staged?": "boolean"
+            }
+          }
         },
         "key": {
           "title": "key",
-          "type": "string"
+          "type": "string",
+          "x-annotation-hasUpdateAction": {
+            "action": "setProductVariantKey",
+            "docsAnchor": "set-productvariant-key",
+            "fields": {
+              "variantId?": {
+                "type": "number",
+                "format": "int64"
+              },
+              "sku?": "string",
+              "key?": "string",
+              "staged?": "boolean"
+            }
+          }
         },
         "prices": {
           "title": "prices",
           "type": "array",
           "items": {
             "$ref": "#/definitions/Price"
-          }
+          },
+          "x-annotation-hasUpdateActions": [
+            {
+              "action": "addPrice",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "price": "PriceDraft",
+                "staged?": "boolean"
+              }
+            },
+            {
+              "action": "setPrices",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "prices": "PriceDraft[]",
+                "staged?": "boolean"
+              }
+            },
+            {
+              "action": "changePrice",
+              "fields": {
+                "priceId": "string",
+                "price": "PriceDraft",
+                "staged?": "boolean"
+              }
+            },
+            {
+              "action": "removePrice",
+              "fields": {
+                "priceId": "string",
+                "staged?": "boolean"
+              }
+            },
+            {
+              "action": "setProductPriceCustomType",
+              "fields": {
+                "priceId": "string",
+                "staged?": "boolean",
+                "type?": "TypeReference",
+                "fields?": "FieldContainer"
+              }
+            },
+            {
+              "action": "setProductPriceCustomField",
+              "docsAnchor": "set-customfield",
+              "fields": {
+                "priceId": "string",
+                "staged?": "boolean",
+                "name": "string",
+                "value?": "any"
+              }
+            },
+            {
+              "action": "setDiscountedPrice",
+              "fields": {
+                "priceId": "string",
+                "staged?": "boolean",
+                "discounted?": "DiscountedPrice"
+              }
+            }
+          ]
         },
         "attributes": {
           "title": "attributes",
           "type": "array",
           "items": {
             "$ref": "#/definitions/Attribute"
-          }
+          },
+          "x-annotation-hasUpdateActions": [
+            {
+              "action": "setAttribute",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "name": "string",
+                "value?": "any",
+                "staged?": "boolean"
+              }
+            },
+            {
+              "action": "setAttributeInAllVariants",
+              "fields": {
+                "name": "string",
+                "value?": "any",
+                "staged?": "boolean"
+              }
+            }
+          ]
         },
         "price": {
           "title": "price",
@@ -16587,13 +16842,54 @@
           },
           "x-annotation-hasUpdateActions": [
             {
+              "action": "addExternalImage",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "image": "Image",
+                "staged?": "boolean"
+              }
+            },
+            {
+              "action": "moveImageToPosition",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "imageUrl": "string",
+                "position": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "staged?": "boolean"
+              }
+            },
+            {
+              "action": "removeImage",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "imageUrl": "string",
+                "staged?": "boolean"
+              }
+            },
+            {
               "action": "setImageLabel",
               "fields": {
                 "sku?": {
                   "type": "string"
                 },
                 "variantId?": {
-                  "type": "integer"
+                  "type": "number",
+                  "format": "int64"
                 },
                 "imageUrl": {
                   "type": "string"
@@ -16613,7 +16909,149 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/Asset"
-          }
+          },
+          "x-annotation-hasUpdateActions": [
+            {
+              "action": "addAsset",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "staged?": "boolean",
+                "asset": "AssetDraft",
+                "position?": {
+                  "type": "number",
+                  "format": "int32"
+                }
+              }
+            },
+            {
+              "action": "removeAsset",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "staged?": "boolean",
+                "assetId?": "string",
+                "assetKey?": "string"
+              }
+            },
+            {
+              "action": "setAssetKey",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "staged?": "boolean",
+                "assetId": "string",
+                "assetKey?": "string"
+              }
+            },
+            {
+              "action": "changeAssetOrder",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "staged?": "boolean",
+                "assetOrder": "string[]"
+              }
+            },
+            {
+              "action": "changeAssetName",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "staged?": "boolean",
+                "assetId?": "string",
+                "assetKey?": "string",
+                "name": "LocalizedString"
+              }
+            },
+            {
+              "action": "setAssetDescription",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "staged?": "boolean",
+                "assetId?": "string",
+                "assetKey?": "string",
+                "description?": "LocalizedString"
+              }
+            },
+            {
+              "action": "setAssetTags",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "staged?": "boolean",
+                "assetId?": "string",
+                "assetKey?": "string",
+                "tags?": "string[]"
+              }
+            },
+            {
+              "action": "setAssetSources",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "staged?": "boolean",
+                "assetId?": "string",
+                "assetKey?": "string",
+                "sources": "AssetSource[]"
+              }
+            },
+            {
+              "action": "setAssetCustomType",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "staged?": "boolean",
+                "assetId?": "string",
+                "assetKey?": "string",
+                "type": "TypeReference",
+                "fields": "object"
+              }
+            },
+            {
+              "action": "setAssetCustomField",
+              "fields": {
+                "variantId?": {
+                  "type": "number",
+                  "format": "int64"
+                },
+                "sku?": "string",
+                "staged?": "boolean",
+                "assetId?": "string",
+                "assetKey?": "string",
+                "name": "string",
+                "value?": "any"
+              }
+            }
+          ]
         },
         "availability": {
           "title": "availability",
@@ -16918,25 +17356,26 @@
         },
         {
           "properties": {
-            "asset": {
-              "title": "asset",
-              "$ref": "#/definitions/AssetDraft"
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
               "type": "string"
             },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
-            },
             "staged": {
               "title": "staged",
               "type": "boolean"
             },
+            "asset": {
+              "title": "asset",
+              "$ref": "#/definitions/AssetDraft"
+            },
             "position": {
               "title": "position",
-              "format": "int64",
+              "format": "int32",
               "type": "number"
             }
           },
@@ -16957,17 +17396,18 @@
         },
         {
           "properties": {
-            "image": {
-              "title": "image",
-              "$ref": "#/definitions/Image"
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
               "type": "string"
             },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
+            "image": {
+              "title": "image",
+              "$ref": "#/definitions/Image"
             },
             "staged": {
               "title": "staged",
@@ -16991,17 +17431,18 @@
         },
         {
           "properties": {
-            "price": {
-              "title": "price",
-              "$ref": "#/definitions/PriceDraft"
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
               "type": "string"
             },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
+            "price": {
+              "title": "price",
+              "$ref": "#/definitions/PriceDraft"
             },
             "staged": {
               "title": "staged",
@@ -17055,19 +17496,9 @@
         },
         {
           "properties": {
-            "attributes": {
-              "title": "attributes",
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Attribute"
-              }
-            },
-            "images": {
-              "title": "images",
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Image"
-              }
+            "sku": {
+              "title": "sku",
+              "type": "string"
             },
             "key": {
               "title": "key",
@@ -17080,9 +17511,19 @@
                 "$ref": "#/definitions/PriceDraft"
               }
             },
-            "sku": {
-              "title": "sku",
-              "type": "string"
+            "images": {
+              "title": "images",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Image"
+              }
+            },
+            "attributes": {
+              "title": "attributes",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Attribute"
+              }
             },
             "staged": {
               "title": "staged",
@@ -17103,29 +17544,30 @@
         },
         {
           "properties": {
-            "assetKey": {
-              "title": "assetKey",
-              "type": "string"
-            },
-            "assetId": {
-              "title": "assetId",
-              "type": "string"
-            },
-            "name": {
-              "title": "name",
-              "$ref": "#/definitions/LocalizedString"
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
               "type": "string"
             },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
-            },
             "staged": {
               "title": "staged",
               "type": "boolean"
+            },
+            "assetId": {
+              "title": "assetId",
+              "type": "string"
+            },
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
+            "name": {
+              "title": "name",
+              "$ref": "#/definitions/LocalizedString"
             }
           },
           "required": [
@@ -17145,24 +17587,25 @@
         },
         {
           "properties": {
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
+            },
+            "sku": {
+              "title": "sku",
+              "type": "string"
+            },
+            "staged": {
+              "title": "staged",
+              "type": "boolean"
+            },
             "assetOrder": {
               "title": "assetOrder",
               "type": "array",
               "items": {
                 "type": "string"
               }
-            },
-            "sku": {
-              "title": "sku",
-              "type": "string"
-            },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
-            },
-            "staged": {
-              "title": "staged",
-              "type": "boolean"
             }
           },
           "required": [
@@ -17171,7 +17614,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Product"
+      "x-annotation-package": "Product",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#change-asset-order"
     },
     "ProductChangeMasterVariantAction": {
       "title": "ProductChangeMasterVariantAction",
@@ -17181,19 +17625,23 @@
         },
         {
           "properties": {
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
+            },
             "sku": {
               "title": "sku",
               "type": "string"
-            },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
             },
             "staged": {
               "title": "staged",
               "type": "boolean"
             }
           },
+          "required": [
+            "sku"
+          ],
           "type": "object"
         }
       ],
@@ -17234,13 +17682,13 @@
         },
         {
           "properties": {
-            "price": {
-              "title": "price",
-              "$ref": "#/definitions/PriceDraft"
-            },
             "priceId": {
               "title": "priceId",
               "type": "string"
+            },
+            "price": {
+              "title": "price",
+              "$ref": "#/definitions/PriceDraft"
             },
             "staged": {
               "title": "staged",
@@ -17248,8 +17696,8 @@
             }
           },
           "required": [
-            "price",
-            "priceId"
+            "priceId",
+            "price"
           ],
           "type": "object"
         }
@@ -17316,21 +17764,23 @@
         },
         {
           "properties": {
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
+            },
+            "sku": {
+              "title": "sku",
+              "type": "string"
+            },
             "imageUrl": {
               "title": "imageUrl",
               "type": "string"
             },
             "position": {
               "title": "position",
-              "type": "integer"
-            },
-            "sku": {
-              "title": "sku",
-              "type": "string"
-            },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
+              "format": "int64",
+              "type": "number"
             },
             "staged": {
               "title": "staged",
@@ -17374,25 +17824,26 @@
         },
         {
           "properties": {
-            "assetKey": {
-              "title": "assetKey",
-              "type": "string"
-            },
-            "assetId": {
-              "title": "assetId",
-              "type": "string"
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
               "type": "string"
             },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
-            },
             "staged": {
               "title": "staged",
               "type": "boolean"
+            },
+            "assetId": {
+              "title": "assetId",
+              "type": "string"
+            },
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
             }
           },
           "type": "object"
@@ -17435,17 +17886,18 @@
         },
         {
           "properties": {
-            "imageUrl": {
-              "title": "imageUrl",
-              "type": "string"
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
               "type": "string"
             },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
+            "imageUrl": {
+              "title": "imageUrl",
+              "type": "string"
             },
             "staged": {
               "title": "staged",
@@ -17497,7 +17949,8 @@
           "properties": {
             "id": {
               "title": "id",
-              "type": "integer"
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
@@ -17551,17 +18004,10 @@
         },
         {
           "properties": {
-            "assetKey": {
-              "title": "assetKey",
-              "type": "string"
-            },
-            "assetId": {
-              "title": "assetId",
-              "type": "string"
-            },
-            "name": {
-              "title": "name",
-              "type": "string"
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
@@ -17571,13 +18017,21 @@
               "title": "staged",
               "type": "boolean"
             },
+            "assetId": {
+              "title": "assetId",
+              "type": "string"
+            },
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
+            "name": {
+              "title": "name",
+              "type": "string"
+            },
             "value": {
               "title": "value",
               "type": "string"
-            },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
             }
           },
           "required": [
@@ -17587,7 +18041,7 @@
         }
       ],
       "x-annotation-package": "Product",
-      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#set-asset-customfield"
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#set-asset-custom-field"
     },
     "ProductSetAssetCustomTypeAction": {
       "title": "ProductSetAssetCustomTypeAction",
@@ -17597,17 +18051,10 @@
         },
         {
           "properties": {
-            "assetKey": {
-              "title": "assetKey",
-              "type": "string"
-            },
-            "assetId": {
-              "title": "assetId",
-              "type": "string"
-            },
-            "fields": {
-              "title": "fields",
-              "type": "string"
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
@@ -17617,15 +18064,27 @@
               "title": "staged",
               "type": "boolean"
             },
+            "assetId": {
+              "title": "assetId",
+              "type": "string"
+            },
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
             "type": {
               "title": "type",
               "$ref": "#/definitions/TypeReference"
             },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
+            "fields": {
+              "title": "fields",
+              "type": "object"
             }
           },
+          "required": [
+            "type",
+            "fields"
+          ],
           "type": "object"
         }
       ],
@@ -17640,29 +18099,30 @@
         },
         {
           "properties": {
-            "assetKey": {
-              "title": "assetKey",
-              "type": "string"
-            },
-            "assetId": {
-              "title": "assetId",
-              "type": "string"
-            },
-            "description": {
-              "title": "description",
-              "$ref": "#/definitions/LocalizedString"
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
               "type": "string"
             },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
-            },
             "staged": {
               "title": "staged",
               "type": "boolean"
+            },
+            "assetId": {
+              "title": "assetId",
+              "type": "string"
+            },
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
+            },
+            "description": {
+              "title": "description",
+              "$ref": "#/definitions/LocalizedString"
             }
           },
           "type": "object"
@@ -17681,7 +18141,8 @@
           "properties": {
             "variantId": {
               "title": "variantId",
-              "type": "integer"
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
@@ -17719,23 +18180,24 @@
           "properties": {
             "variantId": {
               "title": "variantId",
-              "type": "integer"
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
               "type": "string"
             },
-            "assetKey": {
-              "title": "assetKey",
-              "type": "string"
+            "staged": {
+              "title": "staged",
+              "type": "boolean"
             },
             "assetId": {
               "title": "assetId",
               "type": "string"
             },
-            "staged": {
-              "title": "staged",
-              "type": "boolean"
+            "assetKey": {
+              "title": "assetKey",
+              "type": "string"
             },
             "sources": {
               "title": "sources",
@@ -17762,16 +18224,25 @@
         },
         {
           "properties": {
-            "assetKey": {
-              "title": "assetKey",
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
+            },
+            "sku": {
+              "title": "sku",
               "type": "string"
+            },
+            "staged": {
+              "title": "staged",
+              "type": "boolean"
             },
             "assetId": {
               "title": "assetId",
               "type": "string"
             },
-            "sku": {
-              "title": "sku",
+            "assetKey": {
+              "title": "assetKey",
               "type": "string"
             },
             "tags": {
@@ -17780,14 +18251,6 @@
               "items": {
                 "type": "string"
               }
-            },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
-            },
-            "staged": {
-              "title": "staged",
-              "type": "boolean"
             }
           },
           "type": "object"
@@ -17804,21 +18267,22 @@
         },
         {
           "properties": {
-            "name": {
-              "title": "name",
-              "type": "string"
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
               "type": "string"
             },
+            "name": {
+              "title": "name",
+              "type": "string"
+            },
             "value": {
               "title": "value",
               "type": "string"
-            },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
             },
             "staged": {
               "title": "staged",
@@ -17911,9 +18375,6 @@
               "type": "boolean"
             }
           },
-          "required": [
-            "description"
-          ],
           "type": "object"
         }
       ],
@@ -17928,10 +18389,6 @@
         },
         {
           "properties": {
-            "discounted": {
-              "title": "discounted",
-              "$ref": "#/definitions/DiscountedPrice"
-            },
             "priceId": {
               "title": "priceId",
               "type": "string"
@@ -17939,6 +18396,10 @@
             "staged": {
               "title": "staged",
               "type": "boolean"
+            },
+            "discounted": {
+              "title": "discounted",
+              "$ref": "#/definitions/DiscountedPrice"
             }
           },
           "required": [
@@ -17964,7 +18425,8 @@
             },
             "variantId": {
               "title": "variantId",
-              "type": "integer"
+              "format": "int64",
+              "type": "number"
             },
             "imageUrl": {
               "title": "imageUrl",
@@ -18084,20 +18546,21 @@
         },
         {
           "properties": {
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
+            },
+            "sku": {
+              "title": "sku",
+              "type": "string"
+            },
             "prices": {
               "title": "prices",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/PriceDraft"
               }
-            },
-            "sku": {
-              "title": "sku",
-              "type": "string"
-            },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
             },
             "staged": {
               "title": "staged",
@@ -18121,10 +18584,6 @@
         },
         {
           "properties": {
-            "name": {
-              "title": "name",
-              "type": "string"
-            },
             "priceId": {
               "title": "priceId",
               "type": "string"
@@ -18133,19 +18592,24 @@
               "title": "staged",
               "type": "boolean"
             },
+            "name": {
+              "title": "name",
+              "type": "string"
+            },
             "value": {
               "title": "value",
               "type": "string"
             }
           },
           "required": [
-            "name",
-            "priceId"
+            "priceId",
+            "name"
           ],
           "type": "object"
         }
       ],
-      "x-annotation-package": "Product"
+      "x-annotation-package": "Product",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#set-customfield"
     },
     "ProductSetProductPriceCustomTypeAction": {
       "title": "ProductSetProductPriceCustomTypeAction",
@@ -18155,10 +18619,6 @@
         },
         {
           "properties": {
-            "fields": {
-              "title": "fields",
-              "type": "string"
-            },
             "priceId": {
               "title": "priceId",
               "type": "string"
@@ -18170,6 +18630,10 @@
             "type": {
               "title": "type",
               "$ref": "#/definitions/TypeReference"
+            },
+            "fields": {
+              "title": "fields",
+              "$ref": "#/definitions/FieldContainer"
             }
           },
           "required": [
@@ -18178,7 +18642,8 @@
           "type": "object"
         }
       ],
-      "x-annotation-package": "Product"
+      "x-annotation-package": "Product",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#set-product-price-custom-type"
     },
     "ProductSetProductVariantKeyAction": {
       "title": "ProductSetProductVariantKeyAction",
@@ -18188,17 +18653,18 @@
         },
         {
           "properties": {
-            "key": {
-              "title": "key",
-              "type": "string"
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
             },
             "sku": {
               "title": "sku",
               "type": "string"
             },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
+            "key": {
+              "title": "key",
+              "type": "string"
             },
             "staged": {
               "title": "staged",
@@ -18245,13 +18711,14 @@
         },
         {
           "properties": {
+            "variantId": {
+              "title": "variantId",
+              "format": "int64",
+              "type": "number"
+            },
             "sku": {
               "title": "sku",
               "type": "string"
-            },
-            "variantId": {
-              "title": "variantId",
-              "type": "integer"
             },
             "staged": {
               "title": "staged",
