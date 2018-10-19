@@ -4382,6 +4382,903 @@
         }
       ]
     },
+    "/{projectKey}/orders/edits": {
+      "get": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Query edits",
+        "operationId": "GET_projectKey-orders-edits",
+        "parameters": [
+          {
+            "name": "where",
+            "in": "query",
+            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
+            "schema": {
+              "includePath": "traits/query.raml",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
+            "schema": {
+              "includePath": "traits/sortable.raml",
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          },
+          {
+            "$ref": "#/components/parameters/trait_paging_limit"
+          },
+          {
+            "$ref": "#/components/parameters/trait_paging_offset"
+          },
+          {
+            "$ref": "#/components/parameters/trait_paging_withTotal"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_order_edits:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "df20c5ea-b114-4aab-b330-740b0e9f3099",
+                  "version": 1,
+                  "resource": {
+                    "typeId": "order",
+                    "id": "ed454f4e-c43a-485f-a86f-046c691b1363"
+                  },
+                  "key": "order-edit-key",
+                  "createdAt": "2018-10-04T15:22:31.639Z",
+                  "lastModifiedAt": "2018-10-04T15:22:31.639Z",
+                  "stagedActions": [
+                    {
+                      "action": "setCustomerEmail",
+                      "email": "user@localhost"
+                    }
+                  ],
+                  "result": {
+                    "preview": {
+                      "type": "Order",
+                      "id": "ed454f4e-c43a-485f-a86f-046c691b1363",
+                      "version": 3,
+                      "customerId": "bf5d96ce-4704-45b2-8842-d409dd34cdfc",
+                      "customerEmail": "user@localhost",
+                      "createdAt": "2018-05-15T12:40:17.301Z",
+                      "lastModifiedAt": "2018-05-15T12:40:17.301Z",
+                      "totalPrice": {
+                        "type": "centPrecision",
+                        "currencyCode": "EUR",
+                        "centAmount": 3970,
+                        "fractionDigits": 2
+                      },
+                      "taxedPrice": {
+                        "totalNet": {
+                          "type": "centPrecision",
+                          "currencyCode": "EUR",
+                          "centAmount": 3336,
+                          "fractionDigits": 2
+                        },
+                        "totalGross": {
+                          "type": "centPrecision",
+                          "currencyCode": "EUR",
+                          "centAmount": 3970,
+                          "fractionDigits": 2
+                        },
+                        "taxPortions": [
+                          {
+                            "rate": 0.19,
+                            "amount": {
+                              "type": "centPrecision",
+                              "currencyCode": "EUR",
+                              "centAmount": 634,
+                              "fractionDigits": 2
+                            },
+                            "name": "19% MwSt"
+                          }
+                        ]
+                      },
+                      "country": "DE",
+                      "orderState": "Open",
+                      "syncInfo": [],
+                      "returnInfo": [],
+                      "shippingInfo": {
+                        "shippingMethodName": "DHL",
+                        "price": {
+                          "type": "centPrecision",
+                          "currencyCode": "EUR",
+                          "centAmount": 570,
+                          "fractionDigits": 2
+                        },
+                        "shippingRate": {
+                          "price": {
+                            "type": "centPrecision",
+                            "currencyCode": "EUR",
+                            "centAmount": 570,
+                            "fractionDigits": 2
+                          },
+                          "tiers": []
+                        },
+                        "taxRate": {
+                          "name": "19% MwSt",
+                          "amount": 0.19,
+                          "includedInPrice": true,
+                          "country": "DE",
+                          "id": "rrsT1Jbw",
+                          "subRates": []
+                        },
+                        "taxCategory": {
+                          "typeId": "tax-category",
+                          "id": "fdeb9625-10f8-476c-a549-5d5c6d1bd412"
+                        },
+                        "deliveries": [],
+                        "shippingMethod": {
+                          "typeId": "shipping-method",
+                          "id": "d18b3f77-92de-4893-b6e3-b5c9c8c1eb96"
+                        },
+                        "taxedPrice": {
+                          "totalNet": {
+                            "type": "centPrecision",
+                            "currencyCode": "EUR",
+                            "centAmount": 479,
+                            "fractionDigits": 2
+                          },
+                          "totalGross": {
+                            "type": "centPrecision",
+                            "currencyCode": "EUR",
+                            "centAmount": 570,
+                            "fractionDigits": 2
+                          }
+                        },
+                        "shippingMethodState": "MatchesCart"
+                      },
+                      "taxMode": "Platform",
+                      "inventoryMode": "None",
+                      "taxRoundingMode": "HalfEven",
+                      "taxCalculationMode": "LineItemLevel",
+                      "origin": "Customer",
+                      "lineItems": [
+                        {
+                          "id": "31099128-dba8-40a7-bb6c-d12857149ff8",
+                          "productId": "d6d0c517-572e-4d26-b80e-ffce825334a4",
+                          "name": {
+                            "en": "GIRLS HARTBREAK CREW"
+                          },
+                          "productType": {
+                            "typeId": "product-type",
+                            "id": "6dc75271-b0e5-4ae9-9158-faa1fff65f7b",
+                            "version": 2
+                          },
+                          "productSlug": {
+                            "en": "girls-hartbreak-crew1522841378290"
+                          },
+                          "variant": {
+                            "id": 1,
+                            "sku": "sku_GIRLS_HARTBREAK_CREW_variant1_1522841378290",
+                            "prices": [
+                              {
+                                "value": {
+                                  "type": "centPrecision",
+                                  "currencyCode": "EUR",
+                                  "centAmount": 3400,
+                                  "fractionDigits": 2
+                                },
+                                "id": "b5595b13-bbb8-44ab-a2e2-89c18edf1b22"
+                              }
+                            ],
+                            "images": [
+                              {
+                                "url": "https://www.commercetools.com/cli/data/253234387_1.jpg",
+                                "dimensions": {
+                                  "w": 1400,
+                                  "h": 1400
+                                }
+                              }
+                            ],
+                            "attributes": [],
+                            "assets": []
+                          },
+                          "price": {
+                            "value": {
+                              "type": "centPrecision",
+                              "currencyCode": "EUR",
+                              "centAmount": 3400,
+                              "fractionDigits": 2
+                            },
+                            "id": "b5595b13-bbb8-44ab-a2e2-89c18edf1b22"
+                          },
+                          "quantity": 1,
+                          "discountedPricePerQuantity": [],
+                          "taxRate": {
+                            "name": "19% MwSt",
+                            "amount": 0.19,
+                            "includedInPrice": true,
+                            "country": "DE",
+                            "id": "rrsT1Jbw",
+                            "subRates": []
+                          },
+                          "state": [
+                            {
+                              "quantity": 1,
+                              "state": {
+                                "typeId": "state",
+                                "id": "60a64e06-b4e8-4205-a0f3-94bc203e2d6d"
+                              }
+                            }
+                          ],
+                          "priceMode": "Platform",
+                          "totalPrice": {
+                            "type": "centPrecision",
+                            "currencyCode": "EUR",
+                            "centAmount": 3400,
+                            "fractionDigits": 2
+                          },
+                          "taxedPrice": {
+                            "totalNet": {
+                              "type": "centPrecision",
+                              "currencyCode": "EUR",
+                              "centAmount": 2857,
+                              "fractionDigits": 2
+                            },
+                            "totalGross": {
+                              "type": "centPrecision",
+                              "currencyCode": "EUR",
+                              "centAmount": 3400,
+                              "fractionDigits": 2
+                            }
+                          },
+                          "lineItemMode": "Standard"
+                        }
+                      ],
+                      "customLineItems": [],
+                      "transactionFee": true,
+                      "discountCodes": [],
+                      "lastMessageSequenceNumber": 3,
+                      "cart": {
+                        "typeId": "cart",
+                        "id": "6c97e772-9769-4419-8adc-501c7c5b6088"
+                      },
+                      "shippingAddress": {
+                        "id": "51RkSh-E",
+                        "salutation": "Mr",
+                        "firstName": "user",
+                        "lastName": "lastname",
+                        "streetName": "streetname",
+                        "streetNumber": "2",
+                        "postalCode": "101256",
+                        "city": "Berlin",
+                        "country": "DE",
+                        "building": "34",
+                        "pOBox": "12344",
+                        "email": "user@example.org"
+                      },
+                      "billingAddress": {
+                        "id": "51RkSh-E",
+                        "salutation": "Mr",
+                        "firstName": "user",
+                        "lastName": "lastname",
+                        "streetName": "streetname",
+                        "streetNumber": "2",
+                        "postalCode": "101256",
+                        "city": "Berlin",
+                        "country": "DE",
+                        "building": "34",
+                        "pOBox": "12344",
+                        "email": "user@example.org"
+                      },
+                      "itemShippingAddresses": [],
+                      "refusedGifts": []
+                    },
+                    "messagePayloads": [
+                      {
+                        "email": "user@localhost",
+                        "type": "OrderCustomerEmailSet"
+                      },
+                      {
+                        "edit": {
+                          "typeId": "order-edit",
+                          "id": "df20c5ea-b114-4aab-b330-740b0e9f3099"
+                        },
+                        "result": {
+                          "type": "Applied",
+                          "appliedAt": "2018-10-04T15:29:14.091Z",
+                          "excerptBeforeEdit": {
+                            "totalPrice": {
+                              "type": "centPrecision",
+                              "currencyCode": "EUR",
+                              "centAmount": 3970,
+                              "fractionDigits": 2
+                            },
+                            "taxedPrice": {
+                              "totalNet": {
+                                "type": "centPrecision",
+                                "currencyCode": "EUR",
+                                "centAmount": 3336,
+                                "fractionDigits": 2
+                              },
+                              "totalGross": {
+                                "type": "centPrecision",
+                                "currencyCode": "EUR",
+                                "centAmount": 3970,
+                                "fractionDigits": 2
+                              },
+                              "taxPortions": [
+                                {
+                                  "rate": 0.19,
+                                  "amount": {
+                                    "type": "centPrecision",
+                                    "currencyCode": "EUR",
+                                    "centAmount": 634,
+                                    "fractionDigits": 2
+                                  },
+                                  "name": "19% MwSt"
+                                }
+                              ]
+                            },
+                            "version": 1
+                          },
+                          "excerptAfterEdit": {
+                            "totalPrice": {
+                              "type": "centPrecision",
+                              "currencyCode": "EUR",
+                              "centAmount": 3970,
+                              "fractionDigits": 2
+                            },
+                            "taxedPrice": {
+                              "totalNet": {
+                                "type": "centPrecision",
+                                "currencyCode": "EUR",
+                                "centAmount": 3336,
+                                "fractionDigits": 2
+                              },
+                              "totalGross": {
+                                "type": "centPrecision",
+                                "currencyCode": "EUR",
+                                "centAmount": 3970,
+                                "fractionDigits": 2
+                              },
+                              "taxPortions": [
+                                {
+                                  "rate": 0.19,
+                                  "amount": {
+                                    "type": "centPrecision",
+                                    "currencyCode": "EUR",
+                                    "centAmount": 634,
+                                    "fractionDigits": 2
+                                  },
+                                  "name": "19% MwSt"
+                                }
+                              ]
+                            },
+                            "version": 3
+                          }
+                        },
+                        "type": "OrderEditApplied"
+                      }
+                    ],
+                    "type": "PreviewSuccess"
+                  },
+                  "comment": "sample-comment"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/OrderEdit"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Create OrderEdit",
+        "operationId": "POST_projectKey-orders-edits",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "key": "order-edit-key",
+                "resource": {
+                  "typeId": "order",
+                  "id": "ed454f4e-c43a-485f-a86f-046c691b1363"
+                },
+                "stagedActions": [
+                  {
+                    "action": "setCustomerEmail",
+                    "email": "user@localhost"
+                  }
+                ],
+                "comment": "sample-comment"
+              },
+              "schema": {
+                "title": "application/json",
+                "includePath": "resources/orders.raml",
+                "$ref": "#/components/schemas/OrderEditDraft"
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_order_edits:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "projectKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "includePath": "api.raml",
+            "type": "string"
+          },
+          "description": "projectKey"
+        }
+      ]
+    },
+    "/{projectKey}/orders/edits/key={key}": {
+      "get": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Get OrderEdit by ID",
+        "operationId": "GET_projectKey-orders-edits-key=key",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_order_edits:{projectKey}"
+            ]
+          },
+          {
+            "oauth_2_0": []
+          }
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "409": {
+            "$ref": "#/components/responses/trait_conflicting_409"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Update OrderEdit by ID",
+        "operationId": "POST_projectKey-orders-edits-key=key",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "version": 7,
+                "actions": [
+                  {
+                    "action": "setKey",
+                    "key": "another-key"
+                  },
+                  {
+                    "action": "addStagedAction",
+                    "stagedAction": {
+                      "action": "setCountry",
+                      "country": "ES"
+                    }
+                  }
+                ]
+              },
+              "schema": {
+                "title": "application/json",
+                "includePath": "api.raml",
+                "$ref": "#/components/schemas/Update"
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_order_edits:{projectKey}"
+            ]
+          },
+          {
+            "oauth_2_0": []
+          }
+        ]
+      },
+      "delete": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "409": {
+            "$ref": "#/components/responses/trait_conflicting_409"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Delete OrderEdit by ID",
+        "operationId": "DELETE_projectKey-orders-edits-key=key",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/trait_versioned_version"
+          },
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_order_edits:{projectKey}"
+            ]
+          },
+          {
+            "oauth_2_0": []
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "includePath": "resources/orders.raml",
+            "type": "string"
+          },
+          "description": "key"
+        },
+        {
+          "name": "projectKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "includePath": "api.raml",
+            "type": "string"
+          },
+          "description": "projectKey"
+        }
+      ],
+      "x-annotation-methodName": "withKey"
+    },
+    "/{projectKey}/orders/edits/{ID}": {
+      "get": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Get OrderEdit by ID",
+        "operationId": "GET_projectKey-orders-edits-ID",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_order_edits:{projectKey}"
+            ]
+          },
+          {
+            "oauth_2_0": []
+          }
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "409": {
+            "$ref": "#/components/responses/trait_conflicting_409"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Update OrderEdit by ID",
+        "operationId": "POST_projectKey-orders-edits-ID",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "version": 7,
+                "actions": [
+                  {
+                    "action": "setKey",
+                    "key": "another-key"
+                  },
+                  {
+                    "action": "addStagedAction",
+                    "stagedAction": {
+                      "action": "setCountry",
+                      "country": "ES"
+                    }
+                  }
+                ]
+              },
+              "schema": {
+                "title": "application/json",
+                "includePath": "api.raml",
+                "$ref": "#/components/schemas/Update"
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_order_edits:{projectKey}"
+            ]
+          },
+          {
+            "oauth_2_0": []
+          }
+        ]
+      },
+      "delete": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "409": {
+            "$ref": "#/components/responses/trait_conflicting_409"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Delete OrderEdit by ID",
+        "operationId": "DELETE_projectKey-orders-edits-ID",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/trait_versioned_version"
+          },
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_order_edits:{projectKey}"
+            ]
+          },
+          {
+            "oauth_2_0": []
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "includePath": "api.raml",
+            "type": "string"
+          },
+          "description": "ID"
+        },
+        {
+          "name": "projectKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "includePath": "api.raml",
+            "type": "string"
+          },
+          "description": "projectKey"
+        }
+      ],
+      "x-annotation-methodName": "withId"
+    },
+    "/{projectKey}/orders/edits/{ID}/apply": {
+      "post": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "operationId": "POST_projectKey-orders-edits-ID-apply",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "application/json",
+                "includePath": "resources/orders.raml",
+                "$ref": "#/components/schemas/OrderEditApply"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_order_edits:{projectKey}"
+            ]
+          },
+          {
+            "oauth_2_0": []
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "includePath": "api.raml",
+            "type": "string"
+          },
+          "description": "ID"
+        },
+        {
+          "name": "projectKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "includePath": "api.raml",
+            "type": "string"
+          },
+          "description": "projectKey"
+        }
+      ]
+    },
     "/{projectKey}/products": {
       "get": {
         "responses": {
@@ -13168,7 +14065,11 @@
               },
               "target": {
                 "title": "target",
-                "$ref": "#/components/schemas/CartDiscountTarget"
+                "$ref": "#/components/schemas/CartDiscountTarget",
+                "x-annotation-hasUpdateAction": {
+                  "action": "changeTarget",
+                  "required": true
+                }
               },
               "sortOrder": {
                 "title": "sortOrder",
@@ -13218,7 +14119,24 @@
               },
               "custom": {
                 "title": "custom",
-                "$ref": "#/components/schemas/CustomFields"
+                "$ref": "#/components/schemas/CustomFields",
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "setCustomType",
+                    "fields": {
+                      "type?": "TypeReference",
+                      "fields?": "object"
+                    }
+                  },
+                  {
+                    "action": "setCustomField",
+                    "docsAnchor": "set-customfield",
+                    "fields": {
+                      "name": "string",
+                      "value?": "any"
+                    }
+                  }
+                ]
               }
             },
             "type": "object"
@@ -13791,7 +14709,6 @@
         ],
         "x-annotation-package": "CartDiscount",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-cartDiscounts.html#change-target",
-        "x-annotation-postman-example": "{\n  \"action\": \"changeTarget\",\n  \"target\": {\n    \"type\": \"lineItems\",\n    \"predicate\": \"sku = \\\"mySKU\\\"\"\n  }\n}\n",
         "type": "string"
       },
       "CartDiscountChangeValueAction": {
@@ -13837,7 +14754,7 @@
           }
         ],
         "x-annotation-package": "CartDiscount",
-        "x-annotation-postman-example": "{\n  \"action\": \"setCustomField\",\n  \"name\": \"StringCustomField\",\n  \"value\": \"myValue\"\n}\n",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-cartDiscounts.html#set-customfield",
         "type": "string"
       },
       "CartDiscountSetCustomTypeAction": {
@@ -13849,20 +14766,20 @@
           },
           {
             "properties": {
-              "fields": {
-                "title": "fields",
-                "type": "string"
-              },
               "type": {
                 "title": "type",
                 "$ref": "#/components/schemas/TypeReference"
+              },
+              "fields": {
+                "title": "fields",
+                "type": "object"
               }
             },
             "type": "object"
           }
         ],
         "x-annotation-package": "CartDiscount",
-        "x-annotation-postman-example": "{\n  \"action\": \"setCustomType\",\n  \"type\": {\n    \"id\": \"089eaa2e-b54b-42d7-811e-23e180fe8dcc\",\n    \"typeId\": \"type\"\n  }\n}\n",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-cartDiscounts.html#set-custom-type",
         "type": "string"
       },
       "CartDiscountSetDescriptionAction": {
@@ -18937,7 +19854,8 @@
           "tax-category",
           "type",
           "zone",
-          "inventory-entry"
+          "inventory-entry",
+          "order-edit"
         ],
         "includePath": "types/common/ReferenceTypeId.raml",
         "type": "string",
@@ -22178,9 +23096,9 @@
         "$ref": "#/components/schemas/UpdateAction",
         "x-annotation-package": "Inventory"
       },
-      "InventoryAddQuantityAction": {
-        "title": "InventoryAddQuantityAction",
-        "includePath": "types/inventory/updates/InventoryAddQuantityAction.raml",
+      "InventoryEntryAddQuantityAction": {
+        "title": "InventoryEntryAddQuantityAction",
+        "includePath": "types/inventory/updates/InventoryEntryAddQuantityAction.raml",
         "allOf": [
           {
             "$ref": "#/components/schemas/InventoryUpdateAction"
@@ -22200,9 +23118,9 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-inventory.html#add-quantity",
         "type": "string"
       },
-      "InventoryChangeQuantityAction": {
-        "title": "InventoryChangeQuantityAction",
-        "includePath": "types/inventory/updates/InventoryChangeQuantityAction.raml",
+      "InventoryEntryChangeQuantityAction": {
+        "title": "InventoryEntryChangeQuantityAction",
+        "includePath": "types/inventory/updates/InventoryEntryChangeQuantityAction.raml",
         "allOf": [
           {
             "$ref": "#/components/schemas/InventoryUpdateAction"
@@ -22222,9 +23140,9 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-inventory.html#change-quantity",
         "type": "string"
       },
-      "InventoryRemoveQuantityAction": {
-        "title": "InventoryRemoveQuantityAction",
-        "includePath": "types/inventory/updates/InventoryRemoveQuantityAction.raml",
+      "InventoryEntryRemoveQuantityAction": {
+        "title": "InventoryEntryRemoveQuantityAction",
+        "includePath": "types/inventory/updates/InventoryEntryRemoveQuantityAction.raml",
         "allOf": [
           {
             "$ref": "#/components/schemas/InventoryUpdateAction"
@@ -22244,9 +23162,9 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-inventory.html#remove-quantity",
         "type": "string"
       },
-      "InventorySetCustomFieldAction": {
-        "title": "InventorySetCustomFieldAction",
-        "includePath": "types/inventory/updates/InventorySetCustomFieldAction.raml",
+      "InventoryEntrySetCustomFieldAction": {
+        "title": "InventoryEntrySetCustomFieldAction",
+        "includePath": "types/inventory/updates/InventoryEntrySetCustomFieldAction.raml",
         "allOf": [
           {
             "$ref": "#/components/schemas/InventoryUpdateAction"
@@ -22269,9 +23187,9 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-inventory.html#set-customfield",
         "type": "string"
       },
-      "InventorySetCustomTypeAction": {
-        "title": "InventorySetCustomTypeAction",
-        "includePath": "types/inventory/updates/InventorySetCustomTypeAction.raml",
+      "InventoryEntrySetCustomTypeAction": {
+        "title": "InventoryEntrySetCustomTypeAction",
+        "includePath": "types/inventory/updates/InventoryEntrySetCustomTypeAction.raml",
         "allOf": [
           {
             "$ref": "#/components/schemas/InventoryUpdateAction"
@@ -22294,9 +23212,9 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-inventory.html#set-custom-type",
         "type": "string"
       },
-      "InventorySetExpectedDeliveryAction": {
-        "title": "InventorySetExpectedDeliveryAction",
-        "includePath": "types/inventory/updates/InventorySetExpectedDeliveryAction.raml",
+      "InventoryEntrySetExpectedDeliveryAction": {
+        "title": "InventoryEntrySetExpectedDeliveryAction",
+        "includePath": "types/inventory/updates/InventoryEntrySetExpectedDeliveryAction.raml",
         "allOf": [
           {
             "$ref": "#/components/schemas/InventoryUpdateAction"
@@ -22316,9 +23234,9 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-inventory.html#set-expecteddelivery",
         "type": "string"
       },
-      "InventorySetRestockableInDaysAction": {
-        "title": "InventorySetRestockableInDaysAction",
-        "includePath": "types/inventory/updates/InventorySetRestockableInDaysAction.raml",
+      "InventoryEntrySetRestockableInDaysAction": {
+        "title": "InventoryEntrySetRestockableInDaysAction",
+        "includePath": "types/inventory/updates/InventoryEntrySetRestockableInDaysAction.raml",
         "allOf": [
           {
             "$ref": "#/components/schemas/InventoryUpdateAction"
@@ -22338,9 +23256,9 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-inventory.html#set-restockableindays",
         "type": "string"
       },
-      "InventorySetSupplyChannelAction": {
-        "title": "InventorySetSupplyChannelAction",
-        "includePath": "types/inventory/updates/InventorySetSupplyChannelAction.raml",
+      "InventoryEntrySetSupplyChannelAction": {
+        "title": "InventoryEntrySetSupplyChannelAction",
+        "includePath": "types/inventory/updates/InventoryEntrySetSupplyChannelAction.raml",
         "allOf": [
           {
             "$ref": "#/components/schemas/InventoryUpdateAction"
@@ -22574,7 +23492,7 @@
         "includePath": "types/message/CategoryCreatedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22595,7 +23513,7 @@
         "includePath": "types/message/CategorySlugChangedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22616,7 +23534,7 @@
         "includePath": "types/message/CustomLineItemStateTransitionMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22655,7 +23573,7 @@
         "includePath": "types/message/CustomerAddressAddedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22676,7 +23594,7 @@
         "includePath": "types/message/CustomerAddressChangedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22697,7 +23615,7 @@
         "includePath": "types/message/CustomerAddressRemovedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22718,7 +23636,7 @@
         "includePath": "types/message/CustomerCompanyNameSetMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22739,7 +23657,7 @@
         "includePath": "types/message/CustomerCreatedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22760,7 +23678,7 @@
         "includePath": "types/message/CustomerDateOfBirthSetMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22782,7 +23700,7 @@
         "includePath": "types/message/CustomerEmailChangedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22801,7 +23719,7 @@
       "CustomerEmailVerifiedMessage": {
         "title": "CustomerEmailVerifiedMessage",
         "includePath": "types/message/CustomerEmailVerifiedMessage.raml",
-        "$ref": "#/components/schemas/Message",
+        "$ref": "#/components/schemas/MessagePayload",
         "x-annotation-package": "Message",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#customeremailverified-message"
       },
@@ -22810,7 +23728,7 @@
         "includePath": "types/message/CustomerGroupSetMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22831,7 +23749,7 @@
         "includePath": "types/message/DeliveryAddedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22852,7 +23770,7 @@
         "includePath": "types/message/DeliveryAddressSetMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22877,7 +23795,7 @@
         "includePath": "types/message/DeliveryItemsUpdatedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22904,7 +23822,7 @@
         "includePath": "types/message/DeliveryRemovedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22924,7 +23842,7 @@
         "includePath": "types/message/InventoryEntryDeletedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22949,7 +23867,7 @@
         "includePath": "types/message/LineItemStateTransitionMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -22986,9 +23904,28 @@
       "Message": {
         "title": "Message",
         "includePath": "types/message/Message.raml",
-        "discriminator": {
-          "propertyName": "type"
+        "$ref": "#/components/schemas/MessageContext",
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#message"
+      },
+      "MessageConfiguration": {
+        "title": "MessageConfiguration",
+        "includePath": "types/message/MessageConfiguration.raml",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "enabled",
+            "type": "boolean"
+          }
         },
+        "required": [
+          "enabled"
+        ],
+        "x-annotation-package": "Message"
+      },
+      "MessageContext": {
+        "title": "MessageContext",
+        "includePath": "types/message/MessageContext.raml",
         "allOf": [
           {
             "$ref": "#/components/schemas/Resource"
@@ -23021,21 +23958,6 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#message",
         "type": "string"
       },
-      "MessageConfiguration": {
-        "title": "MessageConfiguration",
-        "includePath": "types/message/MessageConfiguration.raml",
-        "type": "object",
-        "properties": {
-          "enabled": {
-            "title": "enabled",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "enabled"
-        ],
-        "x-annotation-package": "Message"
-      },
       "MessagePagedQueryResponse": {
         "title": "MessagePagedQueryResponse",
         "includePath": "types/message/MessagePagedQueryResponse.raml",
@@ -23059,12 +23981,30 @@
         "x-annotation-package": "Message",
         "type": "string"
       },
+      "MessagePayload": {
+        "title": "MessagePayload",
+        "includePath": "types/message/MessagePayload.raml",
+        "type": "object",
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "properties": {
+          "type": {
+            "title": "type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "x-annotation-package": "Message"
+      },
       "OrderBillingAddressSetMessage": {
         "title": "OrderBillingAddressSetMessage",
         "includePath": "types/message/OrderBillingAddressSetMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23085,7 +24025,7 @@
         "includePath": "types/message/OrderCreatedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23106,7 +24046,7 @@
         "includePath": "types/message/OrderCustomerEmailSetMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23127,7 +24067,7 @@
         "includePath": "types/message/OrderCustomerSetMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23160,7 +24100,7 @@
         "includePath": "types/message/OrderDeletedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23176,12 +24116,37 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#orderdeleted-message",
         "type": "string"
       },
+      "OrderEditAppliedMessage": {
+        "title": "OrderEditAppliedMessage",
+        "includePath": "types/message/OrderEditAppliedMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MessagePayload"
+          },
+          {
+            "properties": {
+              "edit": {
+                "title": "edit",
+                "$ref": "#/components/schemas/OrderEditReference"
+              },
+              "result": {
+                "title": "result",
+                "$ref": "#/components/schemas/OrderEditApplied"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#ordercreated-message",
+        "type": "string"
+      },
       "OrderImportedMessage": {
         "title": "OrderImportedMessage",
         "includePath": "types/message/OrderImportedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23202,7 +24167,7 @@
         "includePath": "types/message/OrderPaymentChangedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23223,7 +24188,7 @@
         "includePath": "types/message/OrderReturnInfoAddedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23243,7 +24208,7 @@
         "includePath": "types/message/OrderReturnShipmentStateChangedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23267,7 +24232,7 @@
         "includePath": "types/message/OrderShipmentStateChangedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23287,7 +24252,7 @@
         "includePath": "types/message/OrderShippingAddressSetMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23308,7 +24273,7 @@
         "includePath": "types/message/OrderStateChangedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23329,7 +24294,7 @@
         "includePath": "types/message/OrderStateTransitionMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23354,7 +24319,7 @@
         "includePath": "types/message/ParcelAddedToDeliveryMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23379,7 +24344,7 @@
         "includePath": "types/message/ParcelItemsUpdatedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23410,7 +24375,7 @@
         "includePath": "types/message/ParcelMeasurementsUpdatedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23438,7 +24403,7 @@
         "includePath": "types/message/ParcelRemovedFromDeliveryMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23462,7 +24427,7 @@
         "includePath": "types/message/ParcelTrackingDataUpdatedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23490,7 +24455,7 @@
         "includePath": "types/message/PaymentCreatedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23511,7 +24476,7 @@
         "includePath": "types/message/PaymentInteractionAddedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23532,7 +24497,7 @@
         "includePath": "types/message/PaymentStatusInterfaceCodeSetMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23557,7 +24522,7 @@
         "includePath": "types/message/PaymentStatusStateTransitionMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23582,7 +24547,7 @@
         "includePath": "types/message/PaymentTransactionAddedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23603,7 +24568,7 @@
         "includePath": "types/message/PaymentTransactionStateChangedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23628,7 +24593,7 @@
         "includePath": "types/message/ProductCreatedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23649,7 +24614,7 @@
         "includePath": "types/message/ProductDeletedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23674,7 +24639,7 @@
         "includePath": "types/message/ProductImageAddedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23704,7 +24669,7 @@
         "includePath": "types/message/ProductPublishedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23733,7 +24698,7 @@
         "includePath": "types/message/ProductRevertedStagedChangesMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23754,7 +24719,7 @@
         "includePath": "types/message/ProductSlugChangedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23775,7 +24740,7 @@
         "includePath": "types/message/ProductStateTransitionMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23798,7 +24763,7 @@
       "ProductUnpublishedMessage": {
         "title": "ProductUnpublishedMessage",
         "includePath": "types/message/ProductUnpublishedMessage.raml",
-        "$ref": "#/components/schemas/Message",
+        "$ref": "#/components/schemas/MessagePayload",
         "x-annotation-package": "Message",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#productunpublished-message"
       },
@@ -23807,7 +24772,7 @@
         "includePath": "types/message/ProductVariantDeletedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23832,7 +24797,7 @@
         "includePath": "types/message/ReviewCreatedMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23853,7 +24818,7 @@
         "includePath": "types/message/ReviewRatingSetMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23886,7 +24851,7 @@
         "includePath": "types/message/ReviewStateTransitionMessage.raml",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Message"
+            "$ref": "#/components/schemas/MessagePayload"
           },
           {
             "properties": {
@@ -23920,6 +24885,2738 @@
         ],
         "x-annotation-package": "Message",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#reviewstatetransition-message",
+        "type": "string"
+      },
+      "OrderEdit": {
+        "title": "OrderEdit",
+        "includePath": "types/order-edit/OrderEdit.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "properties": {
+              "createdAt": {
+                "title": "createdAt",
+                "type": "string",
+                "format": "date-time"
+              },
+              "lastModifiedAt": {
+                "title": "lastModifiedAt",
+                "type": "string",
+                "format": "date-time"
+              },
+              "key": {
+                "title": "key",
+                "type": "string",
+                "x-annotation-hasUpdateAction": {
+                  "action": "setKey",
+                  "docsAnchor": "setkey"
+                }
+              },
+              "resource": {
+                "title": "resource",
+                "$ref": "#/components/schemas/OrderReference"
+              },
+              "stagedActions": {
+                "title": "stagedActions",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/StagedOrderUpdateAction"
+                },
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "setStagedActions",
+                    "docsAnchor": "setstagedactions",
+                    "fields": {
+                      "stagedActions": "StagedOrderUpdateAction[]"
+                    }
+                  },
+                  {
+                    "action": "addStagedAction",
+                    "docsAnchor": "addstagedaction",
+                    "fields": {
+                      "stagedAction": "StagedOrderUpdateAction"
+                    }
+                  }
+                ]
+              },
+              "custom": {
+                "title": "custom",
+                "$ref": "#/components/schemas/CustomFields",
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "setCustomType",
+                    "docsAnchor": "setcustomtype",
+                    "fields": {
+                      "type?": "TypeReference",
+                      "fields?": "object"
+                    }
+                  },
+                  {
+                    "action": "setCustomField",
+                    "docsAnchor": "setcustomfield",
+                    "fields": {
+                      "name": "string",
+                      "value?": "any"
+                    }
+                  }
+                ]
+              },
+              "result": {
+                "title": "result",
+                "$ref": "#/components/schemas/OrderEditResult"
+              },
+              "comment": {
+                "title": "comment",
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setComment"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#orderedit",
+        "x-annotation-updateType": "OrderEditUpdate",
+        "type": "string"
+      },
+      "OrderEditApplied": {
+        "title": "OrderEditApplied",
+        "includePath": "types/order-edit/OrderEditApplied.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderEditResult"
+          },
+          {
+            "properties": {
+              "appliedAt": {
+                "title": "appliedAt",
+                "type": "string",
+                "format": "date-time"
+              },
+              "excerptBeforeEdit": {
+                "title": "excerptBeforeEdit",
+                "$ref": "#/components/schemas/OrderExcerpt"
+              },
+              "excerptAfterEdit": {
+                "title": "excerptAfterEdit",
+                "$ref": "#/components/schemas/OrderExcerpt"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#ordereditapplied",
+        "type": "string"
+      },
+      "OrderEditApply": {
+        "title": "OrderEditApply",
+        "includePath": "types/order-edit/OrderEditApply.raml",
+        "type": "object",
+        "properties": {
+          "editVersion": {
+            "title": "editVersion",
+            "type": "integer"
+          },
+          "resourceVersion": {
+            "title": "resourceVersion",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "editVersion",
+          "resourceVersion"
+        ],
+        "x-annotation-package": "OrderEdit"
+      },
+      "OrderEditDraft": {
+        "title": "OrderEditDraft",
+        "includePath": "types/order-edit/OrderEditDraft.raml",
+        "type": "object",
+        "properties": {
+          "key": {
+            "title": "key",
+            "type": "string"
+          },
+          "resource": {
+            "title": "resource",
+            "$ref": "#/components/schemas/OrderReference"
+          },
+          "stagedActions": {
+            "title": "stagedActions",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StagedOrderUpdateAction"
+            }
+          },
+          "custom": {
+            "title": "custom",
+            "$ref": "#/components/schemas/CustomFields"
+          },
+          "comment": {
+            "title": "comment",
+            "type": "string"
+          },
+          "dryRun": {
+            "title": "dryRun",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "resource",
+          "stagedActions"
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#ordereditdraft"
+      },
+      "OrderEditNotProcessed": {
+        "title": "OrderEditNotProcessed",
+        "includePath": "types/order-edit/OrderEditNotProcessed.raml",
+        "$ref": "#/components/schemas/OrderEditResult",
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#ordereditnotprocessed"
+      },
+      "OrderEditPagedQueryResponse": {
+        "title": "OrderEditPagedQueryResponse",
+        "includePath": "types/order-edit/OrderEditPagedQueryResponse.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PagedQueryResponse"
+          },
+          {
+            "properties": {
+              "results": {
+                "title": "results",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OrderEdit"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "type": "string"
+      },
+      "OrderEditPreviewFailure": {
+        "title": "OrderEditPreviewFailure",
+        "includePath": "types/order-edit/OrderEditPreviewFailure.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderEditResult"
+          },
+          {
+            "properties": {
+              "errors": {
+                "title": "errors",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ErrorObject"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#ordereditpreviewfailure",
+        "type": "string"
+      },
+      "OrderEditPreviewSuccess": {
+        "title": "OrderEditPreviewSuccess",
+        "includePath": "types/order-edit/OrderEditPreviewSuccess.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderEditResult"
+          },
+          {
+            "properties": {
+              "preview": {
+                "title": "preview",
+                "$ref": "#/components/schemas/StagedOrder"
+              },
+              "messagePayloads": {
+                "title": "messagePayloads",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MessagePayload"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#ordereditpreviewsuccess",
+        "type": "string"
+      },
+      "OrderEditReference": {
+        "title": "OrderEditReference",
+        "includePath": "types/order-edit/OrderEditReference.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Reference"
+          },
+          {
+            "properties": {
+              "obj": {
+                "title": "obj",
+                "$ref": "#/components/schemas/OrderEdit"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "type": "string"
+      },
+      "OrderEditResult": {
+        "title": "OrderEditResult",
+        "includePath": "types/order-edit/OrderEditResult.raml",
+        "type": "object",
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "properties": {
+          "type": {
+            "title": "type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#ordereditresult"
+      },
+      "OrderEditUpdate": {
+        "title": "OrderEditUpdate",
+        "includePath": "types/order-edit/OrderEditUpdate.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Update"
+          },
+          {
+            "properties": {
+              "actions": {
+                "title": "actions",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OrderEditUpdateAction"
+                }
+              },
+              "dryRun": {
+                "title": "dryRun",
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "type": "string"
+      },
+      "OrderEditUpdateAction": {
+        "title": "OrderEditUpdateAction",
+        "includePath": "types/order-edit/OrderEditUpdateAction.raml",
+        "discriminator": {
+          "propertyName": "action"
+        },
+        "$ref": "#/components/schemas/UpdateAction",
+        "x-annotation-package": "OrderEdit"
+      },
+      "OrderExcerpt": {
+        "title": "OrderExcerpt",
+        "includePath": "types/order-edit/OrderExcerpt.raml",
+        "type": "object",
+        "properties": {
+          "totalPrice": {
+            "title": "totalPrice",
+            "$ref": "#/components/schemas/Money"
+          },
+          "taxedPrice": {
+            "title": "taxedPrice",
+            "$ref": "#/components/schemas/TaxedPrice"
+          },
+          "version": {
+            "title": "version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "totalPrice",
+          "taxedPrice",
+          "version"
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#orderexcerpt"
+      },
+      "StagedOrder": {
+        "title": "StagedOrder",
+        "includePath": "types/order-edit/StagedOrder.raml",
+        "$ref": "#/components/schemas/Order",
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html",
+        "x-annotation-actionType": "StagedOrderUpdateAction",
+        "x-annotation-hasUpdateActions": [
+          {
+            "action": "addShoppingList",
+            "fields": {
+              "shoppingList": {
+                "type": "ShoppingListReference"
+              },
+              "supplyChannel?": {
+                "type": "ChannelReference"
+              },
+              "distributionChannel?": {
+                "type": "ChannelReference"
+              }
+            }
+          },
+          {
+            "action": "setShippingAddressAndShippingMethod",
+            "fields": {
+              "address": {
+                "type": "Address"
+              },
+              "shippingMethod?": {
+                "type": "ShippingMethodReference"
+              },
+              "externalTaxRate?": {
+                "type": "ExternalTaxRateDraft"
+              }
+            }
+          },
+          {
+            "action": "setShippingAddressAndCustomShippingMethod",
+            "fields": {
+              "address": {
+                "type": "Address"
+              },
+              "shippingMethodName": {
+                "type": "string"
+              },
+              "shippingRate": {
+                "type": "ShippingRateDraft"
+              },
+              "taxCategory?": {
+                "type": "TaxCategoryReference"
+              },
+              "externalTaxRate?": {
+                "type": "ExternalTaxRateDraft"
+              }
+            }
+          },
+          {
+            "action": "setCountry",
+            "fields": {
+              "country?": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "action": "setShippingMethod",
+            "fields": {
+              "shippingMethod?": {
+                "type": "TypeReference"
+              },
+              "externalTaxRate?": {
+                "type": "ExternalTaxRateDraft"
+              }
+            }
+          },
+          {
+            "action": "setCustomShippingMethod",
+            "fields": {
+              "shippingMethodName": {
+                "type": "string"
+              },
+              "shippingRate": {
+                "type": "ShippingRateDraft"
+              },
+              "taxCategory?": {
+                "type": "TaxCategoryReference"
+              },
+              "externalTaxRate?": {
+                "type": "ExternalTaxRateDraft"
+              }
+            }
+          },
+          {
+            "action": "setShippingMethodTaxAmount",
+            "docsAnchor": "set-shippingmethod-taxamount",
+            "fields": {
+              "externalTaxAmount?": {
+                "type": "ExternalTaxAmountDraft"
+              }
+            }
+          },
+          {
+            "action": "setShippingMethodTaxRate",
+            "docsAnchor": "set-shippingmethod-taxrate",
+            "fields": {
+              "externalTaxRate?": {
+                "type": "ExternalTaxRateDraft"
+              }
+            }
+          },
+          {
+            "action": "setCustomerGroup",
+            "fields": {
+              "customerGroup?": {
+                "type": "CustomerGroupReference"
+              }
+            }
+          },
+          {
+            "action": "addDiscountCode",
+            "docsAnchor": "add-discountcode",
+            "fields": {
+              "code": "string"
+            }
+          },
+          {
+            "action": "removeDiscountCode",
+            "docsAnchor": "remove-discountcode",
+            "fields": {
+              "discountCode": {
+                "type": "DiscountCodeReference"
+              }
+            }
+          },
+          {
+            "action": "setOrderTotalTax",
+            "fields": {
+              "externalTotalGross": {
+                "type": "Money"
+              },
+              "externalTaxPortions?": {
+                "type": "TaxPortion[]"
+              }
+            }
+          },
+          {
+            "action": "changeTaxMode",
+            "docsAnchor": "change-taxmode",
+            "fields": {
+              "taxMode": {
+                "type": "TaxMode"
+              }
+            }
+          },
+          {
+            "action": "changeTaxRoundingMode",
+            "docsAnchor": "change-tax-roundingmode",
+            "fields": {
+              "taxRoundingMode": {
+                "type": "RoundingMode"
+              }
+            }
+          },
+          {
+            "action": "setShippingRateInput",
+            "fields": {
+              "shippingRateInput?": {
+                "type": "ShippingRateInputDraft"
+              }
+            }
+          },
+          {
+            "action": "changeTaxCalculationMode",
+            "docsAnchor": "change-taxcalculationmode",
+            "fields": {
+              "taxCalculationMode": {
+                "type": "TaxCalculationMode"
+              }
+            }
+          },
+          {
+            "action": "addLineItem",
+            "docsAnchor": "add-lineitem",
+            "fields": {
+              "custom?": {
+                "type": "CustomFieldsDraft"
+              },
+              "distributionChannel?": {
+                "type": "ChannelReference"
+              },
+              "externalTaxRate?": {
+                "type": "ExternalTaxRateDraft"
+              },
+              "productId?": {
+                "type": "string"
+              },
+              "variantId?": {
+                "type": "number",
+                "format": "int64"
+              },
+              "sku?": {
+                "type": "string"
+              },
+              "quantity?": {
+                "type": "number",
+                "default": 1
+              },
+              "supplyChannel?": {
+                "type": "ChannelReference"
+              },
+              "externalPrice?": {
+                "type": "Money"
+              },
+              "externalTotalPrice?": {
+                "type": "ExternalLineItemTotalPrice"
+              },
+              "shippingDetails?": {
+                "type": "ItemShippingDetailsDraft"
+              }
+            }
+          },
+          {
+            "action": "removeLineItem",
+            "docsAnchor": "remove-lineitem",
+            "fields": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "quantity?": {
+                "type": "number"
+              },
+              "externalPrice?": {
+                "type": "Money"
+              },
+              "externalTotalPrice?": {
+                "type": "ExternalLineItemTotalPrice"
+              },
+              "shippingDetailsToRemove?": {
+                "type": "ItemShippingDetailsDraft"
+              }
+            }
+          },
+          {
+            "action": "changeLineItemQuantity",
+            "docsAnchor": "change-lineitem-quantity",
+            "fields": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "number"
+              },
+              "externalPrice?": {
+                "type": "Money"
+              },
+              "externalTotalPrice?": {
+                "type": "ExternalLineItemTotalPrice"
+              }
+            }
+          },
+          {
+            "action": "setLineItemTaxRate",
+            "docsAnchor": "set-lineitem-taxrate",
+            "fields": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "externalTaxRate?": {
+                "type": "ExternalTaxRateDraft"
+              }
+            }
+          },
+          {
+            "action": "setLineItemTaxAmount",
+            "docsAnchor": "set-lineitem-taxamount",
+            "fields": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "externalTaxAmount?": {
+                "type": "ExternalTaxAmountDraft"
+              }
+            }
+          },
+          {
+            "action": "setLineItemTotalPrice",
+            "docsAnchor": "set-lineitem-totalprice",
+            "fields": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "externalTotalPrice?": {
+                "type": "ExternalLineItemTotalPrice"
+              }
+            }
+          },
+          {
+            "action": "setLineItemPrice",
+            "docsAnchor": "set-lineitem-price",
+            "fields": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "externalPrice?": {
+                "type": "Money"
+              }
+            }
+          },
+          {
+            "action": "addCustomLineItem",
+            "docsAnchor": "add-customlineitem",
+            "fields": {
+              "money": {
+                "type": "Money"
+              },
+              "name": {
+                "type": "LocalizedString"
+              },
+              "quantity": {
+                "type": "number"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "taxCategory?": {
+                "type": "TaxCategoryReference"
+              },
+              "custom?": {
+                "type": "CustomFieldsDraft"
+              },
+              "externalTaxRate?": {
+                "type": "ExternalTaxRateDraft"
+              }
+            }
+          },
+          {
+            "action": "removeCustomLineItem",
+            "docsAnchor": "remove-customlineitem",
+            "fields": {
+              "customLineItemId": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "action": "changeCustomLineItemQuantity",
+            "docsAnchor": "change-customlineitem-quantity",
+            "fields": {
+              "customLineItemId": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "action": "changeCustomLineItemMoney",
+            "docsAnchor": "change-customlineitem-money",
+            "fields": {
+              "customLineItemId": {
+                "type": "string"
+              },
+              "money": {
+                "type": "Money"
+              }
+            }
+          },
+          {
+            "action": "setCustomLineItemTaxRate",
+            "docsAnchor": "set-customlineitem-taxrate",
+            "fields": {
+              "customLineItemId": {
+                "type": "string"
+              },
+              "externalTaxRate?": {
+                "type": "ExternalTaxRateDraft"
+              }
+            }
+          },
+          {
+            "action": "setCustomLineItemTaxAmount",
+            "docsAnchor": "set-customlineitem-taxamount",
+            "fields": {
+              "customLineItemId": {
+                "type": "string"
+              },
+              "externalTaxAmount?": {
+                "type": "ExternalTaxAmountDraft"
+              }
+            }
+          }
+        ]
+      },
+      "StagedOrderUpdateAction": {
+        "title": "StagedOrderUpdateAction",
+        "includePath": "types/order-edit/StagedOrderUpdateAction.raml",
+        "type": "object",
+        "discriminator": {
+          "propertyName": "action"
+        },
+        "properties": {
+          "action": {
+            "title": "action",
+            "type": "string"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "x-annotation-package": "Order",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#stagedorderupdateaction"
+      },
+      "OrderEditAddStagedActionAction": {
+        "title": "OrderEditAddStagedActionAction",
+        "includePath": "types/order-edit/updates/OrderEditAddStagedActionAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderEditUpdateAction"
+          },
+          {
+            "properties": {
+              "stagedAction": {
+                "title": "stagedAction",
+                "$ref": "#/components/schemas/StagedOrderUpdateAction"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#addstagedaction",
+        "type": "string"
+      },
+      "OrderEditSetCommentAction": {
+        "title": "OrderEditSetCommentAction",
+        "includePath": "types/order-edit/updates/OrderEditSetCommentAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderEditUpdateAction"
+          },
+          {
+            "properties": {
+              "comment": {
+                "title": "comment",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-comment",
+        "type": "string"
+      },
+      "OrderEditSetCustomFieldAction": {
+        "title": "OrderEditSetCustomFieldAction",
+        "includePath": "types/order-edit/updates/OrderEditSetCustomFieldAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderEditUpdateAction"
+          },
+          {
+            "properties": {
+              "name": {
+                "title": "name",
+                "type": "string"
+              },
+              "value": {
+                "title": "value",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#setcustomfield",
+        "type": "string"
+      },
+      "OrderEditSetCustomTypeAction": {
+        "title": "OrderEditSetCustomTypeAction",
+        "includePath": "types/order-edit/updates/OrderEditSetCustomTypeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderEditUpdateAction"
+          },
+          {
+            "properties": {
+              "type": {
+                "title": "type",
+                "$ref": "#/components/schemas/TypeReference"
+              },
+              "fields": {
+                "title": "fields",
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#setcustomtype",
+        "type": "string"
+      },
+      "OrderEditSetKeyAction": {
+        "title": "OrderEditSetKeyAction",
+        "includePath": "types/order-edit/updates/OrderEditSetKeyAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderEditUpdateAction"
+          },
+          {
+            "properties": {
+              "key": {
+                "title": "key",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#setkey",
+        "type": "string"
+      },
+      "OrderEditSetStagedActionsAction": {
+        "title": "OrderEditSetStagedActionsAction",
+        "includePath": "types/order-edit/updates/OrderEditSetStagedActionsAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderEditUpdateAction"
+          },
+          {
+            "properties": {
+              "stagedActions": {
+                "title": "stagedActions",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/StagedOrderUpdateAction"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#setstagedactions",
+        "type": "string"
+      },
+      "StagedOrderAddCustomLineItemAction": {
+        "title": "StagedOrderAddCustomLineItemAction",
+        "includePath": "types/order-edit/updates/StagedOrderAddCustomLineItemAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "money": {
+                "title": "money",
+                "$ref": "#/components/schemas/Money"
+              },
+              "name": {
+                "title": "name",
+                "$ref": "#/components/schemas/LocalizedString"
+              },
+              "quantity": {
+                "title": "quantity",
+                "type": "number"
+              },
+              "slug": {
+                "title": "slug",
+                "type": "string"
+              },
+              "taxCategory": {
+                "title": "taxCategory",
+                "$ref": "#/components/schemas/TaxCategoryReference"
+              },
+              "custom": {
+                "title": "custom",
+                "$ref": "#/components/schemas/CustomFieldsDraft"
+              },
+              "externalTaxRate": {
+                "title": "externalTaxRate",
+                "$ref": "#/components/schemas/ExternalTaxRateDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#add-customlineitem",
+        "type": "string"
+      },
+      "StagedOrderAddDeliveryAction": {
+        "title": "StagedOrderAddDeliveryAction",
+        "includePath": "types/order-edit/updates/StagedOrderAddDeliveryAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "items": {
+                "title": "items",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DeliveryItem"
+                }
+              },
+              "address": {
+                "title": "address",
+                "$ref": "#/components/schemas/Address"
+              },
+              "parcels": {
+                "title": "parcels",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ParcelDraft"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#add-delivery",
+        "type": "string"
+      },
+      "StagedOrderAddDiscountCodeAction": {
+        "title": "StagedOrderAddDiscountCodeAction",
+        "includePath": "types/order-edit/updates/StagedOrderAddDiscountCodeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "code": {
+                "title": "code",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#add-discountcode",
+        "type": "string"
+      },
+      "StagedOrderAddItemShippingAddressAction": {
+        "title": "StagedOrderAddItemShippingAddressAction",
+        "includePath": "types/order-edit/updates/StagedOrderAddItemShippingAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "address": {
+                "title": "address",
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#add-itemshippingaddress",
+        "type": "string"
+      },
+      "StagedOrderAddLineItemAction": {
+        "title": "StagedOrderAddLineItemAction",
+        "includePath": "types/order-edit/updates/StagedOrderAddLineItemAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "custom": {
+                "title": "custom",
+                "$ref": "#/components/schemas/CustomFieldsDraft"
+              },
+              "distributionChannel": {
+                "title": "distributionChannel",
+                "$ref": "#/components/schemas/ChannelReference"
+              },
+              "externalTaxRate": {
+                "title": "externalTaxRate",
+                "$ref": "#/components/schemas/ExternalTaxRateDraft"
+              },
+              "productId": {
+                "title": "productId",
+                "type": "string"
+              },
+              "variantId": {
+                "title": "variantId",
+                "format": "int64",
+                "type": "number"
+              },
+              "sku": {
+                "title": "sku",
+                "type": "string"
+              },
+              "quantity": {
+                "title": "quantity",
+                "type": "number"
+              },
+              "supplyChannel": {
+                "title": "supplyChannel",
+                "$ref": "#/components/schemas/ChannelReference"
+              },
+              "externalPrice": {
+                "title": "externalPrice",
+                "$ref": "#/components/schemas/Money"
+              },
+              "externalTotalPrice": {
+                "title": "externalTotalPrice",
+                "$ref": "#/components/schemas/ExternalLineItemTotalPrice"
+              },
+              "shippingDetails": {
+                "title": "shippingDetails",
+                "$ref": "#/components/schemas/ItemShippingDetailsDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#add-lineitem",
+        "type": "string"
+      },
+      "StagedOrderAddParcelToDeliveryAction": {
+        "title": "StagedOrderAddParcelToDeliveryAction",
+        "includePath": "types/order-edit/updates/StagedOrderAddParcelToDeliveryAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "deliveryId": {
+                "title": "deliveryId",
+                "type": "string"
+              },
+              "measurements": {
+                "title": "measurements",
+                "$ref": "#/components/schemas/ParcelMeasurements"
+              },
+              "trackingData": {
+                "title": "trackingData",
+                "$ref": "#/components/schemas/TrackingData"
+              },
+              "items": {
+                "title": "items",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DeliveryItem"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#add-parcel",
+        "type": "string"
+      },
+      "StagedOrderAddPaymentAction": {
+        "title": "StagedOrderAddPaymentAction",
+        "includePath": "types/order-edit/updates/StagedOrderAddPaymentAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "payment": {
+                "title": "payment",
+                "$ref": "#/components/schemas/PaymentReference"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#add-payment",
+        "type": "string"
+      },
+      "StagedOrderAddReturnInfoAction": {
+        "title": "StagedOrderAddReturnInfoAction",
+        "includePath": "types/order-edit/updates/StagedOrderAddReturnInfoAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "returnTrackingId": {
+                "title": "returnTrackingId",
+                "type": "string"
+              },
+              "items": {
+                "title": "items",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ReturnItemDraft"
+                }
+              },
+              "returnDate": {
+                "title": "returnDate",
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#add-returninfo",
+        "type": "string"
+      },
+      "StagedOrderAddShoppingListAction": {
+        "title": "StagedOrderAddShoppingListAction",
+        "includePath": "types/order-edit/updates/StagedOrderAddShoppingListAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "shoppingList": {
+                "title": "shoppingList",
+                "$ref": "#/components/schemas/ShoppingListReference"
+              },
+              "supplyChannel": {
+                "title": "supplyChannel",
+                "$ref": "#/components/schemas/ChannelReference"
+              },
+              "distributionChannel": {
+                "title": "distributionChannel",
+                "$ref": "#/components/schemas/ChannelReference"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#add-shopping-list",
+        "type": "string"
+      },
+      "StagedOrderChangeCustomLineItemMoneyAction": {
+        "title": "StagedOrderChangeCustomLineItemMoneyAction",
+        "includePath": "types/order-edit/updates/StagedOrderChangeCustomLineItemMoneyAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "customLineItemId": {
+                "title": "customLineItemId",
+                "type": "string"
+              },
+              "money": {
+                "title": "money",
+                "$ref": "#/components/schemas/Money"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#change-customlineitem-money",
+        "type": "string"
+      },
+      "StagedOrderChangeCustomLineItemQuantityAction": {
+        "title": "StagedOrderChangeCustomLineItemQuantityAction",
+        "includePath": "types/order-edit/updates/StagedOrderChangeCustomLineItemQuantityAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "customLineItemId": {
+                "title": "customLineItemId",
+                "type": "string"
+              },
+              "quantity": {
+                "title": "quantity",
+                "type": "number"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#change-customlineitem-quantity",
+        "type": "string"
+      },
+      "StagedOrderChangeLineItemQuantityAction": {
+        "title": "StagedOrderChangeLineItemQuantityAction",
+        "includePath": "types/order-edit/updates/StagedOrderChangeLineItemQuantityAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "title": "lineItemId",
+                "type": "string"
+              },
+              "quantity": {
+                "title": "quantity",
+                "type": "number"
+              },
+              "externalPrice": {
+                "title": "externalPrice",
+                "$ref": "#/components/schemas/Money"
+              },
+              "externalTotalPrice": {
+                "title": "externalTotalPrice",
+                "$ref": "#/components/schemas/ExternalLineItemTotalPrice"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#change-lineitem-quantity",
+        "type": "string"
+      },
+      "StagedOrderChangeOrderStateAction": {
+        "title": "StagedOrderChangeOrderStateAction",
+        "includePath": "types/order-edit/updates/StagedOrderChangeOrderStateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "orderState": {
+                "title": "orderState",
+                "$ref": "#/components/schemas/OrderState"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#change-orderstate",
+        "type": "string"
+      },
+      "StagedOrderChangePaymentStateAction": {
+        "title": "StagedOrderChangePaymentStateAction",
+        "includePath": "types/order-edit/updates/StagedOrderChangePaymentStateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "paymentState": {
+                "title": "paymentState",
+                "$ref": "#/components/schemas/PaymentState"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#change-paymentstate",
+        "type": "string"
+      },
+      "StagedOrderChangeShipmentStateAction": {
+        "title": "StagedOrderChangeShipmentStateAction",
+        "includePath": "types/order-edit/updates/StagedOrderChangeShipmentStateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "shipmentState": {
+                "title": "shipmentState",
+                "$ref": "#/components/schemas/ShipmentState"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#change-shipmentstate",
+        "type": "string"
+      },
+      "StagedOrderChangeTaxCalculationModeAction": {
+        "title": "StagedOrderChangeTaxCalculationModeAction",
+        "includePath": "types/order-edit/updates/StagedOrderChangeTaxCalculationModeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "taxCalculationMode": {
+                "title": "taxCalculationMode",
+                "$ref": "#/components/schemas/TaxCalculationMode"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#change-taxcalculationmode",
+        "type": "string"
+      },
+      "StagedOrderChangeTaxModeAction": {
+        "title": "StagedOrderChangeTaxModeAction",
+        "includePath": "types/order-edit/updates/StagedOrderChangeTaxModeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "taxMode": {
+                "title": "taxMode",
+                "$ref": "#/components/schemas/TaxMode"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#change-taxmode",
+        "type": "string"
+      },
+      "StagedOrderChangeTaxRoundingModeAction": {
+        "title": "StagedOrderChangeTaxRoundingModeAction",
+        "includePath": "types/order-edit/updates/StagedOrderChangeTaxRoundingModeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "taxRoundingMode": {
+                "title": "taxRoundingMode",
+                "$ref": "#/components/schemas/RoundingMode"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#change-tax-roundingmode",
+        "type": "string"
+      },
+      "StagedOrderImportCustomLineItemStateAction": {
+        "title": "StagedOrderImportCustomLineItemStateAction",
+        "includePath": "types/order-edit/updates/StagedOrderImportCustomLineItemStateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "customLineItemId": {
+                "title": "customLineItemId",
+                "type": "string"
+              },
+              "state": {
+                "title": "state",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ItemState"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#import-state-for-customlineitems",
+        "type": "string"
+      },
+      "StagedOrderImportLineItemStateAction": {
+        "title": "StagedOrderImportLineItemStateAction",
+        "includePath": "types/order-edit/updates/StagedOrderImportLineItemStateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "title": "lineItemId",
+                "type": "string"
+              },
+              "state": {
+                "title": "state",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ItemState"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#import-state-for-lineitems",
+        "type": "string"
+      },
+      "StagedOrderRemoveCustomLineItemAction": {
+        "title": "StagedOrderRemoveCustomLineItemAction",
+        "includePath": "types/order-edit/updates/StagedOrderRemoveCustomLineItemAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "customLineItemId": {
+                "title": "customLineItemId",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#remove-customlineitem",
+        "type": "string"
+      },
+      "StagedOrderRemoveDeliveryAction": {
+        "title": "StagedOrderRemoveDeliveryAction",
+        "includePath": "types/order-edit/updates/StagedOrderRemoveDeliveryAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "deliveryId": {
+                "title": "deliveryId",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#remove-delivery",
+        "type": "string"
+      },
+      "StagedOrderRemoveDiscountCodeAction": {
+        "title": "StagedOrderRemoveDiscountCodeAction",
+        "includePath": "types/order-edit/updates/StagedOrderRemoveDiscountCodeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "discountCode": {
+                "title": "discountCode",
+                "$ref": "#/components/schemas/DiscountCodeReference"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#remove-discountcode",
+        "type": "string"
+      },
+      "StagedOrderRemoveItemShippingAddressAction": {
+        "title": "StagedOrderRemoveItemShippingAddressAction",
+        "includePath": "types/order-edit/updates/StagedOrderRemoveItemShippingAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "addressKey": {
+                "title": "addressKey",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#remove-itemshippingaddress",
+        "type": "string"
+      },
+      "StagedOrderRemoveLineItemAction": {
+        "title": "StagedOrderRemoveLineItemAction",
+        "includePath": "types/order-edit/updates/StagedOrderRemoveLineItemAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "title": "lineItemId",
+                "type": "string"
+              },
+              "quantity": {
+                "title": "quantity",
+                "type": "number"
+              },
+              "externalPrice": {
+                "title": "externalPrice",
+                "$ref": "#/components/schemas/Money"
+              },
+              "externalTotalPrice": {
+                "title": "externalTotalPrice",
+                "$ref": "#/components/schemas/ExternalLineItemTotalPrice"
+              },
+              "shippingDetailsToRemove": {
+                "title": "shippingDetailsToRemove",
+                "$ref": "#/components/schemas/ItemShippingDetailsDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#remove-lineitem",
+        "type": "string"
+      },
+      "StagedOrderRemoveParcelFromDeliveryAction": {
+        "title": "StagedOrderRemoveParcelFromDeliveryAction",
+        "includePath": "types/order-edit/updates/StagedOrderRemoveParcelFromDeliveryAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "parcelId": {
+                "title": "parcelId",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#remove-parcel-from-delivery",
+        "type": "string"
+      },
+      "StagedOrderRemovePaymentAction": {
+        "title": "StagedOrderRemovePaymentAction",
+        "includePath": "types/order-edit/updates/StagedOrderRemovePaymentAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "payment": {
+                "title": "payment",
+                "$ref": "#/components/schemas/PaymentReference"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#remove-payment",
+        "type": "string"
+      },
+      "StagedOrderSetBillingAddressAction": {
+        "title": "StagedOrderSetBillingAddressAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetBillingAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "address": {
+                "title": "address",
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-billing-address",
+        "type": "string"
+      },
+      "StagedOrderSetCountryAction": {
+        "title": "StagedOrderSetCountryAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetCountryAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "country": {
+                "title": "country",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-country",
+        "type": "string"
+      },
+      "StagedOrderSetCustomFieldAction": {
+        "title": "StagedOrderSetCustomFieldAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetCustomFieldAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "name": {
+                "title": "name",
+                "type": "string"
+              },
+              "value": {
+                "title": "value",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-customfield",
+        "type": "string"
+      },
+      "StagedOrderSetCustomLineItemCustomFieldAction": {
+        "title": "StagedOrderSetCustomLineItemCustomFieldAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetCustomLineItemCustomFieldAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "customLineItemId": {
+                "title": "customLineItemId",
+                "type": "string"
+              },
+              "name": {
+                "title": "name",
+                "type": "string"
+              },
+              "value": {
+                "title": "value",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-customlineitem-customfield",
+        "type": "string"
+      },
+      "StagedOrderSetCustomLineItemCustomTypeAction": {
+        "title": "StagedOrderSetCustomLineItemCustomTypeAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetCustomLineItemCustomTypeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "customLineItemId": {
+                "title": "customLineItemId",
+                "type": "string"
+              },
+              "type": {
+                "title": "type",
+                "$ref": "#/components/schemas/TypeReference"
+              },
+              "fields": {
+                "title": "fields",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-customlineitem-custom-type",
+        "type": "string"
+      },
+      "StagedOrderSetCustomLineItemShippingDetailsAction": {
+        "title": "StagedOrderSetCustomLineItemShippingDetailsAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetCustomLineItemShippingDetailsAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "customLineItemId": {
+                "title": "customLineItemId",
+                "type": "string"
+              },
+              "shippingDetails": {
+                "title": "shippingDetails",
+                "$ref": "#/components/schemas/ItemShippingDetailsDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-customlineitemshippingdetails",
+        "type": "string"
+      },
+      "StagedOrderSetCustomLineItemTaxAmountAction": {
+        "title": "StagedOrderSetCustomLineItemTaxAmountAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetCustomLineItemTaxAmountAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "customLineItemId": {
+                "title": "customLineItemId",
+                "type": "string"
+              },
+              "externalTaxAmount": {
+                "title": "externalTaxAmount",
+                "$ref": "#/components/schemas/ExternalTaxAmountDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-customlineitem-taxamount",
+        "type": "string"
+      },
+      "StagedOrderSetCustomLineItemTaxRateAction": {
+        "title": "StagedOrderSetCustomLineItemTaxRateAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetCustomLineItemTaxRateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "customLineItemId": {
+                "title": "customLineItemId",
+                "type": "string"
+              },
+              "externalTaxRate": {
+                "title": "externalTaxRate",
+                "$ref": "#/components/schemas/ExternalTaxRateDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-customlineitem-taxrate",
+        "type": "string"
+      },
+      "StagedOrderSetCustomShippingMethodAction": {
+        "title": "StagedOrderSetCustomShippingMethodAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetCustomShippingMethodAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "shippingMethodName": {
+                "title": "shippingMethodName",
+                "type": "string"
+              },
+              "shippingRate": {
+                "title": "shippingRate",
+                "$ref": "#/components/schemas/ShippingRateDraft"
+              },
+              "taxCategory": {
+                "title": "taxCategory",
+                "$ref": "#/components/schemas/TaxCategoryReference"
+              },
+              "externalTaxRate": {
+                "title": "externalTaxRate",
+                "$ref": "#/components/schemas/ExternalTaxRateDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-custom-shipping-method",
+        "type": "string"
+      },
+      "StagedOrderSetCustomTypeAction": {
+        "title": "StagedOrderSetCustomTypeAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetCustomTypeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "type": {
+                "title": "type",
+                "$ref": "#/components/schemas/TypeReference"
+              },
+              "fields": {
+                "title": "fields",
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-custom-type",
+        "type": "string"
+      },
+      "StagedOrderSetCustomerEmailAction": {
+        "title": "StagedOrderSetCustomerEmailAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetCustomerEmailAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "email": {
+                "title": "email",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-customer-email",
+        "type": "string"
+      },
+      "StagedOrderSetCustomerGroupAction": {
+        "title": "StagedOrderSetCustomerGroupAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetCustomerGroupAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "customerGroup": {
+                "title": "customerGroup",
+                "$ref": "#/components/schemas/CustomerGroupReference"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-customer-group",
+        "type": "string"
+      },
+      "StagedOrderSetCustomerIdAction": {
+        "title": "StagedOrderSetCustomerIdAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetCustomerIdAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "customerId": {
+                "title": "customerId",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-customer-id",
+        "type": "string"
+      },
+      "StagedOrderSetDeliveryAddressAction": {
+        "title": "StagedOrderSetDeliveryAddressAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetDeliveryAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "deliveryId": {
+                "title": "deliveryId",
+                "type": "string"
+              },
+              "address": {
+                "title": "address",
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-delivery-address",
+        "type": "string"
+      },
+      "StagedOrderSetDeliveryItemsAction": {
+        "title": "StagedOrderSetDeliveryItemsAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetDeliveryItemsAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "deliveryId": {
+                "title": "deliveryId",
+                "type": "string"
+              },
+              "items": {
+                "title": "items",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DeliveryItem"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-delivery-items",
+        "type": "string"
+      },
+      "StagedOrderSetLineItemCustomFieldAction": {
+        "title": "StagedOrderSetLineItemCustomFieldAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetLineItemCustomFieldAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "title": "lineItemId",
+                "type": "string"
+              },
+              "name": {
+                "title": "name",
+                "type": "string"
+              },
+              "value": {
+                "title": "value",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-lineitem-customfield",
+        "type": "string"
+      },
+      "StagedOrderSetLineItemCustomTypeAction": {
+        "title": "StagedOrderSetLineItemCustomTypeAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetLineItemCustomTypeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "title": "lineItemId",
+                "type": "string"
+              },
+              "type": {
+                "title": "type",
+                "$ref": "#/components/schemas/TypeReference"
+              },
+              "fields": {
+                "title": "fields",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-lineitem-custom-type",
+        "type": "string"
+      },
+      "StagedOrderSetLineItemPriceAction": {
+        "title": "StagedOrderSetLineItemPriceAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetLineItemPriceAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "title": "lineItemId",
+                "type": "string"
+              },
+              "externalPrice": {
+                "title": "externalPrice",
+                "$ref": "#/components/schemas/Money"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-lineitem-price",
+        "type": "string"
+      },
+      "StagedOrderSetLineItemShippingDetailsAction": {
+        "title": "StagedOrderSetLineItemShippingDetailsAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetLineItemShippingDetailsAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "title": "lineItemId",
+                "type": "string"
+              },
+              "shippingDetails": {
+                "title": "shippingDetails",
+                "$ref": "#/components/schemas/ItemShippingDetailsDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-lineitemshippingdetails",
+        "type": "string"
+      },
+      "StagedOrderSetLineItemTaxAmountAction": {
+        "title": "StagedOrderSetLineItemTaxAmountAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetLineItemTaxAmountAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "title": "lineItemId",
+                "type": "string"
+              },
+              "externalTaxAmount": {
+                "title": "externalTaxAmount",
+                "$ref": "#/components/schemas/ExternalTaxAmountDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-lineitem-taxamount",
+        "type": "string"
+      },
+      "StagedOrderSetLineItemTaxRateAction": {
+        "title": "StagedOrderSetLineItemTaxRateAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetLineItemTaxRateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "title": "lineItemId",
+                "type": "string"
+              },
+              "externalTaxRate": {
+                "title": "externalTaxRate",
+                "$ref": "#/components/schemas/ExternalTaxRateDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-lineitem-taxrate",
+        "type": "string"
+      },
+      "StagedOrderSetLineItemTotalPriceAction": {
+        "title": "StagedOrderSetLineItemTotalPriceAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetLineItemTotalPriceAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "title": "lineItemId",
+                "type": "string"
+              },
+              "externalTotalPrice": {
+                "title": "externalTotalPrice",
+                "$ref": "#/components/schemas/ExternalLineItemTotalPrice"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-lineitem-totalprice",
+        "type": "string"
+      },
+      "StagedOrderSetLocaleAction": {
+        "title": "StagedOrderSetLocaleAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetLocaleAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "locale": {
+                "title": "locale",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-locale",
+        "type": "string"
+      },
+      "StagedOrderSetOrderNumberAction": {
+        "title": "StagedOrderSetOrderNumberAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetOrderNumberAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "orderNumber": {
+                "title": "orderNumber",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-order-number",
+        "type": "string"
+      },
+      "StagedOrderSetOrderTotalTaxAction": {
+        "title": "StagedOrderSetOrderTotalTaxAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetOrderTotalTaxAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "externalTotalGross": {
+                "title": "externalTotalGross",
+                "$ref": "#/components/schemas/Money"
+              },
+              "externalTaxPortions": {
+                "title": "externalTaxPortions",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TaxPortion"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-order-total-tax",
+        "type": "string"
+      },
+      "StagedOrderSetParcelItemsAction": {
+        "title": "StagedOrderSetParcelItemsAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetParcelItemsAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "parcelId": {
+                "title": "parcelId",
+                "type": "string"
+              },
+              "items": {
+                "title": "items",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DeliveryItem"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-parcel-items",
+        "type": "string"
+      },
+      "StagedOrderSetParcelMeasurementsAction": {
+        "title": "StagedOrderSetParcelMeasurementsAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetParcelMeasurementsAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "parcelId": {
+                "title": "parcelId",
+                "type": "string"
+              },
+              "measurements": {
+                "title": "measurements",
+                "$ref": "#/components/schemas/ParcelMeasurements"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-parcel-measurements",
+        "type": "string"
+      },
+      "StagedOrderSetParcelTrackingDataAction": {
+        "title": "StagedOrderSetParcelTrackingDataAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetParcelTrackingDataAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "parcelId": {
+                "title": "parcelId",
+                "type": "string"
+              },
+              "trackingData": {
+                "title": "trackingData",
+                "$ref": "#/components/schemas/TrackingData"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-parcel-tracking-data",
+        "type": "string"
+      },
+      "StagedOrderSetReturnPaymentStateAction": {
+        "title": "StagedOrderSetReturnPaymentStateAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetReturnPaymentStateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "returnItemId": {
+                "title": "returnItemId",
+                "type": "string"
+              },
+              "paymentState": {
+                "title": "paymentState",
+                "$ref": "#/components/schemas/ReturnPaymentState"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-returnpaymentstate",
+        "type": "string"
+      },
+      "StagedOrderSetReturnShipmentStateAction": {
+        "title": "StagedOrderSetReturnShipmentStateAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetReturnShipmentStateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "returnItemId": {
+                "title": "returnItemId",
+                "type": "string"
+              },
+              "shipmentState": {
+                "title": "shipmentState",
+                "$ref": "#/components/schemas/ReturnShipmentState"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-returnshipmentstate",
+        "type": "string"
+      },
+      "StagedOrderSetShippingAddressAction": {
+        "title": "StagedOrderSetShippingAddressAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetShippingAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "address": {
+                "title": "address",
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-shipping-address",
+        "type": "string"
+      },
+      "StagedOrderSetShippingAddressAndCustomShippingMethodAction": {
+        "title": "StagedOrderSetShippingAddressAndCustomShippingMethodAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetShippingAddressAndCustomShippingMethodAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "address": {
+                "title": "address",
+                "$ref": "#/components/schemas/Address"
+              },
+              "shippingMethodName": {
+                "title": "shippingMethodName",
+                "type": "string"
+              },
+              "shippingRate": {
+                "title": "shippingRate",
+                "$ref": "#/components/schemas/ShippingRateDraft"
+              },
+              "taxCategory": {
+                "title": "taxCategory",
+                "$ref": "#/components/schemas/TaxCategoryReference"
+              },
+              "externalTaxRate": {
+                "title": "externalTaxRate",
+                "$ref": "#/components/schemas/ExternalTaxRateDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-shipping-address-and-custom-shipping-method",
+        "type": "string"
+      },
+      "StagedOrderSetShippingAddressAndShippingMethodAction": {
+        "title": "StagedOrderSetShippingAddressAndShippingMethodAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetShippingAddressAndShippingMethodAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "address": {
+                "title": "address",
+                "$ref": "#/components/schemas/Address"
+              },
+              "shippingMethod": {
+                "title": "shippingMethod",
+                "$ref": "#/components/schemas/ShippingMethodReference"
+              },
+              "externalTaxRate": {
+                "title": "externalTaxRate",
+                "$ref": "#/components/schemas/ExternalTaxRateDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-shipping-address-and-shipping-method",
+        "type": "string"
+      },
+      "StagedOrderSetShippingMethodAction": {
+        "title": "StagedOrderSetShippingMethodAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetShippingMethodAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "shippingMethod": {
+                "title": "shippingMethod",
+                "$ref": "#/components/schemas/TypeReference"
+              },
+              "externalTaxRate": {
+                "title": "externalTaxRate",
+                "$ref": "#/components/schemas/ExternalTaxRateDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-shipping-method",
+        "type": "string"
+      },
+      "StagedOrderSetShippingMethodTaxAmountAction": {
+        "title": "StagedOrderSetShippingMethodTaxAmountAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetShippingMethodTaxAmountAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "externalTaxAmount": {
+                "title": "externalTaxAmount",
+                "$ref": "#/components/schemas/ExternalTaxAmountDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-shippingmethod-taxamount",
+        "type": "string"
+      },
+      "StagedOrderSetShippingMethodTaxRateAction": {
+        "title": "StagedOrderSetShippingMethodTaxRateAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetShippingMethodTaxRateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "externalTaxRate": {
+                "title": "externalTaxRate",
+                "$ref": "#/components/schemas/ExternalTaxRateDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-shippingmethod-taxrate",
+        "type": "string"
+      },
+      "StagedOrderSetShippingRateInputAction": {
+        "title": "StagedOrderSetShippingRateInputAction",
+        "includePath": "types/order-edit/updates/StagedOrderSetShippingRateInputAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "shippingRateInput": {
+                "title": "shippingRateInput",
+                "$ref": "#/components/schemas/ShippingRateInputDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-shipping-rate-input",
+        "type": "string"
+      },
+      "StagedOrderTransitionCustomLineItemStateAction": {
+        "title": "StagedOrderTransitionCustomLineItemStateAction",
+        "includePath": "types/order-edit/updates/StagedOrderTransitionCustomLineItemStateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "customLineItemId": {
+                "title": "customLineItemId",
+                "type": "string"
+              },
+              "quantity": {
+                "title": "quantity",
+                "format": "int64",
+                "type": "number"
+              },
+              "fromState": {
+                "title": "fromState",
+                "$ref": "#/components/schemas/StateReference"
+              },
+              "toState": {
+                "title": "toState",
+                "$ref": "#/components/schemas/StateReference"
+              },
+              "actualTransitionDate": {
+                "title": "actualTransitionDate",
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#change-the-state-of-customlineitem-according-to-allowed-transitions",
+        "type": "string"
+      },
+      "StagedOrderTransitionLineItemStateAction": {
+        "title": "StagedOrderTransitionLineItemStateAction",
+        "includePath": "types/order-edit/updates/StagedOrderTransitionLineItemStateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "title": "lineItemId",
+                "type": "string"
+              },
+              "quantity": {
+                "title": "quantity",
+                "format": "int64",
+                "type": "number"
+              },
+              "fromState": {
+                "title": "fromState",
+                "$ref": "#/components/schemas/StateReference"
+              },
+              "toState": {
+                "title": "toState",
+                "$ref": "#/components/schemas/StateReference"
+              },
+              "actualTransitionDate": {
+                "title": "actualTransitionDate",
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#change-the-state-of-lineitem-according-to-allowed-transitions",
+        "type": "string"
+      },
+      "StagedOrderTransitionStateAction": {
+        "title": "StagedOrderTransitionStateAction",
+        "includePath": "types/order-edit/updates/StagedOrderTransitionStateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "state": {
+                "title": "state",
+                "$ref": "#/components/schemas/StateReference"
+              },
+              "force": {
+                "title": "force",
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#transition-state",
+        "type": "string"
+      },
+      "StagedOrderUpdateItemShippingAddressAction": {
+        "title": "StagedOrderUpdateItemShippingAddressAction",
+        "includePath": "types/order-edit/updates/StagedOrderUpdateItemShippingAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "address": {
+                "title": "address",
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#update-itemshippingaddress",
+        "type": "string"
+      },
+      "StagedOrderUpdateSyncInfoAction": {
+        "title": "StagedOrderUpdateSyncInfoAction",
+        "includePath": "types/order-edit/updates/StagedOrderUpdateSyncInfoAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "channel": {
+                "title": "channel",
+                "$ref": "#/components/schemas/ChannelReference"
+              },
+              "externalId": {
+                "title": "externalId",
+                "type": "string"
+              },
+              "syncedAt": {
+                "title": "syncedAt",
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#update-syncinfo",
         "type": "string"
       },
       "Delivery": {
@@ -24823,18 +28520,7 @@
           },
           "measurements": {
             "title": "measurements",
-            "$ref": "#/components/schemas/ParcelMeasurements",
-            "x-annotation-hasUpdateAction": {
-              "action": "setParcelMeasurements",
-              "fields": {
-                "parcelId": {
-                  "type": "string"
-                },
-                "measurements?": {
-                  "type": "ParcelMeasurements"
-                }
-              }
-            }
+            "$ref": "#/components/schemas/ParcelMeasurements"
           },
           "trackingData": {
             "title": "trackingData",
@@ -26435,6 +30121,14 @@
                       "transactionId": "string",
                       "interactionId": "string"
                     }
+                  },
+                  {
+                    "action": "changeTransactionTimestamp",
+                    "docsAnchor": "change-transactiontimestamp",
+                    "fields": {
+                      "transactionId": "string",
+                      "timestamp": "datetime"
+                    }
                   }
                 ]
               },
@@ -26911,14 +30605,14 @@
           },
           {
             "properties": {
+              "transactionId": {
+                "title": "transactionId",
+                "type": "string"
+              },
               "timestamp": {
                 "title": "timestamp",
                 "type": "string",
                 "format": "date-time"
-              },
-              "transactionId": {
-                "title": "transactionId",
-                "type": "string"
               }
             },
             "type": "object"
@@ -26947,6 +30641,7 @@
         ],
         "x-annotation-package": "Payment",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-payments.html#set-amountpaid",
+        "x-annotation-deprecated": true,
         "type": "string"
       },
       "PaymentSetAmountRefundedAction": {
@@ -26968,6 +30663,7 @@
         ],
         "x-annotation-package": "Payment",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-payments.html#set-amountrefunded",
+        "x-annotation-deprecated": true,
         "type": "string"
       },
       "PaymentSetAnonymousIdAction": {
@@ -27015,6 +30711,7 @@
         ],
         "x-annotation-package": "Payment",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-payments.html#set-authorization",
+        "x-annotation-deprecated": true,
         "type": "string"
       },
       "PaymentSetCustomFieldAction": {
@@ -27107,6 +30804,7 @@
         ],
         "x-annotation-package": "Payment",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-payments.html#set-externalid",
+        "x-annotation-deprecated": true,
         "type": "string"
       },
       "PaymentSetInterfaceIdAction": {
@@ -31455,44 +35153,6 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#set-discounted-price",
         "type": "string"
       },
-      "ProductSetImageLabelAction": {
-        "title": "ProductSetImageLabelAction",
-        "includePath": "types/product/updates/ProductSetImageLabelAction.raml",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/ProductUpdateAction"
-          },
-          {
-            "properties": {
-              "sku": {
-                "title": "sku",
-                "type": "string"
-              },
-              "variantId": {
-                "title": "variantId",
-                "format": "int64",
-                "type": "number"
-              },
-              "imageUrl": {
-                "title": "imageUrl",
-                "type": "string"
-              },
-              "label": {
-                "title": "label",
-                "type": "string"
-              },
-              "staged": {
-                "title": "staged",
-                "type": "boolean"
-              }
-            },
-            "type": "object"
-          }
-        ],
-        "x-annotation-package": "Product",
-        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#set-image-label",
-        "type": "string"
-      },
       "ProductSetKeyAction": {
         "title": "ProductSetKeyAction",
         "includePath": "types/product/updates/ProductSetKeyAction.raml",
@@ -31833,6 +35493,44 @@
         "$ref": "#/components/schemas/ProductUpdateAction",
         "x-annotation-package": "Product",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#unpublish"
+      },
+      "ProductVariantSetImageLabelAction": {
+        "title": "ProductVariantSetImageLabelAction",
+        "includePath": "types/product/updates/ProductVariantSetImageLabelAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProductUpdateAction"
+          },
+          {
+            "properties": {
+              "sku": {
+                "title": "sku",
+                "type": "string"
+              },
+              "variantId": {
+                "title": "variantId",
+                "format": "int64",
+                "type": "number"
+              },
+              "imageUrl": {
+                "title": "imageUrl",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "staged": {
+                "title": "staged",
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Product",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-products.html#set-image-label",
+        "type": "string"
       },
       "CartClassificationType": {
         "title": "CartClassificationType",
@@ -36687,6 +40385,7 @@
           }
         ],
         "x-annotation-package": "Type",
+        "x-annotation-deprecated": true,
         "type": "string"
       },
       "TypeChangeFieldDefinitionOrderAction": {
