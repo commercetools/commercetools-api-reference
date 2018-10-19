@@ -166,18 +166,21 @@ class RamlModelParser
                 $fields = $this->resolveProperties($ramlTypes, $ramlType);
                 $displayName = isset($ramlType['displayName']) ? $ramlType['displayName'] : $package;
                 $actionType = isset($ramlType['(actionType)']) ? $ramlType['(actionType)'] : $package . 'UpdateAction';
+                $actionPrefix = isset($ramlType['(actionType)']) ? $ramlType['displayName'] : $package;
                 if (count($fields) > 0) {
                     $ramlInfos[$typeName] = [
                         'fields' => $fields,
                         'domain' => $package,
                         'displayName' => $displayName,
                         'actionType' => $actionType,
+                        'actionPrefix' => $actionPrefix,
                         'model' => $typeName,
                         'docsUri' => $docsUri,
                         'updates' => $updates,
                     ];
                 }
             }
+            ksort($ramlInfos);
             $this->ramlTypes = $ramlInfos;
         }
 
@@ -304,8 +307,7 @@ EOF;
                 $fields = [
                     new Field($field['name'], $field['required'], $field['type'], $field['format'] ?? null)
                 ];
-                $prefix = isset($type['displayName']) ? $type['displayName'] : $type['domain'];
-                return new UpdateAction($type['domain'], $prefix, $type['actionType'], $field['(hasSimpleUpdateAction)'], $fields, $docsUri);
+                return new UpdateAction($type['domain'], $type['actionPrefix'], $type['actionType'], $field['(hasSimpleUpdateAction)'], $fields, $docsUri);
             },
             array_values($simpleActionFields)
         );
@@ -385,8 +387,9 @@ EOF;
             }
         }
         $typeName = isset($actionInfo['type']) ? $actionInfo['type'] : $type['actionType'];
-        $prefix = isset($actionInfo['prefix']) ? $actionInfo['prefix'] : $type['displayName'];
-        return new UpdateAction($type['domain'], $prefix, $typeName, $actionInfo['action'], $fields, $docsUri);
+        $prefix = isset($actionInfo['prefix']) ? $actionInfo['prefix'] : $type['actionPrefix'];
+        $updateAction = new UpdateAction($type['domain'], $prefix, $typeName, $actionInfo['action'], $fields, $docsUri);
+        return $updateAction;
     }
 
     public function generateUpdateCommands()
