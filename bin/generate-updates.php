@@ -73,6 +73,14 @@ class UpdateAction
      */
     public $domain;
     /**
+     * @var string
+     */
+    public $prefix;
+    /**
+     * @var string
+     */
+    public $type;
+    /**
      * @var
      */
     public $action;
@@ -99,16 +107,20 @@ class UpdateAction
     /**
      * UpdateAction constructor.
      * @param string $domain
+     * @param string $prefix
+     * @param string $type
      * @param string $action
      * @param Field[] $fields
      * @param string $docsUri
      */
-    public function __construct($domain, $action, array $fields, $docsUri)
+    public function __construct($domain, $prefix, $type, $action, array $fields, $docsUri)
     {
         $this->action = $action;
         $this->fields = $fields;
+        $this->prefix = $prefix;
         $this->domain = $domain;
-        $this->displayName = ucfirst($domain) . ucfirst($action) . 'Action';
+        $this->type = $type;
+        $this->displayName = ucfirst($prefix) . ucfirst($action) . 'Action';
         $this->docsUri = $docsUri;
     }
 }
@@ -152,10 +164,14 @@ class RamlModelParser
                     $updates = $ramlType['(hasUpdateActions)'];
                 }
                 $fields = $this->resolveProperties($ramlTypes, $ramlType);
+                $displayName = isset($ramlType['displayName']) ? $ramlType['displayName'] : $package;
+                $actionType = isset($ramlType['(actionType)']) ? $ramlType['(actionType)'] : $package . 'UpdateAction';
                 if (count($fields) > 0) {
                     $ramlInfos[$typeName] = [
                         'fields' => $fields,
                         'domain' => $package,
+                        'displayName' => $displayName,
+                        'actionType' => $actionType,
                         'model' => $typeName,
                         'docsUri' => $docsUri,
                         'updates' => $updates,
@@ -170,7 +186,7 @@ class RamlModelParser
 
     private function resolveProperties($ramlTypes, $ramlType)
     {
-        if (isset($ramlType['type'])) {
+        if (isset($ramlType['type']) && !is_array($ramlType['type'])) {
             $parentType = isset($ramlTypes[$ramlType['type']]) ? $ramlTypes[$ramlType['type']] : [];
             $parentProperties = $this->resolveProperties($ramlTypes, $parentType);
         } else {
@@ -182,10 +198,28 @@ class RamlModelParser
                 array_keys($ramlType['properties']),
                 $ramlType['properties']
             );
+            $properties = array_combine(array_map(function ($property) { return $property['name'];}, $properties), $properties);
         } else {
             $properties = [];
         }
-        return array_merge($parentProperties, $properties);
+        foreach ($properties as $name => $property) {
+            $parentProperty = isset($parentProperties[$name]) ? $parentProperties[$name] : [];
+            $parentProperties[$name] = $this->mergeProperty($parentProperty, $property);
+        }
+        return $parentProperties;
+    }
+
+    private function mergeProperty($parentProperty, $property) {
+        foreach ($property as $key => $value) {
+            if (is_array($property[$key])) {
+                $parentPropertyValue = isset($parentProperty[$key]) ? $parentProperty[$key] : [];
+                $parentProperty[$key] = array_merge($parentPropertyValue, $property[$key]);
+            } else if (isset($property[$key])) {
+                $parentProperty[$key] = $property[$key];
+            }
+        }
+
+        return $parentProperty;
     }
 
     private function parseProperty($key, $property)
@@ -215,7 +249,7 @@ class RamlModelParser
 (package): $domainName
 {$docsUri}
 
-type: {$domainName}UpdateAction
+type: {$action->type}
 displayName: {$action->displayName}
 discriminatorValue: {$action->action}
 $exampleExists
@@ -270,9 +304,10 @@ EOF;
                 $fields = [
                     new Field($field['name'], $field['required'], $field['type'], $field['format'] ?? null)
                 ];
-                return new UpdateAction($type['domain'], $field['(hasSimpleUpdateAction)'], $fields, $docsUri);
+                $prefix = isset($type['displayName']) ? $type['displayName'] : $type['domain'];
+                return new UpdateAction($type['domain'], $prefix, $type['actionType'], $field['(hasSimpleUpdateAction)'], $fields, $docsUri);
             },
-            $simpleActionFields
+            array_values($simpleActionFields)
         );
     }
 
@@ -288,9 +323,10 @@ EOF;
         return array_map(
             function ($field) use ($type){
                 $actionInfo = $this->enrich($field, $field['(hasUpdateAction)']);
-                return $this->getUpdateAction($type, $actionInfo);
+                $action =  $this->getUpdateAction($type, $actionInfo);
+                return $action;
             },
-            $actionFields
+            array_values($actionFields)
         );
     }
 
@@ -348,7 +384,9 @@ EOF;
                 $fields[] = new Field($property['name'], $property['required'], $property['type'], $property['format'] ?? null);
             }
         }
-        return new UpdateAction($type['domain'], $actionInfo['action'], $fields, $docsUri);
+        $typeName = isset($actionInfo['type']) ? $actionInfo['type'] : $type['actionType'];
+        $prefix = isset($actionInfo['prefix']) ? $actionInfo['prefix'] : $type['displayName'];
+        return new UpdateAction($type['domain'], $prefix, $typeName, $actionInfo['action'], $fields, $docsUri);
     }
 
     public function generateUpdateCommands()
