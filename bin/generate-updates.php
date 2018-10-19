@@ -253,19 +253,19 @@ type: {$action->type}
 displayName: {$action->displayName}
 discriminatorValue: {$action->action}
 $exampleExists
-properties:
-
 EOF;
-        foreach ($action->fields as $field) {
-            $required = $field->required ? '' : '?';
-            $format = $field->format ? '    format: ' . $field->format . PHP_EOL : '';
-            $command .= <<<EOF
+        if (count($action->fields)) {
+            $command .= PHP_EOL . 'properties:' . PHP_EOL;
+            foreach ($action->fields as $field) {
+                $required = $field->required ? '' : '?';
+                $format = $field->format ? '    format: ' . $field->format . PHP_EOL : '';
+                $command .= <<<EOF
   {$field->name}{$required}:
     type: {$field->type}
 $format
 EOF;
+            }
         }
-
         return $command;
     }
 
@@ -378,9 +378,11 @@ EOF;
     {
         $docsUri = $type['docsUri'] . '#' . (isset($actionInfo['docsAnchor']) ? $actionInfo['docsAnchor'] : camel2dashed($actionInfo['action']));
         $fields = [];
-        foreach ($actionInfo['fields'] as $actionFieldName => $actionField) {
-            $property = $this->parseProperty($actionFieldName, $actionField);
-            $fields[] = new Field($property['name'], $property['required'], $property['type'], $property['format'] ?? null);
+        if (isset($actionInfo['fields'])) {
+            foreach ($actionInfo['fields'] as $actionFieldName => $actionField) {
+                $property = $this->parseProperty($actionFieldName, $actionField);
+                $fields[] = new Field($property['name'], $property['required'], $property['type'], $property['format'] ?? null);
+            }
         }
         $typeName = isset($actionInfo['type']) ? $actionInfo['type'] : $type['actionType'];
         $prefix = isset($actionInfo['prefix']) ? $actionInfo['prefix'] : $type['displayName'];
