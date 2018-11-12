@@ -144,6 +144,9 @@ class RamlModelParser
             $ramlTypes = [];
             foreach ($types as $typeName => $typeFile) {
                 $ramlFile = trim(str_replace('!include', '', $typeFile));
+                if (!file_exists(static::RAML_MODEL_PATH . $ramlFile)) {
+                    continue;
+                }
                 $ramlType = Yaml::parse(file_get_contents(static::RAML_MODEL_PATH . $ramlFile));
 
                 if (isset($ramlType['properties']) || isset($ramlType['type'])) {
@@ -177,6 +180,8 @@ class RamlModelParser
                         'model' => $typeName,
                         'docsUri' => $docsUri,
                         'updates' => $updates,
+                        'type' => isset($ramlType['type']) ? $ramlType['type'] : '',
+                        'fileName' => $ramlFile
                     ];
                 }
             }
@@ -293,6 +298,23 @@ EOF;
     }
 
     /**
+     * @param $types
+     * @return array
+     */
+    private function getMessages($types)
+    {
+        $messages = [];
+        foreach ($types as $type) {
+            if ($type['type'] !== 'Message') {
+                continue;
+            }
+            $messages[] = $type;
+        }
+
+        return $messages;
+    }
+
+    /**
      * @param $type
      * @return UpdateAction[]
      */
@@ -402,9 +424,25 @@ EOF;
 
         foreach ($actions as $action) {
             $output = $this->getUpdateCommand($action);
-            $outputFileName = __DIR__ . '/../types/' . camel2dashed($action->domain) . '/updates/' . $action->displayName . '.raml';
+            $outputFileName = static::RAML_MODEL_PATH . camel2dashed($action->domain) . '/updates/' . $action->displayName . '.raml';
             $this->ensureDirectory($outputFileName);
             file_put_contents($outputFileName, $output);
+        }
+    }
+
+    public function generateMessagePayloads()
+    {
+        $types = $this->getRamlTypes();
+
+        $messages = $this->getMessages($types);
+
+        foreach ($messages as $message) {
+            $payload = file_get_contents(static::RAML_MODEL_PATH . $message['fileName']);
+            $payload = str_replace('type: Message', 'type: MessagePayload', $payload);
+            $payload = preg_replace('/displayName: (.+)Message/', 'displayName: $1MessagePayload', $payload);
+            $payloadDir = dirname($message['fileName']) . '/payload/';
+            $payloadFile = $payloadDir . basename($message['fileName'], '.raml') . 'Payload.raml';
+            file_put_contents(static::RAML_MODEL_PATH . $payloadFile, $payload);
         }
     }
 
@@ -420,3 +458,5 @@ EOF;
 require __DIR__ . '/../vendor/autoload.php';
 
 (new RamlModelParser())->generateUpdateCommands();
+
+(new RamlModelParser())->generateMessagePayloads();
