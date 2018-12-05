@@ -554,6 +554,63 @@
                     },
                     "response": []
                 },{
+                    "name": "ChangeMessagesConfiguration",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "tests[\"Status code \" + responseCode.code] = responseCode.code === 200 || responseCode.code === 201;",
+                                    "var data = JSON.parse(responseBody);",
+                                    "if(data.version){",
+                                    "    postman.setEnvironmentVariable(\"project-version\", data.version);",
+                                    "}",
+                                    "if(data.id){",
+                                    "    postman.setEnvironmentVariable(\"project-id\", data.id); ",
+                                    "}",
+                                    "if(data.key){",
+                                    "    postman.setEnvironmentVariable(\"project-key\", data.key); ",
+                                    "}",
+                                    ""
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth":
+                            {
+                                "type": "oauth2",
+                                "oauth2": {
+                                    "accessToken": "{{ctp_access_token}}",
+                                    "addTokenTo": "header",
+                                    "tokenType": "Bearer"
+                                }
+                            },
+                        "method": "POST",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"version\": {{project-version}},\n  \"actions\": [{\n    \"action\": \"changeMessagesConfiguration\"\n  }]\n}"
+                        },
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{host}}/{{projectKey}}",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "{{projectKey}}"
+                            ]
+                        },
+                        "description": "ProjectChangeMessagesConfigurationAction"
+                    },
+                    "response": []
+                },{
                     "name": "ChangeMessagesEnabled",
                     "event": [
                         {

@@ -17426,8 +17426,8 @@
                     "fields": {
                       "assetId?": "string",
                       "assetKey?": "string",
-                      "type": "TypeReference",
-                      "fields": "object"
+                      "type?": "TypeReference",
+                      "fields?": "object"
                     }
                   },
                   {
@@ -21415,6 +21415,18 @@
         "$ref": "#/components/schemas/ErrorObject",
         "x-annotation-package": "Error"
       },
+      "MissingTaxRateForCountryError": {
+        "title": "MissingTaxRateForCountryError",
+        "includePath": "types/error/MissingTaxRateForCountryError.raml",
+        "$ref": "#/components/schemas/ErrorObject",
+        "x-annotation-package": "Error"
+      },
+      "NoMatchingProductDiscountFoundError": {
+        "title": "NoMatchingProductDiscountFoundError",
+        "includePath": "types/error/NoMatchingProductDiscountFoundError.raml",
+        "$ref": "#/components/schemas/ErrorObject",
+        "x-annotation-package": "Error"
+      },
       "OutOfStockError": {
         "title": "OutOfStockError",
         "includePath": "types/error/OutOfStockError.raml",
@@ -21468,6 +21480,25 @@
         "x-annotation-package": "Error",
         "type": "string"
       },
+      "ReferenceExistsError": {
+        "title": "ReferenceExistsError",
+        "includePath": "types/error/ReferenceExistsError.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ErrorObject"
+          },
+          {
+            "properties": {
+              "referencedBy": {
+                "$ref": "#/components/schemas/ReferenceTypeId"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Error",
+        "type": "string"
+      },
       "RequiredFieldError": {
         "title": "RequiredFieldError",
         "includePath": "types/error/RequiredFieldError.raml",
@@ -21490,6 +21521,12 @@
       "ResourceNotFoundError": {
         "title": "ResourceNotFoundError",
         "includePath": "types/error/ResourceNotFoundError.raml",
+        "$ref": "#/components/schemas/ErrorObject",
+        "x-annotation-package": "Error"
+      },
+      "ShippingMethodDoesNotMatchCartError": {
+        "title": "ShippingMethodDoesNotMatchCartError",
+        "includePath": "types/error/ShippingMethodDoesNotMatchCartError.raml",
         "$ref": "#/components/schemas/ErrorObject",
         "x-annotation-package": "Error"
       },
@@ -22849,10 +22886,33 @@
         "properties": {
           "enabled": {
             "type": "boolean"
+          },
+          "deleteDaysAfterCreation": {
+            "format": "int32",
+            "type": "number"
           }
         },
         "required": [
           "enabled"
+        ],
+        "x-annotation-package": "Message"
+      },
+      "MessageConfigurationDraft": {
+        "title": "MessageConfigurationDraft",
+        "includePath": "types/message/MessageConfigurationDraft.raml",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "deleteDaysAfterCreation": {
+            "format": "int32",
+            "type": "number"
+          }
+        },
+        "required": [
+          "enabled",
+          "deleteDaysAfterCreation"
         ],
         "x-annotation-package": "Message"
       },
@@ -22916,6 +22976,35 @@
         ],
         "x-annotation-package": "Message",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#ordercreated-message",
+        "type": "string"
+      },
+      "OrderCustomLineItemDiscountSetMessage": {
+        "title": "OrderCustomLineItemDiscountSetMessage",
+        "includePath": "types/message/OrderCustomLineItemDiscountSetMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "customLineItemId": {
+                "type": "string"
+              },
+              "discountedPricePerQuantity": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DiscountedLineItemPriceForQuantity"
+                }
+              },
+              "taxedPrice": {
+                "$ref": "#/components/schemas/TaxedItemPrice"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#ordercustomlineitemdiscountset",
         "type": "string"
       },
       "OrderCustomerEmailSetMessage": {
@@ -22987,6 +23076,72 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#orderdeleted-message",
         "type": "string"
       },
+      "OrderDiscountCodeAddedMessage": {
+        "title": "OrderDiscountCodeAddedMessage",
+        "includePath": "types/message/OrderDiscountCodeAddedMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "discountCode": {
+                "$ref": "#/components/schemas/DiscountCodeReference"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#orderdiscountcodeadded",
+        "type": "string"
+      },
+      "OrderDiscountCodeRemovedMessage": {
+        "title": "OrderDiscountCodeRemovedMessage",
+        "includePath": "types/message/OrderDiscountCodeRemovedMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "discountCode": {
+                "$ref": "#/components/schemas/DiscountCodeReference"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#orderdiscountcoderemoved",
+        "type": "string"
+      },
+      "OrderDiscountCodeStateSetMessage": {
+        "title": "OrderDiscountCodeStateSetMessage",
+        "includePath": "types/message/OrderDiscountCodeStateSetMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "discountCode": {
+                "$ref": "#/components/schemas/DiscountCodeReference"
+              },
+              "state": {
+                "$ref": "#/components/schemas/DiscountCodeState"
+              },
+              "oldState": {
+                "$ref": "#/components/schemas/DiscountCodeState"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#orderdiscountcodestateset",
+        "type": "string"
+      },
       "OrderEditAppliedMessage": {
         "title": "OrderEditAppliedMessage",
         "includePath": "types/message/OrderEditAppliedMessage.raml",
@@ -23028,6 +23183,38 @@
         ],
         "x-annotation-package": "Message",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#orderimported-message",
+        "type": "string"
+      },
+      "OrderLineItemDiscountSetMessage": {
+        "title": "OrderLineItemDiscountSetMessage",
+        "includePath": "types/message/OrderLineItemDiscountSetMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "discountedPricePerQuantity": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DiscountedLineItemPriceForQuantity"
+                }
+              },
+              "totalPrice": {
+                "$ref": "#/components/schemas/Money"
+              },
+              "taxedPrice": {
+                "$ref": "#/components/schemas/TaxedItemPrice"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#orderlineitemdiscountset",
         "type": "string"
       },
       "OrderPaymentChangedMessage": {
@@ -23128,6 +23315,52 @@
         ],
         "x-annotation-package": "Message",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#ordershippingaddressset-message",
+        "type": "string"
+      },
+      "OrderShippingInfoSetMessage": {
+        "title": "OrderShippingInfoSetMessage",
+        "includePath": "types/message/OrderShippingInfoSetMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "shippingInfo": {
+                "$ref": "#/components/schemas/ShippingInfo"
+              },
+              "oldShippingInfo": {
+                "$ref": "#/components/schemas/ShippingInfo"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#ordershippinginfoset",
+        "type": "string"
+      },
+      "OrderShippingRateInputSetMessage": {
+        "title": "OrderShippingRateInputSetMessage",
+        "includePath": "types/message/OrderShippingRateInputSetMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "shippingRateInput": {
+                "$ref": "#/components/schemas/ShippingRateInput"
+              },
+              "oldShippingRateInput": {
+                "$ref": "#/components/schemas/ShippingRateInput"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#ordershippingrateinputset",
         "type": "string"
       },
       "OrderStateChangedMessage": {
@@ -24141,6 +24374,35 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#ordercreated-message",
         "type": "string"
       },
+      "OrderCustomLineItemDiscountSetMessagePayload": {
+        "title": "OrderCustomLineItemDiscountSetMessagePayload",
+        "includePath": "types/message/payload/OrderCustomLineItemDiscountSetMessagePayload.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MessagePayload"
+          },
+          {
+            "properties": {
+              "customLineItemId": {
+                "type": "string"
+              },
+              "discountedPricePerQuantity": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DiscountedLineItemPriceForQuantity"
+                }
+              },
+              "taxedPrice": {
+                "$ref": "#/components/schemas/TaxedItemPrice"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#ordercustomlineitemdiscountset",
+        "type": "string"
+      },
       "OrderCustomerEmailSetMessagePayload": {
         "title": "OrderCustomerEmailSetMessagePayload",
         "includePath": "types/message/payload/OrderCustomerEmailSetMessagePayload.raml",
@@ -24210,6 +24472,72 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#orderdeleted-message",
         "type": "string"
       },
+      "OrderDiscountCodeAddedMessagePayload": {
+        "title": "OrderDiscountCodeAddedMessagePayload",
+        "includePath": "types/message/payload/OrderDiscountCodeAddedMessagePayload.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MessagePayload"
+          },
+          {
+            "properties": {
+              "discountCode": {
+                "$ref": "#/components/schemas/DiscountCodeReference"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#orderdiscountcodeadded",
+        "type": "string"
+      },
+      "OrderDiscountCodeRemovedMessagePayload": {
+        "title": "OrderDiscountCodeRemovedMessagePayload",
+        "includePath": "types/message/payload/OrderDiscountCodeRemovedMessagePayload.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MessagePayload"
+          },
+          {
+            "properties": {
+              "discountCode": {
+                "$ref": "#/components/schemas/DiscountCodeReference"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#orderdiscountcoderemoved",
+        "type": "string"
+      },
+      "OrderDiscountCodeStateSetMessagePayload": {
+        "title": "OrderDiscountCodeStateSetMessagePayload",
+        "includePath": "types/message/payload/OrderDiscountCodeStateSetMessagePayload.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MessagePayload"
+          },
+          {
+            "properties": {
+              "discountCode": {
+                "$ref": "#/components/schemas/DiscountCodeReference"
+              },
+              "state": {
+                "$ref": "#/components/schemas/DiscountCodeState"
+              },
+              "oldState": {
+                "$ref": "#/components/schemas/DiscountCodeState"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#orderdiscountcodestateset",
+        "type": "string"
+      },
       "OrderEditAppliedMessagePayload": {
         "title": "OrderEditAppliedMessagePayload",
         "includePath": "types/message/payload/OrderEditAppliedMessagePayload.raml",
@@ -24251,6 +24579,38 @@
         ],
         "x-annotation-package": "Message",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#orderimported-message",
+        "type": "string"
+      },
+      "OrderLineItemDiscountSetMessagePayload": {
+        "title": "OrderLineItemDiscountSetMessagePayload",
+        "includePath": "types/message/payload/OrderLineItemDiscountSetMessagePayload.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MessagePayload"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "discountedPricePerQuantity": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DiscountedLineItemPriceForQuantity"
+                }
+              },
+              "totalPrice": {
+                "$ref": "#/components/schemas/Money"
+              },
+              "taxedPrice": {
+                "$ref": "#/components/schemas/TaxedItemPrice"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#orderlineitemdiscountset",
         "type": "string"
       },
       "OrderPaymentChangedMessagePayload": {
@@ -24351,6 +24711,52 @@
         ],
         "x-annotation-package": "Message",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-messages.html#ordershippingaddressset-message",
+        "type": "string"
+      },
+      "OrderShippingInfoSetMessagePayload": {
+        "title": "OrderShippingInfoSetMessagePayload",
+        "includePath": "types/message/payload/OrderShippingInfoSetMessagePayload.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MessagePayload"
+          },
+          {
+            "properties": {
+              "shippingInfo": {
+                "$ref": "#/components/schemas/ShippingInfo"
+              },
+              "oldShippingInfo": {
+                "$ref": "#/components/schemas/ShippingInfo"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#ordershippinginfoset",
+        "type": "string"
+      },
+      "OrderShippingRateInputSetMessagePayload": {
+        "title": "OrderShippingRateInputSetMessagePayload",
+        "includePath": "types/message/payload/OrderShippingRateInputSetMessagePayload.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MessagePayload"
+          },
+          {
+            "properties": {
+              "shippingRateInput": {
+                "$ref": "#/components/schemas/ShippingRateInput"
+              },
+              "oldShippingRateInput": {
+                "$ref": "#/components/schemas/ShippingRateInput"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Message",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-message-types.html#ordershippingrateinputset",
         "type": "string"
       },
       "OrderStateChangedMessagePayload": {
@@ -25070,7 +25476,7 @@
             }
           },
           "custom": {
-            "$ref": "#/components/schemas/CustomFields"
+            "$ref": "#/components/schemas/CustomFieldsDraft"
           },
           "comment": {
             "type": "string"
@@ -25080,8 +25486,7 @@
           }
         },
         "required": [
-          "resource",
-          "stagedActions"
+          "resource"
         ],
         "x-annotation-package": "OrderEdit",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#ordereditdraft"
@@ -25252,7 +25657,6 @@
         },
         "required": [
           "totalPrice",
-          "taxedPrice",
           "version"
         ],
         "x-annotation-package": "OrderEdit",
@@ -25576,7 +25980,7 @@
               "name": {
                 "type": "LocalizedString"
               },
-              "quantity": {
+              "quantity?": {
                 "type": "number"
               },
               "slug": {
@@ -27462,6 +27866,26 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#update-syncinfo",
         "type": "string"
       },
+      "CustomLineItemReturnItem": {
+        "title": "CustomLineItemReturnItem",
+        "includePath": "types/order/CustomLineItemReturnItem.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ReturnItem"
+          },
+          {
+            "properties": {
+              "customlineItemId": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Order",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#returnitem",
+        "type": "string"
+      },
       "Delivery": {
         "title": "Delivery",
         "includePath": "types/order/Delivery.raml",
@@ -27606,6 +28030,26 @@
         ],
         "x-annotation-package": "Order",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders-import.html#lineitemimportdraft"
+      },
+      "LineItemReturnItem": {
+        "title": "LineItemReturnItem",
+        "includePath": "types/order/LineItemReturnItem.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ReturnItem"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Order",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#returnitem",
+        "type": "string"
       },
       "Order": {
         "title": "Order",
@@ -28441,7 +28885,7 @@
             "format": "int64",
             "type": "number"
           },
-          "lineItemId": {
+          "type": {
             "type": "string"
           },
           "comment": {
@@ -28465,7 +28909,7 @@
         "required": [
           "id",
           "quantity",
-          "lineItemId",
+          "type",
           "shipmentState",
           "paymentState",
           "lastModifiedAt",
@@ -28486,6 +28930,9 @@
           "lineItemId": {
             "type": "string"
           },
+          "customLineItemId": {
+            "type": "string"
+          },
           "comment": {
             "type": "string"
           },
@@ -28495,7 +28942,6 @@
         },
         "required": [
           "quantity",
-          "lineItemId",
           "shipmentState"
         ],
         "x-annotation-package": "Order"
@@ -33258,8 +33704,8 @@
                   "staged?": "boolean",
                   "assetId?": "string",
                   "assetKey?": "string",
-                  "type": "TypeReference",
-                  "fields": "object"
+                  "type?": "TypeReference",
+                  "fields?": "object"
                 }
               },
               {
@@ -34916,9 +35362,9 @@
           "messages": {
             "$ref": "#/components/schemas/MessageConfiguration",
             "x-annotation-hasUpdateAction": {
-              "action": "changeMessagesEnabled",
+              "action": "changeMessagesConfiguration",
               "fields": {
-                "messagesEnabled": "boolean"
+                "messagesConfiguration": "MessageConfigurationDraft"
               }
             }
           },
@@ -35062,6 +35508,26 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-project.html#change-languages",
         "type": "string"
       },
+      "ProjectChangeMessagesConfigurationAction": {
+        "title": "ProjectChangeMessagesConfigurationAction",
+        "includePath": "types/project/updates/ProjectChangeMessagesConfigurationAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProjectUpdateAction"
+          },
+          {
+            "properties": {
+              "messagesConfiguration": {
+                "$ref": "#/components/schemas/MessageConfigurationDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Project",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-project.html#change-messages-configuration",
+        "type": "string"
+      },
       "ProjectChangeMessagesEnabledAction": {
         "title": "ProjectChangeMessagesEnabledAction",
         "includePath": "types/project/updates/ProjectChangeMessagesEnabledAction.raml",
@@ -35080,6 +35546,7 @@
         ],
         "x-annotation-package": "Project",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-project.html#change-messages-enabled",
+        "x-annotation-deprecated": true,
         "type": "string"
       },
       "ProjectChangeNameAction": {
@@ -39009,6 +39476,7 @@
           "channel",
           "customer",
           "order",
+          "order-edit",
           "inventory-entry",
           "line-item",
           "custom-line-item",
