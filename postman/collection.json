@@ -37959,6 +37959,73 @@
                         "description": "ZoneSetDescriptionAction"
                     },
                     "response": []
+                },{
+                    "name": "SetKey",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "tests[\"Status code \" + responseCode.code] = responseCode.code === 200 || responseCode.code === 201;",
+                                    "var data = JSON.parse(responseBody);",
+                                    "if(data.version){",
+                                    "    postman.setEnvironmentVariable(\"zone-version\", data.version);",
+                                    "}",
+                                    "if(data.id){",
+                                    "    postman.setEnvironmentVariable(\"zone-id\", data.id); ",
+                                    "}",
+                                    "if(data.key){",
+                                    "    postman.setEnvironmentVariable(\"zone-key\", data.key); ",
+                                    "}",
+                                    ""
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth":
+                            {
+                                "type": "oauth2",
+                                "oauth2": {
+                                    "accessToken": "{{ctp_access_token}}",
+                                    "addTokenTo": "header",
+                                    "tokenType": "Bearer"
+                                }
+                            },
+                        "method": "POST",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"version\": {{zone-version}},\n  \"actions\": [{\n    \"action\": \"setKey\"\n  }]\n}"
+                        },
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{host}}/{{projectKey}}//zones/{{zone-id}}",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "{{projectKey}}",
+                                "zones",
+                                "{{zone-id}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "expand",
+                                    "value": "",
+                                    "equals": true,
+                                    "disabled": true
+                                }
+                            ]
+                        },
+                        "description": "ZoneSetKeyAction"
+                    },
+                    "response": []
                 }
             ],
             "event": [

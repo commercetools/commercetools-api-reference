@@ -13,6 +13,7 @@ WORKDIR /api_console
 
 RUN apk add --no-cache --virtual .build-deps-api-console git \
     && yarn install \
+    && yarn add api-console-cli@0.2.12
     && node_modules/.bin/api-console build ./update-actions.raml --json -t v4.0.0 \
     && apk del .build-deps-api-console
 
