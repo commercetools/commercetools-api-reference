@@ -24727,6 +24727,51 @@
       ],
       "x-annotation-package": "Subscription"
     },
+    "DeliveryCloudEventsFormat": {
+      "title": "DeliveryCloudEventsFormat",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DeliveryFormat"
+        },
+        {
+          "properties": {
+            "cloudEventsVersion": {
+              "enum": [
+                "0.1"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "cloudEventsVersion"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "Subscription",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#cloudevents-format-preview"
+    },
+    "DeliveryFormat": {
+      "title": "DeliveryFormat",
+      "discriminator": "type",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "x-annotation-package": "Subscription",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#format"
+    },
+    "DeliveryPlatformFormat": {
+      "title": "DeliveryPlatformFormat",
+      "$ref": "#/definitions/DeliveryFormat",
+      "x-annotation-package": "Subscription",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-subscriptions.html#platform-format"
+    },
     "Destination": {
       "title": "Destination",
       "discriminator": "type",
@@ -25053,12 +25098,16 @@
                 "action": "setMessages",
                 "required": false
               }
+            },
+            "format": {
+              "$ref": "#/definitions/DeliveryFormat"
             }
           },
           "required": [
             "changes",
             "destination",
-            "messages"
+            "messages",
+            "format"
           ],
           "type": "object"
         }
@@ -25111,6 +25160,9 @@
           "items": {
             "$ref": "#/definitions/MessageSubscription"
           }
+        },
+        "format": {
+          "$ref": "#/definitions/DeliveryFormat"
         }
       },
       "required": [
