@@ -273,6 +273,8 @@ EOF;
 $format
 EOF;
             }
+        } else {
+            $command .= PHP_EOL;
         }
         return $command;
     }
