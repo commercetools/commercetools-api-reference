@@ -115,70 +115,71 @@ uriParameters:
       securedBy: [oauth_2_0: {
         scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}", "manage_orders:{projectKey}:{storeKey}"]
       }]
-/me/carts:
-  type:
-    baseDomain:
-      resourceType: Cart
-      resourceQueryType: CartPagedQueryResponse
-      resourceDraft: MyCartDraft
-      resourceExample: !include ../examples/cart.example.json
-      resourceQueryExample: !include ../examples/carts.example.json
-      resourceCreateExample: !include ../examples/cart-create.example.json
-      whereExample: customerEmail = "john.doe@example.com"
-      sortExample: createdAt asc
-  description: A shopping cart holds product variants and can be ordered.
-  get:
-    securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
-  post:
-    securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
-  /{ID}:
-    (methodName): withId
+/me:
+  /carts:
     type:
-      baseResource:
-        uriParameterName: ID
+      baseDomain:
         resourceType: Cart
-        resourceUpdateType: Update
-        resourceUpdateExample: !include ../examples/cart-update.example.json
+        resourceQueryType: CartPagedQueryResponse
+        resourceDraft: MyCartDraft
         resourceExample: !include ../examples/cart.example.json
+        resourceQueryExample: !include ../examples/carts.example.json
+        resourceCreateExample: !include ../examples/cart-create.example.json
+        whereExample: customerEmail = "john.doe@example.com"
+        sortExample: createdAt asc
+    description: A shopping cart holds product variants and can be ordered.
     get:
       securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
     post:
       securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
-    delete:
-      securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
-/me/orders:
-  type:
-    baseDomain:
-      resourceType: Order
-      resourceQueryType: OrderPagedQueryResponse
-      resourceDraft: MyOrderFromCartDraft
-      resourceExample: !include ../examples/order.example.json
-      resourceQueryExample: !include ../examples/orders.example.json
-      resourceCreateExample: !include ../examples/order-create.example.json
-      whereExample: customerEmail = "john.doe@example.com"
-      sortExample: createdAt asc
-  description: An order can be created from a cart, usually after a checkout process has been completed.
-  get:
-    securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
-  post:
-    securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
-  /{ID}:
-    (methodName): withId
+    /{ID}:
+      (methodName): withId
+      type:
+        baseResource:
+          uriParameterName: ID
+          resourceType: Cart
+          resourceUpdateType: Update
+          resourceUpdateExample: !include ../examples/cart-update.example.json
+          resourceExample: !include ../examples/cart.example.json
+      get:
+        securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
+      post:
+        securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
+      delete:
+        securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
+  /orders:
     type:
-      baseResource:
-        uriParameterName: ID
+      baseDomain:
         resourceType: Order
-        resourceUpdateType: Update
-        resourceUpdateExample: !include ../examples/order-update.example.json
+        resourceQueryType: OrderPagedQueryResponse
+        resourceDraft: MyOrderFromCartDraft
         resourceExample: !include ../examples/order.example.json
+        resourceQueryExample: !include ../examples/orders.example.json
+        resourceCreateExample: !include ../examples/order-create.example.json
+        whereExample: customerEmail = "john.doe@example.com"
+        sortExample: createdAt asc
+    description: An order can be created from a cart, usually after a checkout process has been completed.
     get:
       securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
-/me/active-cart:
-  type: base
-  get:
-    securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
-    responses:
-      200:
-        body:
-          application/json:
-            type: Cart
+    post:
+      securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
+    /{ID}:
+      (methodName): withId
+      type:
+        baseResource:
+          uriParameterName: ID
+          resourceType: Order
+          resourceUpdateType: Update
+          resourceUpdateExample: !include ../examples/order-update.example.json
+          resourceExample: !include ../examples/order.example.json
+      get:
+        securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
+  /active-cart:
+    type: base
+    get:
+      securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}", "manage_my_orders:{projectKey}:{storeKey}"]}]
+      responses:
+        200:
+          body:
+            application/json:
+              type: Cart
