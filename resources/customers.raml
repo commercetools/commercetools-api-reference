@@ -1,7 +1,7 @@
 type:
   baseDomain:
     resourceType: Customer
-    resourceQueryType: CustomerPagedQueryResponse | Customer
+    resourceQueryType: CustomerPagedQueryResponse
     resourceDraft: CustomerDraft
     resourceExample: !include ../examples/customer.example.json
     resourceQueryExample: !include ../examples/customers.example.json
@@ -124,6 +124,21 @@ post:
         body:
           application/json:
             type: CustomerToken
+/key={key}:
+  (methodName): withKey
+  type:
+    baseResource:
+      uriParameterName: key
+      resourceType: Customer
+      resourceUpdateType: Update
+      resourceExample: !include ../examples/customer.example.json
+      resourceUpdateExample: !include ../examples/customer-update.example.json
+  get:
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
+  post:
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
+  delete:
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]            
 /{ID}:
   (methodName): withId
   type:
