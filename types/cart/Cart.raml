@@ -9,11 +9,11 @@ type: LoggedResource
   - action: addShoppingList
     fields:
       shoppingList:
-        type: ShoppingListReference
+        type: ShoppingListResourceIdentifier
       supplyChannel?:
-        type: ChannelReference
+        type: ChannelResourceIdentifier
       distributionChannel?:
-        type: ChannelReference
+        type: ChannelResourceIdentifier
   - action: recalculate
     fields:
       updateProductData?: boolean
@@ -41,7 +41,7 @@ properties:
           custom?:
             type: CustomFieldsDraft
           distributionChannel?:
-            type: ChannelReference
+            type: ChannelResourceIdentifier
           externalTaxRate?:
             type: ExternalTaxRateDraft
           productId?:
@@ -55,7 +55,7 @@ properties:
             type: number
             default: 1
           supplyChannel?:
-            type: ChannelReference
+            type: ChannelResourceIdentifier
           externalPrice?:
             type: Money
           externalTotalPrice?:
@@ -120,7 +120,7 @@ properties:
           lineItemId:
             type: string
           type?:
-            type: TypeReference
+            type: TypeResourceIdentifier
           fields?:
             type: FieldContainer
       - action: setLineItemCustomField
@@ -161,7 +161,7 @@ properties:
           slug:
             type: string
           taxCategory?:
-            type: TaxCategoryReference
+            type: TaxCategoryResourceIdentifier
           custom?:
             type: CustomFieldsDraft
           externalTaxRate?:
@@ -191,7 +191,7 @@ properties:
           customLineItemId:
             type: string
           type?:
-            type: TypeReference
+            type: TypeResourceIdentifier
           fields?:
             type: FieldContainer
       - action: setCustomLineItemCustomField
@@ -271,7 +271,10 @@ properties:
       docsAnchor: change-taxcalculationmode
     type: TaxCalculationMode
   customerGroup?:
-    (hasSimpleUpdateAction): setCustomerGroup
+    (hasUpdateAction):
+      action: setCustomerGroup
+      fields:
+        customerGroup?: CustomerGroupResourceIdentifier
     type: CustomerGroupReference
   country?:
     (hasSimpleUpdateAction): setCountry
@@ -281,7 +284,7 @@ properties:
     (hasUpdateActions):
       - action: setShippingMethod
         fields:
-          shippingMethod?: TypeReference
+          shippingMethod?: ShippingMethodResourceIdentifier
           externalTaxRate?: ExternalTaxRateDraft
       - action: setCustomShippingMethod
         fields:
@@ -290,7 +293,7 @@ properties:
           shippingRate:
             type: ShippingRateDraft
           taxCategory?:
-            type: TaxCategoryReference
+            type: TaxCategoryResourceIdentifier
           externalTaxRate?:
             type: ExternalTaxRateDraft
       - action: setShippingMethodTaxAmount
@@ -317,7 +320,7 @@ properties:
     (hasUpdateActions):
       - action: setCustomType
         fields:
-          type?: TypeReference
+          type?: TypeResourceIdentifier
           fields?: FieldContainer
       - action: setCustomField
         docsAnchor: set-customfield
@@ -329,10 +332,10 @@ properties:
     (hasUpdateActions):
       - action: addPayment
         fields:
-          payment: PaymentReference
+          payment: PaymentResourceIdentifier
       - action: removePayment
         fields:
-          payment: PaymentReference
+          payment: PaymentResourceIdentifier
   locale?:
     (hasSimpleUpdateAction): setLocale
     type: string

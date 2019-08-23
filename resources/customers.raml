@@ -3,20 +3,22 @@ type:
     resourceType: Customer
     resourceQueryType: CustomerPagedQueryResponse
     resourceDraft: CustomerDraft
-    resourceExample: !include ../examples/customer.example.json
-    resourceQueryExample: !include ../examples/customers.example.json
-    resourceCreateExample: !include ../examples/customer-create.example.json
     whereExample: email = "foo@bar.com"
     sortExample: createdAt asc
 description: |
-  A customer is a person purchasing products. Carts, Orders, Comments and Reviews can be associated to a customer.
+  A customer is a person purchasing products. customers, Orders, Comments and Reviews can be associated to a customer.
 get:
   securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
-  queryParameters:
-    token?:
-      type: string
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../examples/customers.example.json
 post:
   securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
+  body:
+    application/json:
+      example: !include ../examples/customer-create.example.json
   responses:
     201:
       body:
@@ -29,18 +31,26 @@ post:
     baseResource:
       uriParameterName: passwordToken
       resourceType: Customer
-      resourceExample: !include ../examples/customer.example.json
   get:
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customer.example.json
 /email-token={emailToken}:
   (methodName): withEmailToken
   type:
     baseResource:
       uriParameterName: emailToken
       resourceType: Customer
-      resourceExample: !include ../examples/customer.example.json
   get:
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customer.example.json
 /email-token:
   type: base
   displayName: Customer's Email Verification
@@ -146,13 +156,29 @@ post:
       uriParameterName: ID
       resourceType: Customer
       resourceUpdateType: Update
-      resourceUpdateExample: !include ../examples/customer-update.example.json
-      resourceExample: !include ../examples/customer.example.json
   get:
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customer.example.json
   post:
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include ../examples/customer-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customer.example.json
   delete:
     is:
       - dataErasure
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customer.example.json
