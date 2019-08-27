@@ -5461,7 +5461,7 @@
           "properties": {
             "type": {
               "default": "centPrecision",
-              "type": "string"
+              "$ref": "#/definitions/MoneyType"
             }
           },
           "required": [
@@ -5599,7 +5599,7 @@
           "properties": {
             "type": {
               "default": "highPrecision",
-              "type": "string"
+              "$ref": "#/definitions/MoneyType"
             },
             "preciseAmount": {
               "format": "int64",
@@ -28831,6 +28831,7 @@
       "name": "withTotal"
     },
     "trait:versioned:version": {
+      "format": "int64",
       "description": "Last seen version of the resource",
       "type": "number",
       "in": "query",
@@ -30909,6 +30910,160 @@
       "x-annotation-updateable": "Customer",
       "x-annotation-deleteable": "Customer",
       "x-annotation-createable": "CustomerDraft"
+    },
+    "/{projectKey}/customers/key={key}": {
+      "post": {
+        "description": "Update Customer by ID",
+        "operationId": "POST_projectKey-customers-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "version": 3,
+                "actions": [
+                  {
+                    "action": "addAddress",
+                    "address": {
+                      "streetName": "Any Street",
+                      "streetNumber": "1337",
+                      "postalCode": "11111",
+                      "city": "Any City",
+                      "country": "US"
+                    }
+                  }
+                ]
+              },
+              "$ref": "#/definitions/CustomerUpdate"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_customers:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "description": "Get Customer by ID",
+        "operationId": "GET_projectKey-customers-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_customers:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "description": "Delete Customer by ID",
+        "operationId": "DELETE_projectKey-customers-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:dataErasure:dataErasure"
+          },
+          {
+            "$ref": "#/parameters/trait:versioned:version"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_customers:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "key",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-methodName": "withKey"
     },
     "/{projectKey}/customers/{ID}": {
       "post": {
@@ -33135,7 +33290,8 @@
           "name": "projectKey",
           "required": true
         }
-      ]
+      ],
+      "x-annotation-methodName": "importOrder"
     },
     "/{projectKey}/orders/edits": {
       "get": {
@@ -38562,6 +38718,151 @@
       "x-annotation-deleteable": "TaxCategory",
       "x-annotation-createable": "TaxCategoryDraft"
     },
+    "/{projectKey}/tax-categories/key={key}": {
+      "post": {
+        "description": "Update TaxCategory by ID",
+        "operationId": "POST_projectKey-tax-categories-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "version": 1,
+                "actions": [
+                  {
+                    "action": "changeName",
+                    "name": "New Name"
+                  }
+                ]
+              },
+              "$ref": "#/definitions/TaxCategoryUpdate"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_products:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "description": "Get TaxCategory by ID",
+        "operationId": "GET_projectKey-tax-categories-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_products:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "description": "Delete TaxCategory by ID",
+        "operationId": "DELETE_projectKey-tax-categories-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:versioned:version"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_products:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "key",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-methodName": "withKey"
+    },
     "/{projectKey}/tax-categories/{ID}": {
       "post": {
         "description": "Update TaxCategory by ID",
@@ -39312,6 +39613,151 @@
       "x-annotation-deleteable": "Zone",
       "x-annotation-createable": "ZoneDraft"
     },
+    "/{projectKey}/zones/key={key}": {
+      "post": {
+        "description": "Update Zone by key",
+        "operationId": "POST_projectKey-zones-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "version": 1,
+                "actions": [
+                  {
+                    "action": "changeName",
+                    "name": "New Name"
+                  }
+                ]
+              },
+              "$ref": "#/definitions/ZoneUpdate"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_orders:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "description": "Get Zone by key",
+        "operationId": "GET_projectKey-zones-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_orders:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "description": "Delete Zone by key",
+        "operationId": "DELETE_projectKey-zones-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:versioned:version"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_orders:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "key",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-methodName": "withKey"
+    },
     "/{projectKey}/zones/{ID}": {
       "post": {
         "description": "Update Zone by ID",
@@ -39456,151 +39902,6 @@
         }
       ],
       "x-annotation-methodName": "withId"
-    },
-    "/{projectKey}/zones/key={key}": {
-      "get": {
-        "description": "Get Zone by key",
-        "operationId": "GET_projectKey-zones-key=key",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_orders:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "post": {
-        "description": "Update Zone by key",
-        "operationId": "POST_projectKey-zones-key=key",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "409": {
-            "$ref": "#/responses/trait:conflicting:409"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "schema": {
-              "example": {
-                "version": 1,
-                "actions": [
-                  {
-                    "action": "changeName",
-                    "name": "New Name"
-                  }
-                ]
-              },
-              "$ref": "#/definitions/Update"
-            },
-            "in": "body",
-            "name": "body",
-            "required": true
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_orders:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "delete": {
-        "description": "Delete Zone by key",
-        "operationId": "DELETE_projectKey-zones-key=key",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "409": {
-            "$ref": "#/responses/trait:conflicting:409"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:versioned:version"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_orders:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "key",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ],
-      "x-annotation-methodName": "withKey"
     },
     "/{projectKey}/extensions": {
       "get": {
@@ -40034,6 +40335,434 @@
             "oauth_2_0": [
               "manage_project:{projectKey}",
               "manage_extensions:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "ID",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-methodName": "withId"
+    },
+    "/{projectKey}/stores": {
+      "get": {
+        "description": "Query stores",
+        "operationId": "GET_projectKey-stores",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
+            "type": "string",
+            "in": "query",
+            "name": "where"
+          },
+          {
+            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
+            "type": "string",
+            "in": "query",
+            "name": "sort"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:limit"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:offset"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:withTotal"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_stores:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "description": "Create Store",
+        "operationId": "POST_projectKey-stores",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "201": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "id": "c2f93299-c967-44af-8c2a-d2220bf39eb2",
+                "version": 1,
+                "key": "random-key-12314",
+                "name": {
+                  "en": "big store"
+                },
+                "createdAt": "1971-01-01T00:00:00.001Z",
+                "lastModifiedAt": "1972-01-01T00:00:00.001Z"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Store"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "key": "random-key-123",
+                "name": {
+                  "en": "main store"
+                }
+              },
+              "$ref": "#/definitions/StoreDraft"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_stores:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-updateable": "Store",
+      "x-annotation-deleteable": "Store",
+      "x-annotation-createable": "StoreDraft"
+    },
+    "/{projectKey}/stores/key={key}": {
+      "post": {
+        "description": "Update Store by key",
+        "operationId": "POST_projectKey-stores-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "version": 1,
+                "actions": [
+                  {
+                    "action": "setName",
+                    "name": {
+                      "en": "New Name"
+                    }
+                  }
+                ]
+              },
+              "$ref": "#/definitions/StoreUpdate"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_stores:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "description": "Get Store by key",
+        "operationId": "GET_projectKey-stores-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_stores:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "description": "Delete Store by key",
+        "operationId": "DELETE_projectKey-stores-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:versioned:version"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_stores:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "key",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-methodName": "withKey"
+    },
+    "/{projectKey}/stores/{ID}": {
+      "post": {
+        "description": "Update Store by ID",
+        "operationId": "POST_projectKey-stores-ID",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "version": 1,
+                "actions": [
+                  {
+                    "action": "setName",
+                    "name": {
+                      "en": "New Name"
+                    }
+                  }
+                ]
+              },
+              "$ref": "#/definitions/StoreUpdate"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_stores:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "description": "Get Store by ID",
+        "operationId": "GET_projectKey-stores-ID",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_stores:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "description": "Delete Store by ID",
+        "operationId": "DELETE_projectKey-stores-ID",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:versioned:version"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_stores:{projectKey}"
             ]
           }
         ]
@@ -44042,431 +44771,6 @@
           {
             "oauth_2_0": [
               "manage_api_clients:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "ID",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ],
-      "x-annotation-methodName": "withId"
-    },
-    "/{projectKey}/stores": {
-      "get": {
-        "description": "Query stores",
-        "operationId": "GET_projectKey-stores",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
-            "type": "string",
-            "in": "query",
-            "name": "where"
-          },
-          {
-            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
-            "type": "string",
-            "in": "query",
-            "name": "sort"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:limit"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:offset"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:withTotal"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_stores:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "post": {
-        "description": "Create Store",
-        "operationId": "POST_projectKey-stores",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "201": {
-            "description": "",
-            "examples": {
-              "application/json": {
-                "id": "c2f93299-c967-44af-8c2a-d2220bf39eb2",
-                "version": 1,
-                "key": "random-key-12314",
-                "name": {
-                  "en": "big store"
-                },
-                "createdAt": "1971-01-01T00:00:00.001Z",
-                "lastModifiedAt": "1972-01-01T00:00:00.001Z"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/Store"
-            }
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "schema": {
-              "example": {
-                "key": "random-key-123",
-                "name": {
-                  "en": "main store"
-                }
-              },
-              "$ref": "#/definitions/StoreDraft"
-            },
-            "in": "body",
-            "name": "body",
-            "required": true
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_stores:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ]
-    },
-    "/{projectKey}/stores/key={key}": {
-      "get": {
-        "description": "Get Store by key",
-        "operationId": "GET_projectKey-stores-key=key",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_stores:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "post": {
-        "description": "Update Store by key",
-        "operationId": "POST_projectKey-stores-key=key",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "409": {
-            "$ref": "#/responses/trait:conflicting:409"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "schema": {
-              "example": {
-                "version": 1,
-                "actions": [
-                  {
-                    "action": "setName",
-                    "name": {
-                      "en": "New Name"
-                    }
-                  }
-                ]
-              },
-              "$ref": "#/definitions/Update"
-            },
-            "in": "body",
-            "name": "body",
-            "required": true
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_stores:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "delete": {
-        "description": "Delete Store by key",
-        "operationId": "DELETE_projectKey-stores-key=key",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "409": {
-            "$ref": "#/responses/trait:conflicting:409"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:versioned:version"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_stores:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "key",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ],
-      "x-annotation-methodName": "withKey"
-    },
-    "/{projectKey}/stores/{ID}": {
-      "get": {
-        "description": "Get Store by ID",
-        "operationId": "GET_projectKey-stores-ID",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_stores:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "post": {
-        "description": "Update Store by ID",
-        "operationId": "POST_projectKey-stores-ID",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "409": {
-            "$ref": "#/responses/trait:conflicting:409"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "schema": {
-              "example": {
-                "version": 1,
-                "actions": [
-                  {
-                    "action": "setName",
-                    "name": {
-                      "en": "New Name"
-                    }
-                  }
-                ]
-              },
-              "$ref": "#/definitions/Update"
-            },
-            "in": "body",
-            "name": "body",
-            "required": true
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_stores:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "delete": {
-        "description": "Delete Store by ID",
-        "operationId": "DELETE_projectKey-stores-ID",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "409": {
-            "$ref": "#/responses/trait:conflicting:409"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:versioned:version"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_stores:{projectKey}"
             ]
           }
         ]

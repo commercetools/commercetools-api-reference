@@ -39108,7 +39108,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"version\" : 1,\n  \"actions\" : [ {\n    \"action\" : \"changeName\",\n    \"name\" : \"New Name\"\n  } ]\n}"
+                            "raw": "{\n    \"version\": {{zone-version}},\n    \"actions\": []\n}"
                         },
                         "url": {
                             "raw": "{{host}}/{{projectKey}}/zones/key={{zone-key}}",
@@ -41256,7 +41256,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"version\" : 1,\n  \"actions\" : [ {\n    \"action\" : \"setName\",\n    \"name\" : {\n      \"en\" : \"New Name\"\n    }\n  } ]\n}"
+                            "raw": "{\n    \"version\": {{store-version}},\n    \"actions\": []\n}"
                         },
                         "url": {
                             "raw": "{{host}}/{{projectKey}}/stores/{{store-id}}",
@@ -41326,7 +41326,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"version\" : 1,\n  \"actions\" : [ {\n    \"action\" : \"setName\",\n    \"name\" : {\n      \"en\" : \"New Name\"\n    }\n  } ]\n}"
+                            "raw": "{\n    \"version\": {{store-version}},\n    \"actions\": []\n}"
                         },
                         "url": {
                             "raw": "{{host}}/{{projectKey}}/stores/key={{store-key}}",
@@ -41498,6 +41498,74 @@
                             ]
                         },
                         "description": "Delete Store by key"
+                    },
+                    "response": []
+                },{
+                    "name": "SetName",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "tests[\"Status code \" + responseCode.code] = responseCode.code === 200 || responseCode.code === 201;",
+                                    "var data = JSON.parse(responseBody);",
+                                    "if(data.version){",
+                                    "    pm.environment.set(\"store-version\", data.version);",
+                                    "}",
+                                    "if(data.id){",
+                                    "    pm.environment.set(\"store-id\", data.id); ",
+                                    "}",
+                                    "if(data.key){",
+                                    "    pm.environment.set(\"store-key\", data.key);",
+                                    "}",
+                                    "",
+                                    ""
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth":
+                            {
+                                "type": "oauth2",
+                                "oauth2": {
+                                    "accessToken": "{{ctp_access_token}}",
+                                    "addTokenTo": "header",
+                                    "tokenType": "Bearer"
+                                }
+                            },
+                        "method": "POST",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"version\": {{store-version}},\n    \"actions\": [\n        {\n            \"action\" : \"setName\",\n            \"name\" : {\n              \"en\" : \"New Name\"\n            }\n          }\n    ]\n}"
+                        },
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{host}}/{{projectKey}}/stores/{{store-id}}",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "{{projectKey}}",
+                                "stores",
+                                "{{store-id}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "expand",
+                                    "value": "",
+                                    "equals": true,
+                                    "disabled": true
+                                }
+                            ]
+                        },
+                        "description": "StoreSetNameAction"
                     },
                     "response": []
                 }
