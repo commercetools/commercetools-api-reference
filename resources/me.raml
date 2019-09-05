@@ -164,7 +164,7 @@ delete:
       resourceDraft: MyOrderFromCartDraft
       whereExample: customerEmail = "john.doe@example.com"
       sortExample: createdAt asc
-  description: An order can be created from a order, usually after a checkout process has been completed.
+  description: An order can be created from a cart, usually after a checkout process has been completed.
   get:
     securedBy: [oauth_2_0: {scopes: ["manage_my_orders:{projectKey}"]}]
     responses:
@@ -206,3 +206,60 @@ delete:
           body:
             application/json:
               example: !include ../examples/order.example.json
+/shopping-lists:
+  type:
+    baseDomain:
+      resourceType: ShoppingList
+      resourceQueryType: ShoppingListPagedQueryResponse
+      resourceDraft: MyShoppingListDraft
+      whereExample: name(en = "list-name")
+      sortExample: createdAt asc
+  description: The My Shopping Lists endpoint creates and provides access to shopping lists scoped to a specific user.
+  get:
+    securedBy: [oauth_2_0: {scopes: ["manage_my_shopping_lists:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/shopping-lists.example.json
+  post:
+    securedBy: [oauth_2_0: {scopes: ["manage_my_shopping_lists:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include ../examples/shopping-list-create.example.json
+    responses:
+      201:
+        body:
+          application/json:
+            example: !include ../examples/shopping-list.example.json
+  /{ID}:
+    (methodName): withId
+    type:
+      baseResource:
+        uriParameterName: ID
+        resourceType: ShoppingList
+        resourceUpdateType: Update
+    get:
+      securedBy: [oauth_2_0: {scopes: ["manage_my_shopping_lists:{projectKey}"]}]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/shopping-list.example.json
+    post:
+      securedBy: [oauth_2_0: {scopes: ["manage_my_shopping_lists:{projectKey}"]}]
+      body:
+        application/json:
+          example: !include ../examples/shopping-list-update.example.json
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/shopping-list.example.json
+    delete:
+      securedBy: [oauth_2_0: {scopes: ["manage_my_shopping_lists:{projectKey}"]}]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/shopping-list.example.json
