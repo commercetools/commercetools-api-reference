@@ -17575,7 +17575,7 @@
                   "origin": "Customer"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/Cart"
+                  "$ref": "#/components/schemas/MyCart"
                 }
               }
             }
@@ -17599,7 +17599,7 @@
             "$ref": "#/components/responses/trait_errorable_503"
           }
         },
-        "description": "Create Cart",
+        "description": "Create MyCart",
         "operationId": "POST_projectKey-me-carts",
         "requestBody": {
           "content": {
@@ -17665,7 +17665,7 @@
             "$ref": "#/components/responses/trait_errorable_503"
           }
         },
-        "description": "Get Cart by ID",
+        "description": "Get MyCart by ID",
         "operationId": "GET_projectKey-me-carts-ID",
         "parameters": [
           {
@@ -17707,7 +17707,7 @@
             "$ref": "#/components/responses/trait_errorable_503"
           }
         },
-        "description": "Update Cart by ID",
+        "description": "Update MyCart by ID",
         "operationId": "POST_projectKey-me-carts-ID",
         "requestBody": {
           "content": {
@@ -17771,7 +17771,7 @@
             "$ref": "#/components/responses/trait_errorable_503"
           }
         },
-        "description": "Delete Cart by ID",
+        "description": "Delete MyCart by ID",
         "operationId": "DELETE_projectKey-me-carts-ID",
         "parameters": [
           {
@@ -28663,6 +28663,383 @@
         "x-annotation-postman-example": "{\n  \"action\": \"setSupplyChannel\",\n  \"supplyChannel\": {\n    \"id\": \"{{supplyChannelId}}\",\n    \"typeId\": \"channel\"\n  }\n}",
         "type": "string"
       },
+      "MyCart": {
+        "title": "MyCart",
+        "includePath": "types/me/MyCart.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/LoggedResource"
+          },
+          {
+            "properties": {
+              "customerId": {
+                "type": "string"
+              },
+              "customerEmail": {
+                "type": "string"
+              },
+              "anonymousId": {
+                "type": "string"
+              },
+              "store": {
+                "$ref": "#/components/schemas/StoreKeyReference"
+              },
+              "lineItems": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LineItem"
+                },
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "addLineItem",
+                    "docsAnchor": "add-lineitem",
+                    "fields": {
+                      "custom?": {
+                        "type": "CustomFieldsDraft"
+                      },
+                      "distributionChannel?": {
+                        "type": "ChannelResourceIdentifier"
+                      },
+                      "externalTaxRate?": {
+                        "type": "ExternalTaxRateDraft"
+                      },
+                      "productId?": {
+                        "type": "string"
+                      },
+                      "variantId?": {
+                        "type": "number",
+                        "format": "int64"
+                      },
+                      "sku?": {
+                        "type": "string"
+                      },
+                      "quantity?": {
+                        "type": "number",
+                        "default": 1
+                      },
+                      "supplyChannel?": {
+                        "type": "ChannelResourceIdentifier"
+                      },
+                      "externalPrice?": {
+                        "type": "Money"
+                      },
+                      "externalTotalPrice?": {
+                        "type": "ExternalLineItemTotalPrice"
+                      },
+                      "shippingDetails?": {
+                        "type": "ItemShippingDetailsDraft"
+                      }
+                    }
+                  },
+                  {
+                    "action": "removeLineItem",
+                    "docsAnchor": "remove-lineitem",
+                    "fields": {
+                      "lineItemId": {
+                        "type": "string"
+                      },
+                      "quantity?": {
+                        "type": "number"
+                      },
+                      "externalPrice?": {
+                        "type": "Money"
+                      },
+                      "externalTotalPrice?": {
+                        "type": "ExternalLineItemTotalPrice"
+                      },
+                      "shippingDetailsToRemove?": {
+                        "type": "ItemShippingDetailsDraft"
+                      }
+                    }
+                  },
+                  {
+                    "action": "changeLineItemQuantity",
+                    "docsAnchor": "change-lineitem-quantity",
+                    "fields": {
+                      "lineItemId": {
+                        "type": "string"
+                      },
+                      "quantity": {
+                        "type": "number"
+                      },
+                      "externalPrice?": {
+                        "type": "Money"
+                      },
+                      "externalTotalPrice?": {
+                        "type": "ExternalLineItemTotalPrice"
+                      }
+                    }
+                  },
+                  {
+                    "action": "setLineItemCustomType",
+                    "docsAnchor": "set-lineitem-custom-type",
+                    "fields": {
+                      "lineItemId": {
+                        "type": "string"
+                      },
+                      "type?": {
+                        "type": "TypeResourceIdentifier"
+                      },
+                      "fields?": {
+                        "type": "FieldContainer"
+                      }
+                    }
+                  },
+                  {
+                    "action": "setLineItemCustomField",
+                    "docsAnchor": "set-lineitem-customfield",
+                    "fields": {
+                      "lineItemId": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "value?": {
+                        "type": "any"
+                      }
+                    }
+                  },
+                  {
+                    "action": "applyDeltaToLineItemShippingDetailsTargets",
+                    "docsAnchor": "apply-deltatolineitemshippingdetailstargets",
+                    "fields": {
+                      "lineItemId": {
+                        "type": "string"
+                      },
+                      "targetsDelta": {
+                        "type": "ItemShippingTarget[]"
+                      }
+                    }
+                  },
+                  {
+                    "action": "setLineItemShippingDetails",
+                    "docsAnchor": "set-lineitemshippingdetails",
+                    "fields": {
+                      "lineItemId": {
+                        "type": "string"
+                      },
+                      "shippingDetails?": {
+                        "type": "ItemShippingDetailsDraft"
+                      }
+                    }
+                  }
+                ]
+              },
+              "customLineItems": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CustomLineItem"
+                }
+              },
+              "totalPrice": {
+                "$ref": "#/components/schemas/TypedMoney"
+              },
+              "taxedPrice": {
+                "$ref": "#/components/schemas/TaxedPrice"
+              },
+              "cartState": {
+                "$ref": "#/components/schemas/CartState"
+              },
+              "shippingAddress": {
+                "$ref": "#/components/schemas/Address",
+                "x-annotation-hasUpdateAction": {
+                  "action": "setShippingAddress",
+                  "fields": {
+                    "address?": "Address"
+                  }
+                }
+              },
+              "billingAddress": {
+                "$ref": "#/components/schemas/Address",
+                "x-annotation-hasUpdateAction": {
+                  "action": "setBillingAddress",
+                  "fields": {
+                    "address?": "Address"
+                  }
+                }
+              },
+              "inventoryMode": {
+                "$ref": "#/components/schemas/InventoryMode"
+              },
+              "taxMode": {
+                "$ref": "#/components/schemas/TaxMode",
+                "x-annotation-hasUpdateAction": {
+                  "action": "changeTaxMode",
+                  "docsAnchor": "change-taxmode"
+                }
+              },
+              "taxRoundingMode": {
+                "$ref": "#/components/schemas/RoundingMode"
+              },
+              "taxCalculationMode": {
+                "$ref": "#/components/schemas/TaxCalculationMode"
+              },
+              "customerGroup": {
+                "$ref": "#/components/schemas/CustomerGroupReference"
+              },
+              "country": {
+                "$ref": "#/components/schemas/CountryCode",
+                "x-annotation-hasSimpleUpdateAction": "setCountry"
+              },
+              "shippingInfo": {
+                "$ref": "#/components/schemas/ShippingInfo",
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "setShippingMethod",
+                    "fields": {
+                      "shippingMethod?": "ShippingMethodResourceIdentifier",
+                      "externalTaxRate?": "ExternalTaxRateDraft"
+                    }
+                  },
+                  {
+                    "action": "setCustomShippingMethod",
+                    "fields": {
+                      "shippingMethodName": {
+                        "type": "string"
+                      },
+                      "shippingRate": {
+                        "type": "ShippingRateDraft"
+                      },
+                      "taxCategory?": {
+                        "type": "TaxCategoryResourceIdentifier"
+                      },
+                      "externalTaxRate?": {
+                        "type": "ExternalTaxRateDraft"
+                      }
+                    }
+                  }
+                ]
+              },
+              "discountCodes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DiscountCodeInfo"
+                },
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "addDiscountCode",
+                    "docsAnchor": "add-discountcode",
+                    "fields": {
+                      "code": "string"
+                    }
+                  },
+                  {
+                    "action": "removeDiscountCode",
+                    "docsAnchor": "remove-discountcode",
+                    "fields": {
+                      "discountCode": "DiscountCodeReference"
+                    }
+                  }
+                ]
+              },
+              "custom": {
+                "$ref": "#/components/schemas/CustomFields",
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "setCustomType",
+                    "fields": {
+                      "type?": "TypeResourceIdentifier",
+                      "fields?": "FieldContainer"
+                    }
+                  },
+                  {
+                    "action": "setCustomField",
+                    "docsAnchor": "set-customfield",
+                    "fields": {
+                      "name": "string",
+                      "value?": "any"
+                    }
+                  }
+                ]
+              },
+              "paymentInfo": {
+                "$ref": "#/components/schemas/PaymentInfo",
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "addPayment",
+                    "fields": {
+                      "payment": "PaymentResourceIdentifier"
+                    }
+                  },
+                  {
+                    "action": "removePayment",
+                    "fields": {
+                      "payment": "PaymentResourceIdentifier"
+                    }
+                  }
+                ]
+              },
+              "locale": {
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setLocale"
+              },
+              "deleteDaysAfterLastModification": {
+                "type": "integer",
+                "x-annotation-hasUpdateAction": {
+                  "action": "setDeleteDaysAfterLastModification",
+                  "docsAnchor": "set-deletedaysafterlastmodification-beta"
+                }
+              },
+              "refusedGifts": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CartDiscountReference"
+                }
+              },
+              "origin": {
+                "$ref": "#/components/schemas/CartOrigin"
+              },
+              "shippingRateInput": {
+                "$ref": "#/components/schemas/ShippingRateInput"
+              },
+              "itemShippingAddresses": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Address"
+                },
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "addItemShippingAddress",
+                    "docsAnchor": "add-itemshippingaddress",
+                    "fields": {
+                      "address": "Address"
+                    }
+                  },
+                  {
+                    "action": "removeItemShippingAddress",
+                    "docsAnchor": "remove-itemshippingaddress",
+                    "fields": {
+                      "addressKey": "string"
+                    }
+                  },
+                  {
+                    "action": "updateItemShippingAddress",
+                    "docsAnchor": "update-itemshippingaddress",
+                    "fields": {
+                      "address": "Address"
+                    }
+                  }
+                ]
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#my-carts",
+        "x-annotation-updateType": "MyCartUpdate",
+        "x-annotation-actionType": "MyCartUpdateAction",
+        "x-annotation-hasUpdateActions": [
+          {
+            "action": "recalculate",
+            "fields": {
+              "updateProductData?": "boolean"
+            }
+          }
+        ],
+        "type": "string"
+      },
       "MyCartDraft": {
         "title": "MyCartDraft",
         "includePath": "types/me/MyCartDraft.raml",
@@ -28720,6 +29097,207 @@
         ],
         "x-annotation-package": "Me",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts.html#mycartdraft"
+      },
+      "MyCartUpdateAction": {
+        "title": "MyCartUpdateAction",
+        "includePath": "types/me/MyCartUpdateAction.raml",
+        "type": "object",
+        "discriminator": {
+          "propertyName": "action"
+        },
+        "properties": {
+          "action": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#update-actions"
+      },
+      "MyCustomer": {
+        "title": "MyCustomer",
+        "includePath": "types/me/MyCustomer.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/LoggedResource"
+          },
+          {
+            "properties": {
+              "customerNumber": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "changeEmail"
+              },
+              "password": {
+                "type": "string"
+              },
+              "firstName": {
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setFirstName"
+              },
+              "lastName": {
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setLastName"
+              },
+              "middleName": {
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setMiddleName"
+              },
+              "title": {
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setTitle"
+              },
+              "dateOfBirth": {
+                "type": "string",
+                "format": "date",
+                "x-annotation-hasSimpleUpdateAction": "setDateOfBirth"
+              },
+              "companyName": {
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setCompanyName"
+              },
+              "vatId": {
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setVatId"
+              },
+              "addresses": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Address"
+                },
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "addAddress",
+                    "fields": {
+                      "address": "Address"
+                    }
+                  },
+                  {
+                    "action": "changeAddress",
+                    "fields": {
+                      "addressId": "string",
+                      "address": "Address"
+                    }
+                  },
+                  {
+                    "action": "removeAddress",
+                    "fields": {
+                      "addressId": "string"
+                    }
+                  }
+                ]
+              },
+              "defaultShippingAddressId": {
+                "type": "string",
+                "x-annotation-hasUpdateAction": {
+                  "action": "setDefaultShippingAddress",
+                  "fields": {
+                    "addressId?": "string"
+                  }
+                }
+              },
+              "shippingAddressIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "addShippingAddressId",
+                    "fields": {
+                      "addressId": "string"
+                    }
+                  },
+                  {
+                    "action": "removeShippingAddressId",
+                    "fields": {
+                      "addressId": "string"
+                    }
+                  }
+                ]
+              },
+              "defaultBillingAddressId": {
+                "type": "string",
+                "x-annotation-hasUpdateAction": {
+                  "action": "setDefaultBillingAddress",
+                  "fields": {
+                    "addressId?": "string"
+                  }
+                }
+              },
+              "billingAddressIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "addBillingAddressId",
+                    "fields": {
+                      "addressId": "string"
+                    }
+                  },
+                  {
+                    "action": "removeBillingAddressId",
+                    "fields": {
+                      "addressId": "string"
+                    }
+                  }
+                ]
+              },
+              "isEmailVerified": {
+                "type": "boolean"
+              },
+              "externalId": {
+                "type": "string"
+              },
+              "customerGroup": {
+                "$ref": "#/components/schemas/CustomerGroupReference"
+              },
+              "custom": {
+                "$ref": "#/components/schemas/CustomFields",
+                "x-annotation-hasUpdateActions": [
+                  {
+                    "action": "setCustomType",
+                    "fields": {
+                      "type?": "TypeResourceIdentifier",
+                      "fields?": "FieldContainer"
+                    }
+                  },
+                  {
+                    "action": "setCustomField",
+                    "docsAnchor": "set-customfield",
+                    "fields": {
+                      "name": "string",
+                      "value?": "any"
+                    }
+                  }
+                ]
+              },
+              "locale": {
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setLocale"
+              },
+              "salutation": {
+                "type": "string",
+                "x-annotation-hasSimpleUpdateAction": "setSalutation"
+              },
+              "key": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#customer",
+        "x-annotation-updateType": "MyCustomerUpdate",
+        "x-annotation-actionType": "MyCustomerUpdateAction",
+        "type": "string"
       },
       "MyCustomerDraft": {
         "title": "MyCustomerDraft",
@@ -28781,6 +29359,24 @@
         ],
         "x-annotation-package": "Me",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-profile.html#mycustomerdraft"
+      },
+      "MyCustomerUpdateAction": {
+        "title": "MyCustomerUpdateAction",
+        "includePath": "types/me/MyCustomerUpdateAction.raml",
+        "type": "object",
+        "discriminator": {
+          "propertyName": "action"
+        },
+        "properties": {
+          "action": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-profile#update-actions"
       },
       "MyLineItemDraft": {
         "title": "MyLineItemDraft",
@@ -29369,6 +29965,1027 @@
           "amount"
         ],
         "x-annotation-package": "Me"
+      },
+      "MyCartAddDiscountCodeAction": {
+        "title": "MyCartAddDiscountCodeAction",
+        "includePath": "types/me/updates/MyCartAddDiscountCodeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "code": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#add-discountcode",
+        "type": "string"
+      },
+      "MyCartAddItemShippingAddressAction": {
+        "title": "MyCartAddItemShippingAddressAction",
+        "includePath": "types/me/updates/MyCartAddItemShippingAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "address": {
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#add-itemshippingaddress",
+        "type": "string"
+      },
+      "MyCartAddLineItemAction": {
+        "title": "MyCartAddLineItemAction",
+        "includePath": "types/me/updates/MyCartAddLineItemAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "custom": {
+                "$ref": "#/components/schemas/CustomFieldsDraft"
+              },
+              "distributionChannel": {
+                "$ref": "#/components/schemas/ChannelResourceIdentifier"
+              },
+              "externalTaxRate": {
+                "$ref": "#/components/schemas/ExternalTaxRateDraft"
+              },
+              "productId": {
+                "type": "string"
+              },
+              "variantId": {
+                "format": "int64",
+                "type": "number"
+              },
+              "sku": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "number"
+              },
+              "supplyChannel": {
+                "$ref": "#/components/schemas/ChannelResourceIdentifier"
+              },
+              "externalPrice": {
+                "$ref": "#/components/schemas/Money"
+              },
+              "externalTotalPrice": {
+                "$ref": "#/components/schemas/ExternalLineItemTotalPrice"
+              },
+              "shippingDetails": {
+                "$ref": "#/components/schemas/ItemShippingDetailsDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#add-lineitem",
+        "type": "string"
+      },
+      "MyCartAddPaymentAction": {
+        "title": "MyCartAddPaymentAction",
+        "includePath": "types/me/updates/MyCartAddPaymentAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "payment": {
+                "$ref": "#/components/schemas/PaymentResourceIdentifier"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#add-payment",
+        "type": "string"
+      },
+      "MyCartApplyDeltaToLineItemShippingDetailsTargetsAction": {
+        "title": "MyCartApplyDeltaToLineItemShippingDetailsTargetsAction",
+        "includePath": "types/me/updates/MyCartApplyDeltaToLineItemShippingDetailsTargetsAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "targetsDelta": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ItemShippingTarget"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#apply-deltatolineitemshippingdetailstargets",
+        "type": "string"
+      },
+      "MyCartChangeLineItemQuantityAction": {
+        "title": "MyCartChangeLineItemQuantityAction",
+        "includePath": "types/me/updates/MyCartChangeLineItemQuantityAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "number"
+              },
+              "externalPrice": {
+                "$ref": "#/components/schemas/Money"
+              },
+              "externalTotalPrice": {
+                "$ref": "#/components/schemas/ExternalLineItemTotalPrice"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#change-lineitem-quantity",
+        "type": "string"
+      },
+      "MyCartChangeTaxModeAction": {
+        "title": "MyCartChangeTaxModeAction",
+        "includePath": "types/me/updates/MyCartChangeTaxModeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "taxMode": {
+                "$ref": "#/components/schemas/TaxMode"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#change-taxmode",
+        "type": "string"
+      },
+      "MyCartRecalculateAction": {
+        "title": "MyCartRecalculateAction",
+        "includePath": "types/me/updates/MyCartRecalculateAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "updateProductData": {
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#recalculate",
+        "type": "string"
+      },
+      "MyCartRemoveDiscountCodeAction": {
+        "title": "MyCartRemoveDiscountCodeAction",
+        "includePath": "types/me/updates/MyCartRemoveDiscountCodeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "discountCode": {
+                "$ref": "#/components/schemas/DiscountCodeReference"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#remove-discountcode",
+        "type": "string"
+      },
+      "MyCartRemoveItemShippingAddressAction": {
+        "title": "MyCartRemoveItemShippingAddressAction",
+        "includePath": "types/me/updates/MyCartRemoveItemShippingAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "addressKey": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#remove-itemshippingaddress",
+        "type": "string"
+      },
+      "MyCartRemoveLineItemAction": {
+        "title": "MyCartRemoveLineItemAction",
+        "includePath": "types/me/updates/MyCartRemoveLineItemAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "number"
+              },
+              "externalPrice": {
+                "$ref": "#/components/schemas/Money"
+              },
+              "externalTotalPrice": {
+                "$ref": "#/components/schemas/ExternalLineItemTotalPrice"
+              },
+              "shippingDetailsToRemove": {
+                "$ref": "#/components/schemas/ItemShippingDetailsDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#remove-lineitem",
+        "type": "string"
+      },
+      "MyCartRemovePaymentAction": {
+        "title": "MyCartRemovePaymentAction",
+        "includePath": "types/me/updates/MyCartRemovePaymentAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "payment": {
+                "$ref": "#/components/schemas/PaymentResourceIdentifier"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#remove-payment",
+        "type": "string"
+      },
+      "MyCartSetBillingAddressAction": {
+        "title": "MyCartSetBillingAddressAction",
+        "includePath": "types/me/updates/MyCartSetBillingAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "address": {
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#set-billing-address",
+        "type": "string"
+      },
+      "MyCartSetCountryAction": {
+        "title": "MyCartSetCountryAction",
+        "includePath": "types/me/updates/MyCartSetCountryAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "country": {
+                "$ref": "#/components/schemas/CountryCode"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#set-country",
+        "type": "string"
+      },
+      "MyCartSetCustomFieldAction": {
+        "title": "MyCartSetCustomFieldAction",
+        "includePath": "types/me/updates/MyCartSetCustomFieldAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#set-customfield",
+        "type": "string"
+      },
+      "MyCartSetCustomShippingMethodAction": {
+        "title": "MyCartSetCustomShippingMethodAction",
+        "includePath": "types/me/updates/MyCartSetCustomShippingMethodAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "shippingMethodName": {
+                "type": "string"
+              },
+              "shippingRate": {
+                "$ref": "#/components/schemas/ShippingRateDraft"
+              },
+              "taxCategory": {
+                "$ref": "#/components/schemas/TaxCategoryResourceIdentifier"
+              },
+              "externalTaxRate": {
+                "$ref": "#/components/schemas/ExternalTaxRateDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#set-custom-shipping-method",
+        "type": "string"
+      },
+      "MyCartSetCustomTypeAction": {
+        "title": "MyCartSetCustomTypeAction",
+        "includePath": "types/me/updates/MyCartSetCustomTypeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "type": {
+                "$ref": "#/components/schemas/TypeResourceIdentifier"
+              },
+              "fields": {
+                "$ref": "#/components/schemas/FieldContainer"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#set-custom-type",
+        "type": "string"
+      },
+      "MyCartSetDeleteDaysAfterLastModificationAction": {
+        "title": "MyCartSetDeleteDaysAfterLastModificationAction",
+        "includePath": "types/me/updates/MyCartSetDeleteDaysAfterLastModificationAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "deleteDaysAfterLastModification": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#set-deletedaysafterlastmodification-beta",
+        "type": "string"
+      },
+      "MyCartSetLineItemCustomFieldAction": {
+        "title": "MyCartSetLineItemCustomFieldAction",
+        "includePath": "types/me/updates/MyCartSetLineItemCustomFieldAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#set-lineitem-customfield",
+        "type": "string"
+      },
+      "MyCartSetLineItemCustomTypeAction": {
+        "title": "MyCartSetLineItemCustomTypeAction",
+        "includePath": "types/me/updates/MyCartSetLineItemCustomTypeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/components/schemas/TypeResourceIdentifier"
+              },
+              "fields": {
+                "$ref": "#/components/schemas/FieldContainer"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#set-lineitem-custom-type",
+        "type": "string"
+      },
+      "MyCartSetLineItemShippingDetailsAction": {
+        "title": "MyCartSetLineItemShippingDetailsAction",
+        "includePath": "types/me/updates/MyCartSetLineItemShippingDetailsAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "shippingDetails": {
+                "$ref": "#/components/schemas/ItemShippingDetailsDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#set-lineitemshippingdetails",
+        "type": "string"
+      },
+      "MyCartSetLocaleAction": {
+        "title": "MyCartSetLocaleAction",
+        "includePath": "types/me/updates/MyCartSetLocaleAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "locale": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#set-locale",
+        "type": "string"
+      },
+      "MyCartSetShippingAddressAction": {
+        "title": "MyCartSetShippingAddressAction",
+        "includePath": "types/me/updates/MyCartSetShippingAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "address": {
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#set-shipping-address",
+        "type": "string"
+      },
+      "MyCartSetShippingMethodAction": {
+        "title": "MyCartSetShippingMethodAction",
+        "includePath": "types/me/updates/MyCartSetShippingMethodAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "shippingMethod": {
+                "$ref": "#/components/schemas/ShippingMethodResourceIdentifier"
+              },
+              "externalTaxRate": {
+                "$ref": "#/components/schemas/ExternalTaxRateDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#set-shipping-method",
+        "type": "string"
+      },
+      "MyCartUpdateItemShippingAddressAction": {
+        "title": "MyCartUpdateItemShippingAddressAction",
+        "includePath": "types/me/updates/MyCartUpdateItemShippingAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCartUpdateAction"
+          },
+          {
+            "properties": {
+              "address": {
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-carts#update-itemshippingaddress",
+        "type": "string"
+      },
+      "MyCustomerAddAddressAction": {
+        "title": "MyCustomerAddAddressAction",
+        "includePath": "types/me/updates/MyCustomerAddAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "address": {
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#add-address",
+        "type": "string"
+      },
+      "MyCustomerAddBillingAddressIdAction": {
+        "title": "MyCustomerAddBillingAddressIdAction",
+        "includePath": "types/me/updates/MyCustomerAddBillingAddressIdAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "addressId": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#add-billing-address-id",
+        "type": "string"
+      },
+      "MyCustomerAddShippingAddressIdAction": {
+        "title": "MyCustomerAddShippingAddressIdAction",
+        "includePath": "types/me/updates/MyCustomerAddShippingAddressIdAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "addressId": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#add-shipping-address-id",
+        "type": "string"
+      },
+      "MyCustomerChangeAddressAction": {
+        "title": "MyCustomerChangeAddressAction",
+        "includePath": "types/me/updates/MyCustomerChangeAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "addressId": {
+                "type": "string"
+              },
+              "address": {
+                "$ref": "#/components/schemas/Address"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#change-address",
+        "type": "string"
+      },
+      "MyCustomerChangeEmailAction": {
+        "title": "MyCustomerChangeEmailAction",
+        "includePath": "types/me/updates/MyCustomerChangeEmailAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "email": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#change-email",
+        "type": "string"
+      },
+      "MyCustomerRemoveAddressAction": {
+        "title": "MyCustomerRemoveAddressAction",
+        "includePath": "types/me/updates/MyCustomerRemoveAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "addressId": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#remove-address",
+        "type": "string"
+      },
+      "MyCustomerRemoveBillingAddressIdAction": {
+        "title": "MyCustomerRemoveBillingAddressIdAction",
+        "includePath": "types/me/updates/MyCustomerRemoveBillingAddressIdAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "addressId": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#remove-billing-address-id",
+        "type": "string"
+      },
+      "MyCustomerRemoveShippingAddressIdAction": {
+        "title": "MyCustomerRemoveShippingAddressIdAction",
+        "includePath": "types/me/updates/MyCustomerRemoveShippingAddressIdAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "addressId": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#remove-shipping-address-id",
+        "type": "string"
+      },
+      "MyCustomerSetCompanyNameAction": {
+        "title": "MyCustomerSetCompanyNameAction",
+        "includePath": "types/me/updates/MyCustomerSetCompanyNameAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "companyName": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-company-name",
+        "type": "string"
+      },
+      "MyCustomerSetCustomFieldAction": {
+        "title": "MyCustomerSetCustomFieldAction",
+        "includePath": "types/me/updates/MyCustomerSetCustomFieldAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-customfield",
+        "type": "string"
+      },
+      "MyCustomerSetCustomTypeAction": {
+        "title": "MyCustomerSetCustomTypeAction",
+        "includePath": "types/me/updates/MyCustomerSetCustomTypeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "type": {
+                "$ref": "#/components/schemas/TypeResourceIdentifier"
+              },
+              "fields": {
+                "$ref": "#/components/schemas/FieldContainer"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-custom-type",
+        "type": "string"
+      },
+      "MyCustomerSetDateOfBirthAction": {
+        "title": "MyCustomerSetDateOfBirthAction",
+        "includePath": "types/me/updates/MyCustomerSetDateOfBirthAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "dateOfBirth": {
+                "type": "string",
+                "format": "date"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-date-of-birth",
+        "type": "string"
+      },
+      "MyCustomerSetDefaultBillingAddressAction": {
+        "title": "MyCustomerSetDefaultBillingAddressAction",
+        "includePath": "types/me/updates/MyCustomerSetDefaultBillingAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "addressId": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-default-billing-address",
+        "type": "string"
+      },
+      "MyCustomerSetDefaultShippingAddressAction": {
+        "title": "MyCustomerSetDefaultShippingAddressAction",
+        "includePath": "types/me/updates/MyCustomerSetDefaultShippingAddressAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "addressId": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-default-shipping-address",
+        "type": "string"
+      },
+      "MyCustomerSetFirstNameAction": {
+        "title": "MyCustomerSetFirstNameAction",
+        "includePath": "types/me/updates/MyCustomerSetFirstNameAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "firstName": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-first-name",
+        "type": "string"
+      },
+      "MyCustomerSetLastNameAction": {
+        "title": "MyCustomerSetLastNameAction",
+        "includePath": "types/me/updates/MyCustomerSetLastNameAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "lastName": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-last-name",
+        "type": "string"
+      },
+      "MyCustomerSetLocaleAction": {
+        "title": "MyCustomerSetLocaleAction",
+        "includePath": "types/me/updates/MyCustomerSetLocaleAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "locale": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-locale",
+        "type": "string"
+      },
+      "MyCustomerSetMiddleNameAction": {
+        "title": "MyCustomerSetMiddleNameAction",
+        "includePath": "types/me/updates/MyCustomerSetMiddleNameAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "middleName": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-middle-name",
+        "type": "string"
+      },
+      "MyCustomerSetSalutationAction": {
+        "title": "MyCustomerSetSalutationAction",
+        "includePath": "types/me/updates/MyCustomerSetSalutationAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "salutation": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-salutation",
+        "type": "string"
+      },
+      "MyCustomerSetTitleAction": {
+        "title": "MyCustomerSetTitleAction",
+        "includePath": "types/me/updates/MyCustomerSetTitleAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "title": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-title",
+        "type": "string"
+      },
+      "MyCustomerSetVatIdAction": {
+        "title": "MyCustomerSetVatIdAction",
+        "includePath": "types/me/updates/MyCustomerSetVatIdAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyCustomerUpdateAction"
+          },
+          {
+            "properties": {
+              "vatId": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-customers.html#set-vat-id",
+        "type": "string"
       },
       "MyPaymentAddTransactionAction": {
         "title": "MyPaymentAddTransactionAction",
