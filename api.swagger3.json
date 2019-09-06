@@ -18199,6 +18199,366 @@
       ],
       "x-annotation-methodName": "withId"
     },
+    "/{projectKey}/me/payments": {
+      "get": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "401": {
+            "$ref": "#/components/responses/trait_errorable_401"
+          },
+          "403": {
+            "$ref": "#/components/responses/trait_errorable_403"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Query payments",
+        "operationId": "GET_projectKey-me-payments",
+        "parameters": [
+          {
+            "name": "where",
+            "in": "query",
+            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
+            "schema": {
+              "includePath": "traits/query.raml",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
+            "schema": {
+              "includePath": "traits/sortable.raml",
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          },
+          {
+            "$ref": "#/components/parameters/trait_paging_limit"
+          },
+          {
+            "$ref": "#/components/parameters/trait_paging_offset"
+          },
+          {
+            "$ref": "#/components/parameters/trait_paging_withTotal"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_my_payments:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "776f9240-09e1-4416-a34f-32fa80f0333f",
+                  "version": 1,
+                  "amountPlanned": {
+                    "type": "centPrecision",
+                    "fractionDigits": 2,
+                    "currencyCode": "USD",
+                    "centAmount": 1000
+                  },
+                  "paymentMethodInfo": {
+                    "paymentInterface": "STRIPE",
+                    "method": "CREDIT_CARD",
+                    "name": {
+                      "en": "Credit Card"
+                    }
+                  },
+                  "transactions": [
+                    {
+                      "id": "14748fe6-7f77-456a-96c8-913b1e4bbc9a",
+                      "timestamp": "2015-10-20T08:54:24.000Z",
+                      "type": "Charge",
+                      "amount": {
+                        "type": "centPrecision",
+                        "fractionDigits": 2,
+                        "currencyCode": "USD",
+                        "centAmount": 1000
+                      },
+                      "state": "Pending"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/MyPayment"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "401": {
+            "$ref": "#/components/responses/trait_errorable_401"
+          },
+          "403": {
+            "$ref": "#/components/responses/trait_errorable_403"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Create MyPayment",
+        "operationId": "POST_projectKey-me-payments",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "amountPlanned": {
+                  "currencyCode": "USD",
+                  "centAmount": 1000
+                },
+                "paymentMethodInfo": {
+                  "paymentInterface": "STRIPE",
+                  "method": "CREDIT_CARD",
+                  "name": {
+                    "en": "Credit Card"
+                  }
+                },
+                "transaction": {
+                  "timestamp": "2015-10-20T08:54:24.000Z",
+                  "type": "Charge",
+                  "amount": {
+                    "currencyCode": "USD",
+                    "centAmount": 1000
+                  }
+                }
+              },
+              "schema": {
+                "includePath": "resources/me.raml",
+                "$ref": "#/components/schemas/MyPaymentDraft"
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_my_payments:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "projectKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "includePath": "api.raml",
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/{projectKey}/me/payments/{ID}": {
+      "get": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "401": {
+            "$ref": "#/components/responses/trait_errorable_401"
+          },
+          "403": {
+            "$ref": "#/components/responses/trait_errorable_403"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Get MyPayment by ID",
+        "operationId": "GET_projectKey-me-payments-ID",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_my_payments:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "401": {
+            "$ref": "#/components/responses/trait_errorable_401"
+          },
+          "403": {
+            "$ref": "#/components/responses/trait_errorable_403"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "409": {
+            "$ref": "#/components/responses/trait_conflicting_409"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Update MyPayment by ID",
+        "operationId": "POST_projectKey-me-payments-ID",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "version": 1,
+                "actions": [
+                  {
+                    "action": "setMethodInfoMethod",
+                    "method": "12334567890123456"
+                  }
+                ]
+              },
+              "schema": {
+                "includePath": "resources/me.raml",
+                "$ref": "#/components/schemas/Update"
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_my_payments:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/trait_deprecatable_200"
+          },
+          "400": {
+            "$ref": "#/components/responses/trait_errorable_400"
+          },
+          "401": {
+            "$ref": "#/components/responses/trait_errorable_401"
+          },
+          "403": {
+            "$ref": "#/components/responses/trait_errorable_403"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait_errorable_404"
+          },
+          "409": {
+            "$ref": "#/components/responses/trait_conflicting_409"
+          },
+          "500": {
+            "$ref": "#/components/responses/trait_errorable_500"
+          },
+          "503": {
+            "$ref": "#/components/responses/trait_errorable_503"
+          }
+        },
+        "description": "Delete MyPayment by ID",
+        "operationId": "DELETE_projectKey-me-payments-ID",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/trait_versioned_version"
+          },
+          {
+            "$ref": "#/components/parameters/trait_expandable_expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_my_payments:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "includePath": "api.raml",
+            "type": "string"
+          }
+        },
+        {
+          "name": "projectKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "includePath": "api.raml",
+            "type": "string"
+          }
+        }
+      ],
+      "x-annotation-methodName": "withId"
+    },
     "/{projectKey}/me/shopping-lists": {
       "get": {
         "responses": {
@@ -28477,6 +28837,174 @@
         ],
         "x-annotation-package": "Me"
       },
+      "MyPayment": {
+        "title": "MyPayment",
+        "includePath": "types/me/MyPayment.raml",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-annotation-identifier": true
+          },
+          "version": {
+            "format": "int64",
+            "type": "number"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerReference"
+          },
+          "anonymousId": {
+            "type": "string"
+          },
+          "amountPlanned": {
+            "$ref": "#/components/schemas/TypedMoney",
+            "x-annotation-hasUpdateAction": {
+              "action": "changeAmountPlanned",
+              "docsAnchor": "change-amountplanned",
+              "fields": {
+                "amount": "Money"
+              }
+            }
+          },
+          "paymentMethodInfo": {
+            "$ref": "#/components/schemas/PaymentMethodInfo",
+            "x-annotation-hasUpdateActions": [
+              {
+                "action": "setMethodInfoInterface",
+                "docsAnchor": "set-methodinfointerface",
+                "fields": {
+                  "interface": "string"
+                }
+              },
+              {
+                "action": "setMethodInfoMethod",
+                "docsAnchor": "set-methodinfomethod",
+                "fields": {
+                  "method?": "string"
+                }
+              },
+              {
+                "action": "setMethodInfoName",
+                "docsAnchor": "set-methodinfoname",
+                "fields": {
+                  "name?": "LocalizedString"
+                }
+              }
+            ]
+          },
+          "transactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Transaction"
+            },
+            "x-annotation-hasUpdateActions": [
+              {
+                "action": "addTransaction",
+                "fields": {
+                  "transaction": "TransactionDraft"
+                }
+              }
+            ]
+          },
+          "custom": {
+            "$ref": "#/components/schemas/CustomFields",
+            "x-annotation-hasUpdateActions": [
+              {
+                "action": "setCustomField",
+                "docsAnchor": "set-customfield",
+                "fields": {
+                  "name": "string",
+                  "value?": "any"
+                }
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "amountPlanned",
+          "paymentMethodInfo",
+          "transactions"
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-payments#mypayment",
+        "x-annotation-updateType": "MyPaymentUpdate",
+        "x-annotation-actionType": "MyPaymentUpdateAction"
+      },
+      "MyPaymentDraft": {
+        "title": "MyPaymentDraft",
+        "includePath": "types/me/MyPaymentDraft.raml",
+        "type": "object",
+        "properties": {
+          "amountPlanned": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "paymentMethodInfo": {
+            "$ref": "#/components/schemas/PaymentMethodInfo"
+          },
+          "custom": {
+            "$ref": "#/components/schemas/CustomFieldsDraft"
+          },
+          "transaction": {
+            "$ref": "#/components/schemas/MyTransactionDraft"
+          }
+        },
+        "required": [
+          "amountPlanned"
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-payments#mypaymentdraft"
+      },
+      "MyPaymentPagedQueryResponse": {
+        "title": "MyPaymentPagedQueryResponse",
+        "includePath": "types/me/MyPaymentPagedQueryResponse.raml",
+        "type": "object",
+        "properties": {
+          "count": {
+            "format": "int64",
+            "type": "number"
+          },
+          "total": {
+            "format": "int64",
+            "type": "number"
+          },
+          "offset": {
+            "format": "int64",
+            "type": "number"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyPayment"
+            }
+          }
+        },
+        "required": [
+          "count",
+          "offset",
+          "results"
+        ],
+        "x-annotation-package": "Me"
+      },
+      "MyPaymentUpdateAction": {
+        "title": "MyPaymentUpdateAction",
+        "includePath": "types/me/MyPaymentUpdateAction.raml",
+        "type": "object",
+        "discriminator": {
+          "propertyName": "action"
+        },
+        "properties": {
+          "action": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-payments#update-actions"
+      },
       "MyShoppingList": {
         "title": "MyShoppingList",
         "includePath": "types/me/MyShoppingList.raml",
@@ -28798,6 +29326,643 @@
         ],
         "x-annotation-package": "Me",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#my-shopping-lists"
+      },
+      "MyShoppingListUpdateAction": {
+        "title": "MyShoppingListUpdateAction",
+        "includePath": "types/me/MyShoppingListUpdateAction.raml",
+        "type": "object",
+        "discriminator": {
+          "propertyName": "action"
+        },
+        "properties": {
+          "action": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#update-actions"
+      },
+      "MyTransactionDraft": {
+        "title": "MyTransactionDraft",
+        "includePath": "types/me/MyTransactionDraft.raml",
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TransactionType"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "interactionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "amount"
+        ],
+        "x-annotation-package": "Me"
+      },
+      "MyPaymentAddTransactionAction": {
+        "title": "MyPaymentAddTransactionAction",
+        "includePath": "types/me/updates/MyPaymentAddTransactionAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyPaymentUpdateAction"
+          },
+          {
+            "properties": {
+              "transaction": {
+                "$ref": "#/components/schemas/TransactionDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-payments#add-transaction",
+        "type": "string"
+      },
+      "MyPaymentChangeAmountPlannedAction": {
+        "title": "MyPaymentChangeAmountPlannedAction",
+        "includePath": "types/me/updates/MyPaymentChangeAmountPlannedAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyPaymentUpdateAction"
+          },
+          {
+            "properties": {
+              "amount": {
+                "$ref": "#/components/schemas/Money"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-payments#change-amountplanned",
+        "type": "string"
+      },
+      "MyPaymentSetCustomFieldAction": {
+        "title": "MyPaymentSetCustomFieldAction",
+        "includePath": "types/me/updates/MyPaymentSetCustomFieldAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyPaymentUpdateAction"
+          },
+          {
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-payments#set-customfield",
+        "type": "string"
+      },
+      "MyPaymentSetMethodInfoInterfaceAction": {
+        "title": "MyPaymentSetMethodInfoInterfaceAction",
+        "includePath": "types/me/updates/MyPaymentSetMethodInfoInterfaceAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyPaymentUpdateAction"
+          },
+          {
+            "properties": {
+              "interface": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-payments#set-methodinfointerface",
+        "type": "string"
+      },
+      "MyPaymentSetMethodInfoMethodAction": {
+        "title": "MyPaymentSetMethodInfoMethodAction",
+        "includePath": "types/me/updates/MyPaymentSetMethodInfoMethodAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyPaymentUpdateAction"
+          },
+          {
+            "properties": {
+              "method": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-payments#set-methodinfomethod",
+        "type": "string"
+      },
+      "MyPaymentSetMethodInfoNameAction": {
+        "title": "MyPaymentSetMethodInfoNameAction",
+        "includePath": "types/me/updates/MyPaymentSetMethodInfoNameAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyPaymentUpdateAction"
+          },
+          {
+            "properties": {
+              "name": {
+                "$ref": "#/components/schemas/LocalizedString"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-payments#set-methodinfoname",
+        "type": "string"
+      },
+      "MyShoppingListAddLineItemAction": {
+        "title": "MyShoppingListAddLineItemAction",
+        "includePath": "types/me/updates/MyShoppingListAddLineItemAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "sku": {
+                "type": "string"
+              },
+              "productId": {
+                "type": "string"
+              },
+              "variantId": {
+                "format": "int64",
+                "type": "number"
+              },
+              "quantity": {
+                "format": "int64",
+                "type": "number"
+              },
+              "addedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "custom": {
+                "$ref": "#/components/schemas/CustomFieldsDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#add-lineitem",
+        "type": "string"
+      },
+      "MyShoppingListAddTextLineItemAction": {
+        "title": "MyShoppingListAddTextLineItemAction",
+        "includePath": "types/me/updates/MyShoppingListAddTextLineItemAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "name": {
+                "$ref": "#/components/schemas/LocalizedString"
+              },
+              "description": {
+                "$ref": "#/components/schemas/LocalizedString"
+              },
+              "quantity": {
+                "format": "int64",
+                "type": "number"
+              },
+              "addedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "custom": {
+                "$ref": "#/components/schemas/CustomFieldsDraft"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#add-textlineitem",
+        "type": "string"
+      },
+      "MyShoppingListChangeLineItemQuantityAction": {
+        "title": "MyShoppingListChangeLineItemQuantityAction",
+        "includePath": "types/me/updates/MyShoppingListChangeLineItemQuantityAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "quantity": {
+                "format": "int64",
+                "type": "number"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#change-lineitem-quantity",
+        "type": "string"
+      },
+      "MyShoppingListChangeLineItemsOrderAction": {
+        "title": "MyShoppingListChangeLineItemsOrderAction",
+        "includePath": "types/me/updates/MyShoppingListChangeLineItemsOrderAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemOrder": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#change-lineitems-order",
+        "type": "string"
+      },
+      "MyShoppingListChangeNameAction": {
+        "title": "MyShoppingListChangeNameAction",
+        "includePath": "types/me/updates/MyShoppingListChangeNameAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "name": {
+                "$ref": "#/components/schemas/LocalizedString"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#change-name",
+        "type": "string"
+      },
+      "MyShoppingListChangeTextLineItemNameAction": {
+        "title": "MyShoppingListChangeTextLineItemNameAction",
+        "includePath": "types/me/updates/MyShoppingListChangeTextLineItemNameAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "textLineItemId": {
+                "type": "string"
+              },
+              "name": {
+                "$ref": "#/components/schemas/LocalizedString"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#change-textlineitem-name",
+        "type": "string"
+      },
+      "MyShoppingListChangeTextLineItemQuantityAction": {
+        "title": "MyShoppingListChangeTextLineItemQuantityAction",
+        "includePath": "types/me/updates/MyShoppingListChangeTextLineItemQuantityAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "textLineItemId": {
+                "type": "string"
+              },
+              "quantity": {
+                "format": "int64",
+                "type": "number"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#change-textlineitem-quantity",
+        "type": "string"
+      },
+      "MyShoppingListChangeTextLineItemsOrderAction": {
+        "title": "MyShoppingListChangeTextLineItemsOrderAction",
+        "includePath": "types/me/updates/MyShoppingListChangeTextLineItemsOrderAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "textLineItemOrder": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#change-textlineitems-order",
+        "type": "string"
+      },
+      "MyShoppingListRemoveLineItemAction": {
+        "title": "MyShoppingListRemoveLineItemAction",
+        "includePath": "types/me/updates/MyShoppingListRemoveLineItemAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "quantity": {
+                "format": "int64",
+                "type": "number"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#remove-lineitem",
+        "type": "string"
+      },
+      "MyShoppingListRemoveTextLineItemAction": {
+        "title": "MyShoppingListRemoveTextLineItemAction",
+        "includePath": "types/me/updates/MyShoppingListRemoveTextLineItemAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "textLineItemId": {
+                "type": "string"
+              },
+              "quantity": {
+                "format": "int64",
+                "type": "number"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#remove-textlineitem",
+        "type": "string"
+      },
+      "MyShoppingListSetCustomFieldAction": {
+        "title": "MyShoppingListSetCustomFieldAction",
+        "includePath": "types/me/updates/MyShoppingListSetCustomFieldAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#set-customfield",
+        "type": "string"
+      },
+      "MyShoppingListSetCustomTypeAction": {
+        "title": "MyShoppingListSetCustomTypeAction",
+        "includePath": "types/me/updates/MyShoppingListSetCustomTypeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "type": {
+                "$ref": "#/components/schemas/TypeResourceIdentifier"
+              },
+              "fields": {
+                "$ref": "#/components/schemas/FieldContainer"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#set-custom-type",
+        "type": "string"
+      },
+      "MyShoppingListSetDeleteDaysAfterLastModificationAction": {
+        "title": "MyShoppingListSetDeleteDaysAfterLastModificationAction",
+        "includePath": "types/me/updates/MyShoppingListSetDeleteDaysAfterLastModificationAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "deleteDaysAfterLastModification": {
+                "format": "int64",
+                "type": "number"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#set-deletedaysafterlastmodification",
+        "type": "string"
+      },
+      "MyShoppingListSetDescriptionAction": {
+        "title": "MyShoppingListSetDescriptionAction",
+        "includePath": "types/me/updates/MyShoppingListSetDescriptionAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "description": {
+                "$ref": "#/components/schemas/LocalizedString"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#set-description",
+        "type": "string"
+      },
+      "MyShoppingListSetLineItemCustomFieldAction": {
+        "title": "MyShoppingListSetLineItemCustomFieldAction",
+        "includePath": "types/me/updates/MyShoppingListSetLineItemCustomFieldAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#set-lineitem-customfield",
+        "type": "string"
+      },
+      "MyShoppingListSetLineItemCustomTypeAction": {
+        "title": "MyShoppingListSetLineItemCustomTypeAction",
+        "includePath": "types/me/updates/MyShoppingListSetLineItemCustomTypeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "lineItemId": {
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/components/schemas/TypeResourceIdentifier"
+              },
+              "fields": {
+                "$ref": "#/components/schemas/FieldContainer"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#set-lineitem-custom-type",
+        "type": "string"
+      },
+      "MyShoppingListSetTextLineItemCustomFieldAction": {
+        "title": "MyShoppingListSetTextLineItemCustomFieldAction",
+        "includePath": "types/me/updates/MyShoppingListSetTextLineItemCustomFieldAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "textLineItemId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#set-textlineitem-customfield",
+        "type": "string"
+      },
+      "MyShoppingListSetTextLineItemCustomTypeAction": {
+        "title": "MyShoppingListSetTextLineItemCustomTypeAction",
+        "includePath": "types/me/updates/MyShoppingListSetTextLineItemCustomTypeAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "textLineItemId": {
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/components/schemas/TypeResourceIdentifier"
+              },
+              "fields": {
+                "$ref": "#/components/schemas/FieldContainer"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#set-textlineitem-custom-type",
+        "type": "string"
+      },
+      "MyShoppingListSetTextLineItemDescriptionAction": {
+        "title": "MyShoppingListSetTextLineItemDescriptionAction",
+        "includePath": "types/me/updates/MyShoppingListSetTextLineItemDescriptionAction.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MyShoppingListUpdateAction"
+          },
+          {
+            "properties": {
+              "textLineItemId": {
+                "type": "string"
+              },
+              "description": {
+                "$ref": "#/components/schemas/LocalizedString"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-package": "Me",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#set-textlineitem-description",
+        "type": "string"
       },
       "CategoryCreatedMessage": {
         "title": "CategoryCreatedMessage",
