@@ -206,3 +206,60 @@ delete:
           body:
             application/json:
               example: !include ../examples/order.example.json
+/payments:
+  type:
+    baseDomain:
+      resourceType: MyPayment
+      resourceQueryType: MyPaymentPagedQueryResponse
+      resourceDraft: MyPaymentDraft
+      whereExample: customer(id = "43645-23uf")
+      sortExample: id asc
+  description: The My Payments endpoint creates and provides access to payments scoped to a specific user.
+  get:
+    securedBy: [oauth_2_0: {scopes: ["manage_my_payments:{projectKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/my-payments.example.json
+  post:
+    securedBy: [oauth_2_0: {scopes: ["manage_my_payments:{projectKey}"]}]
+    body:
+      application/json:
+        example: !include ../examples/my-payment-create.example.json
+    responses:
+      201:
+        body:
+          application/json:
+            example: !include ../examples/my-payment.example.json
+  /{ID}:
+    (methodName): withId
+    type:
+      baseResource:
+        uriParameterName: ID
+        resourceType: MyPayment
+        resourceUpdateType: Update
+    get:
+      securedBy: [oauth_2_0: {scopes: ["manage_my_payments:{projectKey}"]}]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/my-payment.example.json
+    post:
+      securedBy: [oauth_2_0: {scopes: ["manage_my_payments:{projectKey}"]}]
+      body:
+        application/json:
+          example: !include ../examples/my-payment-update.example.json
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/my-payment.example.json
+    delete:
+      securedBy: [oauth_2_0: {scopes: ["manage_my_payments:{projectKey}"]}]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/my-payment.example.json
