@@ -50,6 +50,10 @@
       "title": "PagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -76,6 +80,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -179,6 +184,10 @@
       "title": "ApiClientPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -199,6 +208,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -227,7 +237,12 @@
             },
             "value": {
               "$ref": "#/definitions/CartDiscountValue",
-              "x-annotation-hasSimpleUpdateAction": "changeValue"
+              "x-annotation-hasUpdateAction": {
+                "action": "changeValue",
+                "fields": {
+                  "value": "CartDiscountValueDraft"
+                }
+              }
             },
             "cartPredicate": {
               "type": "string",
@@ -364,7 +379,7 @@
           "$ref": "#/definitions/LocalizedString"
         },
         "value": {
-          "$ref": "#/definitions/CartDiscountValue"
+          "$ref": "#/definitions/CartDiscountValueDraft"
         },
         "cartPredicate": {
           "type": "string"
@@ -431,6 +446,10 @@
       "title": "CartDiscountPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -451,6 +470,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -562,6 +582,29 @@
             "money": {
               "type": "array",
               "items": {
+                "$ref": "#/definitions/TypedMoney"
+              }
+            }
+          },
+          "required": [
+            "money"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "CartDiscount"
+    },
+    "CartDiscountValueAbsoluteDraft": {
+      "title": "CartDiscountValueAbsoluteDraft",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CartDiscountValueDraft"
+        },
+        {
+          "properties": {
+            "money": {
+              "type": "array",
+              "items": {
                 "$ref": "#/definitions/Money"
               }
             }
@@ -573,6 +616,21 @@
         }
       ],
       "x-annotation-package": "CartDiscount"
+    },
+    "CartDiscountValueDraft": {
+      "title": "CartDiscountValueDraft",
+      "discriminator": "type",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "x-annotation-package": "CartDiscount",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-cartDiscounts.html#cartdiscountvalue"
     },
     "CartDiscountValueGiftLineItem": {
       "title": "CartDiscountValueGiftLineItem",
@@ -605,11 +663,63 @@
       ],
       "x-annotation-package": "CartDiscount"
     },
+    "CartDiscountValueGiftLineItemDraft": {
+      "title": "CartDiscountValueGiftLineItemDraft",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CartDiscountValueDraft"
+        },
+        {
+          "properties": {
+            "product": {
+              "$ref": "#/definitions/ProductReference"
+            },
+            "variantId": {
+              "format": "int64",
+              "type": "number"
+            },
+            "supplyChannel": {
+              "$ref": "#/definitions/ChannelReference"
+            },
+            "distributionChannel": {
+              "$ref": "#/definitions/ChannelReference"
+            }
+          },
+          "required": [
+            "product",
+            "variantId"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "CartDiscount"
+    },
     "CartDiscountValueRelative": {
       "title": "CartDiscountValueRelative",
       "allOf": [
         {
           "$ref": "#/definitions/CartDiscountValue"
+        },
+        {
+          "properties": {
+            "permyriad": {
+              "format": "int64",
+              "type": "number"
+            }
+          },
+          "required": [
+            "permyriad"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "CartDiscount"
+    },
+    "CartDiscountValueRelativeDraft": {
+      "title": "CartDiscountValueRelativeDraft",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CartDiscountValueDraft"
         },
         {
           "properties": {
@@ -885,7 +995,7 @@
         {
           "properties": {
             "value": {
-              "$ref": "#/definitions/CartDiscountValue"
+              "$ref": "#/definitions/CartDiscountValueDraft"
             }
           },
           "required": [
@@ -1419,7 +1529,7 @@
                 "action": "setCartTotalTax",
                 "fields": {
                   "externalTotalGross": "Money",
-                  "externalTaxPortions?": "TaxPortion[]"
+                  "externalTaxPortions?": "TaxPortionDraft[]"
                 }
               }
             },
@@ -1786,6 +1896,10 @@
       "title": "CartPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -1806,6 +1920,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -2067,7 +2182,7 @@
           "$ref": "#/definitions/CartDiscountReference"
         },
         "discountedAmount": {
-          "$ref": "#/definitions/Money"
+          "$ref": "#/definitions/TypedMoney"
         }
       },
       "required": [
@@ -2281,7 +2396,7 @@
           "$ref": "#/definitions/TaxedItemPrice"
         },
         "totalPrice": {
-          "$ref": "#/definitions/Money"
+          "$ref": "#/definitions/TypedMoney"
         },
         "quantity": {
           "format": "int64",
@@ -2609,7 +2724,30 @@
           "type": "number"
         },
         "amount": {
-          "$ref": "#/definitions/Money"
+          "$ref": "#/definitions/TypedMoney"
+        }
+      },
+      "required": [
+        "rate",
+        "amount"
+      ],
+      "x-annotation-package": "Cart",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-carts.html#taxportion"
+    },
+    "TaxPortionDraft": {
+      "title": "TaxPortionDraft",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "rate": {
+          "minimum": 0,
+          "maximum": 1,
+          "type": "number"
+        },
+        "amount": {
+          "$ref": "#/definitions/TypedMoney"
         }
       },
       "required": [
@@ -2641,10 +2779,10 @@
       "type": "object",
       "properties": {
         "totalNet": {
-          "$ref": "#/definitions/Money"
+          "$ref": "#/definitions/TypedMoney"
         },
         "totalGross": {
-          "$ref": "#/definitions/Money"
+          "$ref": "#/definitions/TypedMoney"
         },
         "taxPortions": {
           "type": "array",
@@ -3249,7 +3387,7 @@
             "externalTaxPortions": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/TaxPortion"
+                "$ref": "#/definitions/TaxPortionDraft"
               }
             }
           },
@@ -4132,6 +4270,10 @@
       "title": "CategoryPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -4152,6 +4294,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -4886,6 +5029,10 @@
       "title": "ChannelPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -4906,6 +5053,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -5735,7 +5883,7 @@
           "type": "string"
         },
         "value": {
-          "$ref": "#/definitions/Money"
+          "$ref": "#/definitions/TypedMoney"
         },
         "country": {
           "$ref": "#/definitions/CountryCode"
@@ -5804,7 +5952,7 @@
         "tiers": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/PriceTier"
+            "$ref": "#/definitions/PriceTierDraft"
           }
         },
         "discounted": {
@@ -5819,6 +5967,24 @@
     },
     "PriceTier": {
       "title": "PriceTier",
+      "type": "object",
+      "properties": {
+        "minimumQuantity": {
+          "format": "int64",
+          "type": "number"
+        },
+        "value": {
+          "$ref": "#/definitions/TypedMoney"
+        }
+      },
+      "required": [
+        "minimumQuantity",
+        "value"
+      ],
+      "x-annotation-package": "Common"
+    },
+    "PriceTierDraft": {
+      "title": "PriceTierDraft",
       "type": "object",
       "properties": {
         "minimumQuantity": {
@@ -6003,7 +6169,7 @@
       "title": "CustomObject",
       "allOf": [
         {
-          "$ref": "#/definitions/BaseResource"
+          "$ref": "#/definitions/LoggedResource"
         },
         {
           "properties": {
@@ -6058,6 +6224,10 @@
       "title": "CustomObjectPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -6078,6 +6248,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -6173,6 +6344,10 @@
       "title": "CustomerGroupPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -6193,6 +6368,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -6536,6 +6712,12 @@
             "key": {
               "type": "string",
               "x-annotation-hasSimpleUpdateAction": "setKey"
+            },
+            "stores": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StoreKeyReference"
+              }
             }
           },
           "required": [
@@ -6703,6 +6885,12 @@
         },
         "key": {
           "type": "string"
+        },
+        "stores": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StoreKeyReference"
+          }
         }
       },
       "required": [
@@ -6733,6 +6921,10 @@
       "title": "CustomerPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -6753,6 +6945,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -6839,6 +7032,9 @@
         },
         "anonymousId": {
           "type": "string"
+        },
+        "updateProductData": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -7623,6 +7819,10 @@
       "title": "DiscountCodePagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -7643,6 +7843,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -8828,6 +9029,10 @@
       "title": "ExtensionPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -8848,6 +9053,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -9203,6 +9409,10 @@
       "title": "InventoryPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -9223,6 +9433,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -10033,6 +10244,12 @@
             },
             "key": {
               "type": "string"
+            },
+            "stores": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StoreKeyReference"
+              }
             }
           },
           "required": [
@@ -10100,6 +10317,12 @@
         },
         "locale": {
           "type": "string"
+        },
+        "stores": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StoreKeyReference"
+          }
         }
       },
       "required": [
@@ -10298,6 +10521,10 @@
       "title": "MyPaymentPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -10318,9 +10545,31 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
+      ],
+      "x-annotation-package": "Me"
+    },
+    "MyPaymentUpdate": {
+      "title": "MyPaymentUpdate",
+      "type": "object",
+      "properties": {
+        "version": {
+          "format": "int64",
+          "type": "number"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MyPaymentUpdateAction"
+          }
+        }
+      },
+      "required": [
+        "version",
+        "actions"
       ],
       "x-annotation-package": "Me"
     },
@@ -10660,6 +10909,27 @@
       ],
       "x-annotation-package": "Me",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-me-shoppingLists#my-shopping-lists"
+    },
+    "MyShoppingListUpdate": {
+      "title": "MyShoppingListUpdate",
+      "type": "object",
+      "properties": {
+        "version": {
+          "format": "int64",
+          "type": "number"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MyShoppingListUpdateAction"
+          }
+        }
+      },
+      "required": [
+        "version",
+        "actions"
+      ],
+      "x-annotation-package": "Me"
     },
     "MyShoppingListUpdateAction": {
       "title": "MyShoppingListUpdateAction",
@@ -12739,9 +13009,10 @@
     },
     "Message": {
       "title": "Message",
+      "discriminator": "type",
       "allOf": [
         {
-          "$ref": "#/definitions/BaseResource"
+          "$ref": "#/definitions/LoggedResource"
         },
         {
           "properties": {
@@ -12814,6 +13085,10 @@
       "title": "MessagePagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -12834,6 +13109,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -15839,6 +16115,10 @@
       "title": "OrderEditPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -15859,6 +16139,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -15998,7 +16279,7 @@
       "type": "object",
       "properties": {
         "totalPrice": {
-          "$ref": "#/definitions/Money"
+          "$ref": "#/definitions/TypedMoney"
         },
         "taxedPrice": {
           "$ref": "#/definitions/TaxedPrice"
@@ -16154,7 +16435,7 @@
               "type": "Money"
             },
             "externalTaxPortions?": {
-              "type": "TaxPortion[]"
+              "type": "TaxPortionDraft[]"
             }
           }
         },
@@ -17865,7 +18146,7 @@
             "externalTaxPortions": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/TaxPortion"
+                "$ref": "#/definitions/TaxPortionDraft"
               }
             }
           },
@@ -18691,7 +18972,7 @@
               ]
             },
             "totalPrice": {
-              "$ref": "#/definitions/Money"
+              "$ref": "#/definitions/TypedMoney"
             },
             "taxedPrice": {
               "$ref": "#/definitions/TaxedPrice"
@@ -19003,6 +19284,15 @@
         },
         "paymentState": {
           "$ref": "#/definitions/PaymentState"
+        },
+        "shipmentState": {
+          "$ref": "#/definitions/ShipmentState"
+        },
+        "orderState": {
+          "$ref": "#/definitions/OrderState"
+        },
+        "state": {
+          "$ref": "#/definitions/StateResourceIdentifier"
         }
       },
       "required": [
@@ -19087,6 +19377,9 @@
         },
         "store": {
           "$ref": "#/definitions/StoreKeyReference"
+        },
+        "origin": {
+          "$ref": "#/definitions/CartOrigin"
         }
       },
       "required": [
@@ -19099,6 +19392,10 @@
       "title": "OrderPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -19119,6 +19416,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -20865,6 +21163,10 @@
       "title": "PaymentPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -20885,6 +21187,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -21570,7 +21873,12 @@
             },
             "value": {
               "$ref": "#/definitions/ProductDiscountValue",
-              "x-annotation-hasSimpleUpdateAction": "changeValue"
+              "x-annotation-hasUpdateAction": {
+                "action": "changeValue",
+                "fields": {
+                  "value": "ProductDiscountValueDraft"
+                }
+              }
             },
             "predicate": {
               "type": "string",
@@ -21643,7 +21951,7 @@
           "$ref": "#/definitions/LocalizedString"
         },
         "value": {
-          "$ref": "#/definitions/ProductDiscountValue"
+          "$ref": "#/definitions/ProductDiscountValueDraft"
         },
         "predicate": {
           "type": "string"
@@ -21704,6 +22012,10 @@
       "title": "ProductDiscountPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -21724,6 +22036,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -21815,6 +22128,29 @@
             "money": {
               "type": "array",
               "items": {
+                "$ref": "#/definitions/TypedMoney"
+              }
+            }
+          },
+          "required": [
+            "money"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "ProductDiscount"
+    },
+    "ProductDiscountValueAbsoluteDraft": {
+      "title": "ProductDiscountValueAbsoluteDraft",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ProductDiscountValueDraft"
+        },
+        {
+          "properties": {
+            "money": {
+              "type": "array",
+              "items": {
                 "$ref": "#/definitions/Money"
               }
             }
@@ -21827,9 +22163,29 @@
       ],
       "x-annotation-package": "ProductDiscount"
     },
+    "ProductDiscountValueDraft": {
+      "title": "ProductDiscountValueDraft",
+      "discriminator": "type",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "x-annotation-package": "ProductDiscount",
+      "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-productDiscounts.html#productdiscountvalue"
+    },
     "ProductDiscountValueExternal": {
       "title": "ProductDiscountValueExternal",
       "$ref": "#/definitions/ProductDiscountValue",
+      "x-annotation-package": "ProductDiscount"
+    },
+    "ProductDiscountValueExternalDraft": {
+      "title": "ProductDiscountValueExternalDraft",
+      "$ref": "#/definitions/ProductDiscountValueDraft",
       "x-annotation-package": "ProductDiscount"
     },
     "ProductDiscountValueRelative": {
@@ -21837,6 +22193,27 @@
       "allOf": [
         {
           "$ref": "#/definitions/ProductDiscountValue"
+        },
+        {
+          "properties": {
+            "permyriad": {
+              "format": "int64",
+              "type": "number"
+            }
+          },
+          "required": [
+            "permyriad"
+          ],
+          "type": "object"
+        }
+      ],
+      "x-annotation-package": "ProductDiscount"
+    },
+    "ProductDiscountValueRelativeDraft": {
+      "title": "ProductDiscountValueRelativeDraft",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ProductDiscountValueDraft"
         },
         {
           "properties": {
@@ -21950,7 +22327,7 @@
         {
           "properties": {
             "value": {
-              "$ref": "#/definitions/ProductDiscountValue"
+              "$ref": "#/definitions/ProductDiscountValueDraft"
             }
           },
           "required": [
@@ -22576,6 +22953,10 @@
       "title": "ProductTypePagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -22596,6 +22977,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -23773,6 +24155,10 @@
       "title": "ProductPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -23793,6 +24179,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -23886,6 +24273,10 @@
       "title": "ProductProjectionPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -23906,6 +24297,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -26495,6 +26887,10 @@
       "title": "ReviewPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -26515,6 +26911,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -26952,7 +27349,7 @@
       "title": "ShippingMethod",
       "allOf": [
         {
-          "$ref": "#/definitions/BaseResource"
+          "$ref": "#/definitions/LoggedResource"
         },
         {
           "properties": {
@@ -27081,6 +27478,10 @@
       "title": "ShippingMethodPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -27101,6 +27502,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -27930,6 +28332,10 @@
       "title": "ShoppingListPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -27950,6 +28356,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -28797,6 +29204,10 @@
       "title": "StatePagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -28817,6 +29228,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -29113,7 +29525,7 @@
       "title": "Store",
       "allOf": [
         {
-          "$ref": "#/definitions/BaseResource"
+          "$ref": "#/definitions/LoggedResource"
         },
         {
           "properties": {
@@ -29163,6 +29575,10 @@
       "title": "StorePagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -29183,6 +29599,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -29791,6 +30208,10 @@
       "title": "SubscriptionPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -29811,6 +30232,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -30047,6 +30469,10 @@
       "title": "TaxCategoryPagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -30067,6 +30493,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -30562,7 +30989,7 @@
       "type": "object",
       "properties": {
         "type": {
-          "type": "object"
+          "$ref": "#/definitions/FieldType"
         },
         "name": {
           "type": "string"
@@ -30796,6 +31223,10 @@
       "title": "TypePagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -30816,6 +31247,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -31279,7 +31711,7 @@
       "title": "Zone",
       "allOf": [
         {
-          "$ref": "#/definitions/BaseResource"
+          "$ref": "#/definitions/LoggedResource"
         },
         {
           "properties": {
@@ -31358,6 +31790,10 @@
       "title": "ZonePagedQueryResponse",
       "type": "object",
       "properties": {
+        "limit": {
+          "format": "int64",
+          "type": "number"
+        },
         "count": {
           "format": "int64",
           "type": "number"
@@ -31378,6 +31814,7 @@
         }
       },
       "required": [
+        "limit",
         "count",
         "offset",
         "results"
@@ -36248,197 +36685,6 @@
       ],
       "x-annotation-methodName": "withId"
     },
-    "/{projectKey}/orders/import": {
-      "post": {
-        "description": "Create an Order by Import",
-        "operationId": "POST_projectKey-orders-import",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "201": {
-            "description": "",
-            "examples": {
-              "application/json": {
-                "type": "Order",
-                "id": "92f5a867-bf19-47ab-982c-6720a03a3921",
-                "version": 1,
-                "createdAt": "2017-01-04T19:54:49.797Z",
-                "lastModifiedAt": "2017-01-04T19:54:49.797Z",
-                "totalPrice": {
-                  "type": "centPrecision",
-                  "fractionDigits": 2,
-                  "currencyCode": "EUR",
-                  "centAmount": 1000
-                },
-                "orderState": "Open",
-                "syncInfo": [],
-                "returnInfo": [],
-                "taxMode": "External",
-                "inventoryMode": "None",
-                "taxRoundingMode": "HalfEven",
-                "lineItems": [
-                  {
-                    "id": "7297c742-d8b0-484b-aadc-1d0ba1869dc9",
-                    "productId": "c5c75935-595a-4cc3-a80e-24e9a9c55094",
-                    "name": {
-                      "en": "MyProduct"
-                    },
-                    "productType": {
-                      "typeId": "product-type",
-                      "id": "a5c7e173-9754-4f02-9b18-a600896ae0e1",
-                      "version": 21
-                    },
-                    "productSlug": {
-                      "de": "neues-produkt-slug-1234678",
-                      "en": "new-product-slug-12345678"
-                    },
-                    "variant": {
-                      "id": 1,
-                      "sku": "some-sku-123",
-                      "prices": [
-                        {
-                          "value": {
-                            "type": "centPrecision",
-                            "fractionDigits": 2,
-                            "currencyCode": "EUR",
-                            "centAmount": 1000
-                          },
-                          "id": "6d36dc85-6131-495d-9f20-d00f411d4124"
-                        }
-                      ],
-                      "images": [],
-                      "attributes": [
-                        {
-                          "name": "text",
-                          "value": "attribute-value"
-                        },
-                        {
-                          "name": "enum",
-                          "value": {
-                            "key": "test",
-                            "label": "test"
-                          }
-                        }
-                      ],
-                      "assets": []
-                    },
-                    "price": {
-                      "id": "6d36dc85-6131-495d-9f20-d00f411d4124",
-                      "value": {
-                        "type": "centPrecision",
-                        "fractionDigits": 2,
-                        "currencyCode": "EUR",
-                        "centAmount": 1000
-                      }
-                    },
-                    "quantity": 1,
-                    "discountedPricePerQuantity": [],
-                    "taxRate": {
-                      "name": "Bla",
-                      "amount": 0.1,
-                      "includedInPrice": false,
-                      "country": "DE",
-                      "subRates": []
-                    },
-                    "state": [
-                      {
-                        "quantity": 1,
-                        "state": {
-                          "typeId": "state",
-                          "id": "7c2e2694-aefe-43d7-888e-6a99514caaca"
-                        }
-                      }
-                    ],
-                    "priceMode": "Platform",
-                    "lineItemMode": "Standard",
-                    "totalPrice": {
-                      "type": "centPrecision",
-                      "fractionDigits": 2,
-                      "currencyCode": "EUR",
-                      "centAmount": 1000
-                    },
-                    "taxedPrice": {
-                      "totalNet": {
-                        "type": "centPrecision",
-                        "fractionDigits": 2,
-                        "currencyCode": "EUR",
-                        "centAmount": 1000
-                      },
-                      "totalGross": {
-                        "type": "centPrecision",
-                        "fractionDigits": 2,
-                        "currencyCode": "EUR",
-                        "centAmount": 1100
-                      }
-                    }
-                  }
-                ],
-                "customLineItems": [],
-                "discountCodes": [],
-                "lastMessageSequenceNumber": 1,
-                "origin": "Customer"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/Order"
-            }
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "schema": {
-              "example": {
-                "orderNumber": "100000001",
-                "totalPrice": {
-                  "centAmount": 1000,
-                  "currencyCode": "EUR"
-                }
-              },
-              "$ref": "#/definitions/OrderImportDraft"
-            },
-            "in": "body",
-            "name": "body",
-            "required": true
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_orders:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ],
-      "x-annotation-methodName": "importOrder"
-    },
     "/{projectKey}/orders/edits": {
       "get": {
         "description": "Query edits",
@@ -36917,49 +37163,12 @@
           "name": "projectKey",
           "required": true
         }
-      ]
+      ],
+      "x-annotation-updateable": "OrderEdit",
+      "x-annotation-deleteable": "OrderEdit",
+      "x-annotation-createable": "OrderEditDraft"
     },
     "/{projectKey}/orders/edits/key={key}": {
-      "get": {
-        "description": "Get OrderEdit by key",
-        "operationId": "GET_projectKey-orders-edits-key=key",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_order_edits:{projectKey}"
-            ]
-          }
-        ]
-      },
       "post": {
         "description": "Update OrderEdit by key",
         "operationId": "POST_projectKey-orders-edits-key=key",
@@ -37008,7 +37217,7 @@
                   }
                 ]
               },
-              "$ref": "#/definitions/Update"
+              "$ref": "#/definitions/OrderEditUpdate"
             },
             "in": "body",
             "name": "body",
@@ -37023,6 +37232,46 @@
             "oauth_2_0": [
               "manage_project:{projectKey}",
               "manage_order_edits:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "description": "Get OrderEdit by key",
+        "operationId": "GET_projectKey-orders-edits-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_order_edits:{projectKey}"
             ]
           }
         ]
@@ -37090,46 +37339,6 @@
       "x-annotation-methodName": "withKey"
     },
     "/{projectKey}/orders/edits/{ID}": {
-      "get": {
-        "description": "Get OrderEdit by ID",
-        "operationId": "GET_projectKey-orders-edits-ID",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_order_edits:{projectKey}"
-            ]
-          }
-        ]
-      },
       "post": {
         "description": "Update OrderEdit by ID",
         "operationId": "POST_projectKey-orders-edits-ID",
@@ -37178,7 +37387,7 @@
                   }
                 ]
               },
-              "$ref": "#/definitions/Update"
+              "$ref": "#/definitions/OrderEditUpdate"
             },
             "in": "body",
             "name": "body",
@@ -37193,6 +37402,46 @@
             "oauth_2_0": [
               "manage_project:{projectKey}",
               "manage_order_edits:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "description": "Get OrderEdit by ID",
+        "operationId": "GET_projectKey-orders-edits-ID",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_order_edits:{projectKey}"
             ]
           }
         ]
@@ -37318,6 +37567,197 @@
           "required": true
         }
       ]
+    },
+    "/{projectKey}/orders/import": {
+      "post": {
+        "description": "Create an Order by Import",
+        "operationId": "POST_projectKey-orders-import",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "201": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "type": "Order",
+                "id": "92f5a867-bf19-47ab-982c-6720a03a3921",
+                "version": 1,
+                "createdAt": "2017-01-04T19:54:49.797Z",
+                "lastModifiedAt": "2017-01-04T19:54:49.797Z",
+                "totalPrice": {
+                  "type": "centPrecision",
+                  "fractionDigits": 2,
+                  "currencyCode": "EUR",
+                  "centAmount": 1000
+                },
+                "orderState": "Open",
+                "syncInfo": [],
+                "returnInfo": [],
+                "taxMode": "External",
+                "inventoryMode": "None",
+                "taxRoundingMode": "HalfEven",
+                "lineItems": [
+                  {
+                    "id": "7297c742-d8b0-484b-aadc-1d0ba1869dc9",
+                    "productId": "c5c75935-595a-4cc3-a80e-24e9a9c55094",
+                    "name": {
+                      "en": "MyProduct"
+                    },
+                    "productType": {
+                      "typeId": "product-type",
+                      "id": "a5c7e173-9754-4f02-9b18-a600896ae0e1",
+                      "version": 21
+                    },
+                    "productSlug": {
+                      "de": "neues-produkt-slug-1234678",
+                      "en": "new-product-slug-12345678"
+                    },
+                    "variant": {
+                      "id": 1,
+                      "sku": "some-sku-123",
+                      "prices": [
+                        {
+                          "value": {
+                            "type": "centPrecision",
+                            "fractionDigits": 2,
+                            "currencyCode": "EUR",
+                            "centAmount": 1000
+                          },
+                          "id": "6d36dc85-6131-495d-9f20-d00f411d4124"
+                        }
+                      ],
+                      "images": [],
+                      "attributes": [
+                        {
+                          "name": "text",
+                          "value": "attribute-value"
+                        },
+                        {
+                          "name": "enum",
+                          "value": {
+                            "key": "test",
+                            "label": "test"
+                          }
+                        }
+                      ],
+                      "assets": []
+                    },
+                    "price": {
+                      "id": "6d36dc85-6131-495d-9f20-d00f411d4124",
+                      "value": {
+                        "type": "centPrecision",
+                        "fractionDigits": 2,
+                        "currencyCode": "EUR",
+                        "centAmount": 1000
+                      }
+                    },
+                    "quantity": 1,
+                    "discountedPricePerQuantity": [],
+                    "taxRate": {
+                      "name": "Bla",
+                      "amount": 0.1,
+                      "includedInPrice": false,
+                      "country": "DE",
+                      "subRates": []
+                    },
+                    "state": [
+                      {
+                        "quantity": 1,
+                        "state": {
+                          "typeId": "state",
+                          "id": "7c2e2694-aefe-43d7-888e-6a99514caaca"
+                        }
+                      }
+                    ],
+                    "priceMode": "Platform",
+                    "lineItemMode": "Standard",
+                    "totalPrice": {
+                      "type": "centPrecision",
+                      "fractionDigits": 2,
+                      "currencyCode": "EUR",
+                      "centAmount": 1000
+                    },
+                    "taxedPrice": {
+                      "totalNet": {
+                        "type": "centPrecision",
+                        "fractionDigits": 2,
+                        "currencyCode": "EUR",
+                        "centAmount": 1000
+                      },
+                      "totalGross": {
+                        "type": "centPrecision",
+                        "fractionDigits": 2,
+                        "currencyCode": "EUR",
+                        "centAmount": 1100
+                      }
+                    }
+                  }
+                ],
+                "customLineItems": [],
+                "discountCodes": [],
+                "lastMessageSequenceNumber": 1,
+                "origin": "Customer"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "orderNumber": "100000001",
+                "totalPrice": {
+                  "centAmount": 1000,
+                  "currencyCode": "EUR"
+                }
+              },
+              "$ref": "#/definitions/OrderImportDraft"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_orders:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-methodName": "importOrder"
     },
     "/{projectKey}/products": {
       "get": {
@@ -39300,8 +39740,10 @@
                 "staged": false,
                 "price": {
                   "value": {
+                    "type": "centPrecision",
                     "centAmount": 100,
-                    "currencyCode": "EUR"
+                    "currencyCode": "EUR",
+                    "fractionDigits": 2
                   },
                   "id": "2474c2c3-d424-49af-b90a-b71bc74cf51b"
                 }
@@ -46451,1123 +46893,6 @@
         }
       ]
     },
-    "/{projectKey}/custom-objects": {
-      "get": {
-        "description": "Query custom-objects",
-        "operationId": "GET_projectKey-custom-objects",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
-            "type": "string",
-            "in": "query",
-            "name": "where"
-          },
-          {
-            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
-            "type": "string",
-            "in": "query",
-            "name": "sort"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:limit"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:offset"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:withTotal"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_products:{projectKey}",
-              "view_orders:{projectKey}",
-              "view_customers:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "post": {
-        "description": "Create CustomObject",
-        "operationId": "POST_projectKey-custom-objects",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "201": {
-            "description": "",
-            "examples": {
-              "application/json": {
-                "id": "d8523d32-a79d-441c-90f4-744cc342126e",
-                "version": 2,
-                "container": "test-container",
-                "key": "test-key",
-                "value": "test-value",
-                "createdAt": "2016-02-18T10:36:29.468Z",
-                "lastModifiedAt": "2016-02-18T10:36:29.571Z"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/CustomObject"
-            }
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "schema": {
-              "example": {
-                "container": "test-container",
-                "key": "test-key",
-                "value": "test-value"
-              },
-              "$ref": "#/definitions/CustomObjectDraft"
-            },
-            "in": "body",
-            "name": "body",
-            "required": true
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_products:{projectKey}",
-              "manage_orders:{projectKey}",
-              "manage_customers:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ]
-    },
-    "/{projectKey}/custom-objects/{container}/{key}": {
-      "get": {
-        "description": "Get CustomObject by key",
-        "operationId": "GET_projectKey-custom-objects-container-key",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_products:{projectKey}",
-              "view_orders:{projectKey}",
-              "view_customers:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "delete": {
-        "description": "Delete CustomObject by key",
-        "operationId": "DELETE_projectKey-custom-objects-container-key",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "409": {
-            "$ref": "#/responses/trait:conflicting:409"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:dataErasure:dataErasure"
-          },
-          {
-            "$ref": "#/parameters/trait:versioned:version"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_products:{projectKey}",
-              "manage_orders:{projectKey}",
-              "manage_customers:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "container",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
-          "name": "key",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ],
-      "x-annotation-methodName": "withContainerAndKey"
-    },
-    "/{projectKey}/custom-objects/{ID}": {
-      "get": {
-        "description": "Get CustomObject by container",
-        "operationId": "GET_projectKey-custom-objects-ID",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_products:{projectKey}",
-              "view_orders:{projectKey}",
-              "view_customers:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "delete": {
-        "description": "Delete CustomObject by container",
-        "operationId": "DELETE_projectKey-custom-objects-ID",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "409": {
-            "$ref": "#/responses/trait:conflicting:409"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:dataErasure:dataErasure"
-          },
-          {
-            "$ref": "#/parameters/trait:versioned:version"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_products:{projectKey}",
-              "manage_orders:{projectKey}",
-              "manage_customers:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "ID",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ],
-      "x-annotation-methodName": "withId"
-    },
-    "/{projectKey}/graphql": {
-      "post": {
-        "description": "Execute a GraphQL query",
-        "operationId": "POST_projectKey-graphql",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "consumes": [
-          "application/graphql"
-        ],
-        "parameters": [
-          {
-            "schema": {
-              "example": "query Sphere {\n    products(limit: 1) {\n        ...StagedProduct,\n        ...CurrentProduct\n    }\n}\n\nfragment Product on ProductData {\n    skus, name(locale: \"en\")\n}\n\nfragment StagedProduct on ProductQueryResult {\n    results {\n        id, masterData { staged { ...Product } }\n    }\n}\n\nfragment CurrentProduct on ProductQueryResult {\n    results {\n        id, masterData { current { ...Product } }\n    }\n}\n",
-              "type": "string"
-            },
-            "in": "body",
-            "name": "body",
-            "required": true
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_products:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ]
-    },
-    "/{projectKey}/login": {
-      "post": {
-        "description": "Authenticate Customer (Sign In)",
-        "operationId": "POST_projectKey-login",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "201": {
-            "description": "",
-            "examples": {
-              "application/json": {
-                "customer": {
-                  "addresses": [],
-                  "email": "<random>@example.com",
-                  "firstName": "John",
-                  "id": "some_123_id",
-                  "isEmailVerified": false,
-                  "lastName": "Doe",
-                  "password": "secret123",
-                  "version": 1,
-                  "createdAt": "2015-07-06T13:22:33.339Z",
-                  "lastModifiedAt": "2015-07-06T13:22:33.339Z"
-                }
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/CustomerSignInResult"
-            }
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "schema": {
-              "$ref": "#/definitions/CustomerSignin"
-            },
-            "in": "body",
-            "name": "body",
-            "required": true
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "manage_customers:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ]
-    },
-    "/{projectKey}/messages": {
-      "get": {
-        "description": "Query messages",
-        "operationId": "GET_projectKey-messages",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
-            "type": "string",
-            "in": "query",
-            "name": "where"
-          },
-          {
-            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
-            "type": "string",
-            "in": "query",
-            "name": "sort"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:limit"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:offset"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:withTotal"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_orders:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ]
-    },
-    "/{projectKey}/messages/{ID}": {
-      "get": {
-        "description": "Get Message by ID",
-        "operationId": "GET_projectKey-messages-ID",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_orders:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "ID",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ],
-      "x-annotation-methodName": "withId"
-    },
-    "/{projectKey}/product-projections": {
-      "get": {
-        "description": "Query product-projections",
-        "operationId": "GET_projectKey-product-projections",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "description": "Whether to query for the current or staged projections.",
-            "type": "boolean",
-            "in": "query",
-            "name": "staged"
-          },
-          {
-            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
-            "type": "string",
-            "in": "query",
-            "name": "where"
-          },
-          {
-            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
-            "type": "string",
-            "in": "query",
-            "name": "sort"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCountry"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCustomerGroup"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceChannel"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:limit"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:offset"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:withTotal"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_products:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ]
-    },
-    "/{projectKey}/product-projections/search": {
-      "post": {
-        "description": "Search Product Projection",
-        "operationId": "POST_projectKey-product-projections-search",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_products:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "get": {
-        "description": "Search Product Projection",
-        "operationId": "GET_projectKey-product-projections-search",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "description": "Whether to apply fuzzy search on the text to analyze.",
-            "type": "boolean",
-            "in": "query",
-            "name": "fuzzy"
-          },
-          {
-            "description": "Provide explicitly the fuzzy level desired if fuzzy is enabled. This value can not be higher than the one\nchosen by the platform by default.\n",
-            "type": "number",
-            "in": "query",
-            "name": "fuzzyLevel"
-          },
-          {
-            "description": "Whether to query for the current or staged projections.",
-            "type": "boolean",
-            "in": "query",
-            "name": "staged"
-          },
-          {
-            "type": "string",
-            "in": "query",
-            "name": "filter"
-          },
-          {
-            "type": "string",
-            "in": "query",
-            "name": "filter.facets"
-          },
-          {
-            "type": "string",
-            "in": "query",
-            "name": "filter.query"
-          },
-          {
-            "type": "string",
-            "in": "query",
-            "name": "facet"
-          },
-          {
-            "type": "string",
-            "in": "query",
-            "name": "/text\\.[a-z]{2}(-[A-Z]{2})?/",
-            "x-annotation-placeholderParam": {
-              "paramName": "text",
-              "template": "text.<locale>",
-              "placeholder": "locale"
-            }
-          },
-          {
-            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
-            "type": "string",
-            "in": "query",
-            "name": "sort"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:limit"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:offset"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:withTotal"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCountry"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCustomerGroup"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceChannel"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_products:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ]
-    },
-    "/{projectKey}/product-projections/suggest": {
-      "get": {
-        "operationId": "GET_projectKey-product-projections-suggest",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "description": "Whether to apply fuzzy search on the text to analyze.",
-            "type": "boolean",
-            "in": "query",
-            "name": "fuzzy"
-          },
-          {
-            "description": "Whether to query for the current or staged projections.",
-            "type": "boolean",
-            "in": "query",
-            "name": "staged"
-          },
-          {
-            "type": "string",
-            "in": "query",
-            "name": "/searchKeywords\\.[a-z]{2}(-[A-Z]{2})?/",
-            "x-annotation-placeholderParam": {
-              "paramName": "searchKeywords",
-              "template": "searchKeywords.<locale>",
-              "placeholder": "locale"
-            }
-          },
-          {
-            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
-            "type": "string",
-            "in": "query",
-            "name": "sort"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:limit"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:offset"
-          },
-          {
-            "$ref": "#/parameters/trait:paging:withTotal"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_products:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ]
-    },
-    "/{projectKey}/product-projections/key={key}": {
-      "get": {
-        "description": "Get ProductProjection by key",
-        "operationId": "GET_projectKey-product-projections-key=key",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "description": "Whether to query for the current or staged projections.",
-            "type": "boolean",
-            "in": "query",
-            "name": "staged"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCountry"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCustomerGroup"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceChannel"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_products:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "key",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ],
-      "x-annotation-methodName": "withKey"
-    },
-    "/{projectKey}/product-projections/{ID}": {
-      "get": {
-        "description": "Get ProductProjection by ID",
-        "operationId": "GET_projectKey-product-projections-ID",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/trait:deprecatable:200"
-          },
-          "400": {
-            "$ref": "#/responses/trait:errorable:400"
-          },
-          "401": {
-            "$ref": "#/responses/trait:errorable:401"
-          },
-          "403": {
-            "$ref": "#/responses/trait:errorable:403"
-          },
-          "404": {
-            "$ref": "#/responses/trait:errorable:404"
-          },
-          "500": {
-            "$ref": "#/responses/trait:errorable:500"
-          },
-          "503": {
-            "$ref": "#/responses/trait:errorable:503"
-          }
-        },
-        "parameters": [
-          {
-            "description": "Whether to query for the current or staged projections.",
-            "type": "boolean",
-            "in": "query",
-            "name": "staged"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCountry"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceCustomerGroup"
-          },
-          {
-            "$ref": "#/parameters/trait:priceSelecting:priceChannel"
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
-          }
-        ],
-        "security": [
-          {
-            "oauth_2_0": [
-              "manage_project:{projectKey}",
-              "view_products:{projectKey}"
-            ]
-          }
-        ]
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "ID",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
-          "name": "projectKey",
-          "required": true
-        }
-      ],
-      "x-annotation-methodName": "withId"
-    },
     "/{projectKey}/me": {
       "get": {
         "operationId": "GET_projectKey-me",
@@ -47730,6 +47055,428 @@
         ]
       },
       "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ]
+    },
+    "/{projectKey}/me/shopping-lists": {
+      "get": {
+        "description": "Query shopping-lists",
+        "operationId": "GET_projectKey-me-shopping-lists",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
+            "type": "string",
+            "in": "query",
+            "name": "where"
+          },
+          {
+            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
+            "type": "string",
+            "in": "query",
+            "name": "sort"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:limit"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:offset"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:withTotal"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_my_shopping_lists:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "description": "Create MyShoppingList",
+        "operationId": "POST_projectKey-me-shopping-lists",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "201": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "id": "9693f04b-5aec-467f-baa1-fc74da7d0c3d",
+                "version": 1,
+                "name": {
+                  "en": "test"
+                },
+                "key": "test",
+                "lineItems": [],
+                "textLineItems": [],
+                "createdAt": "2017-03-30T11:49:40.904Z",
+                "lastModifiedAt": "2017-03-30T11:49:40.904Z"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/MyShoppingList"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "name": {
+                  "en": "test"
+                }
+              },
+              "$ref": "#/definitions/MyShoppingListDraft"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_my_shopping_lists:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-updateable": "MyShoppingList",
+      "x-annotation-deleteable": "MyShoppingList",
+      "x-annotation-createable": "MyShoppingListDraft"
+    },
+    "/{projectKey}/me/shopping-lists/key={key}": {
+      "post": {
+        "operationId": "POST_projectKey-me-shopping-lists-key=key",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/definitions/MyShoppingListUpdate"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "key",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ]
+    },
+    "/{projectKey}/me/shopping-lists/{ID}": {
+      "post": {
+        "description": "Update MyShoppingList by ID",
+        "operationId": "POST_projectKey-me-shopping-lists-ID",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "version": 1,
+                "actions": [
+                  {
+                    "action": "changeName",
+                    "name": {
+                      "en": "New Name"
+                    }
+                  }
+                ]
+              },
+              "$ref": "#/definitions/MyShoppingListUpdate"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_my_shopping_lists:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "description": "Get MyShoppingList by ID",
+        "operationId": "GET_projectKey-me-shopping-lists-ID",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_my_shopping_lists:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "description": "Delete MyShoppingList by ID",
+        "operationId": "DELETE_projectKey-me-shopping-lists-ID",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:versioned:version"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_my_shopping_lists:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "ID",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-methodName": "withId"
+    },
+    "/{projectKey}/me/payment": {
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-updateable": "MyPayment",
+      "x-annotation-deleteable": "MyPayment",
+      "x-annotation-createable": "MyPaymentDraft"
+    },
+    "/{projectKey}/me/payment/key={key}": {
+      "post": {
+        "operationId": "POST_projectKey-me-payment-key=key",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/definitions/MyPaymentUpdate"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "key",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ]
+    },
+    "/{projectKey}/me/payment/{ID}": {
+      "post": {
+        "operationId": "POST_projectKey-me-payment-ID",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/definitions/MyPaymentUpdate"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "ID",
+          "required": true
+        },
         {
           "type": "string",
           "in": "path",
@@ -49124,10 +48871,10 @@
       ],
       "x-annotation-methodName": "withId"
     },
-    "/{projectKey}/me/shopping-lists": {
+    "/{projectKey}/custom-objects": {
       "get": {
-        "description": "Query shopping-lists",
-        "operationId": "GET_projectKey-me-shopping-lists",
+        "description": "Query custom-objects",
+        "operationId": "GET_projectKey-custom-objects",
         "responses": {
           "200": {
             "$ref": "#/responses/trait:deprecatable:200"
@@ -49180,14 +48927,17 @@
         "security": [
           {
             "oauth_2_0": [
-              "manage_my_shopping_lists:{projectKey}"
+              "manage_project:{projectKey}",
+              "view_products:{projectKey}",
+              "view_orders:{projectKey}",
+              "view_customers:{projectKey}"
             ]
           }
         ]
       },
       "post": {
-        "description": "Create MyShoppingList",
-        "operationId": "POST_projectKey-me-shopping-lists",
+        "description": "Create CustomObject",
+        "operationId": "POST_projectKey-custom-objects",
         "responses": {
           "200": {
             "$ref": "#/responses/trait:deprecatable:200"
@@ -49196,20 +48946,17 @@
             "description": "",
             "examples": {
               "application/json": {
-                "id": "9693f04b-5aec-467f-baa1-fc74da7d0c3d",
-                "version": 1,
-                "name": {
-                  "en": "test"
-                },
-                "key": "test",
-                "lineItems": [],
-                "textLineItems": [],
-                "createdAt": "2017-03-30T11:49:40.904Z",
-                "lastModifiedAt": "2017-03-30T11:49:40.904Z"
+                "id": "d8523d32-a79d-441c-90f4-744cc342126e",
+                "version": 2,
+                "container": "test-container",
+                "key": "test-key",
+                "value": "test-value",
+                "createdAt": "2016-02-18T10:36:29.468Z",
+                "lastModifiedAt": "2016-02-18T10:36:29.571Z"
               }
             },
             "schema": {
-              "$ref": "#/definitions/MyShoppingList"
+              "$ref": "#/definitions/CustomObject"
             }
           },
           "400": {
@@ -49235,11 +48982,11 @@
           {
             "schema": {
               "example": {
-                "name": {
-                  "en": "test"
-                }
+                "container": "test-container",
+                "key": "test-key",
+                "value": "test-value"
               },
-              "$ref": "#/definitions/MyShoppingListDraft"
+              "$ref": "#/definitions/CustomObjectDraft"
             },
             "in": "body",
             "name": "body",
@@ -49252,7 +48999,10 @@
         "security": [
           {
             "oauth_2_0": [
-              "manage_my_shopping_lists:{projectKey}"
+              "manage_project:{projectKey}",
+              "manage_products:{projectKey}",
+              "manage_orders:{projectKey}",
+              "manage_customers:{projectKey}"
             ]
           }
         ]
@@ -49266,10 +49016,10 @@
         }
       ]
     },
-    "/{projectKey}/me/shopping-lists/{ID}": {
+    "/{projectKey}/custom-objects/{container}/{key}": {
       "get": {
-        "description": "Get MyShoppingList by ID",
-        "operationId": "GET_projectKey-me-shopping-lists-ID",
+        "description": "Get CustomObject by key",
+        "operationId": "GET_projectKey-custom-objects-container-key",
         "responses": {
           "200": {
             "$ref": "#/responses/trait:deprecatable:200"
@@ -49301,14 +49051,17 @@
         "security": [
           {
             "oauth_2_0": [
-              "manage_my_shopping_lists:{projectKey}"
+              "manage_project:{projectKey}",
+              "view_products:{projectKey}",
+              "view_orders:{projectKey}",
+              "view_customers:{projectKey}"
             ]
           }
         ]
       },
-      "post": {
-        "description": "Update MyShoppingList by ID",
-        "operationId": "POST_projectKey-me-shopping-lists-ID",
+      "delete": {
+        "description": "Delete CustomObject by key",
+        "operationId": "DELETE_projectKey-custom-objects-container-key",
         "responses": {
           "200": {
             "$ref": "#/responses/trait:deprecatable:200"
@@ -49327,6 +49080,268 @@
           },
           "409": {
             "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:dataErasure:dataErasure"
+          },
+          {
+            "$ref": "#/parameters/trait:versioned:version"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_products:{projectKey}",
+              "manage_orders:{projectKey}",
+              "manage_customers:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "container",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "key",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-methodName": "withContainerAndKey"
+    },
+    "/{projectKey}/custom-objects/{ID}": {
+      "get": {
+        "description": "Get CustomObject by container",
+        "operationId": "GET_projectKey-custom-objects-ID",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_products:{projectKey}",
+              "view_orders:{projectKey}",
+              "view_customers:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "description": "Delete CustomObject by container",
+        "operationId": "DELETE_projectKey-custom-objects-ID",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "409": {
+            "$ref": "#/responses/trait:conflicting:409"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/trait:dataErasure:dataErasure"
+          },
+          {
+            "$ref": "#/parameters/trait:versioned:version"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "manage_products:{projectKey}",
+              "manage_orders:{projectKey}",
+              "manage_customers:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "ID",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-methodName": "withId"
+    },
+    "/{projectKey}/graphql": {
+      "post": {
+        "description": "Execute a GraphQL query",
+        "operationId": "POST_projectKey-graphql",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "consumes": [
+          "application/graphql"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "example": "query Sphere {\n    products(limit: 1) {\n        ...StagedProduct,\n        ...CurrentProduct\n    }\n}\n\nfragment Product on ProductData {\n    skus, name(locale: \"en\")\n}\n\nfragment StagedProduct on ProductQueryResult {\n    results {\n        id, masterData { staged { ...Product } }\n    }\n}\n\nfragment CurrentProduct on ProductQueryResult {\n    results {\n        id, masterData { current { ...Product } }\n    }\n}\n",
+              "type": "string"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_products:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ]
+    },
+    "/{projectKey}/login": {
+      "post": {
+        "description": "Authenticate Customer (Sign In)",
+        "operationId": "POST_projectKey-login",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "201": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "customer": {
+                  "addresses": [],
+                  "email": "<random>@example.com",
+                  "firstName": "John",
+                  "id": "some_123_id",
+                  "isEmailVerified": false,
+                  "lastName": "Doe",
+                  "password": "secret123",
+                  "version": 1,
+                  "createdAt": "2015-07-06T13:22:33.339Z",
+                  "lastModifiedAt": "2015-07-06T13:22:33.339Z"
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/CustomerSignInResult"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
           },
           "500": {
             "$ref": "#/responses/trait:errorable:500"
@@ -49338,38 +49353,35 @@
         "parameters": [
           {
             "schema": {
-              "example": {
-                "version": 1,
-                "actions": [
-                  {
-                    "action": "changeName",
-                    "name": {
-                      "en": "New Name"
-                    }
-                  }
-                ]
-              },
-              "$ref": "#/definitions/Update"
+              "$ref": "#/definitions/CustomerSignin"
             },
             "in": "body",
             "name": "body",
             "required": true
-          },
-          {
-            "$ref": "#/parameters/trait:expandable:expand"
           }
         ],
         "security": [
           {
             "oauth_2_0": [
-              "manage_my_shopping_lists:{projectKey}"
+              "manage_project:{projectKey}",
+              "manage_customers:{projectKey}"
             ]
           }
         ]
       },
-      "delete": {
-        "description": "Delete MyShoppingList by ID",
-        "operationId": "DELETE_projectKey-me-shopping-lists-ID",
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ]
+    },
+    "/{projectKey}/messages": {
+      "get": {
+        "description": "Query messages",
+        "operationId": "GET_projectKey-messages",
         "responses": {
           "200": {
             "$ref": "#/responses/trait:deprecatable:200"
@@ -49386,8 +49398,76 @@
           "404": {
             "$ref": "#/responses/trait:errorable:404"
           },
-          "409": {
-            "$ref": "#/responses/trait:conflicting:409"
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
+            "type": "string",
+            "in": "query",
+            "name": "where"
+          },
+          {
+            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
+            "type": "string",
+            "in": "query",
+            "name": "sort"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:limit"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:offset"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:withTotal"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_orders:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ]
+    },
+    "/{projectKey}/messages/{ID}": {
+      "get": {
+        "description": "Get Message by ID",
+        "operationId": "GET_projectKey-messages-ID",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
           },
           "500": {
             "$ref": "#/responses/trait:errorable:500"
@@ -49398,7 +49478,260 @@
         },
         "parameters": [
           {
-            "$ref": "#/parameters/trait:versioned:version"
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_orders:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "ID",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-methodName": "withId"
+    },
+    "/{projectKey}/product-projections": {
+      "get": {
+        "description": "Query product-projections",
+        "operationId": "GET_projectKey-product-projections",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "description": "Whether to query for the current or staged projections.",
+            "type": "boolean",
+            "in": "query",
+            "name": "staged"
+          },
+          {
+            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.\n",
+            "type": "string",
+            "in": "query",
+            "name": "where"
+          },
+          {
+            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
+            "type": "string",
+            "in": "query",
+            "name": "sort"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCountry"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCustomerGroup"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceChannel"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:limit"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:offset"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:withTotal"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_products:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ]
+    },
+    "/{projectKey}/product-projections/search": {
+      "post": {
+        "description": "Search Product Projection",
+        "operationId": "POST_projectKey-product-projections-search",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_products:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "description": "Search Product Projection",
+        "operationId": "GET_projectKey-product-projections-search",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "description": "Whether to apply fuzzy search on the text to analyze.",
+            "type": "boolean",
+            "in": "query",
+            "name": "fuzzy"
+          },
+          {
+            "description": "Provide explicitly the fuzzy level desired if fuzzy is enabled. This value can not be higher than the one\nchosen by the platform by default.\n",
+            "type": "number",
+            "in": "query",
+            "name": "fuzzyLevel"
+          },
+          {
+            "description": "Whether to query for the current or staged projections.",
+            "type": "boolean",
+            "in": "query",
+            "name": "staged"
+          },
+          {
+            "type": "string",
+            "in": "query",
+            "name": "filter"
+          },
+          {
+            "type": "string",
+            "in": "query",
+            "name": "filter.facets"
+          },
+          {
+            "type": "string",
+            "in": "query",
+            "name": "filter.query"
+          },
+          {
+            "type": "string",
+            "in": "query",
+            "name": "facet"
+          },
+          {
+            "type": "string",
+            "in": "query",
+            "name": "/text\\.[a-z]{2}(-[A-Z]{2})?/",
+            "x-annotation-placeholderParam": {
+              "paramName": "text",
+              "template": "text.<locale>",
+              "placeholder": "locale"
+            }
+          },
+          {
+            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
+            "type": "string",
+            "in": "query",
+            "name": "sort"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:limit"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:offset"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:withTotal"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCountry"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCustomerGroup"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceChannel"
           },
           {
             "$ref": "#/parameters/trait:expandable:expand"
@@ -49407,7 +49740,234 @@
         "security": [
           {
             "oauth_2_0": [
-              "manage_my_shopping_lists:{projectKey}"
+              "manage_project:{projectKey}",
+              "view_products:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ]
+    },
+    "/{projectKey}/product-projections/suggest": {
+      "get": {
+        "operationId": "GET_projectKey-product-projections-suggest",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "description": "Whether to apply fuzzy search on the text to analyze.",
+            "type": "boolean",
+            "in": "query",
+            "name": "fuzzy"
+          },
+          {
+            "description": "Whether to query for the current or staged projections.",
+            "type": "boolean",
+            "in": "query",
+            "name": "staged"
+          },
+          {
+            "type": "string",
+            "in": "query",
+            "name": "/searchKeywords\\.[a-z]{2}(-[A-Z]{2})?/",
+            "x-annotation-placeholderParam": {
+              "paramName": "searchKeywords",
+              "template": "searchKeywords.<locale>",
+              "placeholder": "locale"
+            }
+          },
+          {
+            "description": "A query endpoint that supports sorting does so through the sort query parameter. The provided value must be\na valid sort expression. The default sort direction is ASC. The allowed sort paths are typically listed on\nthe specific query endpoints.\n\nHere are some examples of sort expressions:\n\n    name desc\n    dog.age asc\n\nIf multiple sort expressions are specified via multiple sort parameters, they are combined into a composed\nsort where the results are first sorted by the first expression, followed by equal values being sorted\naccording to the second expression, and so on.\n\nNote: The sorting is case sensitive.\n",
+            "type": "string",
+            "in": "query",
+            "name": "sort"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:limit"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:offset"
+          },
+          {
+            "$ref": "#/parameters/trait:paging:withTotal"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_products:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ]
+    },
+    "/{projectKey}/product-projections/key={key}": {
+      "get": {
+        "description": "Get ProductProjection by key",
+        "operationId": "GET_projectKey-product-projections-key=key",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "description": "Whether to query for the current or staged projections.",
+            "type": "boolean",
+            "in": "query",
+            "name": "staged"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCountry"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCustomerGroup"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceChannel"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_products:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "key",
+          "required": true
+        },
+        {
+          "type": "string",
+          "in": "path",
+          "name": "projectKey",
+          "required": true
+        }
+      ],
+      "x-annotation-methodName": "withKey"
+    },
+    "/{projectKey}/product-projections/{ID}": {
+      "get": {
+        "description": "Get ProductProjection by ID",
+        "operationId": "GET_projectKey-product-projections-ID",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trait:deprecatable:200"
+          },
+          "400": {
+            "$ref": "#/responses/trait:errorable:400"
+          },
+          "401": {
+            "$ref": "#/responses/trait:errorable:401"
+          },
+          "403": {
+            "$ref": "#/responses/trait:errorable:403"
+          },
+          "404": {
+            "$ref": "#/responses/trait:errorable:404"
+          },
+          "500": {
+            "$ref": "#/responses/trait:errorable:500"
+          },
+          "503": {
+            "$ref": "#/responses/trait:errorable:503"
+          }
+        },
+        "parameters": [
+          {
+            "description": "Whether to query for the current or staged projections.",
+            "type": "boolean",
+            "in": "query",
+            "name": "staged"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCurrency"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCountry"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceCustomerGroup"
+          },
+          {
+            "$ref": "#/parameters/trait:priceSelecting:priceChannel"
+          },
+          {
+            "$ref": "#/parameters/trait:expandable:expand"
+          }
+        ],
+        "security": [
+          {
+            "oauth_2_0": [
+              "manage_project:{projectKey}",
+              "view_products:{projectKey}"
             ]
           }
         ]
