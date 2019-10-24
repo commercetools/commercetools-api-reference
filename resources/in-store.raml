@@ -291,3 +291,206 @@ uriParameters:
             application/json:
               type: Cart
               example: !include ../examples/cart.example.json
+/customers:
+  type:
+    baseDomain:
+      resourceType: Customer
+      resourceQueryType: CustomerPagedQueryResponse
+      resourceDraft: CustomerDraft
+      whereExample: email = "foo@bar.com"
+      sortExample: createdAt asc
+  description: |
+    A customer is a person purchasing products. customers, Orders, Comments and Reviews can be associated to a customer.
+  get:
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}", "view_customers:{projectKey}:{storeKey}"]}]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customers.example.json
+  post:
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}", "manage_customers:{projectKey}:{storeKey}"]}]
+    body:
+      application/json:
+        example: !include ../examples/customer-create.example.json
+    responses:
+      201:
+        body:
+          application/json:
+            example: !include ../examples/customer-sign-in.example.json
+            type: CustomerSignInResult
+  /password-token={passwordToken}:
+    (methodName): withPasswordToken
+    type:
+      baseResource:
+        uriParameterName: passwordToken
+        resourceType: Customer
+    get:
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}", "view_customers:{projectKey}:{storeKey}"]}]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/customer.example.json
+  /email-token={emailToken}:
+    (methodName): withEmailToken
+    type:
+      baseResource:
+        uriParameterName: emailToken
+        resourceType: Customer
+    get:
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}", "view_customers:{projectKey}:{storeKey}"]}]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/customer.example.json
+  /email-token:
+    type: base
+    displayName: Customer's Email Verification
+    description: |
+      To verify a customer's email, an email token can be created. This should be embedded in a link and sent to the
+      customer via email. When the customer clicks on the link, the "verify customer's email" endpoint should be called,
+      which sets customer's isVerifiedEmail field to true.
+    post:
+      description: Create a Token for verifying the Customer's Email
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}", "manage_customers:{projectKey}:{storeKey}"]}]
+      body:
+        application/json:
+          type: CustomerCreateEmailToken
+      responses:
+        200:
+          body:
+            application/json:
+              type: CustomerToken
+  /email:
+    /confirm:
+      type: base
+      displayName: Verify Customer's Email
+      post:
+        description: Verifies customer's email using a token.
+        securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}", "manage_customers:{projectKey}:{storeKey}"]}]
+        body:
+          application/json:
+            type: CustomerEmailVerify
+        responses:
+          200:
+            description: The email was verified.
+  /password:
+    type: base
+    displayName: Change Customers Password
+    post:
+      description: Change a customers password
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}", "manage_customers:{projectKey}:{storeKey}"]}]
+      body:
+        application/json:
+          type: CustomerChangePassword
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/customer.example.json
+              type: Customer
+    /reset:
+      type: base
+      displayName: Reset Customer's Password
+      post:
+        description: Set a new password using a token.
+        securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}", "manage_customers:{projectKey}:{storeKey}"]}]
+        body:
+          application/json:
+            type: CustomerResetPassword
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/customer.example.json
+                type: Customer
+  /password-token:
+    type: base
+    displayName: Create a Token for Resetting the Customer's Password
+    description: |
+      The following workflow can be used to reset the customer's password:
+
+      * Create a password reset token and send it embedded in a link to the customer.
+      * When the customer clicks on the link, the customer is retrieved with the token.
+      * The customer enters a new password and the "reset customer's password" endpoint is called.
+    post:
+      description: |
+        The token value is used to reset the password of the customer with the given email. The token is
+        valid only for 10 minutes.
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}", "manage_customers:{projectKey}:{storeKey}"]}]
+      body:
+        application/json:
+          type: CustomerCreatePasswordResetToken
+      responses:
+        201:
+          body:
+            application/json:
+              type: CustomerToken
+  /key={key}:
+    (methodName): withKey
+    type:
+      baseResource:
+        uriParameterName: key
+        resourceType: Customer
+        resourceUpdateType: Update
+    get:
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}", "view_customers:{projectKey}:{storeKey}"]}]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/customer.example.json
+    post:
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}", "manage_customers:{projectKey}:{storeKey}"]}]
+      body:
+        application/json:
+          example: !include ../examples/customer-update.example.json
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/customer.example.json
+    delete:
+      is:
+        - dataErasure
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}", "manage_customers:{projectKey}:{storeKey}"]}]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/customer.example.json
+  /{ID}:
+    (methodName): withId
+    type:
+      baseResource:
+        uriParameterName: ID
+        resourceType: Customer
+        resourceUpdateType: Update
+    get:
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_customers:{projectKey}", "view_customers:{projectKey}:{storeKey}"]}]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/customer.example.json
+    post:
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}", "manage_customers:{projectKey}:{storeKey}"]}]
+      body:
+        application/json:
+          example: !include ../examples/customer-update.example.json
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/customer.example.json
+    delete:
+      is:
+        - dataErasure
+      securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_customers:{projectKey}", "manage_customers:{projectKey}:{storeKey}"]}]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/customer.example.json
