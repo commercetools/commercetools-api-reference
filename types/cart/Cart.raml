@@ -4,18 +4,7 @@
 displayName: Cart
 (updateType): CartUpdate
 type: LoggedResource
-(hasUpdateActions):
-- action: addShoppingList
-  fields:
-    shoppingList:
-      type: ShoppingListResourceIdentifier
-    supplyChannel?:
-      type: ChannelResourceIdentifier
-    distributionChannel?:
-      type: ChannelResourceIdentifier
-- action: recalculate
-  fields:
-    updateProductData?: boolean
+
 properties:
   id:
     (identifier): true
@@ -32,330 +21,49 @@ properties:
   createdBy?:
     type: CreatedBy
   customerId?:
-    (hasSimpleUpdateAction): setCustomerId
     type: string
   customerEmail?:
-    (hasUpdateAction):
-      action: setCustomerEmail
-      fields:
-        email: string
     type: string
   anonymousId?:
-    (hasSimpleUpdateAction): setAnonymousId
     type: string
   store?:
     type: StoreKeyReference
   lineItems:
     type: LineItem[]
-    (hasUpdateActions):
-    - action: addLineItem
-      docsAnchor: add-lineitem
-      fields:
-        custom?:
-          type: CustomFieldsDraft
-        distributionChannel?:
-          type: ChannelResourceIdentifier
-        externalTaxRate?:
-          type: ExternalTaxRateDraft
-        productId?:
-          type: string
-        variantId?:
-          type: number
-          format: int64
-        sku?:
-          type: string
-        quantity?:
-          type: number
-          default: 1
-        supplyChannel?:
-          type: ChannelResourceIdentifier
-        externalPrice?:
-          type: Money
-        externalTotalPrice?:
-          type: ExternalLineItemTotalPrice
-        shippingDetails?:
-          type: ItemShippingDetailsDraft
-    - action: removeLineItem
-      docsAnchor: remove-lineitem
-      fields:
-        lineItemId:
-          type: string
-        quantity?:
-          type: number
-        externalPrice?:
-          type: Money
-        externalTotalPrice?:
-          type: ExternalLineItemTotalPrice
-        shippingDetailsToRemove?:
-          type: ItemShippingDetailsDraft
-    - action: changeLineItemQuantity
-      docsAnchor: change-lineitem-quantity
-      fields:
-        lineItemId:
-          type: string
-        quantity:
-          type: number
-        externalPrice?:
-          type: Money
-        externalTotalPrice?:
-          type: ExternalLineItemTotalPrice
-    - action: setLineItemTaxRate
-      docsAnchor: set-lineitem-taxrate
-      fields:
-        lineItemId:
-          type: string
-        externalTaxRate?:
-          type: ExternalTaxRateDraft
-    - action: setLineItemTaxAmount
-      docsAnchor: set-lineitem-taxamount
-      fields:
-        lineItemId:
-          type: string
-        externalTaxAmount?:
-          type: ExternalTaxAmountDraft
-    - action: setLineItemTotalPrice
-      docsAnchor: set-lineitem-totalprice
-      fields:
-        lineItemId:
-          type: string
-        externalTotalPrice?:
-          type: ExternalLineItemTotalPrice
-    - action: setLineItemPrice
-      docsAnchor: set-lineitem-price
-      fields:
-        lineItemId:
-          type: string
-        externalPrice?:
-          type: Money
-    - action: setLineItemCustomType
-      docsAnchor: set-lineitem-custom-type
-      fields:
-        lineItemId:
-          type: string
-        type?:
-          type: TypeResourceIdentifier
-        fields?:
-          type: FieldContainer
-    - action: setLineItemCustomField
-      docsAnchor: set-lineitem-customfield
-      fields:
-        lineItemId:
-          type: string
-        name:
-          type: string
-        value?:
-          type: any
-    - action: applyDeltaToLineItemShippingDetailsTargets
-      docsAnchor: apply-deltatolineitemshippingdetailstargets
-      fields:
-        lineItemId:
-          type: string
-        targetsDelta:
-          type: ItemShippingTarget[]
-    - action: setLineItemShippingDetails
-      docsAnchor: set-lineitemshippingdetails
-      fields:
-        lineItemId:
-          type: string
-        shippingDetails?:
-          type: ItemShippingDetailsDraft
   customLineItems:
     type: CustomLineItem[]
-    (hasUpdateActions):
-    - action: addCustomLineItem
-      docsAnchor: add-customlineitem
-      fields:
-        money:
-          type: Money
-        name:
-          type: LocalizedString
-        quantity:
-          type: number
-        slug:
-          type: string
-        taxCategory?:
-          type: TaxCategoryResourceIdentifier
-        custom?:
-          type: CustomFieldsDraft
-        externalTaxRate?:
-          type: ExternalTaxRateDraft
-    - action: removeCustomLineItem
-      docsAnchor: remove-customlineitem
-      fields:
-        customLineItemId:
-          type: string
-    - action: changeCustomLineItemQuantity
-      docsAnchor: change-customlineitem-quantity
-      fields:
-        customLineItemId:
-          type: string
-        quantity:
-          type: number
-    - action: changeCustomLineItemMoney
-      docsAnchor: change-customlineitem-money
-      fields:
-        customLineItemId:
-          type: string
-        money:
-          type: Money
-    - action: setCustomLineItemCustomType
-      docsAnchor: set-customlineitem-custom-type
-      fields:
-        customLineItemId:
-          type: string
-        type?:
-          type: TypeResourceIdentifier
-        fields?:
-          type: FieldContainer
-    - action: setCustomLineItemCustomField
-      docsAnchor: set-customlineitem-customfield
-      fields:
-        customLineItemId:
-          type: string
-        name:
-          type: string
-        value?:
-          type: any
-    - action: setCustomLineItemTaxRate
-      docsAnchor: set-customlineitem-taxrate
-      fields:
-        customLineItemId:
-          type: string
-        externalTaxRate?:
-          type: ExternalTaxRateDraft
-    - action: setCustomLineItemTaxAmount
-      docsAnchor: set-customlineitem-taxamount
-      fields:
-        customLineItemId:
-          type: string
-        externalTaxAmount?:
-          type: ExternalTaxAmountDraft
-    - action: applyDeltaToCustomLineItemShippingDetailsTargets
-      docsAnchor: apply-deltatocustomlineitemshippingdetailstargets
-      fields:
-        customLineItemId:
-          type: string
-        targetsDelta:
-          type: ItemShippingTarget[]
-    - action: setCustomLineItemShippingDetails
-      docsAnchor: set-customlineitemshippingdetails
-      fields:
-        customLineItemId:
-          type: string
-        shippingDetails?:
-          type: ItemShippingDetailsDraft
   totalPrice: TypedMoney
   taxedPrice?:
     type: TaxedPrice
-    (hasUpdateAction):
-      action: setCartTotalTax
-      fields:
-        externalTotalGross: Money
-        externalTaxPortions?: TaxPortionDraft[]
   cartState:
     type: CartState
   shippingAddress?:
     type: Address
-    (hasUpdateAction):
-      action: setShippingAddress
-      fields:
-        address?: Address
   billingAddress?:
     type: Address
-    (hasUpdateAction):
-      action: setBillingAddress
-      fields:
-        address?: Address
   inventoryMode?:
     type: InventoryMode
   taxMode:
-    (hasUpdateAction):
-      action: changeTaxMode
-      docsAnchor: change-taxmode
     type: TaxMode
   taxRoundingMode:
-    (hasUpdateAction):
-      action: changeTaxRoundingMode
-      docsAnchor: change-tax-roundingmode
     type: RoundingMode
   taxCalculationMode:
-    (hasUpdateAction):
-      action: changeTaxCalculationMode
-      docsAnchor: change-taxcalculationmode
     type: TaxCalculationMode
   customerGroup?:
-    (hasUpdateAction):
-      action: setCustomerGroup
-      fields:
-        customerGroup?: CustomerGroupResourceIdentifier
     type: CustomerGroupReference
   country?:
-    (hasSimpleUpdateAction): setCountry
     type: CountryCode
   shippingInfo?:
     type: ShippingInfo
-    (hasUpdateActions):
-    - action: setShippingMethod
-      fields:
-        shippingMethod?: ShippingMethodResourceIdentifier
-        externalTaxRate?: ExternalTaxRateDraft
-    - action: setCustomShippingMethod
-      fields:
-        shippingMethodName:
-          type: string
-        shippingRate:
-          type: ShippingRateDraft
-        taxCategory?:
-          type: TaxCategoryResourceIdentifier
-        externalTaxRate?:
-          type: ExternalTaxRateDraft
-    - action: setShippingMethodTaxAmount
-      docsAnchor: set-shippingmethod-taxamount
-      fields:
-        externalTaxAmount?: ExternalTaxAmountDraft
-    - action: setShippingMethodTaxRate
-      docsAnchor: set-shippingmethod-taxrate
-      fields:
-        externalTaxRate?: ExternalTaxRateDraft
   discountCodes?:
     type: DiscountCodeInfo[]
-    (hasUpdateActions):
-    - action: addDiscountCode
-      docsAnchor: add-discountcode
-      fields:
-        code: string
-    - action: removeDiscountCode
-      docsAnchor: remove-discountcode
-      fields:
-        discountCode: DiscountCodeReference
   custom?:
     type: CustomFields
-    (hasUpdateActions):
-    - action: setCustomType
-      fields:
-        type?: TypeResourceIdentifier
-        fields?: FieldContainer
-    - action: setCustomField
-      docsAnchor: set-customfield
-      fields:
-        name: string
-        value?: any
   paymentInfo?:
     type: PaymentInfo
-    (hasUpdateActions):
-    - action: addPayment
-      fields:
-        payment: PaymentResourceIdentifier
-    - action: removePayment
-      fields:
-        payment: PaymentResourceIdentifier
   locale?:
-    (hasSimpleUpdateAction): setLocale
     type: string
   deleteDaysAfterLastModification?:
-    (hasUpdateAction):
-      action: setDeleteDaysAfterLastModification
-      docsAnchor: set-deletedaysafterlastmodification-beta
     type: integer
   refusedGifts:
     type: CartDiscountReference[]
@@ -363,22 +71,5 @@ properties:
     type: CartOrigin
   shippingRateInput?:
     type: ShippingRateInput
-    (hasUpdateAction):
-      action: setShippingRateInput
-      fields:
-        shippingRateInput?: ShippingRateInputDraft
   itemShippingAddresses?:
     type: Address[]
-    (hasUpdateActions):
-    - action: addItemShippingAddress
-      docsAnchor: add-itemshippingaddress
-      fields:
-        address: Address
-    - action: removeItemShippingAddress
-      docsAnchor: remove-itemshippingaddress
-      fields:
-        addressKey: string
-    - action: updateItemShippingAddress
-      docsAnchor: update-itemshippingaddress
-      fields:
-        address: Address
