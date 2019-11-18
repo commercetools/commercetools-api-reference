@@ -459,6 +459,6 @@ EOF;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-(new RamlModelParser())->generateUpdateCommands();
+//(new RamlModelParser())->generateUpdateCommands();
 
 (new RamlModelParser())->generateMessagePayloads();
