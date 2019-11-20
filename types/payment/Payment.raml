@@ -8,28 +8,45 @@ properties:
   id:
     (identifier): true
     type: string
+    description: ''
   version:
     type: number
     format: int64
+    description: ''
   createdAt:
     type: datetime
+    description: ''
   lastModifiedAt:
     type: datetime
+    description: ''
   lastModifiedBy?:
     type: LastModifiedBy
+    description: Present on resources updated after 1/02/2019 except for [events not
+      tracked](/http-api-client-logging#events-tracked).
   createdBy?:
     type: CreatedBy
+    description: Present on resources created after 1/02/2019 except for [events not
+      tracked](/http-api-client-logging#events-tracked).
   customer?:
     type: CustomerReference
+    description: A reference to the customer this payment belongs to.
   anonymousId?:
     type: string
+    description: Identifies payments belonging to an anonymous session (the customer
+      has not signed up/in yet).
   externalId?:
     (deprecated): true
     type: string
   interfaceId?:
     type: string
+    description: The identifier that is used by the interface that manages the payment
+      (usually the PSP). Cannot be changed once it has been set. The combination of
+      this ID and the [PaymentMethodInfo](#paymentmethodinfo) `paymentInterface` must
+      be unique.
   amountPlanned:
     type: TypedMoney
+    description: How much money this payment intends to receive from the customer.
+      The value usually matches the cart or order gross total.
   amountAuthorized?:
     (deprecated): true
     type: TypedMoney
@@ -44,13 +61,24 @@ properties:
     type: TypedMoney
   paymentMethodInfo:
     type: PaymentMethodInfo
+    description: ''
   paymentStatus:
     type: PaymentStatus
+    description: ''
   transactions:
     type: Transaction[]
+    description: A list of financial transactions of different [TransactionTypes](#transactiontype)
+      with different [TransactionStates](#transactionstate).
   interfaceInteractions:
     type: CustomFields[]
+    description: |-
+      Interface interactions can be requests sent to the PSP, responses received from the PSP or notifications received from the PSP.
+      Some interactions may result in a transaction.
+      If so, the `interactionId` in the [Transaction](#transaction) should be set to match the ID of the PSP for the interaction.
+      Interactions are managed by the PSP integration and are usually neither written nor read by the user facing frontends or other services.
   custom?:
     type: CustomFields
+    description: ''
   key?:
     type: string
+    description: User-specific unique identifier for the payment (max. 256 characters).

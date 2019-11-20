@@ -6,13 +6,34 @@ type: object
 properties:
   name:
     type: string
+    description: ''
   amount?:
     type: number
+    description: |-
+      Percentage in the range of [0..1]. Must be supplied if no `subRates` are specified. If `subRates` are specified
+      then the `amount` can be omitted or it must be the sum of the amounts of all `subRates`.
   country:
     type: string
+    description: A two-digit country code as per {% include external/country_code.html
+      %}.
   state?:
     type: string
+    description: The state in the country
   subRates?:
     type: SubRate[]
+    description: |-
+      For countries (e.g. the US) where the total tax is a combination of multiple taxes (e.g. state and local taxes).
+      The following example shows the impact of `includedInPrice` in the cart calculation. The cart has `taxMode` HalfEven and `taxCalculationMode` is LineItemLevel.
+      | Line Item | Product Variant A | Product Variant B | Shipping |
+      | --- | --- | --- | --- |
+      | **Line Item: Price** | $15 | $25 | $5 |
+      | **Quantity** | 10 | 5 | --- |
+      | **External Tax Rate: includedInPrice** | false | true | false |
+      | **External Tax Rate: amount** | 0.19 | 0.15 | 0.15 |
+      | **Taxed Item Price: totalNet** | $150 | $108.70 | $5 |
+      | **Taxed Item Price: totalGross** | $178.5 | $125 | $5.75 |
+      | **Calculation formula** | 15 x 10 (1 + 0.19) | 25 x 5 / (1+ 0.15) | 5 x (1 + 0.15) |
+      As seen, when `includedInPrice` is TRUE, the tax is calculated in a top-down manner. When `includedInPrice` is FALSE, the tax is calculated in a bottom-up manner.
   includedInPrice?:
     type: boolean
+    description: The default value for `includedInPrice` is FALSE.
