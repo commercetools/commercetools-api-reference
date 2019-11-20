@@ -24,9 +24,7 @@ var markdownLintDefaults = {
         "default": true,
         "MD041": false,  // First line must not necessarily be a top level header because the markdown is a document fragment and not a document.
         "MD002": false, // first heading must not necessarily be a H1 because the markdown is a document fragment and not a document.
-        "MD013": {
-            "line_length": 120
-        },
+        "MD013": false // ignore line length
     }
 }
 
@@ -100,7 +98,7 @@ function validateMarkdown(rootNode){
                 console.log(this.node);
                 console.log("```");
             }else{
-                console.log(" * description markdown \x1b[32mOK\x1b[0m: " + prettifyRamlPath(this).join(" -> "));
+                // console.log(" * description markdown \x1b[32mOK\x1b[0m: " + prettifyRamlPath(this).join(" -> "));
             }
 
         }
