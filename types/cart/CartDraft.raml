@@ -6,46 +6,93 @@ type: object
 properties:
   currency:
     type: CurrencyCode
+    description: A three-digit currency code as per {% include external/currency_code.html
+      %}.
   customerId?:
     type: string
+    description: Id of an existing [Customer](/http-api-projects-customers.html#customer).
   customerEmail?:
     type: string
+    description: ''
   customerGroup?:
     type: CustomerGroupResourceIdentifier
+    description: |-
+      Will be set automatically when the `customerId` is set and the customer is a member of a customer group.
+      Can be set explicitly when no `customerId` is present.
   anonymousId?:
     type: string
+    description: Assigns the new cart to an anonymous session (the customer has not
+      signed up/in yet).
   store?:
     type: StoreResourceIdentifier
+    description: |-
+      Assigns the new cart to the store.
+      The store assignment can not be modified.
   country?:
     type: string
+    description: A two-digit country code as per {% include external/country_code.html
+      %}.
   inventoryMode?:
     type: InventoryMode
+    description: Default inventory mode is `None`.
   taxMode?:
     type: TaxMode
+    description: The default tax mode is `Platform`.
   taxRoundingMode?:
     type: RoundingMode
+    description: The default tax rounding mode is `HalfEven`.
   taxCalculationMode?:
     type: TaxCalculationMode
-  lineItems?: LineItemDraft[]
-  customLineItems?: CustomLineItemDraft[]
+    description: The default tax calculation mode is `LineItemLevel`.
+  lineItems?:
+    description: ''
+    type: LineItemDraft[]
+  customLineItems?:
+    description: ''
+    type: CustomLineItemDraft[]
   shippingAddress?:
     type: Address
+    description: The shipping address is used to determine the eligible [shipping
+      methods and rates](/http-api-projects-shippingMethods.html#get-shippingmethods-for-a-cart)
+      as well as the [tax rate of the line items](#lineitem-taxrate).
   billingAddress?:
     type: Address
+    description: ''
   shippingMethod?:
     type: ShippingMethodResourceIdentifier
+    description: ''
   externalTaxRateForShippingMethod?:
     type: ExternalTaxRateDraft
+    description: An external tax rate can be set for the `shippingMethod` if the cart
+      has the `External` [TaxMode](#taxmode).
   custom?:
     type: CustomFieldsDraft
+    description: The custom fields.
   locale?:
     type: string
+    description: Must be one of the languages supported for this [project](/http-api-projects-project.html)
   deleteDaysAfterLastModification?:
     type: number
     format: int64
+    description: |-
+      The cart will be deleted automatically if it hasn't been modified for the specified amount of days and it is in the `Active` [CartState](#cartstate).
+      If a [ChangeSubscription](/http-api-projects-subscriptions.html#changesubscription) for carts exists, a `ResourceDeleted` notification will be sent.
   origin?:
     type: CartOrigin
+    description: The default origin is `Customer`.
   shippingRateInput?:
     type: ShippingRateInputDraft
+    description: |-
+      The shippingRateInput is used as an input to select a [ShippingRatePriceTier](/http-api-projects-shippingMethods.html#shippingratepricetier).
+      Based on the definition of [ShippingRateInputType](/http-api-projects-project.html#shippingrateinputtype).
+      If [CartClassification](/http-api-projects-project.html#cartclassification) is defined, it must be [ClassificationShippingRateInput](#classificationshippingrateinput).
+      If [CartScore](/http-api-projects-project.html#cartscore) is defined, it must be [ScoreShippingRateInput](#scoreshippingrateinput).
+      Otherwise it can not bet set.
   itemShippingAddresses?:
     type: Address[]
+    description: |-
+      Contains addresses for carts with multiple shipping addresses.
+      Each address must contain a key which is unique in this cart.
+      Line items will use these keys to reference the addresses under their `shippingDetails`.
+      The addresses captured here are not used to determine eligible shipping methods or the applicable tax rate.
+      Only the cart's `shippingAddress` is used for this.

@@ -8,30 +8,54 @@ properties:
   id:
     (identifier): true
     type: string
+    description: ''
   version:
     type: number
     format: int64
+    description: ''
   createdAt:
     type: datetime
+    description: ''
   lastModifiedAt:
     type: datetime
+    description: ''
   lastModifiedBy?:
     type: LastModifiedBy
+    description: Present on resources updated after 1/02/2019 except for [events not
+      tracked](/http-api-client-logging#events-tracked).
   createdBy?:
     type: CreatedBy
+    description: Present on resources created after 1/02/2019 except for [events not
+      tracked](/http-api-client-logging#events-tracked).
   key:
     type: string
+    description: A unique identifier for the state.
   type:
     type: StateTypeEnum
+    description: ''
   name?:
     type: LocalizedString
+    description: A human-readable name of the state.
   description?:
     type: LocalizedString
+    description: A human-readable description of the state.
   initial:
     type: boolean
+    description: |-
+      A state can be declared as an initial state for any state machine.
+      When a workflow starts, this first state must be an `initial` state.
   builtIn:
     type: boolean
+    description: Builtin states are integral parts of the project that cannot be deleted
+      nor the key can be changed.
   roles?:
     type: StateRoleEnum[]
+    description: ''
   transitions?:
     type: StateReference[]
+    description: |-
+      Transitions are a way to describe possible transformations of the current state to other states of the same `type` (e.g.: _Initial_ -> _Shipped_).
+      When performing a `transitionState` update action and `transitions` is set, the currently referenced state must have a transition to the new state.
+      If `transitions` is an empty list, it means the current state is a final state and no further transitions are allowed.
+      If `transitions` is not set, the validation is turned off.
+      When performing a `transitionState` update action, any other state of the same `type` can be transitioned to.
