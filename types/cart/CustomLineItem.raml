@@ -6,24 +6,53 @@ type: object
 properties:
   id:
     type: string
+    description: The unique ID of this CustomLineItem.
   name:
     type: LocalizedString
+    description: The name of this CustomLineItem.
   money:
     type: TypedMoney
+    description: |-
+      The cost to add to the cart.
+      The amount can be negative.
   taxedPrice?:
     type: TaxedItemPrice
+    description: Set once the `taxRate` is set.
   totalPrice:
     type: TypedMoney
-  slug: string
+    description: |-
+      The total price of this custom line item.
+      If custom line item is discounted, then the `totalPrice` would be the discounted custom line item price multiplied by `quantity`.
+      Otherwise a total price is just a `money` multiplied by the `quantity`.
+      `totalPrice` may or may not include the taxes: it depends on the taxRate.includedInPrice property.
+  slug:
+    description: A unique String in the cart to identify this CustomLineItem.
+    type: string
   quantity:
     type: number
-  state: ItemState[]
+    description: |-
+      The amount of a CustomLineItem in the cart.
+      Must be a positive integer.
+  state:
+    description: ''
+    type: ItemState[]
   taxCategory?:
     type: TaxCategoryReference
+    description: ''
   taxRate?:
     type: TaxRate
-  discountedPricePerQuantity: DiscountedLineItemPriceForQuantity[]
+    description: |-
+      Will be set automatically in the `Platform` TaxMode once the shipping address is set is set.
+      For the `External` tax mode the tax rate has to be set explicitly with the ExternalTaxRateDraft.
+  discountedPricePerQuantity:
+    description: ''
+    type: DiscountedLineItemPriceForQuantity[]
   custom?:
     type: CustomFields
+    description: ''
   shippingDetails?:
     type: ItemShippingDetails
+    description: |-
+      Container for custom line item specific address(es).
+      CustomLineItem fields that can be used in query predicates: `slug`, `name`, `quantity`,
+      `money`, `state`, `discountedPricePerQuantity`.

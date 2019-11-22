@@ -15,6 +15,12 @@ get:
           example: !include ../examples/subscriptions.example.json
 post:
   securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_subscriptions:{projectKey}"]}]
+  description: |
+    The creation of a Subscription is eventually consistent, it may take up to a minute before it becomes fully active.
+    In order to test that the destination is correctly configured, a test message will be put into the queue.
+    If the message could not be delivered, the subscription will not be created.
+    The payload of the test message is a notification of type ResourceCreated for the resourceTypeId subscription.
+    Currently, a maximum of 25 subscriptions can be created per project.
   body:
     application/json:
       example: !include ../examples/subscription-create.example.json
@@ -32,6 +38,7 @@ post:
       resourceUpdateType: Update
   get:
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_subscriptions:{projectKey}"]}]
+    description: Retrieves the representation of a subscription by its key.
     responses:
       200:
         body:
@@ -63,6 +70,7 @@ post:
       resourceUpdateType: Update
   get:
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_subscriptions:{projectKey}"]}]
+    description: Retrieves the representation of a subscription by its id.
     responses:
       200:
         body:
