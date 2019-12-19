@@ -19375,10 +19375,16 @@
         "requestBody": {
           "content": {
             "application/graphql": {
-              "example": "query Sphere {\n    products(limit: 1) {\n        ...StagedProduct,\n        ...CurrentProduct\n    }\n}\n\nfragment Product on ProductData {\n    skus, name(locale: \"en\")\n}\n\nfragment StagedProduct on ProductQueryResult {\n    results {\n        id, masterData { staged { ...Product } }\n    }\n}\n\nfragment CurrentProduct on ProductQueryResult {\n    results {\n        id, masterData { current { ...Product } }\n    }\n}\n",
+              "example": {
+                "query": "\n      query query_1($productId: String){\n        product(key:$productId){\n          key\n        }\n      }\n    ",
+                "operationName": "query_1",
+                "variables": {
+                  "productId": "f8ded810-a1"
+                }
+              },
               "schema": {
                 "includePath": "resources/graphql.raml",
-                "type": "string"
+                "$ref": "#/components/schemas/GraphQLRequest"
               }
             }
           },
@@ -29354,6 +29360,98 @@
         "x-annotation-package": "Extension",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-api-extensions.html#set-timeout-in-ms",
         "type": "string"
+      },
+      "GraphQLError": {
+        "title": "GraphQLError",
+        "includePath": "types/graphql/GraphQLError.raml",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GraphQLErrorLocation"
+            }
+          },
+          "path": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "message",
+          "locations",
+          "path"
+        ],
+        "x-annotation-package": "GraphQL"
+      },
+      "GraphQLErrorLocation": {
+        "title": "GraphQLErrorLocation",
+        "includePath": "types/graphql/GraphQLErrorLocation.raml",
+        "type": "object",
+        "properties": {
+          "line": {
+            "type": "integer"
+          },
+          "column": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "line",
+          "column"
+        ],
+        "x-annotation-package": "GraphQL"
+      },
+      "GraphQLRequest": {
+        "title": "GraphQLRequest",
+        "includePath": "types/graphql/GraphQLRequest.raml",
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "operationName": {
+            "type": "string"
+          },
+          "variables": {
+            "$ref": "#/components/schemas/GraphQLVariablesMap"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "x-annotation-package": "GraphQL"
+      },
+      "GraphQLResponse": {
+        "title": "GraphQLResponse",
+        "includePath": "types/graphql/GraphQLResponse.raml",
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string"
+          },
+          "error": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GraphQLError"
+            }
+          }
+        },
+        "x-annotation-package": "GraphQL"
+      },
+      "GraphQLVariablesMap": {
+        "title": "GraphQLVariablesMap",
+        "includePath": "types/graphql/GraphQLVariablesMap.raml",
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        },
+        "x-annotation-package": "GraphQL"
       },
       "InventoryEntry": {
         "title": "InventoryEntry",
