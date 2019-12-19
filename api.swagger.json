@@ -8846,6 +8846,93 @@
       "x-annotation-package": "Extension",
       "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-api-extensions.html#set-timeout-in-ms"
     },
+    "GraphQLError": {
+      "title": "GraphQLError",
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GraphQLErrorLocation"
+          }
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "message",
+        "locations",
+        "path"
+      ],
+      "x-annotation-package": "GraphQL"
+    },
+    "GraphQLErrorLocation": {
+      "title": "GraphQLErrorLocation",
+      "type": "object",
+      "properties": {
+        "line": {
+          "type": "integer"
+        },
+        "column": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "line",
+        "column"
+      ],
+      "x-annotation-package": "GraphQL"
+    },
+    "GraphQLRequest": {
+      "title": "GraphQLRequest",
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "operationName": {
+          "type": "string"
+        },
+        "variables": {
+          "$ref": "#/definitions/GraphQLVariablesMap"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "x-annotation-package": "GraphQL"
+    },
+    "GraphQLResponse": {
+      "title": "GraphQLResponse",
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string"
+        },
+        "error": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GraphQLError"
+          }
+        }
+      },
+      "x-annotation-package": "GraphQL"
+    },
+    "GraphQLVariablesMap": {
+      "title": "GraphQLVariablesMap",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "x-annotation-package": "GraphQL"
+    },
     "InventoryEntry": {
       "title": "InventoryEntry",
       "allOf": [
@@ -48449,8 +48536,14 @@
         "parameters": [
           {
             "schema": {
-              "example": "query Sphere {\n    products(limit: 1) {\n        ...StagedProduct,\n        ...CurrentProduct\n    }\n}\n\nfragment Product on ProductData {\n    skus, name(locale: \"en\")\n}\n\nfragment StagedProduct on ProductQueryResult {\n    results {\n        id, masterData { staged { ...Product } }\n    }\n}\n\nfragment CurrentProduct on ProductQueryResult {\n    results {\n        id, masterData { current { ...Product } }\n    }\n}\n",
-              "type": "string"
+              "example": {
+                "query": "\n      query query_1($productId: String){\n        product(key:$productId){\n          key\n        }\n      }\n    ",
+                "operationName": "query_1",
+                "variables": {
+                  "productId": "f8ded810-a1"
+                }
+              },
+              "$ref": "#/definitions/GraphQLRequest"
             },
             "in": "body",
             "name": "body",
