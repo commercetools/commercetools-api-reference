@@ -43,6 +43,25 @@ post:
             example: !include ../examples/cart.example.json
             type: Cart
     securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "manage_orders:{projectKey}"]}]
+/customer-id={customerId}:
+  (methodName): withCustomerId
+  type:
+    baseResource:
+      uriParameterName: customerId
+      resourceType: Cart
+  get:
+    securedBy: [oauth_2_0: {scopes: ["manage_project:{projectKey}", "view_orders:{projectKey}"]}]
+    description: |
+      Retrieves the active cart of the customer that has been modified most recently.
+      It does not consider carts with CartOrigin Merchant. If no active cart exists, a 404 Not Found error is returned.
+
+      The cart may not contain up-to-date prices, discounts etc. If you want to ensure they’re up-to-date,
+      send an Update request with the Recalculate update action instead.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/cart.example.json
 /{ID}:
   (methodName): withId
   type:
