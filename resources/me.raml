@@ -1,5 +1,6 @@
 type: base
 get:
+  displayName: Get customer
   is:
     - sortable:
         sortExample: createdAt asc
@@ -14,6 +15,7 @@ get:
         application/json:
           type: MyCustomer
 post:
+  displayName: Create a customer
   description: Create a customer
   securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
   body:
@@ -27,6 +29,7 @@ post:
           example: !include ../examples/customer-update-response.example.json
           type: MyCustomer
 delete:
+  displayName: Delete a Customer
   description: Delete a Customer
   is:
     - versioned
@@ -38,14 +41,15 @@ delete:
         application/json:
           example: !include ../examples/customer.example.json
           type: MyCustomer
-/email:
-  /confirm:
+/email/confirm:
     type: base
     post:
+      displayName: Verify Customer's Email
       securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
 /password:
   type: base
   post:
+    displayName: Change a customers password
     is:
       - conflicting
     securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
@@ -60,6 +64,7 @@ delete:
   /reset:
     type: base
     post:
+      displayName: Reset Customer's Password
       securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
       responses:
         200:
@@ -70,6 +75,7 @@ delete:
 /signup:
   type: base
   post:
+    displayName: Signup a customer
     securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
     body:
       application/json:
@@ -82,6 +88,7 @@ delete:
 /login:
   type: base
   post:
+    displayName: Authenticate Customer (Sign In)
     securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
     body:
       application/json:
@@ -93,6 +100,7 @@ delete:
 /active-cart:
   type: base
   get:
+    displayName: Get active cart
     securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
     responses:
       200:
@@ -236,6 +244,37 @@ delete:
         body:
           application/json:
             example: !include ../examples/my-payment.example.json
+  /key={key}:
+    (methodName): withKey
+    type:
+      baseResource:
+        uriParameterName: key
+        resourceType: MyPayment
+        resourceUpdateType: Update
+    get:
+      securedBy: [oauth_2_0: { scopes: ['manage_my_payments:{projectKey}'] }]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/my-payment.example.json
+    post:
+      securedBy: [oauth_2_0: { scopes: ['manage_my_payments:{projectKey}'] }]
+      body:
+        application/json:
+          example: !include ../examples/my-payment-update.example.json
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/my-payment.example.json
+    delete:
+      securedBy: [oauth_2_0: { scopes: ['manage_my_payments:{projectKey}'] }]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/my-payment.example.json
   /{ID}:
     (methodName): withId
     type:
