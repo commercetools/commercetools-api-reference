@@ -1,5 +1,7 @@
 on:
+  - pull_request
   - push
+
 name: CI
 
 jobs:
@@ -9,42 +11,22 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        php-version:
-          - "7.4"
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: "Install PHP with extensions"
-        uses: shivammathur/setup-php@v2
+      - name: "Setup node"
+        uses: actions/setup-node@v1
         with:
-          php-version: ${{ matrix.php-version }}
-          coverage: pcov
-          extensions: json, mbstring, intl
-          tools: composer
-          ini-values: assert.exception=1, zend.assertions=1, pcov.directory=., pcov.exclude="~vendor~"
+          node-version: '12'
 
-      - name: "Cache dependencies installed with composer"
-        uses: actions/cache@v1
-        with:
-          path: ~/.composer/cache
-          key: php${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            php${{ matrix.php-version }}-composer-
-      - name: Install dependencies with composer
-        run: composer install --no-ansi --no-interaction --no-progress --no-suggest
+      - run: yarn install
 
-      - name: Generate
-        run: bin/types.php && bin/generate-updates.php && bin/types.php
+      - name: Check markdown
+        run: node bin/explode-raml.js
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "TASK: Updating RAML types"
-          file_pattern: types/*.raml
-          # Optional commit user and author settings
-          commit_user_name: Auto Mation
-          commit_user_email: automation@commercetools.com
-          commit_author: Auto Mation <automation@commercetools.com>
+      - name: Lint RAML
+        run: yarn run lint:raml
+
+      - name: Validate RAML
+        run: docker run -v$(pwd):/api vrapio/vrap -rc /api/update-actions.raml
