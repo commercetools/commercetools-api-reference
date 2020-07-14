@@ -27,6 +27,11 @@ jobs:
           tools: composer
           ini-values: assert.exception=1, zend.assertions=1, pcov.directory=., pcov.exclude="~vendor~"
 
+      - name: "Setup node"
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+
       - name: "Cache dependencies installed with composer"
         uses: actions/cache@v1
         with:
@@ -34,16 +39,34 @@ jobs:
           key: php${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: |
             php${{ matrix.php-version }}-composer-
+
       - name: Install dependencies with composer
         run: composer install --no-ansi --no-interaction --no-progress --no-suggest
 
-      - name: Generate
+      - run: yarn install
+
+      - name: Update RAML files
         run: bin/types.php && bin/generate-updates.php && bin/types.php
+
+      - name: Check markdown
+        run: node bin/explode-raml.js
+
+      - name: Lint RAML
+        run: yarn run lint:raml
+
+      - name: Validate RAML
+        run: docker run -v$(pwd):/api vrapio/vrap -rc /api/update-actions.raml
+
+      - name: Generate OAS files
+        run: bin/oas-convert.js
+
+      - name: Generate postman collection
+        run: docker run --rm -v$(pwd):/api -v$(pwd):/out vrapio/rmf-codegen generate -o /out/postman -t postman /api/postman.raml
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "TASK: Updating RAML types"
-          file_pattern: types/*.raml
+          commit_message: "TASK: Updating RAML types, Postman and OAS definition"
+          file_pattern: types/*.raml api.swagger.json api.swagger3.json postman/*
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
           commit_author: Auto Mation <automation@commercetools.com>
