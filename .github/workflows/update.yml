@@ -63,7 +63,7 @@ jobs:
       - name: Generate postman collection
         run: docker run --rm -v$(pwd):/api -v$(pwd):/out vrapio/rmf-codegen generate -o /out/postman -t postman /api/postman.raml
 
-      - name: clean
+      - name: clean postman folder
         run: git checkout -- postman/connection_settings.png postman/gen.properties
 
       - uses: stefanzweifel/git-auto-commit-action@v4
@@ -73,15 +73,3 @@ jobs:
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
           commit_author: Auto Mation <automation@commercetools.com>
-
-      - name: Postman collection checkout
-        uses: actions/checkout@v2
-        with:
-          repository: 'commercetools/commercetools-postman-collection'
-          path: 'postman-collection'
-
-      - name: Generate postman collection
-        run: docker run --rm -v$(pwd):/api -v"$PWD/postman-collection":/out vrapio/rmf-codegen generate -o /out/postman -t postman /api/postman.raml
-
-      - name: Show Git status
-        run: cd postman-collection && git status

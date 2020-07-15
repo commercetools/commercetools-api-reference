@@ -1,0 +1,39 @@
+on:
+  - push
+name: Postman collection
+
+jobs:
+
+  generate:
+    name: Update postman collection
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout api reference
+        uses: actions/checkout@v2
+        with:
+          path: api
+
+      - name: Checkout postman collection
+        uses: actions/checkout@v2
+        with:
+          repository: 'commercetools/commercetools-postman-collection'
+          path: postman
+
+      - name: Generate postman collection
+        run: docker run --rm -v"$PWD/api":/api -v"$PWD/postman":/out vrapio/rmf-codegen generate -o /out -t postman /api/postman.raml
+
+      - name: Show Git status
+        run: cd postman && git status
+
+      - name: clean postman folder
+        run: git checkout -- postman/connection_settings.png postman/gen.properties
+
+#      - uses: stefanzweifel/git-auto-commit-action@v4
+#        with:
+#          repository: postman
+#          commit_message: "TASK: Updating RAML types, Postman and OAS definition"
+#          commit_user_name: Auto Mation
+#          commit_user_email: automation@commercetools.com
+#          commit_author: Auto Mation <automation@commercetools.com>
