@@ -1,0 +1,32 @@
+on:
+  - pull_request
+  - push
+
+name: CI
+
+jobs:
+
+  generate:
+    name: Update RAML spec
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: "Setup node"
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+
+      - run: yarn install
+
+      - name: Check markdown
+        run: node bin/explode-raml.js
+
+      - name: Lint RAML
+        run: yarn run lint:raml
+
+      - name: Validate RAML
+        run: docker run -v$(pwd):/api vrapio/vrap -rc /api/update-actions.raml
