@@ -47,10 +47,10 @@ jobs:
           path: sdk
 
       - name: Generate Base files
-        run: docker run --rm -v"$PWD/api":/api -v"$PWD/sdk":/out vrapio/rmf-codegen:php generate -o /out/lib/commercetools-base -t PHP_BASE /api/update-actions.raml
+        run: docker run --rm -v"$PWD/api":/api -v"$PWD/sdk":/out vrapio/rmf-codegen:php generate -o /out/lib/commercetools-base -t PHP_BASE -b "commercetools" /api/update-actions.raml
 
       - name: Generate PHP SDK
-        run: docker run --rm -v"$PWD/api":/api -v"$PWD/sdk":/out vrapio/rmf-codegen:php generate -o /out/lib/commercetools-api -t PHP_CLIENT /api/update-actions.raml
+        run: docker run --rm -v"$PWD/api":/api -v"$PWD/sdk":/out vrapio/rmf-codegen:php generate -o /out/lib/commercetools-api -t PHP_CLIENT -s "commercetools" -b "commercetools/api" /api/update-actions.raml
 
       - name: Install dependencies with composer
         working-directory: sdk
@@ -61,7 +61,7 @@ jobs:
         run: vendor/bin/phpunit --testsuite=unit
 
       - name: Generate PHP SDK Tests
-        run: docker run --rm -v"$PWD/api":/api -v"$PWD/sdk":/out vrapio/rmf-codegen:php generate -o /out/lib/commercetools-api-tests -t PHP_TEST /api/update-actions.raml
+        run: docker run --rm -v"$PWD/api":/api -v"$PWD/sdk":/out vrapio/rmf-codegen:php generate -o /out/lib/commercetools-api-tests -t PHP_TEST -s "commercetools" -b "commercetools/api" /api/update-actions.raml
 
       - name: Run tests
         working-directory: sdk
