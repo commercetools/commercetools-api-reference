@@ -6,13 +6,13 @@ name: CI
 
 jobs:
 
-  generate:
-    name: Update RAML spec
+  lint:
+    name: "lint and validate RAML spec"
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: "Checkout"
         uses: actions/checkout@v2
 
       - name: "Setup node"
@@ -22,11 +22,11 @@ jobs:
 
       - run: yarn install
 
-      - name: Check markdown
+      - name: "Check markdown"
         run: node bin/explode-raml.js
 
-      - name: Lint RAML
+      - name: "Lint RAML"
         run: yarn run lint:raml
 
-      - name: Validate RAML
+      - name: "Validate RAML"
         run: docker run -v$(pwd):/api vrapio/vrap -rc /api/update-actions.raml

@@ -7,26 +7,27 @@ name: Postman collection
 jobs:
 
   generate:
-    name: Update postman collection
+    name: "Update postman collection"
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout api reference
+      - name: "Checkout api reference"
         uses: actions/checkout@v2
         with:
           path: api
 
-      - name: Checkout postman collection
+      - name: "Checkout postman collection"
         uses: actions/checkout@v2
         with:
           repository: 'commercetools/commercetools-postman-collection'
           path: postman
+          ssh-key: ${{ secrets.POSTMAN_DEPLOY_KEY }}
 
-      - name: Generate postman collection
+      - name: "Generate postman collection"
         run: docker run --rm -v"$PWD/api":/api -v"$PWD/postman":/out vrapio/rmf-codegen generate -o /out/api -t postman /api/postman.raml
 
-      - name: clean postman folder
+      - name: "clean postman folder"
         run: cd postman && git checkout -- api/gen.properties
 
       - uses: stefanzweifel/git-auto-commit-action@v4
