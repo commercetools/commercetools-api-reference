@@ -40,12 +40,9 @@ jobs:
       - name: "Check changes pending"
         working-directory: postman
         run: |
+          git status --porcelain -- ':(exclude)*gen.properties'
           CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^ || true`
           echo "::set-env name=CHANGES_PENDING::$CHANGES_PENDING"
-
-      - name: "printev"
-        working-directory: postman
-        run: printenv
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: ${{ env.CHANGES_PENDING != '0' }}

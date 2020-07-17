@@ -18,6 +18,14 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v2
 
+      - name: "Install Java"
+        uses: actions/setup-java@v1
+        with:
+          java-version: '13'
+
+      - name: "Install codegen"
+        run: sudo chmod 777 /usr/local/bin && export VRAP_VERSION=1.0.0-20200716101307 && curl -o- -s https://raw.githubusercontent.com/vrapio/rmf-codegen/master/scripts/install.sh | bash
+
       - name: "Install PHP with extensions"
         uses: shivammathur/setup-php@v2
         with:
@@ -61,7 +69,7 @@ jobs:
         run: yarn run oas_convert
 
       - name: "Generate postman collection"
-        run: docker run --rm -v$(pwd):/api -v$(pwd):/out vrapio/rmf-codegen generate -o /out/postman -t postman /api/postman.raml
+        run: rmf-codegen generate -o postman -t postman /api/postman.raml
 
       - name: "clean postman folder"
         run: git checkout -- postman/connection_settings.png postman/gen.properties
