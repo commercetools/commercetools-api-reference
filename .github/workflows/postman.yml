@@ -1,7 +1,8 @@
 on:
-  push:
-      branches:
-        - master
+  - push
+#  push:
+#      branches:
+#        - master
 name: Postman collection
 
 jobs:
@@ -27,10 +28,12 @@ jobs:
       - name: "Generate postman collection"
         run: docker run --rm -v"$PWD/api":/api -v"$PWD/postman":/out vrapio/rmf-codegen generate -o /out/api -t postman /api/postman.raml
 
-      - name: "clean postman folder"
-        run: cd postman && git checkout -- api/gen.properties
+      - name: "Check changes pending"
+        working-directory: sdk
+        run: git diff-index --quiet HEAD -- ':(exclude)*gen.properties' && echo "::set-env name=changes_pending::$?"
 
       - uses: stefanzweifel/git-auto-commit-action@v4
+        if: env.changes_pending == 1
         with:
           repository: postman
           commit_message: "TASK: Updating Postman collection"
