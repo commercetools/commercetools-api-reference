@@ -84,15 +84,13 @@ jobs:
         run: vendor/bin/phpunit --testsuite=unit
 
       - name: "Check changes pending"
-        working-directory: postman
+        working-directory: sdk
         run: |
-          set +e
-          git diff-index --name-only HEAD -- ':(exclude)*gen.properties'
-          git diff-index --quiet HEAD -- ':(exclude)*gen.properties'
-          echo "::set-env name=CHANGES_PENDING::$?"
+          CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^ || true`
+          echo "::set-env name=CHANGES_PENDING::$CHANGES_PENDING"
 
       - uses: stefanzweifel/git-auto-commit-action@v4
-        if: env.changes_pending == '1'
+        if: env.changes_pending != '0'
         #github.ref == 'refs/heads/master' &&
         with:
           repository: sdk
