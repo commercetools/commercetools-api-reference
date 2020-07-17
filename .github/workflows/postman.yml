@@ -40,18 +40,15 @@ jobs:
       - name: "Check changes pending"
         working-directory: postman
         run: |
-          set +e
-          git diff-index --quiet HEAD -- ':(exclude)*gen.properties'
-          echo "::set-env name=CHANGES_PENDING::$?"
-          git status
-          git diff
+          CHANGES_PENDING=git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^
+          echo "::set-env name=CHANGES_PENDING::$CHANGES_PENDING"
 
       - name: "printev"
         working-directory: postman
         run: printenv
 
       - uses: stefanzweifel/git-auto-commit-action@v4
-        if: ${{ env.CHANGES_PENDING == '1' }}
+        if: ${{ env.CHANGES_PENDING != '0' }}
         with:
           repository: postman
           commit_message: "TASK: Updating Postman collection"
