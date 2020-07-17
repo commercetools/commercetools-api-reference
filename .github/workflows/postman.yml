@@ -13,6 +13,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: "Install Java"
+        uses: actions/setup-java@v1
+        with:
+          java-version: '13'
+
+      - name: "Install codegen"
+        run: export VRAP_VERSION=1.0.0-20200716101307 && curl -o- -s https://raw.githubusercontent.com/vrapio/rmf-codegen/master/scripts/install.sh | bash
+
       - name: "Checkout api reference"
         uses: actions/checkout@v2
         with:
@@ -26,14 +34,14 @@ jobs:
           ssh-key: ${{ secrets.POSTMAN_DEPLOY_KEY }}
 
       - name: "Generate postman collection"
-        run: docker run --rm -v"$PWD/api":/api -v"$PWD/postman":/out vrapio/rmf-codegen generate -o /out/api -t postman /api/postman.raml
+        run: rmf-codegen generate -o postman/api -t postman api/postman.raml
 
       - name: "Check changes pending"
         working-directory: postman
-        run: git diff-index --quiet HEAD -- ':(exclude)*gen.properties' && echo "::set-env name=changes_pending::$?"
+        run: git diff-index --quiet HEAD -- ':(exclude)*gen.properties' ; echo "::set-env name=changes_pending::$?"
 
       - uses: stefanzweifel/git-auto-commit-action@v4
-        if: env.changes_pending == 1
+        if: env.changes_pending == '1'
         with:
           repository: postman
           commit_message: "TASK: Updating Postman collection"
