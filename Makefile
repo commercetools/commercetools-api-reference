@@ -6,7 +6,7 @@ build: install_deps generate lint
 
 install_deps: codegen_install composer_install yarn_install
 
-lint: check_markdown lint_raml validate_raml
+lint: yarn_install check_markdown lint_raml validate_raml
 
 generate: update_types oas_convert generate_collection
 
