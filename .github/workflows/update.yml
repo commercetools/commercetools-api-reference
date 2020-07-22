@@ -23,9 +23,6 @@ jobs:
         with:
           java-version: '13'
 
-      - name: "Install codegen"
-        run: sudo chmod 777 /usr/local/bin && export VRAP_VERSION=1.0.0-20200716101307 && curl -o- -s https://raw.githubusercontent.com/vrapio/rmf-codegen/master/scripts/install.sh | bash
-
       - name: "Install PHP with extensions"
         uses: shivammathur/setup-php@v2
         with:
@@ -48,33 +45,10 @@ jobs:
           restore-keys: |
             php${{ matrix.php-version }}-composer-
 
-      - name: "Install dependencies with composer"
-        run: composer install --no-ansi --no-interaction --no-progress --no-suggest
-
-      - run: yarn install
-
-      - name: "Update RAML files"
-        run: bin/types.php && bin/generate-updates.php && bin/types.php
-
-      - name: "Check markdown"
-        run: node bin/explode-raml.js
-
-      - name: "Lint RAML"
-        run: yarn run lint:raml
-
-      - name: "Validate RAML"
-        run: docker run -v$(pwd):/api vrapio/vrap -rc /api/update-actions.raml
-
-      - name: "Generate OAS files"
-        run: yarn run oas_convert
-
-      - name: "Generate postman collection"
-        run: rmf-codegen generate -o postman -t postman postman.raml
-
-      - name: "clean postman folder"
-        run: git checkout -- postman/connection_settings.png postman/gen.properties
+      - run: sudo chmod 777 /usr/local/bin && make build check_pending
 
       - uses: stefanzweifel/git-auto-commit-action@v4
+        if: env.CHANGES_PENDING != '0'
         with:
           commit_message: "TASK: Updating RAML types, Postman and OAS definition"
           file_pattern: types/*.raml api.swagger.json api.swagger3.json postman/*
