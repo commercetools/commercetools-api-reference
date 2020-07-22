@@ -3,13 +3,16 @@ on:
 
 name: "SDKs"
 
+env:
+  VRAP_VERSION: 1.0.0-20200716101307
+
 jobs:
 
   php:
     name: "Generate PHP SDK"
 
     runs-on: ubuntu-latest
-
+    continue-on-error: true
     strategy:
       matrix:
         php-version:
@@ -38,9 +41,6 @@ jobs:
           restore-keys: |
             php${{ matrix.php-version }}-composer-
 
-      - name: "Install codegen"
-        run: export VRAP_VERSION=1.0.0-20200716101307 && curl -o- -s https://raw.githubusercontent.com/vrapio/rmf-codegen/master/scripts/install.sh | bash
-
       - name: "Checkout api reference"
         uses: actions/checkout@v2
         with:
@@ -54,41 +54,53 @@ jobs:
           ref: develop
           ssh-key: ${{ secrets.SDK_DEPLOY_KEY }}
 
-      - name: "Generate Base files"
-        run: rmf-codegen generate -o sdk/lib/commercetools-base -t PHP_BASE -b "commercetools" api/update-actions.raml
-
-      - name: "Generate PHP SDK"
-        run: rmf-codegen generate -o sdk/lib/commercetools-api -t PHP_CLIENT -s "commercetools" -b "commercetools/api" api/update-actions.raml
-
-      - name: "Install dependencies with composer"
+      - run: make API_RAML="../api/update-actions.raml" build check_pending
         working-directory: sdk
-        run: composer install --no-ansi --no-interaction --no-progress --no-suggest
-
-      - name: "Run tests to check for BC issue"
-        working-directory: sdk
-        run: vendor/bin/phpunit --testsuite=unit
-
-      - name: "Generate PHP SDK Tests"
-        run: rmf-codegen generate -o sdk/lib/commercetools-api-tests -t PHP_TEST -s "commercetools" -b "commercetools/api" api/update-actions.raml
-
-      - name: "Prettify"
-        working-directory: sdk
-        run: ./prettify.sh
-
-      - name: "Run static analysis"
-        working-directory: sdk
-        run: vendor/bin/psalm --threads=2
-
-      - name: "Run tests"
-        working-directory: sdk
-        run: vendor/bin/phpunit --testsuite=unit
 
       - uses: stefanzweifel/git-auto-commit-action@v4
-        if: github.ref == 'refs/heads/master'
+        if: env.changes_pending != '0' && github.ref == 'refs/heads/master'
         with:
           repository: sdk
           branch: develop
           commit_message: "TASK: Updating SDK"
+          commit_user_name: Auto Mation
+          commit_user_email: automation@commercetools.com
+          commit_author: Auto Mation <automation@commercetools.com>
+
+  postman:
+    name: "Generate postman collection"
+
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+
+      - name: "Install Java"
+        uses: actions/setup-java@v1
+        with:
+          java-version: '13'
+
+      - name: "Checkout api reference"
+        uses: actions/checkout@v2
+        with:
+          path: api
+
+      - name: "Checkout postman collection"
+        uses: actions/checkout@v2
+        with:
+          repository: 'commercetools/commercetools-postman-collection'
+          path: postman
+          ssh-key: ${{ secrets.POSTMAN_DEPLOY_KEY }}
+
+      - name: "Generate postman collection"
+        run: sudo chmod 777 /usr/local/bin && make RAML_FILE="../api/postman.raml" LIB_NAME="api" build check_pending
+        working-directory: postman
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: env.CHANGES_PENDING != '0'  && github.ref == 'refs/heads/master'
+        with:
+          repository: postman
+          commit_message: "TASK: Updating Postman collection"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
           commit_author: Auto Mation <automation@commercetools.com>

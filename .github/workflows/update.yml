@@ -18,6 +18,11 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v2
 
+      - name: "Install Java"
+        uses: actions/setup-java@v1
+        with:
+          java-version: '13'
+
       - name: "Install PHP with extensions"
         uses: shivammathur/setup-php@v2
         with:
@@ -40,33 +45,10 @@ jobs:
           restore-keys: |
             php${{ matrix.php-version }}-composer-
 
-      - name: "Install dependencies with composer"
-        run: composer install --no-ansi --no-interaction --no-progress --no-suggest
-
-      - run: yarn install
-
-      - name: "Update RAML files"
-        run: bin/types.php && bin/generate-updates.php && bin/types.php
-
-      - name: "Check markdown"
-        run: node bin/explode-raml.js
-
-      - name: "Lint RAML"
-        run: yarn run lint:raml
-
-      - name: "Validate RAML"
-        run: docker run -v$(pwd):/api vrapio/vrap -rc /api/update-actions.raml
-
-      - name: "Generate OAS files"
-        run: yarn run oas_convert
-
-      - name: "Generate postman collection"
-        run: docker run --rm -v$(pwd):/api -v$(pwd):/out vrapio/rmf-codegen generate -o /out/postman -t postman /api/postman.raml
-
-      - name: "clean postman folder"
-        run: git checkout -- postman/connection_settings.png postman/gen.properties
+      - run: sudo chmod 777 /usr/local/bin && make build check_pending
 
       - uses: stefanzweifel/git-auto-commit-action@v4
+        if: env.CHANGES_PENDING != '0'
         with:
           commit_message: "TASK: Updating RAML types, Postman and OAS definition"
           file_pattern: types/*.raml api.swagger.json api.swagger3.json postman/*
