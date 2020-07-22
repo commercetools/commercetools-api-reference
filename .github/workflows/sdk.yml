@@ -54,11 +54,13 @@ jobs:
           ref: develop
           ssh-key: ${{ secrets.SDK_DEPLOY_KEY }}
 
-      - run: make API_RAML="../api/update-actions.raml" build check_pending
+      - run: make build_api_sdk check_pending
         working-directory: sdk
+        env:
+          RAML_FILE: "../api/update-actions.raml"
 
       - uses: stefanzweifel/git-auto-commit-action@v4
-        if: env.changes_pending != '0' && github.ref == 'refs/heads/master'
+        if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/master'
         with:
           repository: sdk
           branch: develop
@@ -93,8 +95,11 @@ jobs:
           ssh-key: ${{ secrets.POSTMAN_DEPLOY_KEY }}
 
       - name: "Generate postman collection"
-        run: sudo chmod 777 /usr/local/bin && make RAML_FILE="../api/postman.raml" LIB_NAME="api" build check_pending
+        run: sudo chmod 777 /usr/local/bin && make build check_pending
         working-directory: postman
+        env:
+          RAML_FILE: "../api/postman.raml"
+          LIB_NAME: "api"
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: env.CHANGES_PENDING != '0'  && github.ref == 'refs/heads/master'
