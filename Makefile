@@ -29,7 +29,7 @@ lint_raml:
 	yarn run lint:raml
 
 validate_raml:
-	docker run -v$(pwd):/api vrapio/vrap -rc /api/update-actions.raml
+	docker run -v$(shell pwd):/api vrapio/vrap -rc /api/update-actions.raml
 
 oas_convert:
 	yarn run oas_convert
