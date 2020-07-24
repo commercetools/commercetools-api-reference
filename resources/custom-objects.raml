@@ -49,14 +49,12 @@ post:
           example: !include ../examples/custom-object.example.json
 /{container}/{key}:
   (methodName): withContainerAndKey
-  type:
-    baseResource:
-      uriParameters:
-        container:
-          type: string
-        key:
-          type: string
-      resourceType: CustomObject
+  uriParameters:
+    container:
+      type: string
+    key:
+      type: string
+  type: base
   get:
     securedBy:
       - oauth_2_0:
@@ -65,14 +63,24 @@ post:
             - 'view_products:{projectKey}'
             - 'view_orders:{projectKey}'
             - 'view_customers:{projectKey}'
+    is:
+      - expandable
+    displayName: Get CustomObject by container and key
+    description: Get CustomObject by container and key
     responses:
       200:
         body:
           application/json:
             example: !include ../examples/custom-object.example.json
+            type: CustomObject
   delete:
     is:
       - dataErasure
+      - versioned
+      - conflicting
+      - expandable
+    displayName: Delete CustomObject by container and key
+    description: Delete CustomObject by container and key
     securedBy:
       - oauth_2_0:
           scopes:
@@ -88,6 +96,7 @@ post:
         body:
           application/json:
             example: !include ../examples/custom-object.example.json
+            type: CustomObject
 /{ID}:
   (methodName): withId
   type:
