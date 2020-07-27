@@ -12,6 +12,8 @@ $(SUBDIRS):
 
 build: install_deps subdirs
 
+lint: install_deps subdirs
+
 install_deps: codegen_install composer_install yarn_install
 
 codegen_install:

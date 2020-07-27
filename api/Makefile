@@ -1,11 +1,11 @@
 SHELL := /bin/bash
 
-.PHONY: build lint generate
+.PHONY: build lint generate check_pending
 
-build: generate lint
+build: lint
 lint: check_markdown lint_raml validate_raml
 
-generate: update_types oas_convert generate_collection
+generate: update_types generate_collection
 
 update_types:
 	bin/types.php && bin/generate-updates.php && bin/types.php
@@ -24,3 +24,5 @@ oas_convert:
 
 generate_collection:
 	rmf-codegen generate -o postman -t postman postman.raml
+
+check_pending:
