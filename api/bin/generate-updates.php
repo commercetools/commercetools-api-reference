@@ -250,7 +250,7 @@ class RamlModelParser
         if (strlen($docsUri) > 120) {
             $docsUri = '# yamllint disable-line rule:line-length' . PHP_EOL . $docsUri;
         }
-        $exampleExists = file_exists(__DIR__ . '/commercetools-api-reference/' . $exampleFileName) ? '(postman-example): !include ../../../' . $exampleFileName : '';
+        $exampleExists = file_exists(__DIR__ . '/../' . $exampleFileName) ? '(postman-example): !include ../../../' . $exampleFileName : '';
         $command = <<<EOF
 #%RAML 1.0 DataType
 # This file is auto-generated. Do not touch!
