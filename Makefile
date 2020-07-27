@@ -1,18 +1,18 @@
 VRAP_VERSION := "1.0.0-20200716101307"
 SHELL := /bin/bash
 CHANGES_PENDING := `git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^ || true`
+SUBDIRS := api
 
-.PHONY: build install_deps
+.PHONY: build install_deps subdirs $(SUBDIRS)
 
-build: install_deps generate lint
+subdirs: $(SUBDIRS)
+
+$(SUBDIRS):
+	$(MAKE) -C $@ $(MAKECMDGOALS)
+
+build: install_deps subdirs
 
 install_deps: codegen_install composer_install yarn_install
-
-lint:
-	$(MAKE) -C api install_deps lint
-
-generate:
-	$(MAKE) -C api install_deps generate
 
 codegen_install:
 	export VRAP_VERSION=$(VRAP_VERSION) && curl -o- -s https://raw.githubusercontent.com/vrapio/rmf-codegen/master/scripts/install.sh | bash

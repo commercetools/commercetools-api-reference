@@ -1,7 +1,8 @@
 SHELL := /bin/bash
 
-.PHONY: lint generate
+.PHONY: build lint generate
 
+build: generate lint
 lint: check_markdown lint_raml validate_raml
 
 generate: update_types oas_convert generate_collection
