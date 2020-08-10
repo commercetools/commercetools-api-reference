@@ -7,7 +7,7 @@ install_deps: codegen_install composer_install yarn_install
 
 lint: yarn_install check_markdown lint_raml validate_raml
 
-generate: update_types oas_convert generate_collection
+generate: update_types oas_convert generate_collection format_raml
 
 codegen_install:
 	curl -o- -s https://raw.githubusercontent.com/vrapio/rmf-codegen/master/scripts/install.sh | bash
@@ -26,6 +26,9 @@ check_markdown:
 
 lint_raml:
 	yarn run lint:raml
+
+format_raml:
+	yarn run format:raml
 
 validate_raml:
 	docker run -v$(shell pwd):/api vrapio/vrap -rc /api/update-actions.raml
