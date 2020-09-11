@@ -49,6 +49,7 @@ jobs:
           repository: 'commercetools/commercetools-php-sdk-v2'
           path: sdk
           ssh-key: ${{ secrets.SDK_DEPLOY_KEY }}
+          ref: master
 
       - run: make build_api_sdk check_pending
         working-directory: sdk
@@ -88,6 +89,7 @@ jobs:
           repository: 'commercetools/commercetools-postman-collection'
           path: postman
           ssh-key: ${{ secrets.POSTMAN_DEPLOY_KEY }}
+          ref: master
 
       - name: "Generate postman collection"
         run: sudo chmod 777 /usr/local/bin && make build check_pending
@@ -128,6 +130,7 @@ jobs:
           repository: 'commercetools/commercetools-sdk-java-v2'
           path: sdk
           ssh-key: ${{ secrets.JAVA_SDK_DEPLOY_KEY }}
+          ref: master
 
       - name: "Generate Java SDK"
         run: sudo chmod 777 /usr/local/bin && make build_api_sdk check_pending
@@ -151,6 +154,11 @@ jobs:
     continue-on-error: true
 
     steps:
+      - name: "Install Java"
+        uses: actions/setup-java@v1
+        with:
+          java-version: '13'
+
       - name: "Install node"
         uses: actions/setup-node@v1
         with:
@@ -167,6 +175,7 @@ jobs:
           repository: 'commercetools/commercetools-sdk-typescript'
           path: sdk
           ssh-key: ${{ secrets.TS_SDK_DEPLOY_KEY }}
+          ref: master
 
       - name: "Generate Typescript SDK"
         run: sudo chmod 777 /usr/local/bin && make build_api_sdk check_pending
