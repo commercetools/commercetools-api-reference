@@ -226,7 +226,7 @@ Some examples:
       discountCode
          
 ####Array
-Define an Array property using names ending with "s".
+Define an Array property using names in plural form, typically ending with "s".
 
 Some examples:
 
