@@ -1,7 +1,10 @@
 #API GUIDELINES
 
 ##Overview
-These Guidelines aim to help developers to design APIs:
+As commercetools aims to be 100% API First, developer experience for API solution becomes very important for us.
+Additionally we aim to achieve more automation and improve the review process of new changes in the APIs.
+
+With this in mind, we have created "API Guidelines" that aims to help developers to design APIs:
 
  - simple
  - consistent 
