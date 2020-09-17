@@ -210,12 +210,11 @@ Some examples:
         version
         weight
         height
-        orderNumber
         variantId
         totalAmount
       
 ####String
-Define a String property using names that have to be explicable.
+Define a String property using names that have to be explicable about the content.
 
 Some examples:
 
@@ -236,16 +235,16 @@ Some examples:
     allowedValues
     
 ####Object
-Define an Object property using "ResourceIdentifier" or "Draft" or "Reference" in the name.
+Define an Object property using names that have to be explicable about the content and the scope.
 
 Some examples:
 
-    shippingMethod -> ShippingMethodResourceIdentifier
-    shippingRateInput -> ShippingRateInputDraft
-    product -> ProductReference
-    shippingDetailsToRemove -> ItemShippingDetailsDraft
-    discountedPricePerQuantity -> DiscountedLineItemPriceForQuantity[]
-    discountedPrice -> DiscountedLineItemPrice  
+    shippingMethod
+    shippingRateInput
+    product
+    shippingDetailsToRemove
+    discountedPricePerQuantity
+    discountedPrice 
 
 ####*Exceptions
 The only exception allowed is:
