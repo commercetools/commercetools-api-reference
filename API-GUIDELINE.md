@@ -48,7 +48,7 @@ The HTTP verbs used are;
  - POST -> create or update data
  - DELETE -> delete data
 
-It's important to keep in mind the concept of Idempotency. So for instance use GET to retrieve data and not to delete content!
+It's important to avoid unexpected behavior. So for instance use GET to retrieve data and not to delete content!
 
 ##Properties/Payload
 Clients interact with a service by exchanging representations of resources.
