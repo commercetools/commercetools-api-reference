@@ -194,14 +194,14 @@ Some examples:
         validTo
 
 ####Boolean
-Define a Boolean property using a name which includes "is" or "has" and the verb at past participle.
+Define a Boolean property using a name which NOT includes "is" but it can include "has" and the verb at past participle.
 
 Some examples:
 
-        isEmailVerified
+        emailVerified
         hasStagedChanges
-        isPublished
-        isActive
+        published
+        active
         
 ####Number/Integer
 Define a Number/Integer property using names that can be quantified.
