@@ -45,7 +45,7 @@ A resource can be an entity or a collection:
 A resource may contain sub-collection resources.
 
 ## Methods
-The HTTP verbs used are;
+The HTTP verbs used are:
 
  - GET -> retrieve data
  - POST -> create or update data
