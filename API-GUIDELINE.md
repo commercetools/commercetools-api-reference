@@ -20,10 +20,10 @@ The Keywords to have a good Guidelines are:
 The purpose of these guidelines is to achieve the definition of consistent practices and patterns for all API endpoints.
 
 ## URI
-Our API URIs are composed by:
+Our URIs are composed by:
    
     Base Uri like:
-        https://api.{region}.{cloudProvider}.commercetools.com 
+        https://{service}.{region}.{cloudProvider}.commercetools.com 
 
     {projectKey}
 
@@ -33,7 +33,7 @@ Our API URIs are composed by:
 
     by external ID with equals e.g. customers/key={key}
 
-See our documentation for more details https://docs.commercetools.com/http-api.html#hosts
+See our documentation for more details https://docs.commercetools.com/http-api.html#hosts and  https://docs.commercetools.com/http-api-authorization#requesting-an-access-token-using-commercetools-oauth2-server 
 
 ## Resources
 Resource is an object or representation of something, which has some associated data with it and can be helped by methods to operate on it.
