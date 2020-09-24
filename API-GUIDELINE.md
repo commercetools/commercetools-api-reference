@@ -1,7 +1,7 @@
-#API GUIDELINES
+# API GUIDELINES
 
-##Overview
-As commercetools aims to be 100% API First, developer experience for API solution becomes very important for us.
+## Overview
+As commercetools is 100% API First, it's important to have a well designed developer experience.
 Additionally we aim to achieve more automation and improve the review process of new changes in the APIs.
 
 With this in mind, we have created "API Guidelines" that aims to help developers to design APIs:
@@ -14,13 +14,13 @@ The Keywords to have a good Guidelines are:
  
  - Consistency => following the Guidelines
  - Uniformity => checking in the code if there are other properties with similar name and adjust in base of it or improve it
- - Explicability => explain with a few words the purpose of the property avoiding abbreviations (there are some *exceptions).
+ - Explicability => explain with a few words the purpose of the property avoiding abbreviations (there are some [exceptions](#exceptions)).
 
-##Scope
+## Scope
 The purpose of these guidelines is to achieve the definition of consistent practices and patterns for all API endpoints.
 
-##URI
-Our URIs are composed by:
+## URI
+Our API URIs are composed by:
    
     Base Uri like:
         https://api.{region}.{cloudProvider}.commercetools.com 
@@ -35,7 +35,7 @@ Our URIs are composed by:
 
 See our documentation for more details https://docs.commercetools.com/http-api.html#hosts
 
-##Resources
+## Resources
 Resource is an object or representation of something, which has some associated data with it and can be helped by methods to operate on it.
 
 A resource can be an entity or a collection:
@@ -44,7 +44,7 @@ A resource can be an entity or a collection:
  
 A resource may contain sub-collection resources.
 
-##Methods
+## Methods
 The HTTP verbs used are;
 
  - GET -> retrieve data
@@ -53,10 +53,10 @@ The HTTP verbs used are;
 
 It's important to avoid unexpected behavior. So for instance use GET to retrieve data and not to delete content!
 
-##Properties/Payload
+## Properties/Payload
 Clients interact with a service by exchanging representations of resources.
 
-An example, how it's right now the Cart payload:
+An example of the Cart payload:
 
     {
        "type": "Cart",
@@ -156,9 +156,9 @@ An example, how it's right now the Cart payload:
        "origin": "Customer"
      }
 
-##Naming convention
+## Naming convention
 
-###General Guidelines
+### General Guidelines
 To use consistent names these are the rules to follow:
 
  DO'S
@@ -183,7 +183,7 @@ The properties are identified in base of the type:
  - Array
  - Object
 
-####DateTime
+#### DateTime
 In general, define a DateTime property using a name ending with "At", then if there is a range of date use "From" and "To".
 
 Some examples:
@@ -193,7 +193,7 @@ Some examples:
         validFrom
         validTo
 
-####Boolean
+#### Boolean
 Define a Boolean property using a name which NOT includes "is" but it can include "has" and the verb at past participle.
 
 Some examples:
@@ -203,7 +203,7 @@ Some examples:
         published
         active
         
-####Number/Integer
+#### Number/Integer
 Define a Number/Integer property using names that can be quantified.
 
 Some examples:
@@ -216,7 +216,7 @@ Some examples:
         variantId
         totalAmount
       
-####String
+#### String
 Define a String property using names that have to be explicable about the content.
 
 Some examples:
@@ -227,7 +227,7 @@ Some examples:
       productSku
       discountCode
          
-####Array
+#### Array
 Define an Array property using names in plural form, typically ending with "s".
 
 Some examples:
@@ -237,7 +237,7 @@ Some examples:
     roles
     allowedValues
     
-####Object
+#### Object
 Define an Object property using names that have to be explicable about the content and the scope.
 
 Some examples:
@@ -249,6 +249,6 @@ Some examples:
     discountedPricePerQuantity
     discountedPrice 
 
-####*Exceptions
+#### Exceptions
 The only exception allowed is:
  - write "id" even if is an abbreviation
