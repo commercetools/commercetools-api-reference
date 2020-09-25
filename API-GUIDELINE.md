@@ -48,7 +48,7 @@ A resource may contain sub-collection resources.
 The HTTP verbs used are:
 
  - GET -> retrieve data
- - POST -> create or update data
+ - POST -> create data (it should return a 201 HTTP status code) or update data (it should return a 200 HTTP status code)
  - DELETE -> delete data
 
 It's important to avoid unexpected behavior. So for instance use GET to retrieve data and not to delete content!
