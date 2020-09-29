@@ -36,7 +36,7 @@ Our URIs are composed by:
 See our documentation for more details https://docs.commercetools.com/http-api.html#hosts and  https://docs.commercetools.com/http-api-authorization#requesting-an-access-token-using-commercetools-oauth2-server 
 
 ## Resources
-Resource is an object or representation of something, which has some associated data with it and can be helped by methods to operate on it.
+A Resource is a data collection object or a data representation of an entity in the e-commerce domain, which is specified by properties and methods to operate on them.
 
 A resource can be an entity or a collection:
  - Entity is a resource that has to be in singular.
