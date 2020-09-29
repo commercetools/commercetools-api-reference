@@ -13,11 +13,11 @@ With this in mind, we have created "API Guidelines" that aims to help developers
 The Keywords to have a good Guidelines are:
  
  - Consistency => following the Guidelines
- - Uniformity => checking in the code if there are other properties with similar name and adjust in base of it or improve it
- - Explicability => explain with a few words the purpose of the property avoiding abbreviations (there are some [exceptions](#exceptions)).
+ - Uniformity => checking in the code if there are other properties with similar names and adjusting field naming based on it
+ - Explicability => explaining in a few words the purpose of the property avoiding abbreviations (there are some [exceptions](#exceptions)).
 
 ## Scope
-The purpose of these guidelines is to achieve the definition of consistent practices and patterns for all API endpoints.
+The purpose of these guidelines is to define consistent practices and patterns for all API endpoints.
 
 ## URI
 Our URIs are composed by:
@@ -47,14 +47,14 @@ A resource may contain sub-collection resources.
 ## Methods
 The HTTP verbs used are:
 
- - GET -> retrieve data
- - POST -> create data (it should return a 201 HTTP status code) or update data (it should return a 200 HTTP status code)
- - DELETE -> delete data
+ - GET -> retrieve resource
+ - POST -> create resource (it should return a 201 HTTP status code) or update resource (it should return a 200 HTTP status code)
+ - DELETE -> delete resource
 
 It's important to avoid unexpected behavior. So for instance use GET to retrieve data and not to delete content!
 
 ## Properties/Payload
-Clients interact with a service by exchanging representations of resources.
+Clients interact with a service by exchanging representations of resources and providing URL parameters.
 
 An example of the Cart payload:
 
@@ -194,7 +194,8 @@ Some examples:
         validTo
 
 #### Boolean
-Define a Boolean property using a name which NOT includes "is" but it can include "has" and the verb at past participle.
+Define a Boolean property by a the past participle form of a verb. 
+Do NOT use the auxiliary verb "is" as prefix here, but "has" can be used in combination with a noun.
 
 Some examples:
 
