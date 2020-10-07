@@ -188,8 +188,8 @@ To use consistent names these are the rules to follow:
 
  DO'S
  - use nouns instead of verbs to expose resources
- - use lowercase and separated by hyphens (-) for path segments like /shopping-lists
- - use camelcase for properties, query parameters names
+ - use lower case and separated by hyphens (-) for path segments like /shopping-lists
+ - use camel case for properties, query parameters names
  - use American English
  - create each resource as unique resource name
  - use the proper HTTP methods for API operations whenever possible so GET or POST or DELETE
