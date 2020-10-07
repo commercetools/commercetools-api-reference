@@ -29,18 +29,43 @@ Our URIs are composed by:
 
     resources
 
-    by ID
+    URI parameters like:
+        /{ID}
+        /customer-id={customerId}
 
-    by external ID with equals e.g. customers/key={key}
 
-See our documentation for more details https://docs.commercetools.com/http-api.html#hosts and  https://docs.commercetools.com/http-api-authorization#requesting-an-access-token-using-commercetools-oauth2-server 
+See our documentation for more details https://docs.commercetools.com/http-api.html#hosts and  https://docs.commercetools.com/http-api-authorization#requesting-an-access-token-using-commercetools-oauth2-server
+
+### Query Parameters
+The Query Parameters can be defined as the optional key-value and not unique that appear after the question mark(?) in the URL and they can be combined with other parameters with an ampersand(&).
+
+In this case the rules to follow are:
+ - follow the same naming convention as the properties
+ - no need to change of return type based on the parameters
+ - avoid XOR parameters
+ 
+ Some examples:
+ 
+    customerId
+    staged
+    sku
+    cartId
+    markMatchingVariants
+    country
+    currency
+    localeProjection
 
 ## Resources
-A Resource is a data collection object or a data representation of an entity in the e-commerce domain, which is specified by properties and methods to operate on them.
+A Resource is a set of data in the e-commerce domain, which is specified by properties and methods to operate on them.
 
-A resource can be an entity or a collection:
- - Entity is a resource that has to be in singular.
- - Collections are a set of resources that must be in plural.
+A resource can be singleton or collection:
+ - Singleton is a single resource that has to be written in singular. For example:
+ 
+        /product
+        /products/{ID}
+ - Collections are a set of resources that must be in plural. For example:
+
+        /products
  
 A resource may contain sub-collection resources.
 
@@ -164,17 +189,18 @@ To use consistent names these are the rules to follow:
  DO'S
  - use nouns instead of verbs to expose resources
  - use lowercase and separated by hyphens (-) for path segments like /shopping-lists
+ - use camelcase for properties, query parameters names
  - use American English
  - create each resource as unique resource name
- - use the proper HTTP methods for API operations whenever possible
+ - use the proper HTTP methods for API operations whenever possible so GET or POST or DELETE
  
  DON'TS
- - DON'T use snake case (_) or other punctuation
+ - DON'T use snake case (_) or other special characters
  - DON'T use file extensions
  - DON'T use abbreviations
  - DON'T use CRUD HTTP methods or verbs
 
-###Naming Properties
+### Naming Properties
 The properties are identified in base of the type: 
  - DateTime
  - Boolean
@@ -252,4 +278,5 @@ Some examples:
 
 #### Exceptions
 The only exception allowed is:
- - write "id" even if is an abbreviation
+ - write "Id" even if is an abbreviation
+ - write "Sku" even if is an abbreviation
