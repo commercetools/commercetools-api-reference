@@ -1,9 +1,6 @@
 # commercetools-api-reference
 Commercetools Platform API reference documentation
 
-:warning: Please note that this project is currently in the **ALPHA** version and is subject to change.
-
-
 [![Build Status](https://travis-ci.org/commercetools/commercetools-api-reference.svg?branch=master)](https://travis-ci.org/commercetools/commercetools-api-reference)
 
 ## Postman
