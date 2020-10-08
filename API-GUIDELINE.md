@@ -13,8 +13,8 @@ With this in mind, we have created "API Guidelines" that aims to help developers
 The Keywords to have a good Guidelines are:
  
  - Consistency => following the Guidelines
- - Uniformity => checking in the code if there are other properties with similar names and adjusting field naming based on it
- - Explicability => explaining in a few words the purpose of the property avoiding abbreviations (there are some [exceptions](#exceptions)).
+ - Uniformity => checking in the code if there are other fields with similar names and adjusting field naming based on it
+ - Explicability => explaining in a few words the purpose of the field avoiding abbreviations (there are some [exceptions](#exceptions)).
 
 ## Scope
 The purpose of these guidelines is to define consistent practices and patterns for all API endpoints.
@@ -189,7 +189,7 @@ To use consistent names these are the rules to follow:
  DO'S
  - use nouns instead of verbs to expose resources
  - use lower case and separated by hyphens (-) for path segments like /shopping-lists
- - use camel case for properties, query parameters names
+ - use camel case for properties and query parameters names
  - use American English
  - create each resource as unique resource name
  - use the proper HTTP methods for API operations whenever possible so GET or POST or DELETE
