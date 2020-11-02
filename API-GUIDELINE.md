@@ -37,11 +37,11 @@ Our URIs are composed by:
 See our documentation for more details https://docs.commercetools.com/http-api.html#hosts and  https://docs.commercetools.com/http-api-authorization#requesting-an-access-token-using-commercetools-oauth2-server
 
 ### Query Parameters
-The Query Parameters can be defined as the optional key-value and not unique that appear after the question mark(?) in the URL and they can be combined with other parameters with an ampersand(&).
+The Query Parameters is a set of parameters added to the end of the URL. They are extensions of the URL that are used to help define specific content or action based of the data being passed.
 
 In this case the rules to follow are:
  - follow the same naming convention as the properties
- - no need to change of return type based on the parameters
+ - don't change the response type based on the query parameters
  - avoid XOR parameters
  
  Some examples:
