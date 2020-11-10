@@ -279,4 +279,4 @@ Some examples:
 #### Exceptions
 The only exception allowed is:
  - write "Id" even if is an abbreviation
- - write "Sku" even if is an abbreviation
+ - write "Sku" even if is an acronym
