@@ -212,3 +212,48 @@ jobs:
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
           commit_author: Auto Mation <automation@commercetools.com>
+
+  csharp:
+    name: "Generate Csharp SDK"
+
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: "Install Csharp"
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1'
+
+      - name: "Checkout api reference"
+        uses: actions/checkout@v2
+        with:
+          path: api
+
+      - name: "Checkout Csharp SDK"
+        uses: actions/checkout@v2
+        with:
+          repository: 'commercetools/commercetools-dotnet-core-sdk-v2'
+          path: sdk
+          ssh-key: ${{ secrets.CSHARP_SDK_DEPLOY_KEY }}
+          ref: master
+
+      - name: "Generate Csharp SDK"
+        run: sudo chmod 777 /usr/local/bin && make build_api_sdk
+        working-directory: sdk
+        env:
+          RAML_FILE: "../api/update-actions.raml"
+
+      - name: "check pending changes"
+        run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
+        working-directory: sdk
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/master'
+        with:
+          repository: sdk
+          branch: master
+          commit_message: "TASK: Updating SDK"
+          commit_user_name: Auto Mation
+          commit_user_email: automation@commercetools.com
+          commit_author: Auto Mation <automation@commercetools.com>
