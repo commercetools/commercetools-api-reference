@@ -40,8 +40,8 @@ oas_convert:
 	rmf-codegen generate -o tmpdoc -t RAML_DOC update-actions.raml
 	node bin/doc-convert.js
 	rm -rf tmpdoc
-	sed -i "" -e "s/includePath/x-annotation-includePath/g" api.swagger3.json
-	sed -i "" -e "s/additionalProperties/x-annotation-additionalProperties/g" api.swagger3.json
+	sed -ibak -e "s/includePath/x-annotation-includePath/g" api.swagger3.json
+	sed -ibak -e "s/additionalProperties/x-annotation-additionalProperties/g" api.swagger3.json
 	yarn run swagger-cli validate api.swagger3.json
 	#yarn run swagger-cli validate api.swagger.json
 
