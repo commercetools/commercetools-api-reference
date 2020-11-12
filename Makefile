@@ -42,8 +42,10 @@ oas_convert:
 	rm -rf tmpdoc
 	sed -ibak -e "s/includePath/x-annotation-includePath/g" api.swagger3.json
 	sed -ibak -e "s/additionalProperties/x-annotation-additionalProperties/g" api.swagger3.json
+	sed -ibak -e "s/additionalProperties/x-annotation-additionalProperties/g" api.swagger.json
+	sed -ibak -e "s/\"oneOf\"/\"x-annotation-oneOfDef\"/g" api.swagger.json
 	yarn run swagger-cli validate api.swagger3.json
-	#yarn run swagger-cli validate api.swagger.json
+	yarn run swagger-cli validate api.swagger.json
 
 check_pending:
 	git status --porcelain -- ':(exclude)*gen.properties'
