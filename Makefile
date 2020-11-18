@@ -41,6 +41,7 @@ oas_convert:
 	node bin/doc-convert.js
 	rm -rf tmpdoc
 	sed -ibak -e "s/includePath/x-annotation-includePath/g" api.swagger3.json
+	sed -ibak -e "s/example/x-annotation-example/g" api.swagger3.json
 	sed -ibak -e "s/additionalProperties/x-annotation-additionalProperties/g" api.swagger3.json
 	sed -ibak -e "s/additionalProperties/x-annotation-additionalProperties/g" api.swagger.json
 	sed -ibak -e "s/\"oneOf\"/\"x-annotation-oneOfDef\"/g" api.swagger.json
