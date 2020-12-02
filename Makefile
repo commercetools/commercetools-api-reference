@@ -7,7 +7,7 @@ install_deps: codegen_install composer_install yarn_install
 
 lint: yarn_install check_markdown format_raml validate_raml
 
-generate: update_types oas_convert generate_collection format_raml
+generate: update_types generate_oas generate_collection format_raml oas_convert
 
 codegen_install:
 	curl -o- -s https://raw.githubusercontent.com/vrapio/rmf-codegen/master/scripts/install.sh | bash
@@ -35,6 +35,9 @@ validate_raml:
 
 generate_collection:
 	rmf-codegen generate -o postman -t postman postman.raml
+
+generate_oas:
+	rmf-codegen generate -o oas -t OAS update-actions.raml
 
 oas_convert:
 	rmf-codegen generate -o tmpdoc -t RAML_DOC update-actions.raml
