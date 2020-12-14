@@ -5,7 +5,7 @@ var ramlToSwagger2 = new converter.Converter(converter.Formats.RAML, converter.F
 
 process.stdout.write("\n# Converting RAML to OAS2 ...");
 
-ramlToSwagger2.convertFile(__dirname + '/../update-actions.raml').then(function(swagger) {
+ramlToSwagger2.convertFile(__dirname + '/../api-specs/api/update-actions.raml').then(function(swagger) {
     fs.writeFileSync(__dirname + '/../api.swagger.json', swagger);
     process.stdout.write(" \x1b[32mdone\x1b[0m.\n");
 })
@@ -17,7 +17,7 @@ ramlToSwagger2.convertFile(__dirname + '/../update-actions.raml').then(function(
 
     process.stdout.write("\n# Converting RAML to OAS3 ...");
 
-    ramlToSwagger3.convertFile(__dirname + '/../update-actions.raml').then(function(swagger) {
+    ramlToSwagger3.convertFile(__dirname + '/../api-specs/api/update-actions.raml').then(function(swagger) {
         fs.writeFileSync(__dirname + '/../api.swagger3.json', JSON.stringify(swagger, null, 2));
         process.stdout.write(" \x1b[32mdone\x1b[0m.\n");
     })

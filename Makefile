@@ -31,16 +31,16 @@ format_raml:
 	yarn run format:raml
 
 validate_raml:
-	docker run -v$(shell pwd):/api vrapio/vrap -rc /api/update-actions.raml
+	docker run -v$(shell pwd)/api-specs/api:/api vrapio/vrap -rc /api/update-actions.raml
 
 generate_collection:
-	rmf-codegen generate -o postman -t postman postman.raml
+	rmf-codegen generate -o postman -t postman api-specs/api/postman.raml
 
 generate_oas:
-	rmf-codegen generate -o oas -t OAS update-actions.raml
+	rmf-codegen generate -o oas -t OAS api-specs/api/update-actions.raml
 
 oas_convert:
-	rmf-codegen generate -o tmpdoc -t RAML_DOC update-actions.raml
+	rmf-codegen generate -o tmpdoc -t RAML_DOC api-specs/api/update-actions.raml
 	node bin/doc-convert.js
 	rm -rf tmpdoc
 	sed -ibak -e "s/includePath/x-annotation-includePath/g" api.swagger3.json

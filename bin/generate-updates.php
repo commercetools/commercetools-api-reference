@@ -127,7 +127,7 @@ class UpdateAction
 
 class RamlModelParser
 {
-    const RAML_MODEL_PATH = __DIR__ . '/../types/';
+    const RAML_MODEL_PATH = __DIR__ . '/../api-specs/api/types/';
 
     private $ramlTypes = [];
 

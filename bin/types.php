@@ -2,8 +2,10 @@
 <?php
 namespace Commercetools;
 
-$baseDir = dirname(__DIR__);
+$baseDir = dirname(__DIR__) . "/api-specs/api";
 $typeDir = 'types';
+
+var_dump($baseDir);
 
 $allFiles = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($baseDir . '/' . $typeDir));
 $ramlFiles = new \RegexIterator($allFiles, '/\.raml$/');
