@@ -1,0 +1,102 @@
+#%RAML 1.0 Library
+usage: Product import types.
+(annotations.package): products
+
+uses:
+  common: common.raml
+  annotations: ../annotationTypes/annotations.raml
+
+types:
+  SearchKeywords:
+    properties:
+      /^[a-z]{2}(-[A-Z]{2})?$/:
+        type: SearchKeyword[]
+  SearchKeyword:
+    properties:
+      text:
+        type: string
+      suggestTokenizer?:
+        type: SuggestTokenizer
+
+  SuggestTokenizer:
+    discriminator: type
+    properties:
+      type:
+        type: string
+  CustomTokenizer:
+    type: SuggestTokenizer
+    discriminatorValue: custom
+    properties:
+      inputs:
+        type: string[]
+  WhitespaceTokenizer:
+    type: SuggestTokenizer
+    discriminatorValue: whitespace
+
+  ProductImport:
+    type: common.ImportResource
+    description: |
+      Import representation for a prduct.
+
+      The import representation for a product is the most minimal representation required
+      for creating a product in commercetools.
+    additionalProperties: false
+    properties:
+      name:
+        description: |
+          Maps to `Product.name`.
+        type: common.LocalizedString
+      productType:
+        description: |
+          The product's product type. Maps to `Product.productType`.
+
+          The product type referenced
+          must already exist in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.ProductTypeKeyReference
+      slug:
+        description: |
+          Human-readable identifiers usually used as deep-link URL to the related product. Each slug must be unique across a project,
+          but a product can have the same slug for different languages. Allowed are alphabetic, numeric, underscore (_) and hyphen (-) characters.
+        type: common.LocalizedString
+      description?:
+        description: |
+          Maps to `Product.description`.
+        type: common.LocalizedString
+      categories?:
+        description: |
+          An array of references to a categories by their keys. Maps to `Product.categories`.
+
+          The categories referenced
+          must already exist in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.CategoryKeyReference[]
+      metaTitle?:
+        type: common.LocalizedString
+      metaDescription?:
+        type: common.LocalizedString
+      metaKeywords?:
+        type: common.LocalizedString
+      taxCategory?:
+        description: |
+          References a tax category by its key.
+
+          The tax category referenced must already exist
+          in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.TaxCategoryKeyReference
+      searchKeywords?:
+        type: SearchKeywords
+      state?:
+        description: |
+          References a state by its key.
+
+          The tax category referenced must already exist
+          in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.StateKeyReference
+      publish?:
+        type: boolean
+        default: false
+        description: |
+          If there were updates, only the updates will be published to `staged` and `current` projection.

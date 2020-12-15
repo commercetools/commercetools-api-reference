@@ -1,0 +1,121 @@
+#%RAML 1.0 Library
+usage: Product draft import types.
+(annotations.package): productdrafts
+
+uses:
+  common: common.raml
+  annotations: ../annotationTypes/annotations.raml
+  product-import: product-import.raml
+  product-variant-import: product-variant-import.raml
+  custom-field: custom-field.raml
+
+types:
+  ProductDraftImport:
+    type: common.ImportResource
+    properties:
+      productType:
+        description: |
+          The product's product type. Maps to `Product.productType`.
+
+          The product type referenced
+          must already exist in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.ProductTypeKeyReference
+      name:
+        type: common.LocalizedString
+        description: ''
+      slug:
+        type: common.LocalizedString
+        description: |
+          Human-readable identifiers usually used as deep-link URL to the related product. Each slug must be unique across a project,
+          but a product can have the same slug for different languages. Allowed are alphabetic, numeric, underscore (_) and hyphen (-) characters.
+      description?:
+        type: common.LocalizedString
+        description: |
+          Maps to `Product.description`.
+      categories?:
+        description: |
+          An array of references to categories by their keys. Maps to `Product.categories`.
+
+          The categories referenced
+          must already exist in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.CategoryKeyReference[]
+      metaTitle?:
+        type: common.LocalizedString
+      metaDescription?:
+        type: common.LocalizedString
+      metaKeywords?:
+        type: common.LocalizedString
+      masterVariant?:
+        type: ProductVariantDraftImport
+        description: |
+          The master product variant.
+          Required if the `variants` array has product variants.
+      variants?:
+        type: ProductVariantDraftImport[]
+        description: An array of related product variants.
+      taxCategory?:
+        description: |
+          References a tax category by its key.
+
+          The tax category referenced must already exist
+          in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.TaxCategoryKeyReference
+      searchKeywords?:
+        type: product-import.SearchKeywords
+      state?:
+        description: |
+          References a state by its key.
+
+          The tax category referenced must already exist
+          in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.StateKeyReference
+      publish?:
+        type: boolean
+        default: false
+        description: |
+          If there were updates, only the updates will be published to `staged` and `current` projection.
+  ProductVariantDraftImport:
+    type: object
+    properties:
+      sku?:
+        type: string
+      key?:
+        type: string
+      prices?:
+        type: PriceDraftImport[]
+      attributes?:
+        type: product-variant-import.Attribute[]
+      images?:
+        type: common.Image[]
+      assets?:
+        type: common.Asset[]
+  PriceDraftImport:
+    type: object
+    properties:
+      value:
+        type: common.TypedMoney
+      country?:
+        type: common.CountryCode
+      customerGroup?:
+        type: common.CustomerGroupKeyReference
+      channel?:
+        type: common.ChannelKeyReference
+      validFrom?:
+        type: datetime
+      validUntil?:
+        type: datetime
+      custom?:
+        description: The custom fields for this category.
+        type: custom-field.Custom
+      discounted?:
+        description: Sets a discounted price from an external service.
+        type: common.DiscountedPrice
+      tiers?:
+        description: The tiered prices for this price.
+        type: common.PriceTier[]
+      key?:
+        type: string

@@ -1,0 +1,73 @@
+#%RAML 1.0 Library
+usage: Import sink types.
+(annotations.package): importsinks
+
+uses:
+  common: common.raml
+  annotations: ../annotationTypes/annotations.raml
+
+types:
+  ImportSink:
+    description: |
+      An import sink is the entry point for import resources from other systems.
+
+      It has an unique key and is specific to an import resource type.
+
+    properties:
+      key:
+        description: |
+          The unique key of the import sink.
+
+          Valid characters are: alphabetic characters (A-Z, a-z), numeric characters (0-9), underscores (_) and hyphens (-).
+
+        type: string
+      resourceType:
+        description: |
+          The type of import resource sent to this import sink.
+          You can only send one resource type per import sink.
+        type: common.ImportResourceType
+      version:
+        description: The version of this resource.
+        type: number
+        format: int64
+      createdAt:
+        description: When the import sink was created.
+        type: datetime
+      lastModifiedAt:
+        description: When the import sink was modified.
+        type: datetime
+    examples:
+      minimal: !include ../examples/import-sink-minimal.json
+  ImportSinkDraft:
+    description: |
+      The representation sent to the server when creating or updating an import sink.
+    properties:
+      version?:
+        description: The version of this resource.
+        type: number
+        format: int64
+      key:
+        description: The unique key of the import sink.
+        type: string
+      resourceType:
+        description: The type of import resource sent to this import sink.
+        type: common.ImportResourceType
+    examples:
+      minimal: !include ../examples/import-sink-draft-minimal.json
+  ImportSinkPagedResponse:
+    description: This type represents a paged importsink result.
+    properties:
+      limit:
+        description: The maximum number of import operations returned for a page.
+        type: integer
+      offset:
+        description: The offset supplied by the client or the server default. It is the number of elements skipped.
+        type: integer
+        format: long
+      count:
+        description: The actual number of results returned by this response.
+        type: integer
+        format: long
+      results:
+        description: The results for this paged response.
+        type: ImportSink[]

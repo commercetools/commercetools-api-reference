@@ -1,0 +1,405 @@
+#%RAML 1.0
+---
+title: Internal import storage api
+version: v1
+mediaType: application/json
+baseUri: http://import-storage
+
+uses:
+  error: types/error.raml
+  import-operation: internal/types/import-operation.raml
+  public-import-operation: internal/types/public-import-operation.raml
+  import-operation-draft: internal/types/import-operation-draft.raml
+  import-operation-update-patch: internal/types/import-operation-update-patch.raml
+  import-summary: types/import-summary.raml
+  price-import: types/price-import.raml
+  product-draft-import: types/product-draft-import.raml
+  product-type-import: types/product-type-import.raml
+  product-variant-import: types/product-variant-import.raml
+  category-import: types/category-import.raml
+  customer-import: types/customer-import.raml
+  order-import: types/order-import.raml
+  inventory-import: types/inventory-import.raml
+  price-mapping: internal/types/price-mapping.raml
+  unresolved-reference: internal/types/unresolved-reference.raml
+  search-unresolved-reference: internal/types/search-unresolved-reference.raml
+  aggregation: internal/types/aggregation.raml
+  common: types/common.raml
+  import-request: types/import-request.raml
+  import-sink: types/import-sink.raml
+  product-import: types/product-import.raml
+  custom-field: types/custom-field.raml
+  messages: internal/types/messages.raml
+
+/{projectKey}:
+  /import-sinks:
+    post:
+      description: Creates a new import sink.
+      body:
+        type: import-sink.ImportSinkDraft
+      responses:
+        201:
+          body:
+            type: import-sink.ImportSink
+        400:
+          description: The request was invalid.
+          body:
+            type: error.ErrorResponse
+    get:
+      description: |
+        Retrieves all import sinks for the given import sink.
+      queryParameters:
+        limit?:
+          type: number
+        offset?:
+          type: number
+      responses:
+        200:
+          body:
+            type: import-sink.ImportSinkPagedResponse
+    /{importSinkKey}:
+      uriParameters:
+        importSinkKey:
+          description: The key of the import sink.
+          type: string
+      put:
+        description: Updates the import sink given by the key.
+        body:
+          type: import-sink.ImportSinkDraft
+        responses:
+          200:
+            description: The import sink was successfully updated.
+            body:
+              type: import-sink.ImportSink
+          404:
+            description: The requested import sink wasn't found.
+            body:
+              type: error.ErrorResponse
+          409:
+            description: A concurrent modification was detected. The client should retry and resolve the conflict.
+            body:
+              type: error.ErrorResponse
+      get:
+        description: Retrieves the import sink given by the key.
+        responses:
+          200:
+            description: The requested import sink was found.
+            body:
+              type: import-sink.ImportSink
+          404:
+            description: The requested import sink wasn't found.
+            body:
+              type: error.ErrorResponse
+      delete:
+        description: Deletes the import sink given by the key.
+        responses:
+          200:
+            description: The deleted import sink.
+            body:
+              type: import-sink.ImportSink
+          404:
+            description: The import sink to delete wasn't found.
+            body:
+              type: error.ErrorResponse
+  /import-summaries:
+    /importSinkKey={importSinkKey}:
+      uriParameters:
+        importSinkKey:
+          description: |
+            The key of the import sink.
+          type: string
+      get:
+        description: |
+          Retrieves the import summary for the given import sink.
+
+          The import summary is calculated on demand.
+        responses:
+          200:
+            body:
+              type: import-summary.ImportSummary
+  /import-operation:
+    put:
+      description: |
+        Updates an import operation given in the body.
+      body:
+        type: import-operation-draft.ImportOperationDraft
+      responses:
+        200:
+          body:
+            type: import-operation.ImportOperation
+        404:
+          body:
+            type: error.ErrorResponse
+    post:
+      description: |
+        Creates or updates the import operation given in the body.
+      body:
+        type: import-operation-draft.ImportOperationDraft
+      responses:
+        200:
+          body:
+            type: import-operation.ImportOperation
+    get:
+      description: |
+        Retrieves all import operations for the given import sink.
+      queryParameters:
+        limit?:
+          type: number
+        offset?:
+          type: number
+        resourceKey?:
+          description: |
+            The key of the import operation to retrieve.
+          type: string
+        importSinkKey?:
+          description: |
+            The key of the import operation to retrieve.
+          type: string
+        state?:
+          description: |
+            The state of the import operations to retrieve.
+          type: common.ProcessingState
+        referenceType?:
+          description: The reference type.
+          type: common.ReferenceType
+        referenceKey?:
+          description: The reference key.
+          type: string
+        resourceType?:
+          description: The resource type.
+          type: common.ImportResourceType
+      responses:
+        200:
+          body:
+            type: import-operation.ImportOperationPagedResponse
+        400:
+          description: Querying import operations with choses parameters together is not allowed.
+          body:
+            type: error.ErrorResponse
+    /public:
+      get:
+        description: |
+          Retrieves all import operations for the given import sink.
+        queryParameters:
+          limit?:
+            type: number
+          offset?:
+            type: number
+          sort?:
+            type: string[]
+          resourceKey?:
+            description: |
+              The key of the import operation to retrieve.
+            type: string
+          importSinkKey?:
+            description: |
+              The key of the import operation to retrieve.
+            type: string
+          state?:
+            description: |
+              The state of the import operations to retrieve.
+            type: common.ProcessingState
+          referenceType?:
+            description: The reference type.
+            type: common.ReferenceType
+          referenceKey?:
+            description: The reference key.
+            type: string
+          resourceType?:
+            description: The resource type.
+            type: common.ImportResourceType
+        responses:
+          200:
+            body:
+              type: public-import-operation.ImportOperationPagedResponse
+          400:
+            description: Querying import operations with choses parameters together is not allowed.
+            body:
+              type: error.ErrorResponse
+      /{id}:
+        uriParameters:
+          id:
+            description: |
+              The public operation identifier
+            type: string
+        get:
+          description: |
+            Retrieves the public import operation with the given id.
+          responses:
+            200:
+              body:
+                type: public-import-operation.PublicImportOperation
+            404:
+              body:
+                type: error.ErrorResponse
+            503:
+              body:
+                type: error.ErrorResponse
+    /{id}:
+      uriParameters:
+        id:
+          description: |
+            The operation identifier
+          type: string
+      get:
+        description: |
+          Retrieves the import operation with the given id.
+        responses:
+          200:
+            body:
+              type: import-operation.ImportOperation
+          404:
+            body:
+              type: error.ErrorResponse
+          503:
+            body:
+              type: error.ErrorResponse
+      patch:
+        description: |
+          Updates a part of an import operation with the given id, currently supporting updates to state, inflight-state and errors only.
+        body:
+          type: import-operation-update-patch.ImportOperationUpdatePatch
+        responses:
+          200:
+            body:
+              type: import-operation-update-patch.ImportOperationUpdatePatch
+          404:
+            body:
+              type: error.ErrorResponse
+          503:
+            body:
+              type: error.ErrorResponse
+      delete:
+        description: |
+          Deletes the import operation with the given key.
+        responses:
+          200:
+            body:
+              type: import-operation.ImportOperation
+          404:
+            body:
+              type: error.ErrorResponse
+          503:
+            body:
+              type: error.ErrorResponse
+  /unresolved-references:
+    get:
+      description: |
+        Retrieves all unresolved references of the given `referenceType` and `referenceKey`.
+      queryParameters:
+        limit?:
+          type: number
+        offset?:
+          type: number
+        referenceType?:
+          description: The reference type.
+          type: common.ReferenceType
+        referenceKey?:
+          description: The reference key.
+          type: string
+      responses:
+        200:
+          body:
+            type: unresolved-reference.UnresolvedReferencePagedResponse
+        404:
+          body:
+            type: error.ErrorResponse
+    /search:
+      get:
+        description: |
+          Retrieves all unresolved references of the given `referenceType` and `referenceKey`,
+          returns the `unresolvedReference` and `resourceType`.
+        queryParameters:
+          limit?:
+            type: number
+          offset?:
+            type: number
+          referenceType?:
+            description: The reference type.
+            type: common.ReferenceType
+          referenceKey?:
+            description: The reference key.
+            type: string
+        responses:
+          200:
+            body:
+              type: search-unresolved-reference.UnresolvedReferenceWithResourceTypePagedResponse
+          404:
+            body:
+              type: error.ErrorResponse
+  /price-mapping:
+    post:
+      description: |
+        Creates or updates the price-mapping given in the body.
+      body:
+        type: price-mapping.PriceMapping
+      responses:
+        200:
+          body:
+            type: price-mapping.PriceMapping
+    /{key}:
+      uriParameters:
+        key:
+          description: |
+            The key of the import price to retrieve.
+          type: string
+      get:
+        description: |
+          Retrieves the price mapping with the given key.
+        responses:
+          200:
+            body:
+              type: price-mapping.PriceMapping
+          404:
+            body:
+              type: error.ErrorResponse
+      delete:
+        description: |
+          Deletes the price mapping with the given key.
+        responses:
+          200:
+            body:
+              type: price-mapping.PriceMapping
+          404:
+            body:
+              type: error.ErrorResponse
+  /aggregations:
+    /products:
+      get:
+        description: Queries the aggregations with the given parameters.
+        queryParameters:
+          resourceKey:
+            description: The key of the aggregation product.
+            type: string
+          state:
+            description: The aggregation state.
+            type: aggregation.AggregationState
+        responses:
+          200:
+            body:
+              type: aggregation.AggregationPagedResponse
+      post:
+        description: Creates a new product aggregation.
+        body:
+          type: aggregation.AggregationDraft
+        responses:
+          200:
+            body:
+              type: aggregation.Aggregation
+      put:
+        description: Updates the given product aggregation.
+        body:
+          type: aggregation.Aggregation
+        responses:
+          200:
+            body:
+              type: aggregation.Aggregation
+          400:
+            body:
+              type: error.ErrorResponse
+          404:
+            body:
+              type: error.ErrorResponse
+          409:
+            body:
+              type: error.ErrorResponse

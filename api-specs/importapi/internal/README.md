@@ -1,0 +1,1 @@
+This folder contains internal types used by our `import-storage-service`.

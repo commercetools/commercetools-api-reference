@@ -1,0 +1,127 @@
+#%RAML 1.0 Library
+usage: Product type import types.
+(annotations.package): producttypes
+
+uses:
+  common: common.raml
+  annotations: ../annotationTypes/annotations.raml
+
+types:
+  AttributeDefinition:
+    properties:
+      type:
+        description:
+        type: AttributeType
+      name:
+        type: string
+      label:
+        type: common.LocalizedString
+      isRequired:
+        type: boolean
+      attributeConstraint?:
+        type: AttributeConstraintEnum
+      inputTip?:
+        type: common.LocalizedString
+      inputHint?:
+        type: TextInputHint
+      isSearchable?:
+        type: boolean
+  AttributeType:
+    discriminator: name
+    properties:
+      name:
+        type: string
+  AttributeBooleanType:
+    type: AttributeType
+    discriminatorValue: boolean
+  AttributeDateTimeType:
+    type: AttributeType
+    discriminatorValue: datetime
+  AttributeDateType:
+    type: AttributeType
+    discriminatorValue: date
+  AttributeEnumType:
+    type: AttributeType
+    discriminatorValue: enum
+    properties:
+      values:
+        type: AttributePlainEnumValue[]
+  AttributePlainEnumValue:
+    properties:
+      key:
+        type: string
+      label:
+        type: string
+  AttributeLocalizableTextType:
+    type: AttributeType
+    discriminatorValue: ltext
+  AttributeLocalizedEnumType:
+    type: AttributeType
+    discriminatorValue: lenum
+    properties:
+      values:
+        type: AttributeLocalizedEnumValue[]
+  AttributeLocalizedEnumValue:
+    properties:
+      key:
+        type: string
+      label:
+        type: common.LocalizedString
+  AttributeMoneyType:
+    type: AttributeType
+    discriminatorValue: money
+  AttributeNestedType:
+    type: AttributeType
+    discriminatorValue: nested
+    properties:
+      typeReference: common.ProductTypeKeyReference
+  AttributeNumberType:
+    type: AttributeType
+    discriminatorValue: number
+  AttributeReferenceType:
+    type: AttributeType
+    discriminatorValue: reference
+    properties:
+      referenceTypeId:
+        type: common.ReferenceType
+  AttributeSetType:
+    type: AttributeType
+    discriminatorValue: set
+    properties:
+      elementType:
+        type: AttributeType
+  AttributeTextType:
+    type: AttributeType
+    discriminatorValue: text
+  AttributeTimeType:
+    type: AttributeType
+    discriminatorValue: time
+  AttributeConstraintEnum:
+    type: string
+    enum:
+      - None
+      - Unique
+      - CombinationUnique
+      - SameForAll
+  TextInputHint:
+    type: string
+    enum:
+      - SingleLine
+      - MultiLine
+  ProductTypeImport:
+    description: |
+      Import representation for a product type.
+    type: common.ImportResource
+    properties:
+      name:
+        description: |
+          Maps to `ProductType.name`.
+        type: string
+      description:
+        description: |
+          Maps to `ProductType.description`.
+        type: string
+      attributes?:
+        description: |
+          The product type's attributes.
+        type: AttributeDefinition[]

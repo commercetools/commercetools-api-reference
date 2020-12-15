@@ -1,0 +1,105 @@
+#%RAML 1.0 Library
+usage: Price import types.
+(annotations.package): prices
+
+uses:
+  common: common.raml
+  annotations: ../annotationTypes/annotations.raml
+  custom-field: custom-field.raml
+
+types:
+  SubRate:
+    properties:
+      name:
+        type: string
+      amount:
+        type: number
+        minimum: 0
+        maximum: 1
+  TaxRate:
+    properties:
+      id?:
+        type: string
+      name:
+        type: string
+      amount:
+        type: number
+        minimum: 0
+        maximum: 1
+      includedInPrice:
+        type: boolean
+      country:
+        type: common.CountryCode
+      state?:
+        type: string
+      subRates?:
+        type: SubRate[]
+  PriceImport:
+    description: |
+      Imports a product variant's prices.
+    type: common.ImportResource
+    properties:
+      value:
+        description: |
+          Maps to `Price.value`.
+
+          The Import API **only** supports `centPrecision` prices.
+        type: common.TypedMoney
+      country?:
+        description: |
+          Maps to `Price.county`.
+        type: common.CountryCode
+      validFrom?:
+        description: |
+          Maps to `Price.validFrom`.
+        type: datetime
+      validUntil?:
+        description: |
+          Maps to `Price.validUntil`.
+        type: datetime
+      customerGroup?:
+        description: |
+          References a customer group by its key.
+
+          The customer group referenced
+          must already exist in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.CustomerGroupKeyReference
+      channel?:
+        description: |
+          References a channel by its key.
+
+          The channel referenced
+          must already exist in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.ChannelKeyReference
+      discounted?:
+        description: Sets a discounted price from an external service.
+        type: common.DiscountedPrice
+      publish?:
+        type: boolean
+        default: false
+        description: |
+          Only the Price updates will be published to `staged` and `current` projection.
+      tiers?:
+        description: The tiered prices for this price.
+        type: common.PriceTier[]
+      custom?:
+        description: The custom fields for this price.
+        type: custom-field.Custom
+      productVariant:
+        description: |
+          The product variant in which this price is contained.
+
+          The product variant referenced
+          must already exist in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.ProductVariantKeyReference
+      product:
+        description: |
+          The product in which this product variant containong the price is contained. Maps to `ProductVariant.product`.
+
+          The product referenced
+          must already exist in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.ProductKeyReference

@@ -1,0 +1,276 @@
+#%RAML 1.0 Library
+usage: Product variant import types.
+(annotations.package): productvariants
+
+uses:
+  common: common.raml
+  annotations: ../annotationTypes/annotations.raml
+
+types:
+  Attribute:
+    description: |
+      This type represents the value of an attribute of a product variant.
+      The name and type property must match the name and type property of an attribute definition of the product type.
+    discriminator: type
+    properties:
+      name?:
+        description: |
+          The name of this attribute must match a name of the product types attribute definitions.
+          The name is required if this type is used in a product variant and must not be set when
+          used in a product variant patch.
+        type: string
+      type:
+        type: string
+  BooleanAttribute:
+    description: |
+      This type represents an attribute which value is either "true" or "false".
+    type: Attribute
+    discriminatorValue: boolean
+    properties:
+      value:
+        type: boolean
+  BooleanSetAttribute:
+    description: |
+      This type represents an attribute which value is set of boolean values.
+    type: Attribute
+    discriminatorValue: boolean-set
+    properties:
+      value:
+        type: boolean[]
+  DateAttribute:
+    description: |
+      This type represents an attribute which value is a date.
+    type: Attribute
+    discriminatorValue: date
+    properties:
+      value:
+        type: date-only
+  DateSetAttribute:
+    description: |
+      This type represents an attribute which value is a set of dates.
+    type: Attribute
+    discriminatorValue: date-set
+    properties:
+      value:
+        type: date-only[]
+  DateTimeAttribute:
+    description: |
+      This type represents an attribute which value is a date with time.
+    type: Attribute
+    discriminatorValue: datetime
+    properties:
+      value:
+        type: datetime
+  DateTimeSetAttribute:
+    description: |
+      This type represents an attribute which value is a set of dates with time.
+    type: Attribute
+    discriminatorValue: datetime-set
+    properties:
+      value:
+        type: datetime[]
+  EnumAttribute:
+    description: |
+      This type represents an attribute which value is an enum.
+      The attribute value refers to the key of the enum value.
+    type: Attribute
+    discriminatorValue: enum
+    properties:
+      value:
+        type: string
+  EnumSetAttribute:
+    description: |
+      This type represents an attribute which value is an enum.
+      The attribute value refers to the key of the enum value.
+    type: Attribute
+    discriminatorValue: enum-set
+    properties:
+      value:
+        type: string[]
+  LocalizableEnumAttribute:
+    description: |
+      This type represents an attribute which value is a localized enum.
+      The attribute value refers to the key of the enum value.
+    type: Attribute
+    discriminatorValue: lenum
+    properties:
+      value:
+        type: string
+  LocalizableEnumSetAttribute:
+    description: |
+      This type represents an attribute which value is a localized enum.
+      The attribute value refers to the key of the enum value.
+    type: Attribute
+    discriminatorValue: lenum-set
+    properties:
+      value:
+        type: string[]
+  LocalizableTextAttribute:
+    description: |
+      This type represents an attribute which value is a localized text.
+    type: Attribute
+    discriminatorValue: ltext
+    properties:
+      value:
+        type: common.LocalizedString
+  LocalizableTextSetAttribute:
+    description: |
+      This type represents an attribute which value is a localized text.
+    type: Attribute
+    discriminatorValue: ltext-set
+    properties:
+      value:
+        type: common.LocalizedString[]
+  MoneyAttribute:
+    description: |
+      This type represents an attribute which value is a money object.
+    type: Attribute
+    discriminatorValue: money
+    properties:
+      value:
+        type: common.TypedMoney
+  MoneySetAttribute:
+    description: |
+      This type represents an attribute which value is a set of money objects.
+    type: Attribute
+    discriminatorValue: money-set
+    properties:
+      value:
+        type: common.TypedMoney[]
+  NumberAttribute:
+    description: |
+      This type represents an attribute which value is a number.
+    type: Attribute
+    discriminatorValue: number
+    properties:
+      value:
+        type: number
+  NumberSetAttribute:
+    description: |
+      This type represents an attribute which value is a set of numbers.
+    type: Attribute
+    discriminatorValue: number-set
+    properties:
+      value:
+        type: number[]
+  ReferenceAttribute:
+    description: |
+      This type represents an attribute which value is a key reference.
+    type: Attribute
+    discriminatorValue: reference
+    properties:
+      value:
+        type: common.KeyReference
+  ReferenceSetAttribute:
+    description: |
+      This type represents an attribute which value is a set of references.
+    type: Attribute
+    discriminatorValue: reference-set
+    properties:
+      value:
+        type: common.KeyReference[]
+  TextAttribute:
+    description: |
+      This type represents an attribute which value is a string.
+    type: Attribute
+    discriminatorValue: text
+    properties:
+      value:
+        type: string
+  TextSetAttribute:
+    description: |
+      This type represents an attribute which value is a set of strings.
+    type: Attribute
+    discriminatorValue: text-set
+    properties:
+      value:
+        type: string[]
+  TimeAttribute:
+    description: |
+      This type represents an attribute which value is a time.
+    type: Attribute
+    discriminatorValue: time
+    properties:
+      value:
+        type: time-only
+  TimeSetAttribute:
+    description: |
+      This type represents an attribute which value is a set of times.
+    type: Attribute
+    discriminatorValue: time-set
+    properties:
+      value:
+        type: time-only[]
+  ProductVariantImport:
+    description: |
+      Import representation for a product variant. Use this type for importing new product variants
+      into a commercetools project.
+    type: common.ImportResource
+    additionalProperties: false
+    properties:
+      sku?:
+        description: |
+          Maps to `ProductVariant.sku`.
+        type: string
+      isMasterVariant:
+        description: |
+          Maps to `ProductVariant.isMasterVariant`.
+        type: boolean
+      attributes?:
+        description: |
+          Maps to `ProductVariant.attributes`.
+
+          Each attribute referenced must be defined
+          in an already existing product type in the commercetools project, or the import
+          operation state is set to `Unresolved`.
+        type: Attribute[]
+      images?:
+        description: |
+          Maps to `ProductVariant.images`.
+        type: common.Image[]
+      assets?:
+        description: |
+          Maps to `ProductVariant.assets`.
+        type: common.Asset[]
+      publish?:
+        type: boolean
+        default: false
+        description: |
+          If there were updates, only the updates will be published to `staged` and `current` projection.
+      product:
+        description: |
+          The product in which this product variant is contained. Maps to `ProductVariant.product`.
+
+          The product referenced
+          must already exist in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.ProductKeyReference
+  ProductVariantPatch:
+    description: |
+      Import representation for an update to a product variant. Use this type for importing updates to existing
+      product variants into a commercetools project.
+    properties:
+      productVariant:
+        description: |
+          The product variant to which this patch is applied.
+
+          The product variant referenced
+          must already exist in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.ProductVariantKeyReference
+      attributes?:
+        description: |
+          Maps to `ProductVariant.attributes`.
+
+          Each attribute referenced must be defined
+          in an already existing product type in the commercetools project, or the import
+          operation state is set to `ValidationFailed`.
+        type: Attributes
+  Attributes:
+    properties:
+      //:
+        description: |
+          The name of the attribute is given by the key and shouldn't be set on the attribute itself.
+          And since this property will be represented as a map, we can set individual attributes to null
+          to delete them (which follows JSON Merge Patch semantics).
+        type: Attribute | nil

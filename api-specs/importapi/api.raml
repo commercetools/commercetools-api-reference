@@ -1,0 +1,966 @@
+#%RAML 1.0
+---
+title: Commercetools Import API
+version: v1
+mediaType: application/json
+baseUri: https://import.europe-west1.gcp.commercetools.com
+
+uses:
+  annotations: annotationTypes/annotations.raml
+  postman: annotationTypes/postman.raml
+
+  error: types/error.raml
+  import-operation: types/import-operation.raml
+  import-sink: types/import-sink.raml
+  import-summary: types/import-summary.raml
+  import-request: types/import-request.raml
+  price-import: types/price-import.raml
+  product-import: types/product-import.raml
+  product-draft-import: types/product-draft-import.raml
+  product-type-import: types/product-type-import.raml
+  product-variant-import: types/product-variant-import.raml
+  category-import: types/category-import.raml
+  customer-import: types/customer-import.raml
+  order-import: types/order-import.raml
+  inventory-import: types/inventory-import.raml
+  custom-field: types/custom-field.raml
+  common: types/common.raml
+
+resourceTypes:
+  base:
+    get?:
+      displayName: Query <<resourcePathName>>
+      responses:
+        200:
+    post?:
+      displayName: Import <<resourcePathName | !singularize>>
+      responses:
+        201:
+    put?:
+      displayName: Update <<resourcePathName | !singularize>>
+      responses:
+        200:
+    delete?:
+      displayName: Delete <<resourcePathName | !singularize>>
+      responses:
+        200:
+  baseByParam:
+    type: base
+    get?:
+      displayName: Get <<resourcePathName | !singularize>>
+      responses:
+        200:
+
+securitySchemes:
+  oauth_2_0: !include security-schemes/oauth2.raml
+securedBy: [oauth_2_0]
+
+traits:
+  secured_by_manage_import_sinks:
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - manage_project:{projectKey}
+            - manage_import_sinks:{projectKey}
+  secured_by_view_import_sinks:
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - manage_project:{projectKey}
+            - manage_import_sinks:{projectKey}
+            - view_import_sinks:{projectKey}
+  secured_by_manage_products:
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - manage_project:{projectKey}
+            - manage_products:{projectKey}
+  secured_by_view_products:
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - manage_project:{projectKey}
+            - manage_products:{projectKey}
+            - view_products:{projectKey}
+  secured_by_manage_customers:
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - manage_customers:{projectKey}
+            - manage_project:{projectKey}
+  secured_by_view_customers:
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - manage_customers:{projectKey}
+            - view_customers:{projectKey}
+            - manage_project:{projectKey}
+  secured_by_manage_orders:
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - manage_project:{projectKey}
+            - manage_orders:{projectKey}
+  secured_by_view_orders:
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - manage_project:{projectKey}
+            - manage_orders:{projectKey}
+            - view_orders:{projectKey}
+
+/{projectKey}:
+  displayName: Project
+  uriParameters:
+    projectKey:
+      description: The commercetools project key.
+      type: string
+  /import-sinks:
+    type: base
+    post:
+      displayName: Creates a new import sink.
+      description: Creates a new import sink.
+      is:
+        - secured_by_manage_import_sinks
+      body:
+        type: import-sink.ImportSinkDraft
+      responses:
+        201:
+          body:
+            type: import-sink.ImportSink
+            example: !include examples/import-sink-minimal.json
+        400:
+          description: The request was invalid.
+          body:
+            type: error.ErrorResponse
+    get:
+      queryParameters:
+        limit:
+          type: number
+        offset:
+          type: number
+      description: Retrieves all import sinks of a project key.
+      is:
+        - secured_by_view_import_sinks
+      responses:
+        200:
+          body:
+            type: import-sink.ImportSinkPagedResponse
+    /{importSinkKey}:
+      type: baseByParam
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: The key of the import sink.
+          type: string
+      put:
+        description: Updates the import sink given by the key.
+        is:
+          - secured_by_manage_import_sinks
+        body:
+          type: import-sink.ImportSinkDraft
+        responses:
+          200:
+            description: The import sink was successfully updated.
+            body:
+              type: import-sink.ImportSink
+              example: !include examples/import-sink-minimal.json
+          409:
+            description: A concurrent modification was detected. The client should retry and resolve the conflict.
+            body:
+              type: error.ErrorResponse
+              example: !include examples/error-response-concurrent-modification.json
+      get:
+        description: Retrieves the import sink given by the key.
+        is:
+          - secured_by_view_import_sinks
+        responses:
+          200:
+            description: The requested import sink was found.
+            body:
+              type: import-sink.ImportSink
+              example: !include examples/import-sink-minimal.json
+          404:
+            description: The requested import sink wasn't found.
+            body:
+              type: error.ErrorResponse
+              example: !include examples/error-response-resource-not-found.json
+      delete:
+        description: Deletes the import sink given by the key.
+        is:
+          - secured_by_manage_import_sinks
+        responses:
+          200:
+            description: The deleted import sink.
+            body:
+              type: import-sink.ImportSink
+          404:
+            description: The import sink to delete wasn't found.
+            body:
+              type: error.ErrorResponse
+  /import-summaries:
+    /importSinkKey={importSinkKey}:
+      type: base
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: |
+            The key of the import sink.
+          type: string
+      get:
+        is:
+          - secured_by_view_import_sinks
+        description: |
+          Retrieves an import summary for the given import sink.
+
+          The import summary is calculated on demand.
+        responses:
+          200:
+            body:
+              type: import-summary.ImportSummary
+  /categories:
+    /importSinkKey={importSinkKey}:
+      type: base
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: The import sink used to create the new resource
+          type: string
+      post:
+        description: Creates import request for creating new categories or updating existing ones.
+        is:
+          - secured_by_manage_products
+        body:
+          type: import-request.CategoryImportRequest
+          example: !include examples/category-import-request.json
+        responses:
+          201:
+            body:
+              type: import-request.ImportResponse
+              example: !include examples/category-import-response.json
+      /resourceKey={resourceKey}:
+        type: base
+        delete:
+          description: Deletes the category given by the resource key.
+          is:
+            - secured_by_manage_products
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationStatus
+      /import-operations:
+        type: base
+        get:
+          description: Retrieves all category import operations of an import sink key.
+          is:
+            - secured_by_view_products
+          queryParameters:
+            limit?:
+              type: number
+            offset?:
+              type: number
+            sort?:
+              type: string[]
+            resourceKey?:
+              description: |
+                The key of the import operation to retrieve.
+              type: string
+            state?:
+              description: |
+                The state of the import operations to retrieve.
+              type: common.ProcessingState
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationPagedResponse
+                example: !include examples/import-operation-paged.response.json
+        /{id}:
+          type: baseByParam
+          uriParameters:
+            id:
+              description: |
+                The operation identifier
+              type: string
+          get:
+            description: |
+              Retrieves the import operation with the given id.
+            is:
+              - secured_by_view_products
+            responses:
+              200:
+                body:
+                  type: import-operation.ImportOperation
+              404:
+                body:
+                  type: error.ErrorResponse
+              503:
+                body:
+                  type: error.ErrorResponse
+
+  /prices:
+    /importSinkKey={importSinkKey}:
+      type: base
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: The import sink used to create the new resource
+          type: string
+      post:
+        description: Creates import request for creating new prices or updating existing ones.
+        is:
+          - secured_by_manage_products
+        body:
+          type: import-request.PriceImportRequest
+        responses:
+          201:
+            body:
+              type: import-request.ImportResponse
+      /resourceKey={resourceKey}:
+        type: base
+        delete:
+          description: Deletes the price given by the resource key.
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationStatus
+      /import-operations:
+        type: base
+        get:
+          description: Retrieves all price import operations of an import sink key.
+          is:
+            - secured_by_view_products
+          queryParameters:
+            limit?:
+              type: number
+            offset?:
+              type: number
+            sort?:
+              type: string[]
+            resourceKey?:
+              description: |
+                The key of the import operation to retrieve.
+              type: string
+            state?:
+              description: |
+                The state of the import operations to retrieve.
+              type: common.ProcessingState
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationPagedResponse
+        /{id}:
+          type: baseByParam
+          uriParameters:
+            id:
+              description: |
+                The operation identifier
+              type: string
+          get:
+            description: |
+              Retrieves the import operation with the given id.
+            is:
+              - secured_by_view_products
+            responses:
+              200:
+                body:
+                  type: import-operation.ImportOperation
+              404:
+                body:
+                  type: error.ErrorResponse
+              503:
+                body:
+                  type: error.ErrorResponse
+
+  /products:
+    /importSinkKey={importSinkKey}:
+      type: base
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: The import sink used to create the new resource
+          type: string
+      post:
+        description: Creates import request for creating new products or updating existing ones.
+        is:
+          - secured_by_manage_products
+        body:
+          type: import-request.ProductImportRequest
+        responses:
+          201:
+            body:
+              type: import-request.ImportResponse
+      /resourceKey={resourceKey}:
+        type: base
+        delete:
+          description: |
+            Deletes the product given by the resource key.
+          is:
+            - secured_by_manage_products
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationStatus
+      /import-operations:
+        type: base
+        get:
+          description: Retrieves all product import operations of an import sink key.
+          is:
+            - secured_by_view_products
+          queryParameters:
+            limit?:
+              type: number
+            offset?:
+              type: number
+            sort?:
+              type: string[]
+            resourceKey?:
+              description: |
+                The key of the import operation to retrieve.
+              type: string
+            state?:
+              description: |
+                The state of the import operations to retrieve.
+              type: common.ProcessingState
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationPagedResponse
+        /{id}:
+          type: baseByParam
+          uriParameters:
+            id:
+              description: |
+                The operation identifier
+              type: string
+          get:
+            description: |
+              Retrieves the import operation with the given id.
+            is:
+              - secured_by_view_products
+            responses:
+              200:
+                body:
+                  type: import-operation.ImportOperation
+              404:
+                body:
+                  type: error.ErrorResponse
+              503:
+                body:
+                  type: error.ErrorResponse
+  /product-drafts:
+    /importSinkKey={importSinkKey}:
+      type: base
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: |
+            The import sink used to create the new resource
+          type: string
+      post:
+        description: |
+          Creates import request for creating new product drafts or updating existing ones.
+        is:
+          - secured_by_manage_products
+        body:
+          type: import-request.ProductDraftImportRequest
+        responses:
+          201:
+            body:
+              type: import-request.ImportResponse
+      /resourceKey={resourceKey}:
+        type: base
+        delete:
+          description: Deletes the product type given by the resource key.
+          is:
+            - secured_by_manage_products
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationStatus
+      /import-operations:
+        type: base
+        get:
+          description: Retrieves all import operations of an import sink key.
+          is:
+            - secured_by_view_products
+          queryParameters:
+            limit?:
+              type: number
+            offset?:
+              type: number
+            sort?:
+              type: string[]
+            resourceKey?:
+              description: |
+                The key of the import operation to retrieve.
+              type: string
+            state?:
+              description: |
+                The state of the import operations to retrieve.
+              type: common.ProcessingState
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationPagedResponse
+        /{id}:
+          type: baseByParam
+          uriParameters:
+            id:
+              description: |
+                The operation identifier
+              type: string
+          get:
+            description: |
+              Retrieves the import operation with the given id.
+            is:
+              - secured_by_view_products
+            responses:
+              200:
+                body:
+                  type: import-operation.ImportOperation
+              404:
+                body:
+                  type: error.ErrorResponse
+              503:
+                body:
+                  type: error.ErrorResponse
+
+  /product-types:
+    /importSinkKey={importSinkKey}:
+      type: base
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: The import sink used to create the new resource
+          type: string
+      post:
+        description: Creates import request for creating new product types or updating existing ones.
+        is:
+          - secured_by_manage_products
+        body:
+          type: import-request.ProductTypeImportRequest
+        responses:
+          201:
+            body:
+              type: import-request.ImportResponse
+      /resourceKey={resourceKey}:
+        type: base
+        delete:
+          description: Deletes the product type given by the resource key.
+          is:
+            - secured_by_manage_products
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationStatus
+      /import-operations:
+        type: base
+        get:
+          description: Retrieves all import operations of an import sink key.
+          is:
+            - secured_by_view_products
+          queryParameters:
+            limit?:
+              type: number
+            offset?:
+              type: number
+            sort?:
+              type: string[]
+            resourceKey?:
+              description: |
+                The key of the import operation to retrieve.
+              type: string
+            state?:
+              description: |
+                The state of the import operations to retrieve.
+              type: common.ProcessingState
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationPagedResponse
+        /{id}:
+          type: baseByParam
+          uriParameters:
+            id:
+              description: |
+                The operation identifier
+              type: string
+          get:
+            description: |
+              Retrieves the import operation with the given id.
+            is:
+              - secured_by_view_products
+            responses:
+              200:
+                body:
+                  type: import-operation.ImportOperation
+              404:
+                body:
+                  type: error.ErrorResponse
+              503:
+                body:
+                  type: error.ErrorResponse
+  /product-variants:
+    /importSinkKey={importSinkKey}:
+      type: base
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: The import sink used to create the new resource
+          type: string
+      post:
+        description: Creates import request for creating new product variants or updating existing ones.
+        is:
+          - secured_by_manage_products
+        body:
+          type: import-request.ProductVariantImportRequest
+        responses:
+          201:
+            body:
+              type: import-request.ImportResponse
+      /resourceKey={resourceKey}:
+        type: base
+        delete:
+          description: Deletes the product variant given by the resource key.
+          is:
+            - secured_by_manage_products
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationStatus
+      /import-operations:
+        type: base
+        get:
+          description: Retrieves all product-variant import operations of an import sink key.
+          is:
+            - secured_by_view_products
+          queryParameters:
+            limit?:
+              type: number
+            offset?:
+              type: number
+            sort?:
+              type: string[]
+            resourceKey?:
+              description: |
+                The key of the import operation to retrieve.
+              type: string
+            state?:
+              description: |
+                The state of the import operations to retrieve.
+              type: common.ProcessingState
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationPagedResponse
+        /{id}:
+          type: baseByParam
+          uriParameters:
+            id:
+              description: |
+                The operation identifier
+              type: string
+          get:
+            description: |
+              Retrieves the import operation with the given id.
+            is:
+              - secured_by_view_products
+            responses:
+              200:
+                body:
+                  type: import-operation.ImportOperation
+              404:
+                body:
+                  type: error.ErrorResponse
+              503:
+                body:
+                  type: error.ErrorResponse
+  /product-variant-patches:
+    /importSinkKey={importSinkKey}:
+      type: base
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: The import sink used to create the new resource
+          type: string
+      post:
+        description: Creates a new import request for product variant patches
+        is:
+          - secured_by_manage_products
+        body:
+          type: import-request.ProductVariantPatchRequest
+        responses:
+          201:
+            body:
+              type: import-request.ImportResponse
+      /import-operations:
+        type: base
+        get:
+          description: Retrieves all product-variant-patches import operations of an import sink key.
+          is:
+            - secured_by_view_products
+          queryParameters:
+            limit?:
+              type: number
+            offset?:
+              type: number
+            sort?:
+              type: string[]
+            resourceKey?:
+              description: |
+                The key of the import operation to retrieve.
+              type: string
+            state?:
+              description: |
+                The state of the import operations to retrieve.
+              type: common.ProcessingState
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationPagedResponse
+        /{id}:
+          type: baseByParam
+          uriParameters:
+            id:
+              description: |
+                The operation identifier
+              type: string
+          get:
+            description: |
+              Retrieves the import operation with the given id.
+            is:
+              - secured_by_view_products
+            responses:
+              200:
+                body:
+                  type: import-operation.ImportOperation
+              404:
+                body:
+                  type: error.ErrorResponse
+              503:
+                body:
+                  type: error.ErrorResponse
+  /orders:
+    /importSinkKey={importSinkKey}:
+      type: base
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: The import sink used to create the new resource
+          type: string
+      post:
+        description: Creates import request for creating new orders or updating existing ones.
+        is:
+          - secured_by_manage_orders
+        body:
+          type: import-request.OrderImportRequest
+          example: !include examples/order-import-request.json
+        responses:
+          201:
+            body:
+              type: import-request.ImportResponse
+      /import-operations:
+        type: base
+        get:
+          description: Retrieves all order import operations of an import sink key.
+          is:
+            - secured_by_view_orders
+          queryParameters:
+            limit?:
+              type: number
+            offset?:
+              type: number
+            sort?:
+              type: string[]
+            resourceKey?:
+              description: |
+                The key of the import operation to retrieve.
+              type: string
+            state?:
+              description: |
+                The state of the import operations to retrieve.
+              type: common.ProcessingState
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationPagedResponse
+                example: !include examples/import-operation-paged.response.json
+        /{id}:
+          type: baseByParam
+          uriParameters:
+            id:
+              description: |
+                The operation identifier
+              type: string
+          get:
+            description: |
+              Retrieves the import operation with the given id.
+            is:
+              - secured_by_view_orders
+            responses:
+              200:
+                body:
+                  type: import-operation.ImportOperation
+              404:
+                body:
+                  type: error.ErrorResponse
+              503:
+                body:
+                  type: error.ErrorResponse
+
+  /customers:
+    /importSinkKey={importSinkKey}:
+      type: base
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: The import sink used to create the new resource
+          type: string
+      post:
+        description: Creates import request for creating new customers or updating existing ones.
+        is:
+          - secured_by_manage_customers
+        body:
+          type: import-request.CustomerImportRequest
+          example: !include examples/customer-import-request.json
+        responses:
+          201:
+            body:
+              type: import-request.ImportResponse
+              example: !include examples/customer-import-response.json
+      /resourceKey={resourceKey}:
+        type: base
+        delete:
+          description: Deletes the customer given by the resource key.
+          is:
+            - secured_by_manage_customers
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationStatus
+      /import-operations:
+        type: base
+        get:
+          description: Retrieves all customer import operations of an import sink key.
+          is:
+            - secured_by_view_customers
+          queryParameters:
+            limit?:
+              type: number
+            offset?:
+              type: number
+            sort?:
+              type: string[]
+            resourceKey?:
+              description: |
+                The key of the import operation to retrieve.
+              type: string
+            state?:
+              description: |
+                The state of the import operations to retrieve.
+              type: common.ProcessingState
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationPagedResponse
+                example: !include examples/import-operation-paged.response.json
+        /{id}:
+          type: baseByParam
+          uriParameters:
+            id:
+              description: |
+                The operation identifier
+              type: string
+          get:
+            description: |
+              Retrieves the import operation with the given id.
+            is:
+              - secured_by_view_customers
+            responses:
+              200:
+                body:
+                  type: import-operation.ImportOperation
+              404:
+                body:
+                  type: error.ErrorResponse
+              503:
+                body:
+                  type: error.ErrorResponse
+  /inventories:
+    /importSinkKey={importSinkKey}:
+      type: base
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: The import sink used to create the new resource
+          type: string
+      post:
+        description: Creates import request for creating new inventories or updating existing ones.
+        is:
+          - secured_by_manage_products
+        body:
+          type: import-request.InventoryImportRequest
+          example: !include examples/inventory-import-request.json
+        responses:
+          201:
+            body:
+              type: import-request.ImportResponse
+              example: !include examples/inventory-import-response.json
+      /resourceKey={resourceKey}:
+        type: base
+        delete:
+          description: Deletes the inventory given by the resource key.
+          is:
+            - secured_by_manage_products
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationStatus
+      /import-operations:
+        type: base
+        get:
+          description: Retrieves all inventory import operations of an import sink key.
+          is:
+            - secured_by_view_products
+          queryParameters:
+            limit?:
+              type: number
+            offset?:
+              type: number
+            sort?:
+              type: string[]
+            resourceKey?:
+              description: |
+                The key of the import operation to retrieve.
+              type: string
+            state?:
+              description: |
+                The state of the import operations to retrieve.
+              type: common.ProcessingState
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationPagedResponse
+                example: !include examples/import-operation-paged.response.json
+        /{id}:
+          type: baseByParam
+          uriParameters:
+            id:
+              description: |
+                The operation identifier
+              type: string
+          get:
+            description: |
+              Retrieves the import operation with the given id.
+            is:
+              - secured_by_view_products
+            responses:
+              200:
+                body:
+                  type: import-operation.ImportOperation
+              404:
+                body:
+                  type: error.ErrorResponse
+              503:
+                body:
+                  type: error.ErrorResponse

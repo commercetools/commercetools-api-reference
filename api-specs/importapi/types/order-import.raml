@@ -1,0 +1,466 @@
+#%RAML 1.0 Library
+usage: Order import types.
+(annotations.package): orders
+
+uses:
+  common: common.raml
+  annotations: ../annotationTypes/annotations.raml
+  price: price-import.raml
+  product-variant: product-variant-import.raml
+  custom-field: custom-field.raml
+
+types:
+  ItemState:
+    description: |
+      The item's state.
+    properties:
+      quantity:
+        type: number
+      state:
+        description: |
+          Maps to `ItemState.state`.
+        type: common.StateKeyReference
+  ItemShippingTarget:
+    description: |
+      The item's shipping target.
+    properties:
+      addressKey:
+        description: |
+          Maps to `ItemShippingTarget.addressKey`.
+        type: string
+      quantity:
+        description: |
+          Maps to `ItemShippingTarget.quantity`.
+        type: number
+  ItemShippingDetailsDraft:
+    properties:
+      targets:
+        description: |
+          Maps to `ItemShippingDetailsDraft.targets`.
+        type: ItemShippingTarget[]
+  LineItemPrice:
+    properties:
+      value:
+        description: |
+          Maps to `Price.value`.
+        type: common.TypedMoney
+      country?:
+        description: |
+          Maps to `Price.county`.
+        type: common.CountryCode
+      validFrom?:
+        description: |
+          Maps to `Price.validFrom`.
+        type: datetime
+      validUntil?:
+        description: |
+          Maps to `Price.validUntil`.
+        type: datetime
+      customerGroup?:
+        description: |
+          References a customer group by its key.
+        type: common.CustomerGroupKeyReference
+      channel?:
+        description: |
+          References a channel by its key.
+        type: common.ChannelKeyReference
+      discounted?:
+        description: Sets a discounted price from an external service.
+        type: common.DiscountedPrice
+      tiers?:
+        description: The tiered prices for this price.
+        type: common.PriceTier[]
+      custom?:
+        description: |
+          Maps to `Price.custom`.
+        type: custom-field.Custom
+  LineItemProductVariantImportDraft:
+    properties:
+      product?:
+        description: |
+          Maps to `ProductVariant.product`.
+        type: common.ProductKeyReference
+      sku?:
+        description: |
+          Maps to `ProductVariantImportDraft.sku`.
+        type: string
+      prices?:
+        description: |
+          Maps to `ProductVariantImportDraft.prices`
+        type: LineItemPrice[]
+      attributes?:
+        description: |
+          Maps to `ProductVariantImportDraft.attributes`
+        type: product-variant.Attribute[]
+      images?:
+        description: |
+          Maps to `ProductVariantImportDraft.images`.
+        type: common.Image[]
+  LineItemImportDraft:
+    description: |
+      Represents an individual line item in an Order. A line item is a snapshot of a product at the time it was added to the order.
+
+      You cannot create an order which includes line operations that do not exist in the project or have been deleted.
+      Products and variants referenced by a line item must already exist in the commercetools project.
+    properties:
+      product?:
+        description: |
+          Maps to `LineItem.productId`.
+        type: common.ProductKeyReference
+      name:
+        description: |
+          Maps to `LineItem.name`.
+        type: common.LocalizedString
+      variant:
+        description: |
+          Maps to `ProductVariantImportDraft`.
+        type: LineItemProductVariantImportDraft
+      price:
+        description: |
+          Maps to `LineItem.price`.
+        type: LineItemPrice
+      quantity:
+        description: |
+          Maps to `LineItem.quantity`.
+        type: number
+      state?:
+        type: ItemState[]
+      supplyChannel?:
+        description: |
+          References a supply channel. Maps to `LineItem.supplyChannel`.
+
+          The supply channel referenced must already exist
+          in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.ChannelKeyReference
+      distributionChannel?:
+        description: |
+          References a distribution channel. Maps to `LineItem.distributionChannel`.
+
+          The distribution channel referenced must already exist
+          in the commercetools project, or the
+          import operation state is set to `Unresolved`.
+        type: common.ChannelKeyReference
+      taxRate?:
+        description: |
+          Maps to `LineItem.taxRate`.
+        type: price.TaxRate
+      shippingDetails?:
+        description: |
+          Maps to LineItem.shippingDetails.
+        type: ItemShippingDetailsDraft
+  ShippingRateTierType:
+    type: string
+    enum:
+      - CartValue
+      - CartClassification
+      - CartScore
+  ShippingRatePriceTier:
+    discriminator: type
+    properties:
+      type:
+        type: ShippingRateTierType
+  CartClassificationTier:
+    type: ShippingRatePriceTier
+    discriminatorValue: CartClassification
+    properties:
+      value:
+        type: string
+      price:
+        type: common.Money
+      tiers:
+        type: ShippingRatePriceTier[]
+      isMatching?:
+        type: boolean
+  ShippingRateDraft:
+    properties:
+      price:
+        type: common.Money
+      freeAbove?:
+        type: common.Money
+      tiers?:
+        type: ShippingRatePriceTier[]
+  ParcelMeasurements:
+    properties:
+      heightInMillimeter?: number
+      lengthInMillimeter?: number
+      widthInMillimeter?: number
+      weightInGram?: number
+  TrackingData:
+    properties:
+      trackingId?: string
+      carrier?: string
+      provider?: string
+      providerTransaction?: string
+      isReturn?: boolean
+  DeliveryItem:
+    properties:
+      id: string
+      quantity: number
+  Parcel:
+    properties:
+      id:
+        type: string
+      createdAt:
+        type: datetime
+      measurements?:
+        type: ParcelMeasurements
+      trackingData?: TrackingData
+      items?:
+        type: DeliveryItem[]
+  Delivery:
+    properties:
+      id: string
+      createdAt: datetime
+      items: DeliveryItem[]
+      parcels: Parcel[]
+      address?:
+        type: common.Address
+  DiscountedLineItemPortion:
+    properties:
+      discount:
+        type: common.CartDiscountKeyReference
+      discountedAmount:
+        type: common.Money
+  DiscountedLineItemPriceDraft:
+    properties:
+      value:
+        type: common.Money
+      includedDiscounts: DiscountedLineItemPortion[]
+  ShippingMethodState:
+    type: string
+    enum:
+      - DoesNotMatchCart
+      - MatchesCart
+  ShippingInfoImportDraft:
+    description: |
+      Maps to an order's `shippingInfo` property. This field is usually populated by the cart assosciated with
+      the order, but when importing orders you must provide a draft representation as a part of the OrderImport.
+    properties:
+      shippingMethodName:
+        type: string
+      price:
+        type: common.TypedMoney
+      shippingRate:
+        type: ShippingRateDraft
+      taxRate?:
+        type: price.TaxRate
+      taxCategory?:
+        type: common.TaxCategoryKeyReference
+      shippingMethod?:
+        type: common.ShippingMethodKeyReference
+      deliveries?:
+        type: Delivery[]
+      discountedPrice?:
+        type: DiscountedLineItemPriceDraft
+      shippingMethodState?:
+        type: ShippingMethodState
+  ExternalTaxRateDraft:
+    properties:
+      name: string
+      amount?: number
+      country: string
+      state?: string
+      subRates?: price.SubRate[]
+      includedInPrice?: boolean
+  CustomLineItemTaxedPrice:
+    properties:
+      totalNet:
+        type: common.TypedMoney
+      totalGross:
+        type: common.TypedMoney
+  CustomLineItemDraft:
+    properties:
+      name:
+        type: common.LocalizedString
+      money:
+        type: common.TypedMoney
+      taxedPrice?:
+        type: CustomLineItemTaxedPrice
+      totalPrice:
+        type: common.TypedMoney
+      slug: string
+      quantity:
+        type: number
+      state?:
+        type: ItemState[]
+      taxCategory?:
+        type: common.TaxCategoryKeyReference
+      taxRate?:
+        type: price.TaxRate
+      externalTaxRate?:
+        type: ExternalTaxRateDraft
+      discountedPricePerQuantity?:
+        type: DiscountedLineItemPriceDraft[]
+      shippingDetails?:
+        type: ItemShippingDetailsDraft
+  TaxPortion:
+    properties:
+      name?:
+        type: string
+      rate:
+        type: number
+        minimum: 0
+        maximum: 1
+      amount:
+        type: common.TypedMoney
+  TaxedPrice:
+    properties:
+      totalNet:
+        type: common.Money
+        description: Maps to `TaxedPrice.totalNet`.
+      totalGross:
+        type: common.Money
+        description: Maps to `TaxedPrice.totalGross`.
+      taxPortions:
+        type: TaxPortion[]
+        description: Maps to `TaxedPrice.taxPortions`.
+  OrderState:
+    type: string
+    description: Maps to `Order.orderState`.
+    enum:
+      - Open
+      - Confirmed
+      - Complete
+      - Cancelled
+  ShipmentState:
+    type: string
+    description: Maps to `Order.shipmentState`.
+    enum:
+      - Shipped
+      - Ready
+      - Pending
+      - Delayed
+      - Partial
+      - Backorder
+  PaymentState:
+    type: string
+    description: Maps to `Order.paymentState`.
+    enum:
+      - BalanceDue
+      - Failed
+      - Pending
+      - CreditOwed
+      - Paid
+  InventoryMode:
+    type: string
+    description: Maps to `Order.inventoryMode`.
+    enum:
+      - TrackOnly
+      - ReserveOnOrder
+  RoundingMode:
+    type: string
+    description: Maps to `Order.taxRoundingMode`.
+    enum:
+      - HalfEven
+      - HalfUp
+      - HalfDown
+  TaxCalculationMode:
+    type: string
+    description: Maps to `Order.taxCalculationMode`.
+    enum:
+      - LineItemLevel
+      - UnitPriceLevel
+  CartOrigin:
+    type: string
+    description: Maps to `Order.origin`.
+    enum:
+      - Customer
+      - Merchant
+  OrderImport:
+    type: common.ImportResource
+    description: |
+      Import representation for an order.
+
+      In commercetools, you can import an order using the
+      [Create Order by Import](https://docs.commercetools.com/http-api-projects-orders-import.html#create-an-order-by-import)
+      endpoint method instead of creating it from a cart.
+
+      The order import draft is a snapshot of an order at the time it was imported.
+    properties:
+      orderNumber?:
+        description: |
+          Maps to `Order.orderNumber`.
+        type: string
+      customer?:
+        type: common.CustomerKeyReference
+      customerEmail?:
+        description: |
+          Maps to `Order.customerEmail`.
+        type: string
+      lineItems?:
+        description: |
+          Maps to `Order.lineItems`.
+        type: LineItemImportDraft[]
+      customLineItems?:
+        description: |
+          Maps to `Order.customLineItems`
+        type: CustomLineItemDraft[]
+      totalPrice:
+        description: |
+          Maps to `Order.totalPrice`.
+        type: common.TypedMoney
+      taxedPrice?:
+        description: |
+          Maps to `Order.taxedPrice`.
+        type: TaxedPrice
+      shippingAddress?:
+        description: |
+          Maps to `Order.shippingAddress`.
+        type: common.Address
+      billingAddress?:
+        description: |
+          Maps to `Order.billingAddress`.
+        type: common.Address
+      customerGroup?:
+        description: |
+          Maps to `Order.customerGroup`.
+        type: common.CustomerGroupKeyReference
+      country?:
+        description: |
+          Maps to `Order.country`.
+        type: string
+      orderState?:
+        description: |
+          Maps to `Order.orderState`.
+        type: OrderState
+      shipmentState?:
+        description: |
+          Maps to `Order.shipmentState`.
+        type: ShipmentState
+      paymentState?:
+        description: |
+          Maps to `Order.paymentState`.
+        type: PaymentState
+      shippingInfo?:
+        description: |
+          Maps to `Order.shippingInfo`.
+        type: ShippingInfoImportDraft
+      completedAt?:
+        description: |
+          Maps to `Order.completedAt`.
+        type: datetime
+      custom?:
+        description: |
+          Maps to `Order.custom`.
+        type: custom-field.Custom
+      inventoryMode?:
+        description: |
+          Maps to `Order.inventoryMode`.
+        type: InventoryMode
+      taxRoundingMode?:
+        description: |
+          Maps to `Order.taxRoundingMode`.
+        type: RoundingMode
+      taxCalculationMode?:
+        description: |
+          Maps to `Order.taxCalculationMode`.
+        type: TaxCalculationMode
+      origin?:
+        description: |
+          Maps to `Order.origin`.
+        type: CartOrigin
+      itemShippingAddresses?:
+        description: |
+          Maps to `Order.itemShippingAddresses`.
+        type: common.Address[]

@@ -1,0 +1,309 @@
+#%RAML 1.0 Library
+usage: Common data types.
+(annotations.package): common
+
+uses:
+  annotations: ../annotationTypes/annotations.raml
+  custom-field: custom-field.raml
+
+types:
+  Asset:
+    properties:
+      key:
+        description: |
+          User-defined identifier for the asset.
+          Asset keys are unique inside their container (a product variant or a category).
+        type: string
+      sources:
+        type: AssetSource[]
+        minItems: 1
+      name:
+        type: LocalizedString
+      description?:
+        type: LocalizedString
+      tags?:
+        type: string[]
+      custom?:
+        type: custom-field.Custom
+  AssetDimensions:
+    properties:
+      w:
+        type: number
+      h:
+        type: number
+  AssetSource:
+    properties:
+      uri:
+        type: string
+      key?:
+        type: string
+      dimensions?:
+        type: AssetDimensions
+      contentType?:
+        type: string
+  CountryCode:
+    type: string
+    description: |
+      A two-digit country code as per [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
+    pattern: ^[A-Z]{2}$
+  CurrencyCode:
+    type: string
+    description: |
+      The currency code compliant to [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
+    pattern: ^[A-Z]{3}$
+  Image:
+    properties:
+      url:
+        type: string
+      dimensions:
+        type: AssetDimensions
+      label?:
+        type: string
+  EnumValue:
+    properties:
+      key:
+        type: string
+      label:
+        type: string
+  LocalizedEnumValue:
+    properties:
+      key:
+        type: string
+      label:
+        type: LocalizedString
+  LocalizedString:
+    type: object
+    (annotations.asMap):
+      keyTypeHint: string
+    properties:
+      /^[a-z]{2}(-[A-Z]{2})?$/:
+        type: string
+  ImportResource:
+    description: |
+      A representation of the resource to import.
+      Import resources are similar to commercetools draft types, but they only support key references.
+      In general, import resources are more granular then the normal commercetools resource.
+      They are optimized for incremental updates and therefore have a slightly different structure.
+    properties:
+      key: string
+  KeyReference:
+    description: References a resource by its key.
+    discriminator: typeId
+    properties:
+      key: string
+      typeId: ReferenceType
+  CartDiscountKeyReference:
+    description: References a cart discount by its key.
+    type: KeyReference
+    discriminatorValue: cart-discount
+  CategoryKeyReference:
+    description: References a category by its key.
+    type: KeyReference
+    discriminatorValue: category
+  ChannelKeyReference:
+    description: References a channel by its key.
+    type: KeyReference
+    discriminatorValue: channel
+  CustomerKeyReference:
+    description: References a customer by its key.
+    type: KeyReference
+    discriminatorValue: customer
+  CustomerGroupKeyReference:
+    description: References a customer group by its key.
+    type: KeyReference
+    discriminatorValue: customer-group
+  PriceKeyReference:
+    description: References a price by its key.
+    type: KeyReference
+    discriminatorValue: price
+  ProductKeyReference:
+    description: References a product by its key.
+    type: KeyReference
+    discriminatorValue: product
+  ProductDiscountKeyReference:
+    description: References a product discount by its key.
+    type: KeyReference
+    discriminatorValue: product-discount
+  ProductTypeKeyReference:
+    description: References a product type by its key.
+    type: KeyReference
+    discriminatorValue: product-type
+  ProductVariantKeyReference:
+    description: References a product variant by its key.
+    type: KeyReference
+    discriminatorValue: product-variant
+  ShippingMethodKeyReference:
+    description: References a shipping method by its key.
+    type: KeyReference
+    discriminatorValue: shipping-method
+  StateKeyReference:
+    description: References a state by its key.
+    type: KeyReference
+    discriminatorValue: state
+  StoreKeyReference:
+    description: References a store by its key.
+    type: KeyReference
+    discriminatorValue: store
+  TaxCategoryKeyReference:
+    description: References a tax category by its key.
+    type: KeyReference
+    discriminatorValue: tax-category
+  TypeKeyReference:
+    description: References a type by its key.
+    type: KeyReference
+    discriminatorValue: type
+  MoneyType:
+    type: string
+    enum:
+      - centPrecision
+      - highPrecision
+  TypedMoney:
+    discriminator: type
+    properties:
+      type:
+        type: MoneyType
+      fractionDigits?:
+        type: number
+        format: int32
+        maximum: 12
+      centAmount:
+        type: number
+        format: int64
+      currencyCode:
+        type: CurrencyCode
+  HighPrecisionMoney:
+    type: TypedMoney
+    discriminatorValue: highPrecision
+    properties:
+      preciseAmount:
+        type: number
+        format: int64
+  Money:
+    type: TypedMoney
+    discriminatorValue: centPrecision
+  DiscountedPrice:
+    properties:
+      value:
+        type: TypedMoney
+      discount:
+        description: Reference to a ProductDiscount.
+        type: ProductDiscountKeyReference
+  PriceTier:
+    description: |
+      A price tier is selected instead of the default price when a certain quantity of the ProductVariant is added to a cart and ordered.
+    properties:
+      minimumQuantity:
+        description: |
+          The minimum quantity this price tier is valid for.
+        type: number
+        format: int64
+      value:
+        description: The currency of a price tier is always the same as the currency of the base Price.
+        type: TypedMoney
+  ImportResourceType:
+    description: |
+      The type of the import resource.
+    (annotations.enumDescriptions):
+      category: The category import resource type.
+      order: The order import resource type.
+      price: The price import resource type.
+      product: The product import resource type.
+      product-type: The product type import resource type.
+      product-variant: The product variant import resource type.
+      product-variant-patch: The product variant patch import resource type.
+      customer: The customer import resource type.
+    type: string
+    enum:
+      - category
+      - order
+      - price
+      - product
+      - product-draft
+      - product-type
+      - product-variant
+      - product-variant-patch
+      - customer
+      - inventory
+  ReferenceType:
+    description: |
+      The type of the referenced resource.
+    (annotations.enumDescriptions):
+      cart-discount: References a cart discount.
+      category: References a category.
+      channel: References a channel.
+      customer: References a customer.
+      customer-group: References a customer group.
+      price: References a price.
+      product: References a product.
+      product-draft: References a product draft.
+      product-type: References a product type.
+      product-variant: References a product variant.
+      shipping-method: References a shipping method.
+      state: References a state.
+      store: References a store.
+      tax-category: References a tax-category.
+      type: References a type.
+    type: string
+    enum:
+      - cart-discount
+      - category
+      - channel
+      - customer
+      - customer-group
+      - price
+      - product
+      - product-discount
+      - product-type
+      - product-variant
+      - shipping-method
+      - state
+      - store
+      - tax-category
+      - type
+  ProcessingState:
+    description: |
+      This enumeration describes the processing state of an import operation.
+    (annotations.enumDescriptions):
+      ValidationFailed: The validation of the import resource failed.
+      Unresolved: This is an initial state of the import resource, it might contain unresolved references and needs to be resolved further.
+      WaitForMasterVariant: Wait for a master variant to arrive. The product import has required attributes and thus requires a master variant that provides those.
+      Imported: The import resource was imported successfully.
+      Delete: The import resource is being deleted.
+      Deleted: The import resource was deleted successfully.
+      Rejected: The import resource couldn't be imported or deleted after several retries.
+    type: string
+    enum:
+      - ValidationFailed
+      - Unresolved
+      - WaitForMasterVariant
+      - Imported
+      - Delete
+      - Deleted
+      - Rejected
+  Address:
+    properties:
+      id?: string
+      key?: string
+      title?: string
+      salutation?: string
+      firstName?: string
+      lastName?: string
+      streetName?: string
+      streetNumber?: string
+      additionalStreetInfo?: string
+      postalCode?: string
+      city?: string
+      region?: string
+      state?: string
+      country: CountryCode
+      company?: string
+      department?: string
+      building?: string
+      apartment?: string
+      pOBox?: string
+      phone?: string
+      mobile?: string
+      email?: string
+      fax?: string
+      additionalAddressInfo?: string
+      externalId?: string

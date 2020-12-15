@@ -1,0 +1,204 @@
+#%RAML 1.0 Library
+usage: Error types.
+(annotations.package): errors
+
+uses:
+  annotations: ../annotationTypes/annotations.raml
+  product-variant-import: product-variant-import.raml
+  price-import: price-import.raml
+  common: common.raml
+types:
+  ErrorResponse:
+    description: |
+      The response in case of an error.
+    properties:
+      statusCode:
+        description: The http status code of the response.
+        type: integer
+      message:
+        description: Describes the error.
+        type: string
+      error?:
+        description: |
+          This property is only used for OAuth2 errors.
+          Contains the error code.
+        type: string
+      error_description?:
+        description: |
+          This property is only used for OAuth2 errors.
+          Additional information to assist the client developer in
+          understanding the error.
+        type: string
+      errors?:
+        description: |
+          The errors that caused this error response.
+        type: ErrorObject[]
+  ErrorObject:
+    description: |
+      An error.
+    discriminator: code
+    properties:
+      code:
+        type: string
+      message:
+        description: The error's description.
+        type: string
+  AccessDeniedError:
+    type: ErrorObject
+    discriminatorValue: access_denied
+  InvalidScopeError:
+    description: |
+      The requested scope is invalid, unknown, malformed, or exceeds the scope granted by the resource owner.
+    type: ErrorObject
+    discriminatorValue: invalid_scope
+  InvalidOperation:
+    description: |
+      The resources involved in the request are not in a valid state for the operation.
+      The client application should validate the constraints described in the error message before sending the request.
+    type: ErrorObject
+    discriminatorValue: InvalidOperation
+  DuplicateAttributeValueError:
+    description: The Unique AttributeConstraint was violated.
+    type: ErrorObject
+    discriminatorValue: DuplicateAttributeValue
+    properties:
+      attribute:
+        description: The conflicting attribute.
+        type: product-variant-import.Attribute
+  DuplicateAttributeValuesError:
+    description: The CombinationUnique AttributeConstraint was violated.
+    type: ErrorObject
+    discriminatorValue: DuplicateAttributeValues
+    properties:
+      attributes:
+        type: product-variant-import.Attribute[]
+  DuplicateFieldError:
+    description: A value for a field conflicts with an existing duplicate value.
+    type: ErrorObject
+    discriminatorValue: DuplicateField
+    properties:
+      field?:
+        description: The name of the field.
+        type: string
+      duplicateValue?:
+        description: The offending duplicate value.
+        type: any
+  DuplicateVariantValuesError:
+    description: |
+      A given combination of variant values conflicts with an existing one.
+      Every product variant must have a distinct combination of SKU, prices, and custom attribute values.
+    type: ErrorObject
+    discriminatorValue: DuplicateVariantValues
+    properties:
+      variantValues:
+        description: The offending variant values.
+        type: VariantValues
+  VariantValues:
+    properties:
+      sku?:
+        type: string
+      prices:
+        type: price-import.PriceImport[]
+      attributes:
+        type: product-variant-import.Attribute[]
+  InsufficientScopeError:
+    type: ErrorObject
+    discriminatorValue: insufficient_scope
+  InvalidCredentialsError:
+    type: ErrorObject
+    discriminatorValue: InvalidCredentials
+  InvalidTokenError:
+    type: ErrorObject
+    discriminatorValue: invalid_token
+  InvalidFieldError:
+    description: A field has an invalid value.
+    type: ErrorObject
+    discriminatorValue: InvalidField
+    properties:
+      field:
+        description: The name of the field.
+        type: string
+      invalidValue:
+        description: The invalid value.
+        type: any
+      allowedValues?:
+        description: A fixed set of allowed values for the field, if any.
+        type: any[]
+  InvalidJsonInput:
+    description: |
+      Invalid JSON input has been sent to the service. Either the JSON is syntactically not correct, or the JSON does not
+      conform to the expected shape (e.g. is missing a required field). The client application should validate the input
+      according to the constraints described in the error message before sending the request.
+    type: ErrorObject
+    discriminatorValue: InvalidJsonInput
+  InvalidInput:
+    description: |
+      Invalid input has been sent to the service. The client application should validate the input according to the
+      constraints described in the error message before sending the request.
+    type: ErrorObject
+    discriminatorValue: InvalidInput
+  ResourceNotFoundError:
+    type: ErrorObject
+    discriminatorValue: ResourceNotFound
+    properties:
+      resource?:
+        type: any
+  ResourceCreationError:
+    type: ErrorObject
+    discriminatorValue: ResourceCreation
+    properties:
+      resource?:
+        type: any
+  ResourceUpdateError:
+    type: ErrorObject
+    discriminatorValue: ResourceUpdate
+    properties:
+      resource?:
+        type: any
+  ResourceDeletionError:
+    type: ErrorObject
+    discriminatorValue: ResourceDeletion
+    properties:
+      resource?:
+        type: any
+  RequiredFieldError:
+    description: A required field is missing a value.
+    type: ErrorObject
+    discriminatorValue: RequiredField
+    properties:
+      field:
+        description: The name of the field.
+        type: string
+  InvalidStateTransitionError:
+    type: ErrorObject
+    discriminatorValue: InvalidTransition
+    properties:
+      currentState:
+        type: common.ProcessingState
+      newState:
+        type: common.ProcessingState
+  ConcurrentModificationError:
+    description: |
+      The request conflicts with the current state of the involved resource(s). Typically, the request attempts to modify a resource
+      that is out of date, i.e. that has been modified by another client since the last time it was retrieved.
+      The client application should resolve the conflict (with or without involving the end-user) before retrying the request
+    type: ErrorObject
+    discriminatorValue: ConcurrentModification
+    properties:
+      specifiedVersion?:
+        description: The version specified in the failed request.
+        type: integer
+        format: long
+      currentVersion:
+        description: The current version of the resource.
+        type: integer
+        format: long
+      conflictedResource?:
+        description: The conflicted resource.
+        type: any
+  ContentionError:
+    type: ErrorObject
+    discriminatorValue: Contention
+  GenericError:
+    type: ErrorObject
+    discriminatorValue: Generic
