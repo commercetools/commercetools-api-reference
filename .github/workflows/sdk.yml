@@ -11,16 +11,12 @@ jobs:
 
     runs-on: ubuntu-latest
     continue-on-error: true
-    strategy:
-      matrix:
-        php-version:
-          - "7.4"
 
     steps:
       - name: "Install PHP with extensions"
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-version }}
+          php-version: "7.4"
           coverage: pcov
           extensions: json, mbstring, intl
           tools: composer
@@ -35,9 +31,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.composer/cache
-          key: php${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.json') }}
+          key: php7.4-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: |
-            php${{ matrix.php-version }}-composer-
+            php7.4-composer-
 
       - name: "Checkout api reference"
         uses: actions/checkout@v2
@@ -55,6 +51,7 @@ jobs:
       - run: make codegen_install generate_base gen_api_sdk gen_import_sdk prettify analyse test_api
         working-directory: sdk
         env:
+          RAML_FILE: "../api/api-specs/api/update-actions.raml"
           API_RAML: "../api/api-specs/api/update-actions.raml"
           IMPORT_RAML: "../api/api-specs/importapi/api.raml"
 
