@@ -11,16 +11,12 @@ jobs:
 
     runs-on: ubuntu-latest
     continue-on-error: true
-    strategy:
-      matrix:
-        php-version:
-          - "7.4"
 
     steps:
       - name: "Install PHP with extensions"
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-version }}
+          php-version: "7.4"
           coverage: pcov
           extensions: json, mbstring, intl
           tools: composer
@@ -35,9 +31,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.composer/cache
-          key: php${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.json') }}
+          key: php7.4-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: |
-            php${{ matrix.php-version }}-composer-
+            php7.4-composer-
 
       - name: "Checkout api reference"
         uses: actions/checkout@v2
@@ -52,10 +48,12 @@ jobs:
           ssh-key: ${{ secrets.SDK_DEPLOY_KEY }}
           ref: master
 
-      - run: make build_api_sdk
+      - run: make codegen_install generate_base gen_api_sdk gen_import_sdk prettify analyse test_api
         working-directory: sdk
         env:
           RAML_FILE: "../api/api-specs/api/update-actions.raml"
+          API_RAML: "../api/api-specs/api/update-actions.raml"
+          IMPORT_RAML: "../api/api-specs/importapi/api.raml"
 
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
@@ -97,12 +95,19 @@ jobs:
           ssh-key: ${{ secrets.POSTMAN_DEPLOY_KEY }}
           ref: master
 
-      - name: "Generate postman collection"
+      - name: "Generate api postman collection"
         run: sudo chmod 777 /usr/local/bin && make build
         working-directory: postman
         env:
           RAML_FILE: "../api/api-specs/api/postman.raml"
           LIB_NAME: "api"
+
+      - name: "Generate importapi postman collection"
+        run: sudo chmod 777 /usr/local/bin && make build
+        working-directory: postman
+        env:
+          RAML_FILE: "../api/api-specs/importapi/api.raml"
+          LIB_NAME: "import"
 
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
@@ -144,10 +149,11 @@ jobs:
           ref: master
 
       - name: "Generate Java SDK"
-        run: sudo chmod 777 /usr/local/bin && make build_api_sdk
+        run: sudo chmod 777 /usr/local/bin && make build_api_sdk build_import_sdk
         working-directory: sdk
         env:
-          RAML_FILE: "../api/api-specs/api/update-actions.raml"
+          API_RAML: "../api/api-specs/api/update-actions.raml"
+          IMPORT_RAML: "../api/api-specs/importapi/api.raml"
 
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
@@ -194,10 +200,11 @@ jobs:
           ref: master
 
       - name: "Generate Typescript SDK"
-        run: sudo chmod 777 /usr/local/bin && make build_api_sdk
+        run: sudo chmod 777 /usr/local/bin && make build_api_sdk build_import_sdk
         working-directory: sdk
         env:
-          RAML_FILE: "../api/api-specs/api/update-actions.raml"
+          API_RAML: "../api/api-specs/api/update-actions.raml"
+          IMPORT_RAML: "../api/api-specs/importapi/api.raml"
 
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
