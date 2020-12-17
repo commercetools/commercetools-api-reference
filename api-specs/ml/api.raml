@@ -1,0 +1,32 @@
+#%RAML 1.0
+---
+title: Commercetools Machine Learning API
+version: v1
+mediaType: application/json
+baseUri: https://ml-eu.europe-west1.gcp.commercetools.com
+
+uses:
+  category-recommendations: types/category-recommendations.raml
+  general-recommendations: types/general-recommendations.raml
+  image-search: types/image-search.raml
+  image-search-config: types/image-search-config.raml
+  missing-data: types/missing-data.raml
+  common: types/common.raml
+  similar-products: types/similar-products.raml
+  annotations: types/annotations.raml
+
+securitySchemes:
+  oauth_2_0: !include securitySchemes/oauth2.raml
+securedBy: [oauth_2_0]
+
+/{projectKey}:
+  (annotations.methodName): withProjectKey
+  uriParameters:
+    projectKey:
+      type: string
+  /image-search: !include resources/image-search.raml
+  /recommendations:
+    /project-categories: !include resources/category-recommendations.raml
+    /general-categories: !include resources/general-recommendations.raml
+  /missing-data: !include resources/missing-data.raml
+  /similarities: !include resources/similar-products.raml

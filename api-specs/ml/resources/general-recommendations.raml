@@ -1,0 +1,37 @@
+#%RAML 1.0 Library
+
+get:
+  description: |
+    This endpoint takes arbitrary product names or image URLs and generates recommendations from a general set of categories, which cover a broad range of industries. The full list of supported categories can be found [here](https://docs.commercetools.com/category_recommendations_supported_categories.txt). These are independent of the categories that are actually defined in your project. The main  purpose of this API is to provide a quick way to test the behavior of the category recommendations engine for different names and images. In contrast to the [project-specific endpoint](https://docs.commercetools.com/http-api-projects-categoryrecommendations#project-specific-category-recommendations), this endpoint does not have [activation criteria](https://docs.commercetools.com/http-api-projects-categoryrecommendations#activating-the-api) and is enabled for all projects.
+  queryParameters:
+    productImageUrl?:
+      type: string
+      description:
+        Either `productName` or `productImageUrl` is required URL to a a product
+        image.
+    productName:
+      type: string
+      description:
+        Either `productName` or `productImageUrl` is required. Name of the
+        product that should get category recommendations (best results with
+        English names).
+    limit?:
+      default: 3
+      type: integer
+    offset?:
+      description: |
+        Support for paging results
+      default: 0
+      type: integer
+    confidenceMin?:
+      type: number
+      format: float
+    confidenceMax?:
+      type: number
+      format: float
+  responses:
+    200:
+      body:
+        application/json:
+          type: general-recommendations.GeneralCategoryRecommendationPagedQueryResponse
+          example: !include ../examples/general-recommendations.json

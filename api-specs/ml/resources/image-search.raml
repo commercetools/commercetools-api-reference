@@ -1,0 +1,46 @@
+#%RAML 1.0 Library
+
+description: |
+  Search for similar products using an image as search input.
+post:
+  description: |
+    Accepts an image file and returns similar products from product catalogue.
+  queryParameters:
+    limit?:
+      description: |
+        Maximum number of matches returned
+      default: 5
+      type: integer
+    offset?:
+      description: |
+        Support for paging results
+      default: 0
+      type: integer
+  body:
+    multipart/form-data:
+      type: image-search.ImageSearchRequest
+      fileTypes: ['image/jpeg', 'image/png', 'image/gif']
+  responses:
+    200:
+      body:
+        application/json:
+          type: image-search.ImageSearchResponse
+          example: !include ../examples/image-search.json
+/config:
+  get:
+    description: Get the current image search config.
+    responses:
+      200:
+        body:
+          application/json:
+            type: image-search-config.ImageSearchConfigResponse
+  post:
+    description: Endpoint to update the image search config.
+    body:
+      application/json:
+        type: image-search-config.ImageSearchConfigRequest
+    responses:
+      200:
+        body:
+          application/json:
+            type: image-search-config.ImageSearchConfigResponse

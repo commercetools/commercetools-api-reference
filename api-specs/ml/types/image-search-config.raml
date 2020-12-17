@@ -1,0 +1,39 @@
+#%RAML 1.0 Library
+
+usage: Image search config endpoint
+(annotations.package): image-search-config
+
+uses:
+  common: ./common.raml
+  annotations: ./annotations.raml
+
+types:
+  ImageSearchConfigStatus:
+    type: string
+    enum:
+      - 'on'
+      - 'off'
+  ImageSearchConfigUpdateAction:
+    discriminator: action
+    properties:
+      action:
+        type: string
+
+  ChangeStatusUpdateAction:
+    type: ImageSearchConfigUpdateAction
+    discriminatorValue: changeStatus
+    properties:
+      status:
+        type: ImageSearchConfigStatus
+
+  ImageSearchConfigRequest:
+    properties:
+      actions:
+        description: The list of update actions to be performed on the project.
+        type: ImageSearchConfigUpdateAction[]
+  ImageSearchConfigResponse:
+    properties:
+      status:
+        type: ImageSearchConfigStatus
+        description: The image search activation status.
+      lastModifiedAt: datetime

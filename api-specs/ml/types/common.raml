@@ -1,0 +1,112 @@
+#%RAML 1.0 Library
+usage: Common data types.
+(annotations.package): common
+
+uses:
+  annotations: ./annotations.raml
+
+types:
+  LocalizedString:
+    (annotations.asMap):
+      key: string
+      value: string
+    properties:
+      /^[a-z]{2}(-[A-Z]{2})?$/:
+        type: string
+
+  CurrencyCode:
+    type: string
+    description: |
+      The currency code compliant to [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
+    pattern: ^[A-Z]{3}$
+
+  Money:
+    properties:
+      centAmount:
+        type: number
+        format: int64
+      currencyCode:
+        type: CurrencyCode
+
+  ReferenceTypeId:
+    type: string
+    enum:
+      - cart
+      - cart-discount
+      - category
+      - channel
+      - customer
+      - customer-group
+      - discount-code
+      - key-value-document
+      - payment
+      - product
+      - product-type
+      - product-discount
+      - order
+      - review
+      - shopping-list
+      - shipping-method
+      - state
+      - store
+      - tax-category
+      - type
+      - zone
+      - inventory-entry
+      - order-edit
+
+  Reference:
+    type: object
+    discriminator: typeId
+    properties:
+      typeId:
+        type: ReferenceTypeId
+      id:
+        type: string
+
+  CategoryReference:
+    type: Reference
+    discriminatorValue: category
+
+  ProductReference:
+    type: Reference
+    discriminatorValue: product
+
+  ProductTypeReference:
+    type: Reference
+    discriminatorValue: product-type
+
+  ProductVariant:
+    description: The product variant that contains the image.
+    properties:
+      product:
+        description: The product that contains this variant.
+        type: ProductReference
+        required: true
+      staged:
+        description: The state of the product variant.
+        type: boolean
+        required: true
+      variantId:
+        description: The id of the product variant.
+        type: number
+        format: int32
+        required: true
+
+  TaskStatusEnum:
+    type: string
+    enum:
+      - PENDING
+      - SUCCESS
+
+  TaskToken:
+    description:
+      Represents a URL path to poll to get the results of an Asynchronous
+      Request.
+    properties:
+      taskId:
+        description: The ID for the task. Used to find the status of the task.
+        type: string
+      uriPath:
+        description: The URI path to poll for the status of the task.
+        type: string
