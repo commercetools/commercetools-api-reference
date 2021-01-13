@@ -94,6 +94,82 @@ uriParameters:
           body:
             application/json:
               example: !include ../examples/cart.example.json
+  /key={key}:
+    (methodName): withKey
+    type:
+      baseResource:
+        uriParameterName: key
+        resourceType: Cart
+        resourceUpdateType: Update
+    get:
+      displayName: Get cart by key in store
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_orders:{projectKey}',
+                  'view_orders:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+      description: |
+        Returns a cart by its key from a specific Store. The {storeKey} path parameter maps to a Store's key.
+        If the cart exists in the commercetools project but does not have the store field,
+        or the store field references a different store, this method returns a ResourceNotFound error.
+        The cart may not contain up-to-date prices, discounts etc.
+        If you want to ensure they're up-to-date, send an Update request with the Recalculate update action instead.
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/cart.example.json
+    post:
+      displayName: Update cart by key in store
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_orders:{projectKey}',
+                  'manage_orders:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+      description: |
+        Updates a cart in the store specified by {storeKey}. The {storeKey} path parameter maps to a Store's key.
+        If the cart exists in the commercetools project but does not have the store field,
+        or the store field references a different store, this method returns a ResourceNotFound error.
+      body:
+        application/json:
+          example: !include ../examples/cart-update.example.json
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/cart.example.json
+    delete:
+      displayName: Delete cart by key in store
+      is:
+        - dataErasure
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_orders:{projectKey}',
+                  'manage_orders:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/cart.example.json
   /replicate:
     type: base
     post:
