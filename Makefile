@@ -7,7 +7,7 @@ install_deps: codegen_install composer_install yarn_install
 
 lint: check_markdown format_raml validate_raml
 
-generate: update_types generate_oas generate_collection
+generate: update_types generate_oas
 
 oas_convert: oas_convert3 oas_convert2
 
@@ -34,9 +34,6 @@ format_raml: yarn_install update_types
 
 validate_raml: update_types format_raml
 	docker run -v$(shell pwd)/api-specs/api:/api vrapio/vrap -rc /api/update-actions.raml
-
-generate_collection: codegen_install format_raml
-	rmf-codegen generate -o postman -t postman api-specs/api/postman.raml
 
 generate_oas: codegen_install format_raml
 	rmf-codegen generate -o oas -t OAS api-specs/api/update-actions.raml
