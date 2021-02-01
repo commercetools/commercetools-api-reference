@@ -58,7 +58,7 @@ $newTypes = [];
 
 foreach ($types as $type) {
     if ($type['originalName'] !== $type['fileName']) {
-        exec('git mv ' . $type['originalName'] . ' ' . $type['fileName']);
+        exec('git mv ' . $baseDir . '/' . $type['originalName'] . ' ' . $baseDir . '/' . $type['fileName']);
     }
     $newTypes[$type['fileName']] = $type['displayName'] . ': !include ' . str_replace($typeDir . '/' , '', $type['fileName']);
 }
