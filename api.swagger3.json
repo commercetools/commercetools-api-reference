@@ -4493,16 +4493,40 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/CustomObject",
+                  "$ref": "#/components/schemas/CustomObjectPagedQueryResponse",
                   "x-annotation-builtinType": "object"
                 }
               }
             }
           }
         },
-        "description": "Get CustomObject by container",
-        "operationId": "Get CustomObject by container",
+        "description": "Get CustomObjectPagedQueryResponse by container",
+        "operationId": "Get CustomObjectPagedQueryResponse by container",
         "parameters": [
+          {
+            "name": "where",
+            "in": "query",
+            "description": "If queries support ad-hoc filtering of resources through flexible predicates, they do so via the where query\nparameter that accepts a single (possibly compound) predicate to determine whether a specific resource\nrepresentation should be included in the result.\n\nThe structure of predicates and the names of the fields follow the structure and naming of the fields in the\ndocumented response representation of the query results.\n\nExamples of predicates:\n\n    // Compare a field's value to a given value\n    name = \"Peter\"\n    age < 42\n    age > 42\n    age <= 42\n    age >= 42\n    age <> 42\n\n    // Combine any two conditional expressions in a logical conjunction / disjunction\n    name = \"Peter\" and age < 42\n    name = \"Peter\" or age < 42\n\n    // Negate any other conditional expression\n    not (name = \"Peter\" and age < 42)\n\n    // Check whether a field's value is or is not contained in\n    // a specified set of values.\n    age in (42, 43, 44)\n    age not in (42, 43, 44)\n\n    // Check whether an array contains all or any of a set of values\n    tags contains all (\"a\", \"b\", \"c\")\n    tags contains any (\"a\", \"b\", \"c\")\n\n    // Check whether an array is empty\n    tags is empty\n\n    // Check whether a field exists & has a non-null value\n    name is defined\n    name is not defined\n\n    // Descend into nested objects\n    dog(age < 7 and name = \"Beethoven\")\n\n    // Descend into nested arrays of objects\n    cities(zip > 10000 and zip < 20000)\n\nA query endpoint usually restricts predicates to only be allowed on a specified subset of a resource\nrepresentation's fields. The documentation of the endpoint will therefore list fields that can be used\nfor constructing predicates.\n\nIf multiple predicates are specified via multiple where query parameters, the individual predicates are\ncombined in a logical conjunction, just as if they had been specified in a single where query parameter\nand combined with and.\n\nNote: The encoding of the predicates is UTF-8 and the predicate must be URL-encoded in the HTTP request.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-annotation-builtinType": "array"
+          },
+          {
+            "name": "/^var[.][a-zA-Z0-9]+$/",
+            "in": "query",
+            "description": "Predicate parameter values",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-annotation-builtinType": "array"
+          },
           {
             "name": "expand",
             "in": "query",
@@ -80532,6 +80556,7 @@
           "payment",
           "payment-interface-interaction",
           "review",
+          "shipping-method",
           "shopping-list",
           "shopping-list-text-line-item",
           "discount-code",
@@ -82618,6 +82643,11 @@
                 "type": "string",
                 "x-annotation-builtinType": "string",
                 "x-annotation-inherited": false
+              },
+              "custom": {
+                "$ref": "#/components/schemas/CustomFields",
+                "x-annotation-builtinType": "object",
+                "x-annotation-inherited": false
               }
             },
             "type": "object"
@@ -82905,6 +82935,11 @@
             "type": "string",
             "x-annotation-builtinType": "string",
             "x-annotation-inherited": false
+          },
+          "custom": {
+            "$ref": "#/components/schemas/CustomFieldsDraft",
+            "x-annotation-builtinType": "object",
+            "x-annotation-inherited": false
           }
         },
         "required": [
@@ -83122,6 +83157,93 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-shippingMethods.html#shippingmethod",
         "type": "string"
       },
+      "ShippingMethodSetCustomFieldAction": {
+        "title": "ShippingMethodSetCustomFieldAction",
+        "x-annotation-includePath": "types/ShippingMethod/ShippingMethodSetCustomFieldAction.raml",
+        "x-annotation-example": {
+          "action": "setCustomField",
+          "name": "ExamplaryStringTypeField",
+          "value": "TextString"
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ShippingMethodUpdateAction"
+          },
+          {
+            "properties": {
+              "action": {
+                "enum": [
+                  "setCustomField"
+                ],
+                "type": "string",
+                "x-annotation-builtinType": "string",
+                "x-annotation-inherited": true
+              },
+              "name": {
+                "type": "string",
+                "x-annotation-builtinType": "string",
+                "x-annotation-inherited": false
+              },
+              "value": {
+                "type": "string",
+                "x-annotation-builtinType": "any",
+                "x-annotation-inherited": false
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-builtinType": "object",
+        "x-annotation-package": "ShippingMethod",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-shippingMethods.html#set-customfield",
+        "type": "string"
+      },
+      "ShippingMethodSetCustomTypeAction": {
+        "title": "ShippingMethodSetCustomTypeAction",
+        "x-annotation-includePath": "types/ShippingMethod/ShippingMethodSetCustomTypeAction.raml",
+        "x-annotation-example": {
+          "action": "setCustomType",
+          "type": {
+            "id": "{{type-id}}",
+            "typeId": "type"
+          },
+          "fields": {
+            "examplaryStringTypeField": "TextString"
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ShippingMethodUpdateAction"
+          },
+          {
+            "properties": {
+              "action": {
+                "enum": [
+                  "setCustomType"
+                ],
+                "type": "string",
+                "x-annotation-builtinType": "string",
+                "x-annotation-inherited": true
+              },
+              "type": {
+                "$ref": "#/components/schemas/TypeResourceIdentifier",
+                "x-annotation-builtinType": "object",
+                "x-annotation-inherited": false
+              },
+              "fields": {
+                "$ref": "#/components/schemas/FieldContainer",
+                "x-annotation-builtinType": "object",
+                "x-annotation-inherited": false
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-builtinType": "object",
+        "x-annotation-package": "ShippingMethod",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-shippingMethods.html#set-customtype",
+        "type": "string"
+      },
       "ShippingMethodSetDescriptionAction": {
         "title": "ShippingMethodSetDescriptionAction",
         "x-annotation-includePath": "types/ShippingMethod/ShippingMethodSetDescriptionAction.raml",
@@ -83329,6 +83451,8 @@
           "ShippingMethodChangeTaxCategoryAction",
           "ShippingMethodRemoveShippingRateAction",
           "ShippingMethodRemoveZoneAction",
+          "ShippingMethodSetCustomFieldAction",
+          "ShippingMethodSetCustomTypeAction",
           "ShippingMethodSetDescriptionAction",
           "ShippingMethodSetKeyAction",
           "ShippingMethodSetLocalizedDescriptionAction",
