@@ -11,6 +11,25 @@ types:
     properties:
       /^[a-z]{2}(-[A-Z]{2})?$/:
         type: SearchKeyword[]
+    description: |
+      Search keywords are primarily used by the suggester but are also considered for the full-text search. SearchKeywords is a JSON object where the keys are of [IETF language tag](https://en.wikipedia.org/wiki/IETF_language_tag). The value to a language tag key is an array of SearchKeyword for the specific language.
+      ```json
+      {
+        "en": [
+          { "text": "Multi tool" },
+          { "text": "Swiss Army Knife", "suggestTokenizer": { "type": "whitespace" } }
+        ],
+        "de": [
+          {
+            "text": "Schweizer Messer",
+            "suggestTokenizer": {
+              "type": "custom",
+              "inputs": ["schweizer messer", "offiziersmesser", "sackmesser"]
+            }
+          }
+        ]
+      }
+      ```
   SearchKeyword:
     properties:
       text:
@@ -23,6 +42,8 @@ types:
     properties:
       type:
         type: string
+    description: |
+      The tokenizer defines the tokens that are used to match against the [Suggest Query](/../products-suggestions#suggest-query) input.
   CustomTokenizer:
     type: SuggestTokenizer
     discriminatorValue: custom
