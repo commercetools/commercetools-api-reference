@@ -33,13 +33,13 @@ format_raml: yarn_install update_types
 	yarn run format:raml
 
 validate_raml: update_types format_raml
-	docker run -v$(shell pwd)/api-specs/api:/api vrapio/vrap -rc /api/update-actions.raml
+	docker run -v$(shell pwd)/api-specs/api:/api vrapio/vrap -rc /api/api.raml
 
 generate_oas: codegen_install format_raml
-	rmf-codegen generate -o oas -t OAS api-specs/api/update-actions.raml
+	rmf-codegen generate -o oas -t OAS api-specs/api/api.raml
 
 raml_doc_convert: codegen_install format_raml
-	rmf-codegen generate -o tmpdoc -t RAML_DOC api-specs/api/update-actions.raml
+	rmf-codegen generate -o tmpdoc -t RAML_DOC api-specs/api/api.raml
 
 oas_convert3: lint raml_doc_convert
 	node bin/doc-convert-oas3.js
