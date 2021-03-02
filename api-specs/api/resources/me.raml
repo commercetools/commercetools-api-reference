@@ -21,7 +21,7 @@ post:
   body:
     application/json:
       example: !include ../examples/customer-update.example.json
-      type: Update
+      type: MyCustomerUpdate
   responses:
     200:
       body:
@@ -115,6 +115,9 @@ delete:
       resourceDraft: MyCartDraft
       whereExample: customerEmail = "john.doe@example.com"
       sortExample: createdAt asc
+  (updateable): MyCart
+  (deleteable): MyCart
+  (createable): MyCartDraft
   description: A shopping cart holds product variants and can be ordered.
   get:
     displayName: Query my carts
@@ -135,13 +138,47 @@ delete:
         body:
           application/json:
             example: !include ../examples/cart.example.json
+  /key={key}:
+    (methodName): withKey
+    type:
+      baseResource:
+        uriParameterName: key
+        resourceType: MyCart
+        resourceUpdateType: MyCartUpdate
+    get:
+      displayName: Get my cart by key
+      securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/cart.example.json
+    post:
+      displayName: Update my cart by key
+      securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
+      body:
+        application/json:
+          example: !include ../examples/cart-update.example.json
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/cart.example.json
+    delete:
+      displayName: Delete my cart by key
+      securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/cart.example.json
   /{ID}:
     (methodName): withId
     type:
       baseResource:
         uriParameterName: ID
         resourceType: MyCart
-        resourceUpdateType: Update
+        resourceUpdateType: MyCartUpdate
     get:
       displayName: Get my cart by id
       securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
@@ -205,7 +242,7 @@ delete:
       baseResource:
         uriParameterName: ID
         resourceType: MyOrder
-        resourceUpdateType: Update
+        resourceUpdateType: MyOrderUpdate
     get:
       displayName: Get my order by id
       securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
@@ -222,6 +259,9 @@ delete:
       resourceDraft: MyPaymentDraft
       whereExample: customer(id = "43645-23uf")
       sortExample: id asc
+  (updateable): MyPayment
+  (deleteable): MyPayment
+  (createable): MyPaymentDraft
   description:
     The My Payments endpoint creates and provides access to payments scoped to a
     specific user.
@@ -250,7 +290,7 @@ delete:
       baseResource:
         uriParameterName: key
         resourceType: MyPayment
-        resourceUpdateType: Update
+        resourceUpdateType: MyPaymentUpdate
     get:
       displayName: Get my payment by key
       securedBy: [oauth_2_0: { scopes: ['manage_my_payments:{projectKey}'] }]
@@ -284,7 +324,7 @@ delete:
       baseResource:
         uriParameterName: ID
         resourceType: MyPayment
-        resourceUpdateType: Update
+        resourceUpdateType: MyPaymentUpdate
     get:
       displayName: Get my payment by id
       securedBy: [oauth_2_0: { scopes: ['manage_my_payments:{projectKey}'] }]
@@ -320,6 +360,9 @@ delete:
       resourceDraft: MyShoppingListDraft
       whereExample: name(en = "list-name")
       sortExample: createdAt asc
+  (updateable): MyShoppingList
+  (deleteable): MyShoppingList
+  (createable): MyShoppingListDraft
   description:
     The My Shopping Lists endpoint creates and provides access to shopping lists
     scoped to a specific user.
@@ -350,7 +393,7 @@ delete:
       baseResource:
         uriParameterName: ID
         resourceType: MyShoppingList
-        resourceUpdateType: Update
+        resourceUpdateType: MyShoppingListUpdate
     get:
       displayName: Get my shopping list by id
       securedBy:
@@ -387,7 +430,7 @@ delete:
       baseResource:
         uriParameterName: key
         resourceType: MyShoppingList
-        resourceUpdateType: Update
+        resourceUpdateType: MyShoppingListUpdate
     get:
       displayName: Get my shopping list by key
       securedBy:
