@@ -1,0 +1,303 @@
+#%RAML 1.0
+---
+title: Change History API
+description:
+  Fetch all changes from all resource types that match queryParameters.
+version: 1
+baseUri: https://history.europe-west1.gcp.commercetools.com
+securitySchemes:
+  oauth_2_0: !include oauth2.raml
+securedBy: [oauth_2_0]
+mediaType: application/json
+annotationTypes:
+  asMap:
+    type: object
+    properties:
+      key: string
+      value: string
+types: !include types/types.raml
+
+resourceTypes:
+  base:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: ChangeHistoryPagedQueryResponse
+              example: !include examples/ChangeHistoryPagedQueryResponse.json
+          description: Changes of the resource under query.
+        400:
+          body:
+            application/json:
+              type: ErrorResponse
+              example: !include examples/BadRequest.json
+          description:
+            Bad Request. A 400 is the most commonly expected error response and
+            indicates that a request failed due to providing bad input. Bad
+            input can be a malformed request body, missing required parameters,
+            wrongly typed or malformed parameters or a parameter that references
+            another resource that does not exist. Clients need to resolve the
+            problems mentioned in the response before re-sending the request.
+        401:
+          body:
+            application/json:
+              type: ErrorResponse
+              example: !include examples/Unauthorized.json
+          description:
+            Unauthorized. Indicate that the request is not properly
+            authenticated.
+        403:
+          body:
+            application/json:
+              type: ErrorResponse
+              example: !include examples/Forbidden.json
+          description:
+            Forbidden. Indicates that the authenticated client is not allowed to
+            perform the request.
+        500:
+          body:
+            application/json:
+              type: ErrorResponse
+              example: !include examples/InternalServerError.json
+          description:
+            Internal Server Error. A 500 indicates that a request failed due to
+            a server-side problem that needs to be resolved before subsequent
+            requests can succeed. It either indicates a temporary unavailability
+            or permanent server-side problem that needs to be reported and
+            resolved.
+        503:
+          body:
+            application/json:
+              type: ErrorResponse
+              example: !include examples/ServiceUnavailable.json
+          description: |
+            Service Unavailable. The following general error codes can appear in responses with the HTTP status code `503`
+            - `OverCapacity` The service is having trouble handling the load. The client application should retry the request with exponential backoff up to a point where further delay is unacceptable.
+/{projectKey}:
+  type: base
+  uriParameters:
+    projectKey:
+      type: string
+      description: |
+        `key` of the commercetools Project.
+  get:
+    securedBy:
+      - oauth_2_0:
+          scopes: ['view_change_history:{projectKey}']
+    queryParameters:
+      resourceType?:
+        type: ChangeHistoryResourceType[]
+        description: |
+          Can be passed multiple times.
+          Can be used to filter for Changes of specified resource types.
+          By default, the API returns the Changes of all supported resource types.
+        example: ['order', 'product']
+      dates[from]?:
+        type: any
+        description: |
+          Can be [DateTime](/types#datetime), non-negative integer, or `now`.
+          The non-negative integer represents the point in time in the past from now measured in hours.
+          For example, `24` signifies 24 hours ago.
+          The time range must be valid.
+          Assigning `dates[from]` a time point later than `dates[to]` will fail with an error.
+      dates[to]?:
+        type: any
+        description: |
+          See `dates[from]`.
+      limit?:
+        type: integer
+        description: Maximum number of results to return.
+      offset?:
+        type: integer
+        description: Number of results to skip.
+      userId?:
+        type: string
+        description: |
+          [ID](/general-concepts#identifier) of the Merchant Center user who made the change.
+          Can be used to query changes made by a Merchant Center user.
+      changeType?:
+        type: string
+        description: |
+          Can be `"ResourceUpdated"`, `"ResourceCreated"`, or `"ResourceDeleted"`.
+          Can be used to filter for a specific type of change.
+      clientId?:
+        type: string
+        description: |
+          [ID](/general-concepts#identifier) of the [API Client](/projects/api-clients#apiclient) that made the change.
+      resourceId?:
+        type: string
+        description: |
+          [ID](/general-concepts#identifier) of the changed resource.
+      source?:
+        type: string
+        description: |
+          Name of the source with which changes were made. Can be `"MerchantCenter"`, `"ImpEx"`, or `"ApiClient"`.
+      actions?:
+        type: UpdateType[]
+        description: |
+          Can be passed multiple times. Values must be well-defined.
+      customerId:
+        type: string
+        description: |
+          [ID](/general-concepts#identifier) of the [Customer](/projects/customers#customer) who made the change using a token from the [Password Flow](/authorization#password-flow).
+      expand?:
+        type: boolean
+        description: |
+          Allows changes to be expanded with more information.
+  /{resourceType}:
+    type: base
+    uriParameters:
+      resourceType:
+        type: ChangeHistoryResourceType
+        description: |
+          Resource type for which a query is made.
+    get:
+      securedBy:
+        - oauth_2_0:
+            scopes:
+              [
+                'view_cart_discounts:{projectKey}',
+                'view_orders:{projectKey}',
+                'view_orders:{projectKey}:{storeKey}',
+                'view_categories:{projectKey}',
+                'view_products:{projectKey}',
+                'view_customers:{projectKey}',
+                'view_customer_groups:{projectKey}',
+                'view_discount_codes:{projectKey}',
+                'view_payments:{projectKey}',
+                'view_shopping_lists:{projectKey}',
+                'view_states:{projectKey}',
+                'view_stores:{projectKey}',
+                'view_tax_categories:{projectKey}',
+                'view_types:{projectKey}',
+              ]
+      queryParameters:
+        dates[from]?:
+          type: any
+          description: |
+            Can be [DateTime](/types#datetime), non-negative integer, or `now`.
+            The non-negative integer represents the time point in the past in hours.
+            For example, `24` signifies 24 hours ago.
+            The time range must be valid.
+            Assigning `dates[from]` a time point later than `dates[to]` will fail with an error.
+        dates[to]?:
+          type: any
+          description: |
+            See `dates[from]`.
+        limit?:
+          type: integer
+          description: Maximum number of results to return.
+        offset?:
+          type: integer
+          description: Number of results to skip.
+        userId?:
+          type: string
+          description: |
+            [ID](/general-concepts#identifier) of the Merchant Center user who made the change.
+            Can be used to query changes made by a Merchant Center user.
+        changeType?:
+          type: string
+          description: |
+            Can be `"ResourceUpdated"`, `"ResourceCreated"`, or `"ResourceDeleted"`.
+            Can be used to filter for a specific type of change.
+        clientId?:
+          type: string
+          description: |
+            [ID](/general-concepts#identifier) of the [API Client](/projects/api-clients#apiclient) that made the change.
+        resourceId?:
+          type: string
+          description: |
+            [ID](/general-concepts#identifier) of the changed resource.
+        source?:
+          type: string
+          description: |
+            Name of the source with which changes were made. Can be `"MerchantCenter"`, `"ImpEx"`, or `"ApiClient"`.
+        actions?:
+          type: UpdateType[]
+          description: |
+            Can be passed multiple times. Values must be well-defined.
+        customerId:
+          type: string
+          description: |
+            [ID](/general-concepts#identifier) of the [Customer](/projects/customers#customer) who made the change using a token from the [Password Flow](/authorization#password-flow).
+        expand?:
+          type: boolean
+          description: |
+            Allows changes to be expanded with more information.
+    /{ID}:
+      type: base
+      uriParameters:
+        ID:
+          type: string
+          description: |
+            [ID](/general-concepts#identifier) of the commercetools resource for which a query is made.
+      get:
+        securedBy:
+          - oauth_2_0:
+              scopes:
+                [
+                  'view_cart_discounts:{projectKey}',
+                  'view_orders:{projectKey}',
+                  'view_orders:{projectKey}:{storeKey}',
+                  'view_categories:{projectKey}',
+                  'view_products:{projectKey}',
+                  'view_customers:{projectKey}',
+                  'view_customer_groups:{projectKey}',
+                  'view_discount_codes:{projectKey}',
+                  'view_payments:{projectKey}',
+                  'view_shopping_lists:{projectKey}',
+                  'view_states:{projectKey}',
+                  'view_stores:{projectKey}',
+                  'view_tax_categories:{projectKey}',
+                  'view_types:{projectKey}',
+                ]
+        queryParameters:
+          dates[from]?:
+            type: any
+            description: |
+              Can be [DateTime](/types#datetime), non-negative integer, or `now`.
+              The non-negative integer represents the time point in the past in hours.
+              For example, `24` signifies 24 hours ago.
+              The time range must be valid.
+              Assigning `dates[from]` a time point later than `dates[to]` will fail with an error.
+          dates[to]?:
+            type: any
+            description: |
+              See `dates[from]`.
+          limit?:
+            type: integer
+            description: The maximum number of results to return.
+          offset?:
+            type: integer
+            description: The number of results to skip.
+          userId?:
+            type: string
+            description: |
+              [ID](/general-concepts#identifier) of the Merchant Center user who made the change.
+              Can be used to query changes made by a Merchant Center user.
+          changeType?:
+            type: string
+            description: |
+              Can be `"ResourceUpdated"`, `"ResourceCreated"`, or `"ResourceDeleted"`.
+              Can be used to filter for a specific type of change.
+          clientId?:
+            type: string
+            description: |
+              [ID](/general-concepts#identifier) of the [API Client](/projects/api-clients#apiclient) that made the change.
+          source?:
+            type: string
+            description: |
+              Name of the source with which changes were made. Can be `"MerchantCenter"`, `"ImpEx"`, or `"ApiClient"`.
+          actions?:
+            type: UpdateType[]
+            description: |
+              Can be passed multiple times. Values must be well-defined.
+          customerId:
+            type: string
+            description: |
+              [ID](/general-concepts#identifier) of the [Customer](/projects/customers#customer) who made the change using a token from the [Password Flow](/authorization#password-flow).
+          expand?:
+            type: boolean
+            description: |
+              Allows changes to be expanded with more information.
