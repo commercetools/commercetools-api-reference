@@ -1,8 +1,7 @@
 #%RAML 1.0
 ---
 title: Change History API
-description:
-  Fetch all changes from all resource types that match queryParameters.
+description: Fetch all Records from all resource types that match queryParameters.
 version: 1
 baseUri: https://history.europe-west1.gcp.commercetools.com
 securitySchemes:
@@ -26,7 +25,7 @@ resourceTypes:
             application/json:
               type: ChangeHistoryPagedQueryResponse
               example: !include examples/ChangeHistoryPagedQueryResponse.json
-          description: Changes of the resource under query.
+          description: Records of the resource under query.
         400:
           body:
             application/json:
@@ -44,8 +43,7 @@ resourceTypes:
             application/json:
               type: ErrorResponse
               example: !include examples/Unauthorized.json
-          description:
-            Unauthorized. Indicate that the request is not properly
+          description: Unauthorized. Indicate that the request is not properly
             authenticated.
         403:
           body:
@@ -84,30 +82,31 @@ resourceTypes:
   get:
     securedBy:
       - oauth_2_0:
-          scopes: ['view_change_history:{projectKey}']
+          scopes: ['view_audit_log:{projectKey}']
     queryParameters:
       resourceType?:
         type: ChangeHistoryResourceType[]
         description: |
           Can be passed multiple times.
-          Can be used to filter for Changes of specified resource types.
-          By default, the API returns the Changes of all supported resource types.
+          Can be used to filter for Records of specified resource types.
+          By default, the API returns the Records of all supported resource types.
         example: ['order', 'product']
-      dates[from]?:
+      date.from?:
         type: any
         description: |
           Can be [DateTime](/types#datetime), non-negative integer, or `now`.
           The non-negative integer represents the point in time in the past from now measured in hours.
           For example, `24` signifies 24 hours ago.
           The time range must be valid.
-          Assigning `dates[from]` a time point later than `dates[to]` will fail with an error.
-      dates[to]?:
+          Assigning `date.from` a time point later than `date.to` will fail with an error.
+      date.to?:
         type: any
         description: |
-          See `dates[from]`.
+          See `date.from`.
       limit?:
         type: integer
         description: Maximum number of results to return.
+        minimum: 0
       offset?:
         type: integer
         description: Number of results to skip.
@@ -116,11 +115,15 @@ resourceTypes:
         description: |
           [ID](/general-concepts#identifier) of the Merchant Center user who made the change.
           Can be used to query changes made by a Merchant Center user.
-      changeType?:
-        type: string
-        description: |
-          Can be `"ResourceUpdated"`, `"ResourceCreated"`, or `"ResourceDeleted"`.
-          Can be used to filter for a specific type of change.
+      # changeType?:
+      #   type: string
+      #   description: |
+      #     Can be `"ResourceCreated"`, `"ResourceUpdated"`, or `"ResourceDeleted"`.
+      #     Can be used to filter for a specific type of change.
+        enum:
+          - ResourceCreated
+          - ResourceUpdated
+          - ResourceDeleted
       clientId?:
         type: string
         description: |
@@ -133,10 +136,12 @@ resourceTypes:
         type: string
         description: |
           Name of the source with which changes were made. Can be `"MerchantCenter"`, `"ImpEx"`, or `"ApiClient"`.
-      actions?:
-        type: UpdateType[]
+      changes?:
+        type: string[]
         description: |
-          Can be passed multiple times. Values must be well-defined.
+          Restrict the types of [Changes](/history/change-types#change) returned by passing the value of the `change` field.
+          Can be passed multiple times.
+          The values must belong to the resource type specified in the path parameter.
       customerId:
         type: string
         description: |
@@ -144,7 +149,7 @@ resourceTypes:
       expand?:
         type: boolean
         description: |
-          Allows changes to be expanded with more information.
+          If `true`, [CustomFieldExpandedValue](#customfieldexpandedvalue) is made available.
   /{resourceType}:
     type: base
     uriParameters:
@@ -173,18 +178,18 @@ resourceTypes:
                 'view_types:{projectKey}',
               ]
       queryParameters:
-        dates[from]?:
+        date.from?:
           type: any
           description: |
             Can be [DateTime](/types#datetime), non-negative integer, or `now`.
             The non-negative integer represents the time point in the past in hours.
             For example, `24` signifies 24 hours ago.
             The time range must be valid.
-            Assigning `dates[from]` a time point later than `dates[to]` will fail with an error.
-        dates[to]?:
+            Assigning `date.from` a time point later than `date.to` will fail with an error.
+        date.to?:
           type: any
           description: |
-            See `dates[from]`.
+            See `date.from`.
         limit?:
           type: integer
           description: Maximum number of results to return.
@@ -196,11 +201,11 @@ resourceTypes:
           description: |
             [ID](/general-concepts#identifier) of the Merchant Center user who made the change.
             Can be used to query changes made by a Merchant Center user.
-        changeType?:
-          type: string
-          description: |
-            Can be `"ResourceUpdated"`, `"ResourceCreated"`, or `"ResourceDeleted"`.
-            Can be used to filter for a specific type of change.
+        # changeType?:
+        #   type: string
+        #   description: |
+        #     Can be `"ResourceUpdated"`, `"ResourceCreated"`, or `"ResourceDeleted"`.
+        #     Can be used to filter for a specific type of change.
         clientId?:
           type: string
           description: |
@@ -213,10 +218,12 @@ resourceTypes:
           type: string
           description: |
             Name of the source with which changes were made. Can be `"MerchantCenter"`, `"ImpEx"`, or `"ApiClient"`.
-        actions?:
-          type: UpdateType[]
+        changes?:
+          type: string[]
           description: |
-            Can be passed multiple times. Values must be well-defined.
+            Restrict the types of [Changes](/history/change-types#change) returned by passing the value of the `change` field.
+            Can be passed multiple times.
+            The values must belong to the resource type specified in the path parameter.
         customerId:
           type: string
           description: |
@@ -224,7 +231,7 @@ resourceTypes:
         expand?:
           type: boolean
           description: |
-            Allows changes to be expanded with more information.
+            If `true`, [CustomFieldExpandedValue](#customfieldexpandedvalue) is made available.
     /{ID}:
       type: base
       uriParameters:
@@ -253,18 +260,18 @@ resourceTypes:
                   'view_types:{projectKey}',
                 ]
         queryParameters:
-          dates[from]?:
+          date.from?:
             type: any
             description: |
               Can be [DateTime](/types#datetime), non-negative integer, or `now`.
               The non-negative integer represents the time point in the past in hours.
               For example, `24` signifies 24 hours ago.
               The time range must be valid.
-              Assigning `dates[from]` a time point later than `dates[to]` will fail with an error.
-          dates[to]?:
+              Assigning `date.from` a time point later than `date.to` will fail with an error.
+          date.to?:
             type: any
             description: |
-              See `dates[from]`.
+              See `date.from`.
           limit?:
             type: integer
             description: The maximum number of results to return.
@@ -276,11 +283,11 @@ resourceTypes:
             description: |
               [ID](/general-concepts#identifier) of the Merchant Center user who made the change.
               Can be used to query changes made by a Merchant Center user.
-          changeType?:
-            type: string
-            description: |
-              Can be `"ResourceUpdated"`, `"ResourceCreated"`, or `"ResourceDeleted"`.
-              Can be used to filter for a specific type of change.
+          # changeType?:
+          #   type: string
+          #   description: |
+          #     Can be `"ResourceUpdated"`, `"ResourceCreated"`, or `"ResourceDeleted"`.
+          #     Can be used to filter for a specific type of change.
           clientId?:
             type: string
             description: |
@@ -289,10 +296,12 @@ resourceTypes:
             type: string
             description: |
               Name of the source with which changes were made. Can be `"MerchantCenter"`, `"ImpEx"`, or `"ApiClient"`.
-          actions?:
-            type: UpdateType[]
+          changes?:
+            type: string[]
             description: |
-              Can be passed multiple times. Values must be well-defined.
+              Restrict the types of [Changes](/history/change-types#change) returned by passing the value of the `change` field.
+              Can be passed multiple times.
+              The values must belong to the resource type specified in the path parameter.
           customerId:
             type: string
             description: |
@@ -300,4 +309,4 @@ resourceTypes:
           expand?:
             type: boolean
             description: |
-              Allows changes to be expanded with more information.
+              If `true`, [CustomFieldExpandedValue](#customfieldexpandedvalue) is made available.

@@ -1,0 +1,47 @@
+#%RAML 1.0 DataType
+type: object
+displayName: Record
+description: |
+  A Record captures the differences in a resource between one version and the next.
+  (Reall that the version number is not always incremented by one; see [Optimistic Concurrency Control](/general-concepts#optimistic-concurrency-control).)
+properties:
+  version:
+    type: integer
+    description: Version of the resource after the change.
+  previousVersion:
+    type: integer
+    description: Version of the resource before the change.
+  type:
+    type: string
+    enum:
+      - ResourceUpdated
+      - ResourceCreated
+      - ResourceDeleted
+    description: Type of the change (creation, update or deletion).
+  modifiedBy:
+    type: ModifiedBy
+    description: Information about the user or the client who performed the change.
+  modifiedAt:
+    type: string
+    description: Date and time when the change was made.
+  label:
+    description: Information that describes the resource after the change.
+    type: Label
+  previousLabel:
+    description: Information that describes the resource before the change.
+    type: Label
+  changes:
+    description: |
+      Shows the differences in the resource between `previousVersion` and `version`.
+      The value is not designed to represent the actual array of update actions that was sent to the platform nor is limited to update actions (see, for example, [Optimistic  Concurrency Control](/general-concepts#optimistic-concurrency-control)).
+    type: array
+    items:
+      type: Change
+  resource:
+    type: Reference
+    description: |
+      [Reference](/types#reference) to the changed resource.
+  withoutChanges:
+    description: |
+      `true` if no change was detected.
+    type: boolean
