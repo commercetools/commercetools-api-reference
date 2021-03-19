@@ -38,34 +38,35 @@ jobs:
       - name: "Checkout api reference"
         uses: actions/checkout@v2
         with:
-          path: api
+          path: commercetools-api-reference
 
       - name: "Checkout PHP SDK"
         uses: actions/checkout@v2
         with:
           repository: 'commercetools/commercetools-php-sdk-v2'
-          path: sdk
+          path: commercetools-php-sdk-v2
           ssh-key: ${{ secrets.SDK_DEPLOY_KEY }}
           ref: master
 
       - run: make -j2 build
-        working-directory: sdk
+        working-directory: commercetools-php-sdk-v2
         env:
-          RAML_FILE: "../api/api-specs/api/api.raml"
-          API_RAML: "../api/api-specs/api/api.raml"
-          IMPORT_RAML: "../api/api-specs/importapi/api.raml"
-          ML_RAML: "../api/api-specs/ml/api.raml"
-          HISTORY_RAML: "../api/api-specs/history/api.raml"
+          RAML_FILE: "../commercetools-api-reference/api-specs/api/api.raml"
+          API_RAML: "../commercetools-api-reference/api-specs/api/api.raml"
+          IMPORT_RAML: "../commercetools-api-reference/api-specs/importapi/api.raml"
+          ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
+          HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
 
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
-        working-directory: sdk
+        working-directory: commercetools-php-sdk-v2
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/master'
         with:
-          repository: sdk
-          branch: master
+          repository: commercetools-php-sdk-v2
+          branch: gen-sdk-updates
+          push_options: --force
           commit_message: "TASK: Updating SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
@@ -87,7 +88,7 @@ jobs:
       - name: "Checkout api reference"
         uses: actions/checkout@v2
         with:
-          path: api
+          path: commercetools-api-reference
 
       - name: "Checkout postman collection"
         uses: actions/checkout@v2
@@ -101,14 +102,14 @@ jobs:
         run: sudo chmod 777 /usr/local/bin && make build
         working-directory: postman
         env:
-          RAML_FILE: "../api/api-specs/api/postman.raml"
+          RAML_FILE: "../commercetools-api-reference/api-specs/api/postman.raml"
           LIB_NAME: "api"
 
       - name: "Generate importapi postman collection"
         run: sudo chmod 777 /usr/local/bin && make build
         working-directory: postman
         env:
-          RAML_FILE: "../api/api-specs/importapi/api.raml"
+          RAML_FILE: "../commercetools-api-reference/api-specs/importapi/api.raml"
           LIB_NAME: "import"
 
       - name: "check pending changes"
@@ -140,34 +141,34 @@ jobs:
       - name: "Checkout api reference"
         uses: actions/checkout@v2
         with:
-          path: api
+          path: commercetools-api-reference
 
       - name: "Checkout Java SDK"
         uses: actions/checkout@v2
         with:
           repository: 'commercetools/commercetools-sdk-java-v2'
-          path: sdk
+          path: commercetools-sdk-java-v2
           ssh-key: ${{ secrets.JAVA_SDK_DEPLOY_KEY }}
           ref: master
 
       - name: "Generate Java SDK"
         run: sudo chmod 777 /usr/local/bin && make build
-        working-directory: sdk
+        working-directory: commercetools-sdk-java-v2
         env:
-          RAML_FILE: "../api/api-specs/api/api.raml"
-          API_RAML: "../api/api-specs/api/api.raml"
-          IMPORT_RAML: "../api/api-specs/importapi/api.raml"
-          ML_RAML: "../api/api-specs/ml/api.raml"
-          HISTORY_RAML: "../api/api-specs/history/api.raml"
+          RAML_FILE: "../commercetools-api-reference/api-specs/api/api.raml"
+          API_RAML: "../commercetools-api-reference/api-specs/api/api.raml"
+          IMPORT_RAML: "../commercetools-api-reference/api-specs/importapi/api.raml"
+          ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
+          HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
 
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
-        working-directory: sdk
+        working-directory: commercetools-sdk-java-v2
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/master'
         with:
-          repository: sdk
+          repository: commercetools-sdk-java-v2
           branch: master
           commit_message: "TASK: Updating SDK"
           commit_user_name: Auto Mation
@@ -194,34 +195,34 @@ jobs:
       - name: "Checkout api reference"
         uses: actions/checkout@v2
         with:
-          path: api
+          path: commercetools-api-reference
 
       - name: "Checkout Typescript SDK"
         uses: actions/checkout@v2
         with:
           repository: 'commercetools/commercetools-sdk-typescript'
-          path: sdk
+          path: commercetools-sdk-typescript
           ssh-key: ${{ secrets.TS_SDK_DEPLOY_KEY }}
           ref: master
 
       - name: "Generate Typescript SDK"
         run: sudo chmod 777 /usr/local/bin && make build
-        working-directory: sdk
+        working-directory: commercetools-sdk-typescript
         env:
-          RAML_FILE: "../api/api-specs/api/api.raml"
-          API_RAML: "../api/api-specs/api/api.raml"
-          IMPORT_RAML: "../api/api-specs/importapi/api.raml"
-          ML_RAML: "../api/api-specs/ml/api.raml"
-          HISTORY_RAML: "../api/api-specs/history/api.raml"
+          RAML_FILE: "../commercetools-api-reference/api-specs/api/api.raml"
+          API_RAML: "../commercetools-api-reference/api-specs/api/api.raml"
+          IMPORT_RAML: "../commercetools-api-reference/api-specs/importapi/api.raml"
+          ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
+          HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
 
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
-        working-directory: sdk
+        working-directory: commercetools-sdk-typescript
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/master'
         with:
-          repository: sdk
+          repository: commercetools-sdk-typescript
           branch: master
           commit_message: "TASK: Updating Platform SDK"
           commit_user_name: Auto Mation
@@ -243,34 +244,34 @@ jobs:
       - name: "Checkout api reference"
         uses: actions/checkout@v2
         with:
-          path: api
+          path: commercetools-api-reference
 
       - name: "Checkout Csharp SDK"
         uses: actions/checkout@v2
         with:
           repository: 'commercetools/commercetools-dotnet-core-sdk-v2'
-          path: sdk
+          path: commercetools-dotnet-core-sdk-v2
           ssh-key: ${{ secrets.CSHARP_SDK_DEPLOY_KEY }}
           ref: master
 
       - name: "Generate Csharp SDK"
         run: sudo chmod 777 /usr/local/bin && make build
-        working-directory: sdk
+        working-directory: commercetools-dotnet-core-sdk-v2
         env:
-          RAML_FILE: "../api/api-specs/api/api.raml"
-          API_RAML: "../api/api-specs/api/api.raml"
-          IMPORT_RAML: "../api/api-specs/importapi/api.raml"
-          ML_RAML: "../api/api-specs/ml/api.raml"
-          HISTORY_RAML: "../api/api-specs/history/api.raml"
+          RAML_FILE: "../commercetools-api-reference/api-specs/api/api.raml"
+          API_RAML: "../commercetools-api-reference/api-specs/api/api.raml"
+          IMPORT_RAML: "../commercetools-api-reference/api-specs/importapi/api.raml"
+          ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
+          HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
 
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
-        working-directory: sdk
+        working-directory: commercetools-dotnet-core-sdk-v2
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/master'
         with:
-          repository: sdk
+          repository: commercetools-dotnet-core-sdk-v2
           branch: master
           commit_message: "TASK: Updating SDK"
           commit_user_name: Auto Mation
