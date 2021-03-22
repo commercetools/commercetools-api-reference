@@ -48,7 +48,6 @@ jobs:
           repository: 'commercetools/commercetools-sdk-php-v2'
           path: commercetools-sdk-php-v2
           ssh-key: ${{ secrets.SDK_DEPLOY_KEY }}
-          ref: master
 
       - run: make -j2 build
         working-directory: commercetools-php-sdk-v2
@@ -100,7 +99,6 @@ jobs:
           repository: 'commercetools/commercetools-postman-collection'
           path: postman
           ssh-key: ${{ secrets.POSTMAN_DEPLOY_KEY }}
-          ref: master
 
       - name: "Generate api postman collection"
         run: sudo chmod 777 /usr/local/bin && make build
@@ -153,7 +151,6 @@ jobs:
           repository: 'commercetools/commercetools-sdk-java-v2'
           path: commercetools-sdk-java-v2
           ssh-key: ${{ secrets.JAVA_SDK_DEPLOY_KEY }}
-          ref: master
 
       - name: "Generate Java SDK"
         run: sudo chmod 777 /usr/local/bin && make build
@@ -169,11 +166,14 @@ jobs:
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
         working-directory: commercetools-sdk-java-v2
 
+      - run: git switch -C gen-sdk-updates
+        working-directory: commercetools-sdk-java-v2
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/master'
         with:
           repository: commercetools-sdk-java-v2
-          branch: master
+          branch: gen-sdk-updates
+          push_options: --force
           commit_message: "TASK: Updating SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
@@ -207,7 +207,6 @@ jobs:
           repository: 'commercetools/commercetools-sdk-typescript'
           path: commercetools-sdk-typescript
           ssh-key: ${{ secrets.TS_SDK_DEPLOY_KEY }}
-          ref: master
 
       - name: "Generate Typescript SDK"
         run: sudo chmod 777 /usr/local/bin && make build
@@ -256,7 +255,6 @@ jobs:
           repository: 'commercetools/commercetools-dotnet-core-sdk-v2'
           path: commercetools-dotnet-core-sdk-v2
           ssh-key: ${{ secrets.CSHARP_SDK_DEPLOY_KEY }}
-          ref: master
 
       - name: "Generate Csharp SDK"
         run: sudo chmod 777 /usr/local/bin && make build
