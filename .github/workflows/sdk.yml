@@ -62,8 +62,6 @@ jobs:
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
         working-directory: commercetools-sdk-php-v2
 
-      - run: git switch -C gen-sdk-updates
-        working-directory: commercetools-sdk-php-v2
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/master'
         with:
@@ -152,6 +150,9 @@ jobs:
           path: commercetools-sdk-java-v2
           ssh-key: ${{ secrets.JAVA_SDK_DEPLOY_KEY }}
 
+      - run: git checkout -B gen-sdk-updates
+        working-directory: commercetools-sdk-java-v2
+
       - name: "Generate Java SDK"
         run: sudo chmod 777 /usr/local/bin && make build
         working-directory: commercetools-sdk-java-v2
@@ -166,14 +167,11 @@ jobs:
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
         working-directory: commercetools-sdk-java-v2
 
-      - run: git switch -C gen-sdk-updates
-        working-directory: commercetools-sdk-java-v2
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/master'
         with:
           repository: commercetools-sdk-java-v2
           branch: gen-sdk-updates
-          push_options: --force
           commit_message: "TASK: Updating SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
