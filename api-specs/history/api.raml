@@ -4,6 +4,44 @@ title: Change History API
 description: Fetch all Records from all resource types that match queryParameters.
 version: 1
 baseUri: https://history.europe-west1.gcp.commercetools.com
+(docsBaseUri): https://history.{region}{cloudProvider}.commercetools.com
+(docsBaseUriParameters):
+  region:
+    type: string
+    enum:
+      - europe-west1
+      - us-central1
+      - australia-southeast1
+    description: |
+      Our service regions.
+  cloudProvider:
+    type: string
+    enum:
+      - gcp
+    description: |
+      Our supported cloud providers.
+(serviceRegions):
+  - uri: https://history.us-central1.gcp.commercetools.com/
+    region: us-central1
+    provider: gcp
+    name: North America (Google Cloud, Iowa)
+  #  - uri: https://history.us-east-2.aws.commercetools.com/
+  #    region: us-east-2
+  #    provider: aws
+  #    name: North America (AWS, Ohio)
+  - uri: https://history.europe-west1.gcp.commercetools.com
+    region: europe-west1
+    provider: gcp
+    name: Europe (Google Cloud, Belgium)
+#  - uri: https://history.eu-central-1.aws.commercetools.com
+#    region: eu-central-1
+#    provider: aws
+#    name: Europe (AWS, Frankfurt)
+  - uri: https://history.australia-southeast1.gcp.commercetools.com
+    region: australia-southeast1
+    provider: gcp
+    name: Australia (Google Cloud, Sydney)
+
 securitySchemes:
   oauth_2_0: !include oauth2.raml
 securedBy: [oauth_2_0]
@@ -14,6 +52,29 @@ annotationTypes:
     properties:
       key: string
       value: string
+  docsBaseUri:
+    allowedTargets:
+      - API
+    type: string
+  docsBaseUriParameters:
+    allowedTargets:
+      - API
+    type: object
+  serviceRegions:
+    allowedTargets:
+      - API
+      - SecuritySchemeSettings
+    type: array
+    items:
+      type: object
+      properties:
+        uri: string
+        region: string
+        provider: string
+        name: string
+  package:
+    type: string
+    allowedTargets: TypeDeclaration
 types: !include types/types.raml
 
 resourceTypes:
@@ -80,9 +141,27 @@ resourceTypes:
       description: |
         `key` of the commercetools Project.
   get:
+    displayName: Query Records
     securedBy:
       - oauth_2_0:
-          scopes: ['view_audit_log:{projectKey}']
+          scopes:
+            [
+              'view_audit_log:{projectKey}',
+              'view_cart_discounts:{projectKey}',
+              'view_orders:{projectKey}',
+              'view_orders:{projectKey}:{storeKey}',
+              'view_categories:{projectKey}',
+              'view_products:{projectKey}',
+              'view_customers:{projectKey}',
+              'view_customer_groups:{projectKey}',
+              'view_discount_codes:{projectKey}',
+              'view_payments:{projectKey}',
+              'view_shopping_lists:{projectKey}',
+              'view_states:{projectKey}',
+              'view_stores:{projectKey}',
+              'view_tax_categories:{projectKey}',
+              'view_types:{projectKey}',
+            ]
     queryParameters:
       resourceType?:
         type: ChangeHistoryResourceType[]
@@ -92,15 +171,16 @@ resourceTypes:
           By default, the API returns the Records of all supported resource types.
         example: ['order', 'product']
       date.from?:
-        type: any
+        type: number | datetime | DateStringFilter
         description: |
-          Can be [DateTime](/types#datetime), non-negative integer, or `now`.
+          Can be [DateTime](/types#datetime), non-negative integer, or `"now"`.
           The non-negative integer represents the point in time in the past from now measured in hours.
           For example, `24` signifies 24 hours ago.
           The time range must be valid.
           Assigning `date.from` a time point later than `date.to` will fail with an error.
+          The default value for `date.from` (resp., `date.to`) is `24` (resp., `"now"`).
       date.to?:
-        type: any
+        type: number | datetime | DateStringFilter
         description: |
           See `date.from`.
       limit?:
@@ -115,11 +195,11 @@ resourceTypes:
         description: |
           [ID](/general-concepts#identifier) of the Merchant Center user who made the change.
           Can be used to query changes made by a Merchant Center user.
-        # changeType?:
-        #   type: string
-        #   description: |
-        #     Can be `"ResourceCreated"`, `"ResourceUpdated"`, or `"ResourceDeleted"`.
-        #     Can be used to filter for a specific type of change.
+      type?:
+        type: string
+        description: |
+          Can be `"ResourceCreated"`, `"ResourceUpdated"`, or `"ResourceDeleted"`.
+          Can be used to filter for a specific type of change.
         enum:
           - ResourceCreated
           - ResourceUpdated
@@ -149,7 +229,7 @@ resourceTypes:
       expand?:
         type: boolean
         description: |
-          If `true`, [CustomFieldExpandedValue](#customfieldexpandedvalue) is made available.
+          If `true`, [CustomFieldExpandedValue](/history/change-types#customfieldexpandedvalue) is made available.
   /{resourceType}:
     type: base
     uriParameters:
@@ -158,10 +238,12 @@ resourceTypes:
         description: |
           Resource type for which a query is made.
     get:
+      displayName: Query Records for a specific resource type
       securedBy:
         - oauth_2_0:
             scopes:
               [
+                'view_audit_log:{projectKey}',
                 'view_cart_discounts:{projectKey}',
                 'view_orders:{projectKey}',
                 'view_orders:{projectKey}:{storeKey}',
@@ -179,15 +261,16 @@ resourceTypes:
               ]
       queryParameters:
         date.from?:
-          type: any
+          type: number | datetime | DateStringFilter
           description: |
-            Can be [DateTime](/types#datetime), non-negative integer, or `now`.
+            Can be [DateTime](/types#datetime), non-negative integer, or `"now"`.
             The non-negative integer represents the time point in the past in hours.
             For example, `24` signifies 24 hours ago.
             The time range must be valid.
             Assigning `date.from` a time point later than `date.to` will fail with an error.
+            The default value for `date.from` (resp., `date.to`) is `24` (resp., `"now"`).
         date.to?:
-          type: any
+          type: number | datetime | DateStringFilter
           description: |
             See `date.from`.
         limit?:
@@ -201,11 +284,11 @@ resourceTypes:
           description: |
             [ID](/general-concepts#identifier) of the Merchant Center user who made the change.
             Can be used to query changes made by a Merchant Center user.
-        # changeType?:
-        #   type: string
-        #   description: |
-        #     Can be `"ResourceUpdated"`, `"ResourceCreated"`, or `"ResourceDeleted"`.
-        #     Can be used to filter for a specific type of change.
+        type?:
+          type: string
+          description: |
+            Can be `"ResourceCreated"`, `"ResourceUpdated"`, or `"ResourceDeleted"`.
+            Can be used to filter for a specific type of change.
         clientId?:
           type: string
           description: |
@@ -231,7 +314,7 @@ resourceTypes:
         expand?:
           type: boolean
           description: |
-            If `true`, [CustomFieldExpandedValue](#customfieldexpandedvalue) is made available.
+            If `true`, [CustomFieldExpandedValue](/history/change-types#customfieldexpandedvalue) is made available.
     /{ID}:
       type: base
       uriParameters:
@@ -240,10 +323,12 @@ resourceTypes:
           description: |
             [ID](/general-concepts#identifier) of the commercetools resource for which a query is made.
       get:
+        displayName: Query Records by a resource ID
         securedBy:
           - oauth_2_0:
               scopes:
                 [
+                  'view_audit_log:{projectKey}',
                   'view_cart_discounts:{projectKey}',
                   'view_orders:{projectKey}',
                   'view_orders:{projectKey}:{storeKey}',
@@ -261,15 +346,16 @@ resourceTypes:
                 ]
         queryParameters:
           date.from?:
-            type: any
+            type: number | datetime | DateStringFilter
             description: |
-              Can be [DateTime](/types#datetime), non-negative integer, or `now`.
+              Can be [DateTime](/types#datetime), non-negative integer, or `"now"`.
               The non-negative integer represents the time point in the past in hours.
               For example, `24` signifies 24 hours ago.
               The time range must be valid.
               Assigning `date.from` a time point later than `date.to` will fail with an error.
+              The default value for `date.from` (resp., `date.to`) is `24` (resp., `"now"`).
           date.to?:
-            type: any
+            type: number | datetime | DateStringFilter
             description: |
               See `date.from`.
           limit?:
@@ -283,11 +369,11 @@ resourceTypes:
             description: |
               [ID](/general-concepts#identifier) of the Merchant Center user who made the change.
               Can be used to query changes made by a Merchant Center user.
-          # changeType?:
-          #   type: string
-          #   description: |
-          #     Can be `"ResourceUpdated"`, `"ResourceCreated"`, or `"ResourceDeleted"`.
-          #     Can be used to filter for a specific type of change.
+          type?:
+            type: string
+            description: |
+              Can be `"ResourceCreated"`, `"ResourceUpdated"`, or `"ResourceDeleted"`.
+              Can be used to filter for a specific type of change.
           clientId?:
             type: string
             description: |
@@ -309,4 +395,4 @@ resourceTypes:
           expand?:
             type: boolean
             description: |
-              If `true`, [CustomFieldExpandedValue](#customfieldexpandedvalue) is made available.
+              If `true`, [CustomFieldExpandedValue](/history/change-types#customfieldexpandedvalue) is made available.
