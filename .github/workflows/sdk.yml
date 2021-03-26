@@ -49,6 +49,13 @@ jobs:
           path: commercetools-sdk-php-v2
           ssh-key: ${{ secrets.SDK_DEPLOY_KEY }}
 
+      - run: |
+          git fetch --depth=1 origin gen-sdk-updates || true
+          git checkout -B gen-sdk-updates origin/gen-sdk-updates || true
+          git checkout -B gen-sdk-updates
+          git log -1
+        working-directory: commercetools-sdk-java-v2
+
       - run: make -j2 build
         working-directory: commercetools-sdk-php-v2
         env:
@@ -67,7 +74,6 @@ jobs:
         with:
           repository: commercetools-sdk-php-v2
           branch: gen-sdk-updates
-          push_options: --force
           commit_message: "TASK: Updating SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
@@ -149,9 +155,12 @@ jobs:
           repository: 'commercetools/commercetools-sdk-java-v2'
           path: commercetools-sdk-java-v2
           ssh-key: ${{ secrets.JAVA_SDK_DEPLOY_KEY }}
-          fetch-depth: 0
 
-      - run: git checkout -B gen-sdk-updates
+      - run: |
+          git fetch --depth=1 origin gen-sdk-updates || true
+          git checkout -B gen-sdk-updates origin/gen-sdk-updates || true
+          git checkout -B gen-sdk-updates
+          git log -1
         working-directory: commercetools-sdk-java-v2
 
       - name: "Generate Java SDK"
