@@ -216,6 +216,13 @@ jobs:
           path: commercetools-sdk-typescript
           ssh-key: ${{ secrets.TS_SDK_DEPLOY_KEY }}
 
+      - run: |
+          git fetch --depth=1 origin gen-sdk-updates || true
+          git checkout -B gen-sdk-updates origin/gen-sdk-updates || true
+          git checkout -B gen-sdk-updates
+          git log -1
+        working-directory: commercetools-sdk-typescript
+
       - name: "Generate Typescript SDK"
         run: sudo chmod 777 /usr/local/bin && make build
         working-directory: commercetools-sdk-typescript
@@ -234,7 +241,7 @@ jobs:
         if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/master'
         with:
           repository: commercetools-sdk-typescript
-          branch: master
+          branch: gen-sdk-updates
           commit_message: "TASK: Updating Platform SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
@@ -264,6 +271,13 @@ jobs:
           path: commercetools-dotnet-core-sdk-v2
           ssh-key: ${{ secrets.CSHARP_SDK_DEPLOY_KEY }}
 
+      - run: |
+          git fetch --depth=1 origin gen-sdk-updates || true
+          git checkout -B gen-sdk-updates origin/gen-sdk-updates || true
+          git checkout -B gen-sdk-updates
+          git log -1
+        working-directory: commercetools-dotnet-core-sdk-v2
+
       - name: "Generate Csharp SDK"
         run: sudo chmod 777 /usr/local/bin && make build
         working-directory: commercetools-dotnet-core-sdk-v2
@@ -282,7 +296,7 @@ jobs:
         if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/master'
         with:
           repository: commercetools-dotnet-core-sdk-v2
-          branch: master
+          branch: gen-sdk-updates
           commit_message: "TASK: Updating SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
