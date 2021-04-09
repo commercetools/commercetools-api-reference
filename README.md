@@ -7,4 +7,4 @@ See [postman documentation](https://github.com/commercetools/commercetools-postm
 
 ## OpenAPI
 
-Please use the [openapi.yml](oas/openapi.yaml)
+Please use the [openapi.yaml](oas/openapi.yaml)
