@@ -3,8 +3,8 @@ Commercetools Platform API reference documentation
 
 ## Postman
 
-See [postman documentation](postman/)
+See [postman documentation](https://github.com/commercetools/commercetools-postman-collection)
 
 ## OpenAPI
 
-Please use the [openapi.yml](oas/openapi.yml)
+Please use the [openapi.yml](oas/openapi.yaml)
