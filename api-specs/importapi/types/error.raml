@@ -34,16 +34,16 @@ types:
           The errors that caused this error response.
         type: ErrorObject[]
   ErrorObject:
-    description: |
-      An error.
+    description:
     discriminator: code
     properties:
       code:
         type: string
       message:
-        description: This is a placeholder for an actual platform error message.
+        description:
         type: string
   AccessDeniedError:
+    description: This is the generic error code for access denied. In case of a wrong scope, an [InvalidScopeError](#invalidscopeerror) will be returned.
     type: ErrorObject
     discriminatorValue: access_denied
   InvalidScopeError:
@@ -53,27 +53,27 @@ types:
     discriminatorValue: invalid_scope
   InvalidOperation:
     description: |
-      The resources involved in the request are not in a valid state for the operation.
-      The client application should validate the constraints described in the error message before sending the request.
+      The resources in the request are not in the valid state for the operation.
+      The client application should validate the constraints described in the error message before sending the request again.
     type: ErrorObject
     discriminatorValue: InvalidOperation
   DuplicateAttributeValueError:
-    description: The Unique AttributeConstraint was violated.
+    description: The `Unique` [Attribute Constraint](/../api/projects/productTypes#attributeconstraint-enum) was violated.
     type: ErrorObject
     discriminatorValue: DuplicateAttributeValue
     properties:
       attribute:
-        description: The conflicting attribute.
+        description: The attribute in conflict.
         type: product-variant-import.Attribute
   DuplicateAttributeValuesError:
-    description: The CombinationUnique AttributeConstraint was violated.
+    description: The `CombinationUnique` [Attribute Constraint](/../api/projects/productTypes#attributeconstraint-enum) was violated.
     type: ErrorObject
     discriminatorValue: DuplicateAttributeValues
     properties:
       attributes:
         type: product-variant-import.Attribute[]
   DuplicateFieldError:
-    description: A value for a field conflicts with an existing duplicate value.
+    description: The given value already exists for a field that is checked for unique values.
     type: ErrorObject
     discriminatorValue: DuplicateField
     properties:
@@ -85,8 +85,8 @@ types:
         type: any
   DuplicateVariantValuesError:
     description: |
-      A given combination of variant values conflicts with an existing one.
-      Every product variant must have a distinct combination of SKU, prices, and custom attribute values.
+      The given combination of values of a [Product Variant](/../api/projects/products#productvariant) conflicts with an existing one.
+      Every [Product Variant](/../api/projects/products#productvariant) must have a distinct combination of SKU, prices, and custom attribute values.
     type: ErrorObject
     discriminatorValue: DuplicateVariantValues
     properties:
@@ -111,7 +111,9 @@ types:
     type: ErrorObject
     discriminatorValue: invalid_token
   InvalidFieldError:
-    description: A field has an invalid value.
+    description: |
+      A given field is not supported.
+      This error occurs, for example, if the field `variants`, which is not supported by [Product Import](/product#productimport), is sent to the Product Import endpoint.
     type: ErrorObject
     discriminatorValue: InvalidField
     properties:
@@ -122,19 +124,19 @@ types:
         description: The invalid value.
         type: any
       allowedValues?:
-        description: A fixed set of allowed values for the field, if any.
+        description: The set of allowed values for the field, if any.
         type: any[]
   InvalidJsonInput:
     description: |
-      Invalid JSON input has been sent to the service. Either the JSON is syntactically not correct, or the JSON does not
-      conform to the expected shape (e.g. is missing a required field). The client application should validate the input
-      according to the constraints described in the error message before sending the request.
+      An invalid JSON input has been sent to the service.
+      Either the JSON is syntactically incorrect or the JSON has an unexpected shape, for example, a required field is missing.
+      The client application should validate the input according to the constraints described in the error message before sending the request again.
     type: ErrorObject
     discriminatorValue: InvalidJsonInput
   InvalidInput:
     description: |
-      Invalid input has been sent to the service. The client application should validate the input according to the
-      constraints described in the error message before sending the request.
+      An invalid input has been sent to the service. The client application should validate the input according to the
+      constraints described in the error message before sending the request again.
     type: ErrorObject
     discriminatorValue: InvalidInput
   ResourceNotFoundError:
@@ -179,9 +181,9 @@ types:
         type: common.ProcessingState
   ConcurrentModificationError:
     description: |
-      The request conflicts with the current state of the involved resource(s). Typically, the request attempts to modify a resource
-      that is out of date, i.e. that has been modified by another client since the last time it was retrieved.
-      The client application should resolve the conflict (with or without involving the end-user) before retrying the request
+      The request conflicts with the current state of the involved resources.
+      This error typically occurs when the request attempts to modify a resource that is out of date, that is, it has been modified by another client since the last time it was retrieved by the system attempting to update it.
+      The client application should resolve the conflict (with or without involving the end-user) before retrying the request.
     type: ErrorObject
     discriminatorValue: ConcurrentModification
     properties:
@@ -194,7 +196,7 @@ types:
         type: integer
         format: long
       conflictedResource?:
-        description: The conflicted resource.
+        description: The resource in conflict.
         type: any
   ContentionError:
     type: ErrorObject
