@@ -319,6 +319,14 @@ types:
       taxPortions:
         type: TaxPortion[]
         description: Maps to `TaxedPrice.taxPortions`.
+  TaxMode:
+    type: string
+    description: Maps to `Order.taxMode`
+    enum:
+      - Platform
+      - External
+      - ExternalAmount
+      - Disabled
   OrderState:
     type: string
     description: Maps to `Order.orderState`.
@@ -371,6 +379,57 @@ types:
     enum:
       - Customer
       - Merchant
+  SyncInfo:
+    properties:
+      channel:
+        type: common.ChannelKeyReference
+        description: Maps to `SyncInfo.channel`
+      externalId?:
+        type: string
+        description: Maps to `SyncInfo.externalId`
+      syncedAt:
+        type: datetime
+        description: Maps to `SyncInfo.syncedAt`
+  DiscountCodeState:
+    type: string
+    description: Maps to `DiscountCodeInfo.state`
+    enum:
+      - NotActive
+      - NotValid
+      - DoesNotMatchCart
+      - MatchesCart
+      - MaxApplicationReached
+      - ApplicationStoppedByPreviousDiscount
+  DiscountCodeInfo:
+    properties:
+      discountCode:
+        type: common.DiscountCodeKeyReference
+      state?:
+        type: DiscountCodeState
+  ShippingRateInputType:
+    type: string
+    enum:
+      - Classification
+      - Score
+  ShippingRateInput:
+    discriminator: type
+    properties:
+      type:
+        type: ShippingRateInputType
+  ClassificationShippingRateInput:
+    type: ShippingRateInput
+    discriminatorValue: Classification
+    properties:
+      key:
+        type: string
+      label:
+        type: common.LocalizedString
+  ScoreShippingRateInput:
+    type: ShippingRateInput
+    discriminatorValue: Score
+    properties:
+      score:
+        type: number
   OrderImport:
     description: |
       Import representation for an order.
@@ -383,7 +442,7 @@ types:
     properties:
       orderNumber:
         description: |
-          Maps to `Order.orderNumber`. A string that identifies an Order. Must be unique across a Project. Once it is set, it cannot be changed.
+          Maps to `Order.orderNumber`, String that uniquely identifies an order. It should be unique across a project. Once it's set it cannot be changed.
         type: string
       customer?:
         type: common.CustomerKeyReference

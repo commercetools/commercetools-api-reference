@@ -1,0 +1,144 @@
+#%RAML 1.0 Library
+usage: Order patch import types.
+(annotations.package): order-patches
+
+uses:
+  common: common.raml
+  annotations: ../annotationTypes/annotations.raml
+  price: price-import.raml
+  product-variant: product-variant-import.raml
+  custom-field: custom-field.raml
+  order: order-import.raml
+
+types:
+  ReturnShipmentState:
+    type: string
+    description: Maps to `ReturnItem.shipmentState`
+    enum:
+      - Advised
+      - Returned
+      - BackInStock
+      - Unusable
+  ReturnItemDraft:
+    properties:
+      quantity:
+        type: number
+      lineItemId?:
+        type: string
+      customLineItemId?:
+        type: string
+      comment?:
+        type: string
+      shipmentState:
+        type: ReturnShipmentState
+  ReturnInfo:
+    properties:
+      items:
+        type: ReturnItemDraft[]
+      returnTrackingId?:
+        type: string
+        description: Maps to `ReturnInfo.returnTrackingId`
+      returnDate?:
+        type: datetime
+        description: Maps to `ReturnInfo.returnDate`
+  DeliveryParcel:
+    properties:
+      deliveryId: string
+      measurements?:
+        type: order.ParcelMeasurements
+      trackingData?:
+        type: order.TrackingData
+      items?:
+        type: order.DeliveryItem[]
+  DeliveryParcelDraft:
+    properties:
+      measurements?:
+        type: order.ParcelMeasurements
+      trackingData?:
+        type: order.TrackingData
+      items?:
+        type: order.DeliveryItem[]
+  DeliveryDraft:
+    properties:
+      items: order.DeliveryItem[]
+      address?:
+        type: common.Address
+      parcels: DeliveryParcelDraft[]
+  DeliveryAddressDraft:
+    properties:
+      deliveryId: string
+      address?:
+        type: common.Address
+  ParcelMeasurementDraft:
+    properties:
+      parcelId: string
+      measurements?:
+        type: order.ParcelMeasurements
+  ParcelTrackingData:
+    properties:
+      parcelId: string
+      trackingData?:
+        type: order.TrackingData
+  ParcelItems:
+    properties:
+      parcelId: string
+      items?:
+        type: order.DeliveryItem[]
+  RemoveDeliveryDraft:
+    properties:
+      id: string
+  RemoveParcelFromDeliveryDraft:
+    properties:
+      parcelId: string
+  OrderField:
+    description: |
+      Order fields that needs to be added or updated.
+    properties:
+      addReturnInfo?:
+        description: |
+          Maps to `Order.returnInfo`
+        type: ReturnInfo
+      addParcelToDelivery?:
+        description: |
+          Maps to `Order.delivery`
+        type: DeliveryParcel
+      addDeliveries?:
+        description: |
+          Maps to `Order.delivery`
+        type: DeliveryDraft[]
+      removeDelivery?:
+        description: |
+          Maps to `Order.removeDelivery`
+        type: RemoveDeliveryDraft
+      removeParcelFromDelivery?:
+        description: |
+          Maps to `Order.removeParcelFromDelivery`
+        type: RemoveParcelFromDeliveryDraft
+      setDeliveryAddress?:
+        description: |
+          Maps to `Order.addressDraft`
+        type: DeliveryAddressDraft
+      setParcelMeasurements?:
+        description: |
+          Maps to `Order.parcelMeasurements`
+        type: ParcelMeasurementDraft
+      setParcelTrackingData?:
+        description: |
+          Maps to `Order.parcelTrackingData`
+        type: ParcelTrackingData
+      setParcelItems?:
+        description: |
+          Maps to `Order.parcelItems`
+        type: ParcelItems[]
+  OrderPatchImport:
+    description: |
+      Import representation for an update to an Order. Use this type for importing updates to an existing Order into a commercetools project.
+    properties:
+      orderNumber:
+        description: |
+          Maps to `Order.orderNumber`, String that uniquely identifies an order, unique across a project.
+        type: string
+      fields:
+        description: |
+          Each field referenced must be defined in an already existing order in the commercetools project or the import operation state is set to `ValidationFailed`.
+        type: OrderField

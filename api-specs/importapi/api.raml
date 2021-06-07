@@ -52,6 +52,7 @@ uses:
   category-import: types/category-import.raml
   customer-import: types/customer-import.raml
   order-import: types/order-import.raml
+  order-patch-import: types/order-patch-import.raml
   inventory-import: types/inventory-import.raml
   custom-field: types/custom-field.raml
   common: types/common.raml
@@ -790,6 +791,73 @@ traits:
               body:
                 type: import-operation.ImportOperationPagedResponse
                 example: !include examples/import-operation-paged.response.json
+        /{id}:
+          type: baseByParam
+          uriParameters:
+            id:
+              description: |
+                The operation identifier
+              type: string
+          get:
+            description: |
+              Retrieves the import operation with the given id.
+            is:
+              - secured_by_view_orders
+            responses:
+              200:
+                body:
+                  type: import-operation.ImportOperation
+              404:
+                body:
+                  type: error.ErrorResponse
+              503:
+                body:
+                  type: error.ErrorResponse
+  /order-patches:
+    /importSinkKey={importSinkKey}:
+      type: base
+      uriParameters:
+        importSinkKey:
+          (postman.paramName): import-sink-key
+          description: The import sink used to create the resource
+          type: string
+      post:
+        description: Creates a new import request for order patches
+        is:
+          - secured_by_manage_orders
+        body:
+          type: import-request.OrderPatchImportRequest
+        responses:
+          201:
+            body:
+              type: import-request.ImportResponse
+      /import-operations:
+        type: base
+        get:
+          description: Retrieves all order-patches import operations of an import sink key.
+          is:
+            - secured_by_view_orders
+          queryParameters:
+            limit?:
+              type: number
+            offset?:
+              type: number
+            sort?:
+              description: |
+                See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
+              type: string[]
+            resourceKey?:
+              description: |
+                The key of the import operation to retrieve.
+              type: string
+            state?:
+              description: |
+                The state of the import operations to retrieve.
+              type: common.ProcessingState
+          responses:
+            200:
+              body:
+                type: import-operation.ImportOperationPagedResponse
         /{id}:
           type: baseByParam
           uriParameters:
