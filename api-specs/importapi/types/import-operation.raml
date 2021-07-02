@@ -10,70 +10,69 @@ uses:
 types:
   ImportOperation:
     description: |
-      Tracks the status of a single import resource as it is imported into the commercetools project.
+      Shows the import status of a specific resource.
     properties:
       version:
-        description: The import operation version.
+        description: The version of the ImportOperation.
         type: integer
         format: long
       importSinkKey:
-        description: The key of the import sink.
+        description: The key of the [ImportSink](/import-sink#importsink).
         type: string
       resourceKey:
-        description: The key of the import resource.
+        description: The key of the resource.
         type: string
       id:
-        description: The identifier of the operaton that is to be commited
+        description: The ID of the ImportOperation.
         type: string
       state:
         description: |
-          The status of the import resource.
+          The import status of the resource. Set to `Rejected` or `ValidationFailed` if the import of the resource was not successful.
         type: common.ProcessingState
       resourceVersion?:
-        description:
-          When the resource is successfully imported, this represents the
-          imported resource version
+        description: The version of the impmorted resource when the import was successful.
         type: integer
         format: long
       errors?:
         description: |
-          If an import resource does not import correctly, the state is set to `Rejected` or `ValidationFailed`
-          and this property contains the errors.
+          Contains an error if the import of the resource was not successful. See [Errors](/error).
         type: error.ErrorObject[]
       createdAt:
-        description: When the import operation was created.
+        description: The time when the ImportOperation was created.
         type: datetime
       lastModifiedAt:
-        description: When the import operation was modified.
+        description: The last time When the ImportOperation was modified.
         type: datetime
       expiresAt:
-        description: When the import operation expires.
+        description: The expiration time of the ImportOperation.
         type: datetime
     examples:
       unresolved: !include ../examples/import-operation-with-unresolved-references.json
       validationFailed: !include ../examples/import-operation-validation-failed.json
   ImportOperationPagedResponse:
-    description: This type represents a paged import operation result.
+    description: |
+      [PagedQueryResult](/../api/general-concepts#pagedqueryresult) for Import Operations.
+      Used as a response to a query request for Import Operations.
     properties:
       limit:
-        description: The maximum number of import operations returned for a page.
+        description: The number of results requested in the query request.
         type: integer
       offset:
-        description:
-          The offset supplied by the client or the server default. It is the
-          number of elements skipped.
+        description: |
+          The number of elements skipped, not a page number.
+          Supplied by the client or the server default.
         type: integer
         format: long
       count:
-        description: The actual number of results returned by this response.
+        description: The actual number of results returned.
         type: integer
         format: long
       results:
-        description: The results for this paged response.
+        description: The array of Import Operations matching the query.
         type: ImportOperation[]
   ImportOperationState:
     description: |
-      This enumeration describes the operation state of a newly created import operation.
+      Describes the validation state of a newly created [ImportOperation](#importoperation).
     (annotations.enumDescriptions):
       Unresolved: This is an initial state of import resource and is currently unresolved.
       ValidationFailed: The validation of the import resource failed.
@@ -82,15 +81,16 @@ types:
       - Unresolved
       - ValidationFailed
   ImportOperationStatus:
-    description: |
-      The validation status of a created operation.
+    description: ' '
     properties:
       operationId?:
-        description: Id of the import operation.
+        description: The ID of the [ImportOperation](#importoperation).
         type: string
       state:
-        description: Validation state of the import operation.
+        description: The validation state of the [ImportOperation](#importoperation).
         type: ImportOperationState
       errors?:
-        description: Validation errors for the import operation.
+        description: |
+          The validation errors for the [ImportOperation](#importoperation).
+          See [Errors](/error).
         type: error.ErrorObject[]

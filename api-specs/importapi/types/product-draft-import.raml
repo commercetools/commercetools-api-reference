@@ -12,14 +12,15 @@ uses:
 types:
   ProductDraftImport:
     type: common.ImportResource
+    description: |
+      The representation of a Product Draft for the import purpose.
     properties:
       productType:
         description: |
-          The product's product type. Maps to `Product.productType`.
-
-          The product type referenced
-          must already exist in the commercetools project, or the
-          import operation state is set to `Unresolved`.
+          The `productType` of a [Product](/../api/projects/products#product).
+          Maps to `Product.productType`.
+          The Reference to the [ProductType](/../api/projects/productTypes#producttype) with which the ProductDraft is associated.
+          If referenced ProductType does not exist, the `state` of the [ImportOperation](/import-operation#importoperation) will be set to `Unresolved` until the necessary ProductType is created.
         type: common.ProductTypeKeyReference
       name:
         type: common.LocalizedString
@@ -35,11 +36,8 @@ types:
           Maps to `Product.description`.
       categories?:
         description: |
-          An array of references to categories by their keys. Maps to `Product.categories`.
-
-          The categories referenced
-          must already exist in the commercetools project, or the
-          import operation state is set to `Unresolved`.
+          The Reference to the [Categories](/../api/projects/categories#category) with which the ProductDraft is associated.
+          If referenced Categories do not exist, the `state` of the [ImportOperation](/import-operation#importoperation) will be set to `Unresolved` until the necessary Categories are created.
         type: common.CategoryKeyReference[]
       metaTitle?:
         type: common.LocalizedString
@@ -50,28 +48,22 @@ types:
       masterVariant?:
         type: ProductVariantDraftImport
         description: |
-          The master product variant.
-          Required if the `variants` array has product variants.
+          The master Product variant.
+          Required if the `variants` array contains a Product Variant.
       variants?:
         type: ProductVariantDraftImport[]
-        description: An array of related product variants.
+        description: An array of related Product Variants.
       taxCategory?:
         description: |
-          References a tax category by its key.
-
-          The tax category referenced must already exist
-          in the commercetools project, or the
-          import operation state is set to `Unresolved`.
+          The Reference to the [TaxCategory](/../api/projects/taxCategories#taxcategory) with which the ProductDraft is associated.
+          If referenced TaxCategory does not exist, the `state` of the [ImportOperation](/import-operation#importoperation) will be set to `Unresolved` until the necessary TaxCategory is created.
         type: common.TaxCategoryKeyReference
       searchKeywords?:
         type: product-import.SearchKeywords
       state?:
         description: |
-          References a state by its key.
-
-          The tax category referenced must already exist
-          in the commercetools project, or the
-          import operation state is set to `Unresolved`.
+          The Reference to the [State](/../api/projects/states#state) with which the ProductDraft is associated.
+          If referenced State does not exist, the `state` of the [ImportOperation](/import-operation#importoperation) will be set to `Unresolved` until the necessary State is created.
         type: common.StateKeyReference
       publish?:
         type: boolean
@@ -80,6 +72,8 @@ types:
           If there were updates, only the updates will be published to `staged` and `current` projection.
   ProductVariantDraftImport:
     type: object
+    description: |
+      The representation of a Product Variant Draft for the import purpose.
     properties:
       sku?:
         type: string
@@ -95,9 +89,13 @@ types:
         type: common.Asset[]
   PriceDraftImport:
     type: object
+    description: |
+      The representation of a Price Draft for the import purpose.
     properties:
       value:
         type: common.TypedMoney
+        description: |
+          TypedMoney is what is called BaseMoney in the HTTP API.
       country?:
         type: common.CountryCode
       customerGroup?:

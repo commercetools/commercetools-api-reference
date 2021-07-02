@@ -42,7 +42,7 @@ types:
     properties:
       value:
         description: |
-          Maps to `Price.value`.
+          Maps to `Price.value`. TypedMoney is what is called BaseMoney in the HTTP API.
         type: common.TypedMoney
       country?:
         description: |
@@ -98,10 +98,10 @@ types:
         type: common.Image[]
   LineItemImportDraft:
     description: |
-      Represents an individual line item in an Order. A line item is a snapshot of a product at the time it was added to the order.
+      Represents an individual Line Item in an Order. A line item is a snapshot of a product at the time it was added to the order.
 
-      You cannot create an order which includes line operations that do not exist in the project or have been deleted.
-      Products and variants referenced by a line item must already exist in the commercetools project.
+      You cannot create an Order that includes line item operations that do not exist in the Project or have been deleted.
+      Products and Product Variants referenced by a line item must already exist in the commercetools Project.
     properties:
       product?:
         description: |
@@ -127,19 +127,15 @@ types:
         type: ItemState[]
       supplyChannel?:
         description: |
-          References a supply channel. Maps to `LineItem.supplyChannel`.
-
-          The supply channel referenced must already exist
-          in the commercetools project, or the
-          import operation state is set to `Unresolved`.
+          Maps to `LineItem.supplyChannel`.
+          The Reference to the Supply [Channel](/../api/projects/channels#channel) with which the LineItem is associated.
+          If referenced Supply Channel does not exist, the `state` of the [ImportOperation](/import-operation#importoperation) will be set to `Unresolved` until the necessary Supply Channel is created.
         type: common.ChannelKeyReference
       distributionChannel?:
         description: |
-          References a distribution channel. Maps to `LineItem.distributionChannel`.
-
-          The distribution channel referenced must already exist
-          in the commercetools project, or the
-          import operation state is set to `Unresolved`.
+          Maps to `LineItem.distributionChannel`.
+          The Reference to the Distribution [Channel](/../api/projects/channels#channel) with which the LineItem is associated.
+          If referenced CustomerGroup does not exist, the `state` of the [ImportOperation](/import-operation#importoperation) will be set to `Unresolved` until the necessary Distribution Channel is created.
         type: common.ChannelKeyReference
       taxRate?:
         description: |
@@ -242,6 +238,8 @@ types:
         type: string
       price:
         type: common.TypedMoney
+        description: |
+          TypedMoney is what is called BaseMoney in the HTTP API.
       shippingRate:
         type: ShippingRateDraft
       taxRate?:
@@ -271,18 +269,26 @@ types:
     properties:
       totalNet:
         type: common.TypedMoney
+        description: |
+          TypedMoney is what is called BaseMoney in the HTTP API.
       totalGross:
         type: common.TypedMoney
+        description: |
+          TypedMoney is what is called BaseMoney in the HTTP API.
   CustomLineItemDraft:
     properties:
       name:
         type: common.LocalizedString
       money:
         type: common.TypedMoney
+        description: |
+          TypedMoney is what is called BaseMoney in the HTTP API.
       taxedPrice?:
         type: CustomLineItemTaxedPrice
       totalPrice:
         type: common.TypedMoney
+        description: |
+          TypedMoney is what is called BaseMoney in the HTTP API.
       slug: string
       quantity:
         type: number
@@ -309,6 +315,8 @@ types:
         maximum: 1
       amount:
         type: common.TypedMoney
+        description: |
+          TypedMoney is what is called BaseMoney in the HTTP API.
   TaxedPrice:
     properties:
       totalNet:
@@ -433,13 +441,13 @@ types:
         type: number
   OrderImport:
     description: |
-      Import representation for an order.
+      The data representation for an Order to be imported that is persisted as an [Order](/../api/projects/orders#top) in the Project.
 
-      In commercetools, you can import an order using the
+      In commercetools, you can import an Order using the
       [Create Order by Import](https://docs.commercetools.com/http-api-projects-orders-import.html#create-an-order-by-import)
-      endpoint method instead of creating it from a cart.
+      endpoint method instead of creating it from a Cart.
 
-      The order import draft is a snapshot of an order at the time it was imported.
+      An OrderImport is a snapshot of an order at the time it was imported.
     properties:
       orderNumber:
         description: |
@@ -447,7 +455,7 @@ types:
         type: string
       customer?:
         type: common.CustomerKeyReference
-        description: References a customer by its key.
+        description:
       customerEmail?:
         description: |
           Maps to `Order.customerEmail`.
@@ -462,7 +470,7 @@ types:
         type: CustomLineItemDraft[]
       totalPrice:
         description: |
-          Maps to `Order.totalPrice`.
+          Maps to `Order.totalPrice`. TypedMoney is what is called BaseMoney in the HTTP API.
         type: common.TypedMoney
       taxedPrice?:
         description: |
