@@ -1,7 +1,19 @@
 #%RAML 1.0
 ---
 title: Commercetools
-baseUri: https://api.europe-west1.gcp.commercetools.com
+baseUri: https://api.{region}.commercetools.com
+(sdkBaseUri): https://api.europe-west1.gcp.commercetools.com
+baseUriParameters:
+  region:
+    type: string
+    enum:
+      - us-central1.gcp
+      - us-east-2.aws
+      - europe-west1.gcp
+      - eu-central-1.aws
+      - australia-southeast1.gcp
+    description: |
+      The [Region](/../api/general-concepts#hosts) in which the Project is hosted.
 version: v1
 securitySchemes:
   oauth_2_0: !include securitySchemes/oauth2.raml
@@ -33,7 +45,6 @@ resourceTypes:
         - query:
             whereExample: <<whereExample>>
       displayName: Query <<resourcePathName>>
-      description: Query <<resourcePathName>>
       responses:
         200:
           body:
@@ -44,7 +55,6 @@ resourceTypes:
         - expandable
         - deprecatable201
       displayName: Create <<resourceType>>
-      description: Create <<resourceType>>
       body:
         application/json:
           type: <<resourceDraft>>
@@ -58,11 +68,11 @@ resourceTypes:
     uriParameters:
       <<uriParameterName>>:
         type: string
+        description: '`<<uriParameterName | !lowercamelcase>>` of the [<<resourceType>>](ctp:api:type:<<resourceType>>)'
     get:
       is:
         - expandable
-      displayName: Get <<resourceType>> by <<uriParameterName>>
-      description: Get <<resourceType>> by <<uriParameterName>>
+      displayName: Get <<resourceType>> by <<uriParameterName | !lowercamelcase>>
       responses:
         200:
           body:
@@ -73,8 +83,7 @@ resourceTypes:
         - conflicting
         - expandable
         - deprecatable200
-      displayName: Update <<resourceType>> by <<uriParameterName>>
-      description: Update <<resourceType>> by <<uriParameterName>>
+      displayName: Update <<resourceType>> by <<uriParameterName | !lowercamelcase>>
       body:
         application/json:
           type: <<resourceUpdateType>>
@@ -88,8 +97,7 @@ resourceTypes:
         - versioned
         - conflicting
         - expandable
-      displayName: Delete <<resourceType>> by <<uriParameterName>>
-      description: Delete <<resourceType>> by <<uriParameterName>>
+      displayName: Delete <<resourceType>> by <<uriParameterName | !lowercamelcase>>
       responses:
         200:
           body:
@@ -112,6 +120,7 @@ resourceTypes:
   uriParameters:
     projectKey:
       type: string
+      description: '`key` of the [Project](/../api/projects/project#project).'
   displayName: Project
   (updateable): Project
   description: The Project endpoint is used to retrieve certain information from a project.
