@@ -422,7 +422,6 @@ type Address {
   additionalAddressInfo: String
   externalId: String
   key: String
-  contactInfo: AddressContactInfo @deprecated(reason: "This field has been removed and will return a HTTP code 400 with X-DEPRECATION-NOTICE when used. Field 'contactInfo' is deprecated. Instead of using e.g. 'contactInfo.email' use 'email' directly.")
   phone: String
   mobile: String
   email: String
@@ -432,13 +431,6 @@ type Address {
   firstName: String
   lastName: String
   custom: CustomFieldsType
-}
-
-type AddressContactInfo {
-  phone: String
-  mobile: String
-  email: String
-  fax: String
 }
 
 type AddressDraft {
@@ -783,22 +775,6 @@ type Cart implements Versioned {
   itemShippingAddresses: [Address!]!
   cartState: CartState!
   key: String
-
-  "This field contains non-typed data. Consider using `customFields` as a typed alternative."
-  customFieldsRaw(
-    """
-    The names of the custom fields to include.
-    
-    If neither `includeNames` nor `excludeNames` are provided, then all custom fields are returned.
-    """
-    includeNames: [String!],
-
-    """
-    The names of the custom fields to exclude.
-    
-    If neither `includeNames` nor `excludeNames` are provided, then all custom fields are returned.
-    """
-    excludeNames: [String!]): [RawCustomField!] @deprecated(reason: "This field has been removed and will return a HTTP code 400 with X-DEPRECATION-NOTICE when used. Please use 'custom.customFieldsRaw'")
   custom: CustomFieldsType
   deleteDaysAfterLastModification: Int
   id: String!
@@ -850,9 +826,6 @@ type CartDiscount implements Versioned {
   nameAllLocales: [LocalizedString!]!
   descriptionAllLocales: [LocalizedString!]
   referenceRefs: [Reference!]!
-
-  "This field would contain type data"
-  customFields: Type @deprecated(reason: "This field has been removed and will return a HTTP code 400 with X-DEPRECATION-NOTICE when used. Please use 'custom.customFieldsRaw'")
   custom: CustomFieldsType
   value: CartDiscountValue!
   target: CartDiscountTarget
@@ -2006,9 +1979,6 @@ type CustomFieldsType {
     If neither `includeNames` nor `excludeNames` are provided, then all custom fields are returned.
     """
     excludeNames: [String!]): [RawCustomField!]
-
-  "This field would contain type data"
-  customFields: Type! @deprecated(reason: "This field has been removed and will return a HTTP code 400 with X-DEPRECATION-NOTICE when used. Typed custom fields are no longer supported, please use customFieldsRaw instead.")
 }
 
 "A custom line item is a generic item that can be added to the cart but is not bound to a product. You can use it for discounts (negative money), vouchers, complex cart rules, additional services or fees. You control the lifecycle of this item."
@@ -3156,7 +3126,6 @@ type Initiator {
   anonymousId: String
   clientId: String
   customerRef: Reference
-  user: Reference @deprecated(reason: "This field has been removed and will return a HTTP code 400 with X-DEPRECATION-NOTICE when used. Use 'userRef' to fetch the reference.")
   userRef: Reference
 }
 
@@ -5598,7 +5567,6 @@ type ProductProjectionMessagePayload {
   metaDescriptionAllLocales: [LocalizedString!]
   hasStagedChanges: Boolean!
   published: Boolean!
-  masterData: ProductVariant! @deprecated(reason: "This field has been removed and will return a HTTP code 400 with X-DEPRECATION-NOTICE when used. Please use 'masterVariant'")
   masterVariant: ProductVariant!
   variants: [ProductVariant!]!
   taxCategoryRef: Reference
@@ -9595,11 +9563,6 @@ type Trigger {
 input TriggerInput {
   resourceTypeId: String!
   actions: [ActionType!]
-}
-
-interface Type {
-  typeRef: Reference!
-  type: TypeDefinition
 }
 
 "Types define the structure of custom fields which can be attached to different entities throughout the platform."
