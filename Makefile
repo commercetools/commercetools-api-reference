@@ -9,7 +9,7 @@ lint: check_markdown format_raml validate_raml
 
 generate: update_types generate_oas
 
-oas_convert: oas_convert3 oas_convert2
+oas_convert: oas_convert3
 
 codegen_install:
 	curl -o- -s https://raw.githubusercontent.com/vrapio/rmf-codegen/master/scripts/install.sh | bash
