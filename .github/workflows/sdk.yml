@@ -275,10 +275,29 @@ jobs:
           path: commercetools-sdk-typescript
           ssh-key: ${{ secrets.TS_SDK_DEPLOY_KEY }}
 
-      - run: |
+      - name: Retrieve branch name
+        id: branch_name
+        run: |
+          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
+          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+        working-directory: commercetools-api-reference
+
+      - name: "Switch SDK to update branch"
+        if: github.ref == 'refs/heads/master'
+        run: |
           git fetch --depth=1 origin gen-sdk-updates || true
           git checkout -B gen-sdk-updates origin/gen-sdk-updates || true
           git checkout -B gen-sdk-updates
+          git log -1
+        working-directory: commercetools-sdk-typescript
+
+      - name: "Switch SDK to update branch"
+        if: github.ref != 'refs/heads/master'
+        run: |
+          git fetch --depth=1 origin ${{ steps.branch_name.outputs.SOURCE_BRANCH }} || true
+          git checkout -B gen-sdk-updates origin/${{ steps.branch_name.outputs.SOURCE_BRANCH }} || true
+          git checkout -B ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
           git log -1
         working-directory: commercetools-sdk-typescript
 
@@ -301,6 +320,16 @@ jobs:
         with:
           repository: commercetools-sdk-typescript
           branch: gen-sdk-updates
+          commit_message: "build(codegen): updating SDK"
+          commit_user_name: Auto Mation
+          commit_user_email: automation@commercetools.com
+          commit_author: Auto Mation <automation@commercetools.com>
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master'
+        with:
+          repository: commercetools-sdk-typescript
+          branch: ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
           commit_message: "build(codegen): updating SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
@@ -330,10 +359,29 @@ jobs:
           path: commercetools-dotnet-core-sdk-v2
           ssh-key: ${{ secrets.CSHARP_SDK_DEPLOY_KEY }}
 
-      - run: |
+      - name: Retrieve branch name
+        id: branch_name
+        run: |
+          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
+          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+        working-directory: commercetools-api-reference
+
+      - name: "Switch SDK to update branch"
+        if: github.ref == 'refs/heads/master'
+        run: |
           git fetch --depth=1 origin gen-sdk-updates || true
           git checkout -B gen-sdk-updates origin/gen-sdk-updates || true
           git checkout -B gen-sdk-updates
+          git log -1
+        working-directory: commercetools-dotnet-core-sdk-v2
+
+      - name: "Switch SDK to update branch"
+        if: github.ref != 'refs/heads/master'
+        run: |
+          git fetch --depth=1 origin ${{ steps.branch_name.outputs.SOURCE_BRANCH }} || true
+          git checkout -B gen-sdk-updates origin/${{ steps.branch_name.outputs.SOURCE_BRANCH }} || true
+          git checkout -B ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
           git log -1
         working-directory: commercetools-dotnet-core-sdk-v2
 
@@ -356,6 +404,16 @@ jobs:
         with:
           repository: commercetools-dotnet-core-sdk-v2
           branch: gen-sdk-updates
+          commit_message: "TASK: Updating SDK"
+          commit_user_name: Auto Mation
+          commit_user_email: automation@commercetools.com
+          commit_author: Auto Mation <automation@commercetools.com>
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master'
+        with:
+          repository: commercetools-dotnet-core-sdk-v2
+          branch: ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
           commit_message: "TASK: Updating SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
