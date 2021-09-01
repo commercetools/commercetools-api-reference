@@ -42,6 +42,15 @@ jobs:
         with:
           path: commercetools-api-reference
 
+      - name: Retrieve branch name
+        id: branch_name
+        run: |
+          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
+          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+        working-directory: commercetools-api-reference
+
+
       - name: "Checkout PHP SDK"
         uses: actions/checkout@v2
         with:
@@ -49,10 +58,21 @@ jobs:
           path: commercetools-sdk-php-v2
           ssh-key: ${{ secrets.SDK_DEPLOY_KEY }}
 
-      - run: |
+      - name: "Switch SDK to update branch"
+        if: github.ref == 'refs/heads/master'
+        run: |
           git fetch --depth=1 origin gen-sdk-updates || true
           git checkout -B gen-sdk-updates origin/gen-sdk-updates || true
           git checkout -B gen-sdk-updates
+          git log -1
+        working-directory: commercetools-sdk-php-v2
+
+      - name: "Switch SDK to update branch"
+        if: github.ref != 'refs/heads/master'
+        run: |
+          git fetch --depth=1 origin ${{env.SOURCE_BRANCH}} || true
+          git checkout -B gen-sdk-updates origin/${{env.SOURCE_BRANCH}} || true
+          git checkout -B ${{env.SOURCE_BRANCH}}
           git log -1
         working-directory: commercetools-sdk-php-v2
 
@@ -74,6 +94,16 @@ jobs:
         with:
           repository: commercetools-sdk-php-v2
           branch: gen-sdk-updates
+          commit_message: "TASK: Updating SDK"
+          commit_user_name: Auto Mation
+          commit_user_email: automation@commercetools.com
+          commit_author: Auto Mation <automation@commercetools.com>
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master'
+        with:
+          repository: commercetools-sdk-php-v2
+          branch: ${{ env.SOURCE_BRANCH }}
           commit_message: "TASK: Updating SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
