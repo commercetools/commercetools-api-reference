@@ -48,6 +48,7 @@ oas_convert3: lint raml_doc_convert
 	sed -ibak -e "s/example/x-annotation-example/g" api.swagger3.json
 	sed -ibak -e "s/additionalProperties/x-annotation-additionalProperties/g" api.swagger3.json
 	yarn run swagger-cli validate api.swagger3.json
+	rm api.swagger3.jsonbak
 
 oas_convert2: lint raml_doc_convert
 	node bin/doc-convert-oas2.js
@@ -55,8 +56,7 @@ oas_convert2: lint raml_doc_convert
 	sed -ibak -e "s/additionalProperties/x-annotation-additionalProperties/g" api.swagger.json
 	sed -ibak -e "s/\"oneOf\"/\"x-annotation-oneOfDef\"/g" api.swagger.json
 	yarn run swagger-cli validate api.swagger.json
+	rm api.swagger.jsonbak
 
 cleanup: oas_convert
 	rm -rf tmpdoc
-	rm api.swagger.jsonbak
-	rm api.swagger3.jsonbak
