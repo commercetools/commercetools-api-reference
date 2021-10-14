@@ -265,7 +265,6 @@
         "security": [
           {
             "oauth_2_0": [
-              "manage_api_clients:{projectKey}",
               "view_api_clients:{projectKey}"
             ]
           }
@@ -381,12 +380,10 @@
             }
           }
         },
-        "description": "Get ApiClient by ID",
         "operationId": "Get ApiClient by ID",
         "security": [
           {
             "oauth_2_0": [
-              "manage_api_clients:{projectKey}",
               "view_api_clients:{projectKey}"
             ]
           }
@@ -419,7 +416,6 @@
             }
           }
         },
-        "description": "Delete ApiClient by ID",
         "operationId": "Delete ApiClient by ID",
         "security": [
           {
@@ -452,6 +448,7 @@
             "x-annotation-includePath": "resources/ByProjectKeyApiClientsById.raml",
             "type": "string"
           },
+          "description": "`id` of the API Client.",
           "x-annotation-builtinType": "string"
         }
       ],
@@ -39143,30 +39140,31 @@
         "type": "object",
         "properties": {
           "id": {
-            "description": "The unique ID of the API client.\nThis is the OAuth2 `client_id` and can be used to obtain a token.",
+            "description": "Unique ID of the API client.\nThis is the OAuth2 `client_id` that can be used to [obtain an access token](/../api/authorization#requesting-an-access-token-using-commercetools-oauth-20-server).",
             "type": "string",
             "x-annotation-builtinType": "string",
             "x-annotation-inherited": false
           },
           "name": {
+            "description": "Name of the API Client.",
             "type": "string",
             "x-annotation-builtinType": "string",
             "x-annotation-inherited": false
           },
           "scope": {
-            "description": "A whitespace separated list of the OAuth scopes.\nThis is the OAuth2 `scope` and can be used to obtain a token.",
+            "description": "Whitespace-separated list of [OAuth scopes](/../api/scopes) that can be used when [obtaining an access token](/../api/authorization#requesting-an-access-token-using-commercetools-oauth-20-server).",
             "type": "string",
             "x-annotation-builtinType": "string",
             "x-annotation-inherited": false
           },
-          "createdAt": {
-            "format": "date-time",
+          "secret": {
+            "description": "Only shown once in the response of creating the API Client.\nThis is the OAuth2 `client_secret` that can be used to [obtain an access token](/../api/authorization#requesting-an-access-token-using-commercetools-oauth-20-server).",
             "type": "string",
-            "x-annotation-builtinType": "datetime",
+            "x-annotation-builtinType": "string",
             "x-annotation-inherited": false
           },
           "lastUsedAt": {
-            "description": "The last day this API Client was used to obtain a token.",
+            "description": "Date of the last day this API Client was used to [obtain an access token](/../api/authorization#requesting-an-access-token-using-commercetools-oauth-20-server).",
             "type": "string",
             "format": "date",
             "x-annotation-builtinType": "date-only",
@@ -39179,10 +39177,11 @@
             "x-annotation-builtinType": "datetime",
             "x-annotation-inherited": false
           },
-          "secret": {
-            "description": "The secret is only shown once in the response of creating the API Client.\nThis is the OAuth2 `client_secret` and can be used to obtain a token.",
+          "createdAt": {
+            "format": "date-time",
+            "description": "Date and time (UTC) the API Client was initially created.",
             "type": "string",
-            "x-annotation-builtinType": "string",
+            "x-annotation-builtinType": "datetime",
             "x-annotation-inherited": false
           }
         },
@@ -39201,11 +39200,13 @@
         "type": "object",
         "properties": {
           "name": {
+            "description": "Name of the API Client.",
             "type": "string",
             "x-annotation-builtinType": "string",
             "x-annotation-inherited": false
           },
           "scope": {
+            "description": "Whitespace-separated list of [OAuth scopes](/../api/scopes) that can be used when [obtaining an access token](/../api/authorization#requesting-an-access-token-using-commercetools-oauth-20-server).",
             "type": "string",
             "x-annotation-builtinType": "string",
             "x-annotation-inherited": false
@@ -39228,34 +39229,40 @@
       },
       "ApiClientPagedQueryResponse": {
         "title": "ApiClientPagedQueryResponse",
+        "description": "[PagedQueryResult](/general-concepts#pagedqueryresult) with `results` containing an array of [APIClient](ctp:api:type:ApiClient).",
         "x-annotation-includePath": "types/ApiClient/ApiClientPagedQueryResponse.raml",
         "type": "object",
         "properties": {
           "limit": {
             "format": "int64",
-            "type": "integer",
-            "x-annotation-builtinType": "integer",
-            "x-annotation-inherited": false
-          },
-          "count": {
-            "format": "int64",
-            "type": "integer",
-            "x-annotation-builtinType": "integer",
-            "x-annotation-inherited": false
-          },
-          "total": {
-            "format": "int64",
+            "description": "Number of results requested in the query request.",
             "type": "integer",
             "x-annotation-builtinType": "integer",
             "x-annotation-inherited": false
           },
           "offset": {
             "format": "int64",
+            "description": "Offset supplied by the client or server default.\nIt is the number of elements skipped, not a page number.",
+            "type": "integer",
+            "x-annotation-builtinType": "integer",
+            "x-annotation-inherited": false
+          },
+          "count": {
+            "format": "int64",
+            "description": "Actual number of results returned.",
+            "type": "integer",
+            "x-annotation-builtinType": "integer",
+            "x-annotation-inherited": false
+          },
+          "total": {
+            "format": "int64",
+            "description": "Total number of results matching the query.\nThis number is an estimation that is not [strongly consistent](/general-concepts#strong-consistency).\nThis field is returned by default.\nFor improved performance, calculating this field can be deactivated by using the query parameter `withTotal=false`.\nWhen the results are filtered with a [Query Predicate](/predicates/query), `total` is subject to a [limit](/contract#queries).",
             "type": "integer",
             "x-annotation-builtinType": "integer",
             "x-annotation-inherited": false
           },
           "results": {
+            "description": "API Clients matching the query.",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ApiClient"
@@ -39266,8 +39273,8 @@
         },
         "required": [
           "limit",
-          "count",
           "offset",
+          "count",
           "results"
         ],
         "x-annotation-builtinType": "object",
