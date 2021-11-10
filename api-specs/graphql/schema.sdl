@@ -5006,6 +5006,7 @@ input OrderUpdateAction {
   setParcelItems: SetOrderParcelItems
   setParcelMeasurements: SetOrderParcelMeasurements
   setParcelTrackingData: SetOrderParcelTrackingData
+  setReturnInfo: SetOrderReturnInfo
   setReturnPaymentState: SetOrderReturnPaymentState
   setReturnShipmentState: SetOrderReturnShipmentState
   setShippingAddress: SetOrderShippingAddress
@@ -5841,6 +5842,8 @@ type ProductSearchVariantAvailability {
   isOnStock: Boolean!
   restockableInDays: Int
   availableQuantity: Long
+  version: Long
+  id: String
 }
 
 type ProductSearchVariantAvailabilityWithChannel {
@@ -6069,6 +6072,8 @@ type ProductVariantAvailability {
   isOnStock: Boolean!
   restockableInDays: Int
   availableQuantity: Long
+  version: Long
+  id: String
 }
 
 type ProductVariantAvailabilityWithChannel {
@@ -6840,6 +6845,23 @@ type ReturnInfo {
 
 type ReturnInfoAdded implements MessagePayload {
   returnInfo: ReturnInfo!
+  type: String!
+}
+
+input ReturnInfoDraftType {
+  items: [ReturnItemDraftType!]!
+  returnDate: DateTime
+  returnTrackingId: String
+}
+
+type ReturnInfoDraftTypeOutput {
+  items: [ReturnItemDraftTypeOutput!]!
+  returnDate: DateTime
+  returnTrackingId: String
+}
+
+type ReturnInfoSet implements MessagePayload {
+  returnInfo: [ReturnInfo!]!
   type: String!
 }
 
@@ -7835,6 +7857,10 @@ input SetOrderParcelTrackingData {
   trackingData: TrackingDataDraftType
 }
 
+input SetOrderReturnInfo {
+  items: [ReturnInfoDraftType!]!
+}
+
 input SetOrderReturnPaymentState {
   returnItemId: String!
   paymentState: ReturnPaymentState!
@@ -8672,6 +8698,15 @@ type SetStagedOrderParcelTrackingDataOutput implements StagedOrderUpdateActionOu
   trackingData: TrackingData
 }
 
+input SetStagedOrderReturnInfo {
+  items: [ReturnInfoDraftType!]!
+}
+
+type SetStagedOrderReturnInfoOutput implements StagedOrderUpdateActionOutput {
+  type: String!
+  items: [ReturnInfoDraftTypeOutput!]!
+}
+
 input SetStagedOrderReturnPaymentState {
   returnItemId: String!
   paymentState: ReturnPaymentState!
@@ -9348,6 +9383,7 @@ input StagedOrderUpdateAction {
   setParcelItems: SetStagedOrderParcelItems
   setParcelMeasurements: SetStagedOrderParcelMeasurements
   setParcelTrackingData: SetStagedOrderParcelTrackingData
+  setReturnInfo: SetStagedOrderReturnInfo
   setReturnPaymentState: SetStagedOrderReturnPaymentState
   setReturnShipmentState: SetStagedOrderReturnShipmentState
   setShippingAddress: SetStagedOrderShippingAddress
