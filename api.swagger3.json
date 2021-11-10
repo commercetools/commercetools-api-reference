@@ -60287,6 +60287,7 @@
           "OrderLineItemDiscountSetMessage",
           "OrderPaymentStateChangedMessage",
           "OrderReturnInfoAddedMessage",
+          "OrderReturnInfoSetMessage",
           "OrderReturnShipmentStateChangedMessage",
           "OrderShipmentStateChangedMessage",
           "OrderShippingAddressSetMessage",
@@ -60564,6 +60565,7 @@
           "OrderLineItemDiscountSetMessagePayload",
           "OrderPaymentStateChangedMessagePayload",
           "OrderReturnInfoAddedMessagePayload",
+          "OrderReturnInfoSetMessagePayload",
           "OrderReturnShipmentStateChangedMessagePayload",
           "OrderShipmentStateChangedMessagePayload",
           "OrderShippingAddressSetMessagePayload",
@@ -68588,6 +68590,131 @@
         "x-annotation-package": "Message",
         "type": "string"
       },
+      "OrderReturnInfoSetMessage": {
+        "title": "OrderReturnInfoSetMessage",
+        "x-annotation-includePath": "types/Message/OrderReturnInfoSetMessage.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Message"
+          },
+          {
+            "properties": {
+              "id": {
+                "type": "string",
+                "x-annotation-builtinType": "string",
+                "x-annotation-inherited": true
+              },
+              "version": {
+                "format": "int64",
+                "type": "integer",
+                "x-annotation-builtinType": "integer",
+                "x-annotation-inherited": true
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "x-annotation-builtinType": "datetime",
+                "x-annotation-inherited": true
+              },
+              "lastModifiedAt": {
+                "type": "string",
+                "format": "date-time",
+                "x-annotation-builtinType": "datetime",
+                "x-annotation-inherited": true
+              },
+              "lastModifiedBy": {
+                "description": "Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).",
+                "$ref": "#/components/schemas/LastModifiedBy",
+                "x-annotation-builtinType": "object",
+                "x-annotation-beta": true,
+                "x-annotation-inherited": true
+              },
+              "createdBy": {
+                "description": "Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).",
+                "$ref": "#/components/schemas/CreatedBy",
+                "x-annotation-builtinType": "object",
+                "x-annotation-beta": true,
+                "x-annotation-inherited": true
+              },
+              "sequenceNumber": {
+                "format": "int64",
+                "type": "integer",
+                "x-annotation-builtinType": "integer",
+                "x-annotation-inherited": true
+              },
+              "resource": {
+                "$ref": "#/components/schemas/Reference",
+                "x-annotation-builtinType": "object",
+                "x-annotation-inherited": true
+              },
+              "resourceVersion": {
+                "format": "int64",
+                "type": "integer",
+                "x-annotation-builtinType": "integer",
+                "x-annotation-inherited": true
+              },
+              "type": {
+                "enum": [
+                  "ReturnInfoSet"
+                ],
+                "type": "string",
+                "x-annotation-builtinType": "string",
+                "x-annotation-inherited": true
+              },
+              "resourceUserProvidedIdentifiers": {
+                "$ref": "#/components/schemas/UserProvidedIdentifiers",
+                "x-annotation-builtinType": "object",
+                "x-annotation-inherited": true
+              },
+              "returnInfo": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ReturnInfo"
+                },
+                "x-annotation-builtinType": "array",
+                "x-annotation-inherited": false
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-builtinType": "object",
+        "x-annotation-package": "Message",
+        "type": "string"
+      },
+      "OrderReturnInfoSetMessagePayload": {
+        "title": "OrderReturnInfoSetMessagePayload",
+        "x-annotation-includePath": "types/Message/OrderReturnInfoSetMessagePayload.raml",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MessagePayload"
+          },
+          {
+            "properties": {
+              "type": {
+                "enum": [
+                  "ReturnInfoSet"
+                ],
+                "type": "string",
+                "x-annotation-builtinType": "string",
+                "x-annotation-inherited": true
+              },
+              "returnInfo": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ReturnInfo"
+                },
+                "x-annotation-builtinType": "array",
+                "x-annotation-inherited": false
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-builtinType": "object",
+        "x-annotation-package": "Message",
+        "type": "string"
+      },
       "OrderReturnShipmentStateChangedMessage": {
         "title": "OrderReturnShipmentStateChangedMessage",
         "x-annotation-includePath": "types/Message/OrderReturnShipmentStateChangedMessage.raml",
@@ -69838,6 +69965,57 @@
         "x-annotation-builtinType": "object",
         "x-annotation-package": "Order",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#set-parcel-tracking-data",
+        "type": "string"
+      },
+      "OrderSetReturnInfoAction": {
+        "title": "OrderSetReturnInfoAction",
+        "x-annotation-includePath": "types/Order/OrderSetReturnInfoAction.raml",
+        "x-annotation-example": {
+          "action": "setReturnInfo",
+          "items": [
+            {
+              "items": [
+                {
+                  "quantity": 1,
+                  "lineItemId": "{{lineItemId}}",
+                  "comment": "any comment",
+                  "shipmentState": "Returned"
+                }
+              ],
+              "returnTrackingId": "returnTrackingId-x-annotation-example",
+              "returnDate": "2021-04-30T09:21:15.003Z"
+            }
+          ]
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderUpdateAction"
+          },
+          {
+            "properties": {
+              "action": {
+                "enum": [
+                  "setReturnInfo"
+                ],
+                "type": "string",
+                "x-annotation-builtinType": "string",
+                "x-annotation-inherited": true
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ReturnInfoDraft"
+                },
+                "x-annotation-builtinType": "array",
+                "x-annotation-inherited": false
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-builtinType": "object",
+        "x-annotation-package": "Order",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order.html#set-returninfo",
         "type": "string"
       },
       "OrderSetReturnPaymentStateAction": {
@@ -71296,6 +71474,7 @@
           "OrderSetParcelItemsAction",
           "OrderSetParcelMeasurementsAction",
           "OrderSetParcelTrackingDataAction",
+          "OrderSetReturnInfoAction",
           "OrderSetReturnPaymentStateAction",
           "OrderSetReturnShipmentStateAction",
           "OrderSetShippingAddressAction",
@@ -83648,6 +83827,38 @@
         "x-annotation-package": "Order",
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-orders.html#returninfo"
       },
+      "ReturnInfoDraft": {
+        "title": "ReturnInfoDraft",
+        "x-annotation-includePath": "types/Order/ReturnInfoDraft.raml",
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReturnItemDraft"
+            },
+            "x-annotation-builtinType": "array",
+            "x-annotation-inherited": false
+          },
+          "returnTrackingId": {
+            "description": "Identifies, which return tracking ID is connected to this particular return.",
+            "type": "string",
+            "x-annotation-builtinType": "string",
+            "x-annotation-inherited": false
+          },
+          "returnDate": {
+            "format": "date-time",
+            "type": "string",
+            "x-annotation-builtinType": "datetime",
+            "x-annotation-inherited": false
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "x-annotation-builtinType": "object",
+        "x-annotation-package": "Order"
+      },
       "ReturnItem": {
         "title": "ReturnItem",
         "x-annotation-includePath": "types/Order/ReturnItem.raml",
@@ -91757,6 +91968,57 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-parcel-tracking-data",
         "type": "string"
       },
+      "StagedOrderSetReturnInfoAction": {
+        "title": "StagedOrderSetReturnInfoAction",
+        "x-annotation-includePath": "types/OrderEdit/StagedOrderSetReturnInfoAction.raml",
+        "x-annotation-example": {
+          "action": "setReturnInfo",
+          "items": [
+            {
+              "items": [
+                {
+                  "quantity": 1,
+                  "lineItemId": "{{lineItemId}}",
+                  "comment": "any comment",
+                  "shipmentState": "Returned"
+                }
+              ],
+              "returnTrackingId": "returnTrackingId-x-annotation-example",
+              "returnDate": "2021-04-30T09:21:15.003Z"
+            }
+          ]
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StagedOrderUpdateAction"
+          },
+          {
+            "properties": {
+              "action": {
+                "enum": [
+                  "setReturnInfo"
+                ],
+                "type": "string",
+                "x-annotation-builtinType": "string",
+                "x-annotation-inherited": true
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ReturnInfoDraft"
+                },
+                "x-annotation-builtinType": "array",
+                "x-annotation-inherited": false
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-builtinType": "object",
+        "x-annotation-package": "OrderEdit",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-order-edits.html#set-returninfo",
+        "type": "string"
+      },
       "StagedOrderSetReturnPaymentStateAction": {
         "title": "StagedOrderSetReturnPaymentStateAction",
         "x-annotation-includePath": "types/OrderEdit/StagedOrderSetReturnPaymentStateAction.raml",
@@ -92575,6 +92837,7 @@
           "StagedOrderSetParcelItemsAction",
           "StagedOrderSetParcelMeasurementsAction",
           "StagedOrderSetParcelTrackingDataAction",
+          "StagedOrderSetReturnInfoAction",
           "StagedOrderSetReturnPaymentStateAction",
           "StagedOrderSetReturnShipmentStateAction",
           "StagedOrderSetShippingAddressAction",
