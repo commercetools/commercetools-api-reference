@@ -32,8 +32,8 @@ lint_raml: yarn_install update_types
 format_raml: yarn_install update_types
 	yarn run format:raml
 
-validate_raml: update_types format_raml
-	docker run -v$(shell pwd)/api-specs/api:/api vrapio/vrap -rc /api/api.raml
+validate_raml: codegen_install update_types format_raml
+	rmf-codegen verify api-specs/api/api.raml
 
 generate_oas: codegen_install format_raml
 	rmf-codegen generate -o oas -t OAS api-specs/api/api.raml
