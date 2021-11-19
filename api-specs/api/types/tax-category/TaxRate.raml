@@ -6,33 +6,32 @@ displayName: TaxRate
 properties:
   id?:
     type: string
-    description: |-
-      The ID is always set if the tax rate is part of a TaxCategory.
-      The external tax rates in a
-      Cart do not contain an `id`.
+    description: |
+      Present if the TaxRate is part of a [TaxCategory](ctp:api:type:TaxCategory).
+      Absent for external TaxRates in [LineItem](ctp:api:type:LineItem), [CustomLineItem](ctp:api:type:CustomLineItem), and [ShippingInfo](ctp:api:type:ShippingInfo).
   name:
     type: string
-    description: ''
+    description: |
+      Name of the TaxRate.
   amount:
     type: number
     minimum: 0
     maximum: 1
-    description: |-
-      Percentage in the range of [0..1].
-      The sum of the amounts of all `subRates`, if there are any.
+    description: |
+      Tax rate. If subrates are used, the amount must be the sum of all subrates.
   includedInPrice:
     type: boolean
-    description: ''
+    description: |
+      If `true`, tax is included in [Prices](ctp:api:type:Price) and the `taxedPrice` is present on [LineItems](ctp:api:type:LineItem). In this case, the platform calculates the `totalNet` price based on the TaxRate.
   country:
     type: CountryCode
-    description: A two-digit country code as per [ISO 3166-1
-      alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
+    description: |
+      Country in which the tax rate is applied in [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) format.
   state?:
     type: string
-    description: The state in the country
+    description: |
+      State within the country, such as Texas in the United States.
   subRates?:
     type: SubRate[]
-    description: |-
-      For countries (e.g.
-      the US) where the total tax is a combination of multiple taxes (e.g.
-      state and local taxes).
+    description: |
+      Used to calculate the [taxPortions](/../api/projects/carts#taxedprice) field in a Cart or Order. It is useful if the total tax of a country (such as the US) is a combination of multiple taxes (such as state and local taxes).
