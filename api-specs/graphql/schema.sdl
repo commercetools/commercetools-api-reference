@@ -500,11 +500,11 @@ enum AnonymousCartSignInMode {
 
   """
   `LineItem`s of the anonymous cart will be copied to the customer’s active cart that has been modified most recently.
-
+  
   The `CartState` of the anonymous cart gets changed to `Merged` while the `CartState` of the customer’s cart remains `Active`.
-
+  
   `CustomLineItems` and `CustomFields` of the anonymous cart will not be copied to the customers cart.
-
+  
   If a `LineItem` in the anonymous cart matches an existing line item in the customer’s cart (same product ID and variant ID), the maximum quantity of both LineItems is used as the new quantity. In that case `CustomFields` on the `LineItem` of the anonymous cart will not be in the resulting `LineItem`.
   """
   MergeWithExistingCustomerCart
@@ -1039,6 +1039,7 @@ input CartUpdateAction {
   setLineItemDistributionChannel: SetCartLineItemDistributionChannel
   setLineItemPrice: SetCartLineItemPrice
   setLineItemShippingDetails: SetCartLineItemShippingDetails
+  setLineItemSupplyChannel: SetCartLineItemSupplyChannel
   setLineItemTaxAmount: SetCartLineItemTaxAmount
   setLineItemTaxRate: SetCartLineItemTaxRate
   setLineItemTotalPrice: SetCartLineItemTotalPrice
@@ -1957,9 +1958,9 @@ input CustomFieldInput {
 
   """
   The value of this custom field consists of escaped JSON based on the FieldDefinition of the Type.
-
+  
   Examples for `value`:
-
+  
   * FieldType `String`: `"\"This is a string\""`
   * FieldType `DateTimeType`: `"\"2018-10-12T14:00:00.000Z\""`
   * FieldType `Number`: `"4"`
@@ -1991,14 +1992,14 @@ type CustomFieldsType {
   customFieldsRaw(
     """
     The names of the custom fields to include.
-
+    
     If neither `includeNames` nor `excludeNames` are provided, then all custom fields are returned.
     """
     includeNames: [String!],
 
     """
     The names of the custom fields to exclude.
-
+    
     If neither `includeNames` nor `excludeNames` are provided, then all custom fields are returned.
     """
     excludeNames: [String!]): [RawCustomField!]
@@ -2586,6 +2587,7 @@ input DestinationInput {
   AzureServiceBus: AzureServiceBusDestinationInput
   EventGrid: EventGridDestinationInput
   GoogleCloudPubSub: GoogleCloudPubSubDestinationInput
+  EventBridge: EventBridgeDestinationInput
 }
 
 type Dimensions {
@@ -2753,14 +2755,14 @@ type EnumAttributeDefinitionType implements AttributeDefinitionType {
   values(
     """
     The keys of the enum values to include.
-
+    
     If neither `includeKeys` nor `excludeKeys` are provided, then all enum values are returned.
     """
     includeKeys: [String!],
 
     """
     The keys of the enum values to exclude.
-
+    
     If neither `includeKeys` nor `excludeKeys` are provided, then all enum values are returned.
     """
     excludeKeys: [String!], limit: Int, offset: Int, sort: [String!]): PlainEnumValueResult!
@@ -2789,6 +2791,18 @@ type EnumValue {
 input EnumValueInput {
   key: String!
   label: String!
+}
+
+type EventBridgeDestination implements Destination {
+  source: String!
+  region: String!
+  accountId: String!
+  type: String!
+}
+
+input EventBridgeDestinationInput {
+  region: String!
+  accountId: String!
 }
 
 type EventGridDestination implements Destination {
@@ -3125,7 +3139,7 @@ type ImportStagedOrderLineItemStateOutput implements StagedOrderUpdateActionOutp
 type InStore implements CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface {
   """
   This field can only be used with an access token created with the password flow or with an anonymous session.
-
+  
   It gives access to the data that is specific to the customer or the anonymous session linked to the access token.
   """
   me: InStoreMe!
@@ -3205,14 +3219,14 @@ type InterfaceInteractionsRaw {
   fields(
     """
     The names of the custom fields to include.
-
+    
     If neither `includeNames` nor `excludeNames` are provided, then all custom fields are returned.
     """
     includeNames: [String!],
 
     """
     The names of the custom fields to exclude.
-
+    
     If neither `includeNames` nor `excludeNames` are provided, then all custom fields are returned.
     """
     excludeNames: [String!]): [RawCustomField!]!
@@ -3533,14 +3547,14 @@ type LocalizableEnumAttributeDefinitionType implements AttributeDefinitionType {
   values(
     """
     The keys of the enum values to include.
-
+    
     If neither `includeKeys` nor `excludeKeys` are provided, then all enum values are returned.
     """
     includeKeys: [String!],
 
     """
     The keys of the enum values to exclude.
-
+    
     If neither `includeKeys` nor `excludeKeys` are provided, then all enum values are returned.
     """
     excludeKeys: [String!], limit: Int, offset: Int, sort: [String!]): LocalizableEnumValueTypeResult!
@@ -4045,25 +4059,25 @@ type Mutation {
 
   """
   Retrieves the authenticated customer (a customer that matches the given email/password pair).
-
+  
   There may be carts and orders created before the sign in that should be assigned to the customer account. With the `anonymousCartId`, a single anonymous cart can be assigned. With the `anonymousId`, all orders and carts that have this `anonymousId` set will be assigned to the customer.
   If both `anonymousCartId` and `anonymousId` are given, the anonymous cart must have the `anonymousId`.
-
+  
   Additionally, there might also exist one or more active customer carts from an earlier session. On customer sign in there are several ways how to proceed with this cart and the cart referenced by the `anonymousCartId`.
-
+  
   * If the customer does not have a cart yet, the anonymous cart becomes the customer's cart.
   * If the customer already has one or more carts, the content of the anonymous cart will be copied to the customer's active cart that has been modified most recently.
-
+  
     In this case the `CartState` of the anonymous cart gets changed to `Merged` while the customer's cart remains the `Active` cart.
-
+  
     If a `LineItem` in the anonymous cart matches an existing line item, or a `CustomLineItem` matches an existing custom line item in the customer's cart, the maximum quantity of both line items is used as the new quantity.
-
+  
     `ItemShippingDetails` are copied from the item with the highest quantity.
-
+  
     If `itemShippingAddresses` are different in the two carts, the resulting cart contains the addresses of both the customer cart and the anonymous cart.
-
+  
     Note, that it is not possible to merge carts that differ in their currency (set during creation of the cart).
-
+  
   If a cart is is returned as part of the `CustomerSignInResult`, it has been recalculated (it will have up-to-date prices, taxes and discounts, and invalid line items have been removed).
   """
   customerSignIn(draft: CustomerSignInDraft!,
@@ -4097,7 +4111,7 @@ type Mutation {
 
   """
   The following workflow can be used to reset the customer’s password:
-
+  
   1. Create a password reset token and send it embedded in a link to the customer.
   2. When the customer clicks on the link, you may optionally retrieve customer by password token.
   3. When the customer entered new password, use reset customer’s password to reset the password.
@@ -4137,14 +4151,14 @@ type Mutation {
 
   """
   BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features
-
+  
   Retrieves the authenticated customer (a customer that matches the given email/password pair).
-
+  
   If used with an access token for Anonymous Sessions, all orders and carts belonging to the `anonymousId` will be assigned to the newly created customer.
-
+  
   * If the customer does not have a cart yet, the anonymous cart that was modified most recently becomes the customer's cart.
   * If the customer already has a cart, the most recently modified anonymous cart will be handled according to the `AnonymousCartSignInMode`.
-
+  
   If a cart is is returned as part of the `CustomerSignInResult`, it has been recalculated (it will have up-to-date prices, taxes and discounts, and invalid line items have been removed).
   """
   customerSignMeIn(draft: CustomerSignMeInDraft!,
@@ -4454,6 +4468,7 @@ input MyCartUpdateAction {
   setLineItemCustomType: SetCartLineItemCustomType
   setLineItemDistributionChannel: SetCartLineItemDistributionChannel
   setLineItemShippingDetails: SetCartLineItemShippingDetails
+  setLineItemSupplyChannel: SetCartLineItemSupplyChannel
   setLocale: SetCartLocale
   setShippingMethod: SetMyCartShippingMethod
   setShippingAddress: SetCartShippingAddress
@@ -5415,9 +5430,9 @@ type ProductData {
 
     """
     The IDs of channels for which to check the stock of the `isOnStock`.
-
+    
     Variant is returned if at least one of the channels is matching the `isOnStock`
-
+    
     If the list is not provided then noChannel is checked for `isOnStock`
     """
     stockChannelIds: [String!], hasImages: Boolean): [ProductVariant!]!
@@ -5427,9 +5442,9 @@ type ProductData {
 
     """
     The IDs of channels for which to check the stock of the `isOnStock`.
-
+    
     Variant is returned if at least one of the channels is matching the `isOnStock`
-
+    
     If the list is not provided then noChannel is checked for `isOnStock`
     """
     stockChannelIds: [String!], hasImages: Boolean): [ProductVariant!]!
@@ -5643,7 +5658,6 @@ input ProductPriceTierInput {
 
 type ProductProjection {
   id: String!
-  key: String
   version: Long!
   createdAt: DateTime!
   lastModifiedAt: DateTime!
@@ -5833,14 +5847,14 @@ type ProductSearchVariant {
   attributesRaw(
     """
     The names of the attributes to include.
-
+    
     If neither `includeNames` nor `excludeNames` are provided, then all attributes are returned.
     """
     includeNames: [String!],
 
     """
     The names of the attributes to exclude.
-
+    
     If neither `includeNames` nor `excludeNames` are provided, then all attributes are returned.
     """
     excludeNames: [String!]): [RawProductSearchAttribute!]!
@@ -5875,14 +5889,14 @@ type ProductSearchVariantAvailabilityWithChannels {
   channels(
     """
     The IDs of channels to include.
-
+    
     If neither `includeChannelIds` nor `excludeChannelIds` are provided, then all channels are returned.
     """
     includeChannelIds: [String!],
 
     """
     The IDs of channels to exclude.
-
+    
     If neither `includeChannelIds` nor `excludeChannelIds` are provided, then all channels are returned.
     """
     excludeChannelIds: [String!], limit: Int, offset: Int): ProductSearchVariantAvailabilitiesResult!
@@ -5920,14 +5934,14 @@ type ProductTypeDefinition implements Versioned {
   attributeDefinitions(
     """
     The names of the attribute definitions to include.
-
+    
     If neither `includeNames` nor `excludeNames` are provided, then all attribute definitions are returned.
     """
     includeNames: [String!],
 
     """
     The names of the attribute definitions to exclude.
-
+    
     If neither `includeNames` nor `excludeNames` are provided, then all attribute definitions are returned.
     """
     excludeNames: [String!], limit: Int, offset: Int, sort: [String!]): AttributeDefinitionResult!
@@ -6058,14 +6072,14 @@ type ProductVariant {
   attributesRaw(
     """
     The names of the attributes to include.
-
+    
     If neither `includeNames` nor `excludeNames` are provided, then all attributes are returned.
     """
     includeNames: [String!],
 
     """
     The names of the attributes to exclude.
-
+    
     If neither `includeNames` nor `excludeNames` are provided, then all attributes are returned.
     """
     excludeNames: [String!]): [RawProductAttribute!]!
@@ -6105,14 +6119,14 @@ type ProductVariantAvailabilityWithChannels {
   channels(
     """
     The IDs of channels to include.
-
+    
     If neither `includeChannelIds` nor `excludeChannelIds` are provided, then all channels are returned.
     """
     includeChannelIds: [String!],
 
     """
     The IDs of channels to exclude.
-
+    
     If neither `includeChannelIds` nor `excludeChannelIds` are provided, then all channels are returned.
     """
     excludeChannelIds: [String!], limit: Int, offset: Int): ProductVariantAvailabilitiesResult!
@@ -6205,7 +6219,7 @@ enum PublishScope {
 type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShoppingListQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface {
   """
   This field can only be used with an access token created with the password flow or with an anonymous session.
-
+  
   It gives access to the data that is specific to the customer or the anonymous session linked to the access token.
   """
   me: Me!
@@ -6288,12 +6302,12 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
 
     """
     Sort result - supported fields are:
-
+    
     * `id`
     * `name`
     * `createdAt`
     * `modifiedAt`
-
+    
     by default sorted by relevance (a score of matches against the search term in descending order)
     """
     sorts: [SearchSort!]): CategorySearchResult!
@@ -7121,6 +7135,7 @@ input SearchFilterModelInput {
 type SearchIndexingConfiguration {
   products: SearchIndexingConfigurationValues
   orders: OrderSearchConfiguration
+  categoriesDisabledForInternalTest: Boolean
 }
 
 type SearchIndexingConfigurationValues {
@@ -7357,6 +7372,11 @@ input SetCartLineItemPrice {
 input SetCartLineItemShippingDetails {
   lineItemId: String!
   shippingDetails: ItemShippingDetailsDraft
+}
+
+input SetCartLineItemSupplyChannel {
+  lineItemId: String!
+  supplyChannel: ResourceIdentifierInput
 }
 
 input SetCartLineItemTaxAmount {
@@ -7876,7 +7896,7 @@ input SetOrderParcelTrackingData {
 }
 
 input SetOrderReturnInfo {
-  items: [ReturnInfoDraftType!]
+  items: [ReturnInfoDraftType!] = []
 }
 
 input SetOrderReturnPaymentState {
@@ -8717,7 +8737,7 @@ type SetStagedOrderParcelTrackingDataOutput implements StagedOrderUpdateActionOu
 }
 
 input SetStagedOrderReturnInfo {
-  items: [ReturnInfoDraftType!]
+  items: [ReturnInfoDraftType!] = []
 }
 
 type SetStagedOrderReturnInfoOutput implements StagedOrderUpdateActionOutput {
@@ -10078,14 +10098,14 @@ type TypeDefinition implements Versioned {
   fieldDefinitions(
     """
     The names of the custom field definitions to include.
-
+    
     If neither `includeNames` nor `excludeNames` are provided, then all custom fields are returned.
     """
     includeNames: [String!],
 
     """
     The names of the custom field definitions to exclude.
-
+    
     If neither `includeNames` nor `excludeNames` are provided, then all custom fields are returned.
     """
     excludeNames: [String!]): [FieldDefinition!]!
