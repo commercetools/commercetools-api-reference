@@ -46,7 +46,6 @@ uses:
   customer-import: types/customer-import.raml
   order-import: types/order-import.raml
   order-patch-import: types/order-patch-import.raml
-  inventory-import: types/inventory-import.raml
   custom-field: types/custom-field.raml
   common: types/common.raml
 
@@ -1395,110 +1394,6 @@ traits:
               Retrieves the import operation with the given id.
             is:
               - secured_by_view_customers
-            responses:
-              200:
-                body:
-                  type: import-operation.ImportOperation
-              404:
-                body:
-                  type: error.ErrorResponse
-              503:
-                body:
-                  type: error.ErrorResponse
-  /inventories:
-    /import-containers:
-      /{importContainerKey}:
-        type: base
-        uriParameters:
-          importContainerKey:
-            (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
-            type: string
-        post:
-          description:
-            Creates a request for creating new Inventories or updating
-            existing ones.
-          is:
-            - secured_by_manage_products
-          body:
-            type: import-request.InventoryImportRequest
-            example: !include examples/inventory-import-request.json
-          responses:
-            201:
-              body:
-                type: import-request.ImportResponse
-                example: !include examples/inventory-import-response.json
-            400:
-              description: The request was invalid.
-              body:
-                type: error.ErrorResponse
-    /importSinkKey={importSinkKey}:
-      (annotations.markDeprecated): true
-      type: base
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: The import sink used to create the new resource
-          type: string
-      post:
-        description:
-          Creates import request for creating new inventories or updating
-          existing ones.
-        is:
-          - secured_by_manage_products
-        body:
-          type: import-request.InventoryImportRequest
-          example: !include examples/inventory-import-request.json
-        responses:
-          201:
-            body:
-              type: import-request.ImportResponse
-              example: !include examples/inventory-import-response.json
-      /import-operations:
-        type: base
-        get:
-          description: Retrieves all inventory import operations of an import sink key.
-          is:
-            - secured_by_view_products
-          queryParameters:
-            limit?:
-              type: number
-            offset?:
-              type: number
-            sort?:
-              description: |
-                See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
-              type: string[]
-            resourceKey?:
-              description: |
-                The key of the import operation to retrieve.
-              type: string
-            state?:
-              description: |
-                The state of the import operations to retrieve.
-              type: common.ProcessingState
-            debug?:
-              description: |
-                In case of `unresolved`, it will show the unresolved references.
-              type: boolean
-              default: false
-          responses:
-            200:
-              body:
-                type: import-operation.ImportOperationPagedResponse
-                example: !include examples/import-operation-paged.response.json
-        /{id}:
-          type: baseByParam
-          uriParameters:
-            id:
-              description: |
-                The operation identifier
-              type: string
-          get:
-            description: |
-              Retrieves the import operation with the given id.
-            is:
-              - secured_by_view_products
             responses:
               200:
                 body:
