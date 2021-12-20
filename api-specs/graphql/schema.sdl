@@ -155,6 +155,7 @@ input AddOrderDelivery {
   items: [DeliveryItemDraftType!] = []
   parcels: [ParcelDataDraftType!] = []
   address: AddressInput
+  custom: CustomFieldsDraft
 }
 
 input AddOrderEditStagedAction {
@@ -277,6 +278,7 @@ input AddStagedOrderDelivery {
   items: [DeliveryItemDraftType!] = []
   parcels: [ParcelDataDraftType!] = []
   address: AddressInput
+  custom: CustomFieldsDraft
 }
 
 type AddStagedOrderDeliveryOutput implements StagedOrderUpdateActionOutput {
@@ -284,6 +286,7 @@ type AddStagedOrderDeliveryOutput implements StagedOrderUpdateActionOutput {
   items: [DeliveryItem!]!
   parcels: [ParcelData!]!
   address: AddressDraft
+  custom: CustomFieldsCommand
 }
 
 input AddStagedOrderDiscountCode {
@@ -2541,6 +2544,7 @@ type Delivery {
   items: [DeliveryItem!]!
   parcels: [Parcel!]!
   address: Address
+  custom: CustomFieldsType
 }
 
 type DeliveryAdded implements MessagePayload {
@@ -5029,6 +5033,8 @@ input OrderUpdateAction {
   setDeliveryAddress: SetOrderDeliveryAddress
   setDeliveryAddressCustomField: SetOrderDeliveryAddressCustomField
   setDeliveryAddressCustomType: SetOrderDeliveryAddressCustomType
+  setDeliveryCustomField: SetOrderDeliveryCustomField
+  setDeliveryCustomType: SetOrderDeliveryCustomType
   setDeliveryItems: SetOrderDeliveryItems
   setItemShippingAddressCustomField: SetOrderItemShippingAddressCustomField
   setItemShippingAddressCustomType: SetOrderItemShippingAddressCustomType
@@ -7813,6 +7819,20 @@ input SetOrderDeliveryAddressCustomType {
   typeId: String
 }
 
+input SetOrderDeliveryCustomField {
+  name: String!
+  value: String
+  deliveryId: String!
+}
+
+input SetOrderDeliveryCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+  deliveryId: String!
+}
+
 input SetOrderDeliveryItems {
   deliveryId: String!
   items: [DeliveryItemDraftType!]!
@@ -8558,6 +8578,33 @@ type SetStagedOrderDeliveryAddressOutput implements StagedOrderUpdateActionOutpu
   type: String!
   deliveryId: String!
   address: AddressDraft
+}
+
+input SetStagedOrderDeliveryCustomField {
+  name: String!
+  value: String
+  deliveryId: String!
+}
+
+type SetStagedOrderDeliveryCustomFieldOutput implements StagedOrderUpdateActionOutput {
+  type: String!
+  name: String!
+  value: Json
+  deliveryId: String!
+}
+
+input SetStagedOrderDeliveryCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+  deliveryId: String!
+}
+
+type SetStagedOrderDeliveryCustomTypeOutput implements StagedOrderUpdateActionOutput {
+  type: String!
+  custom: CustomFieldsCommand!
+  deliveryId: String!
 }
 
 input SetStagedOrderDeliveryItems {
@@ -9421,6 +9468,8 @@ input StagedOrderUpdateAction {
   setDeliveryAddress: SetStagedOrderDeliveryAddress
   setDeliveryAddressCustomField: SetStagedOrderDeliveryAddressCustomField
   setDeliveryAddressCustomType: SetStagedOrderDeliveryAddressCustomType
+  setDeliveryCustomField: SetStagedOrderDeliveryCustomField
+  setDeliveryCustomType: SetStagedOrderDeliveryCustomType
   setDeliveryItems: SetStagedOrderDeliveryItems
   setItemShippingAddressCustomField: SetStagedOrderItemShippingAddressCustomField
   setItemShippingAddressCustomType: SetStagedOrderItemShippingAddressCustomType
