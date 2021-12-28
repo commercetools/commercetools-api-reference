@@ -25135,6 +25135,100 @@
       "x-annotation-resourceName": "ByProjectKeyOrdersOrderNumberByOrderNumber",
       "x-annotation-resourcePathUri": "/{projectKey}/orders/order-number={orderNumber}"
     },
+    "/{projectKey}/orders/search": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "x-annotation-example": {
+                  "default": {
+                    "total": 3,
+                    "offset": 0,
+                    "limit": 50,
+                    "hits": [
+                      {
+                        "id": "c2d430e8-1ccf-44c8-8976-36763b572f3e",
+                        "version": 12,
+                        "relevance": 0.9871
+                      },
+                      {
+                        "id": "ee8e3533-00d2-43c2-a2f4-57b1eee0f5b4",
+                        "version": 2,
+                        "relevance": 0.735654
+                      },
+                      {
+                        "id": "9a9e129c-2ed1-436d-90d9-af60d83490ed",
+                        "version": 44,
+                        "relevance": 0.42415
+                      }
+                    ]
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/OrderPagedSearchResponse",
+                  "x-annotation-builtinType": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "Search Orders",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "x-annotation-includePath": "resources/ByProjectKeyOrdersSearch.raml",
+                "$ref": "#/components/schemas/OrderSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "oauth_2_0": [
+              "view_orders:{projectKey}"
+            ]
+          }
+        ]
+      },
+      "head": {
+        "responses": {
+          "200": {
+            "description": "The index exists and the Search Orders endpoint can be used."
+          }
+        },
+        "description": "Checks whether a search index for the Project's Orders exists.",
+        "operationId": "HEAD_projectKey-orders-search",
+        "security": [
+          {
+            "oauth_2_0": [
+              "project_settings:{projectKey}"
+            ]
+          }
+        ],
+        "x-annotation-codeExamples": {
+          "curl": "curl -X HEAD https://api.{region}.commercetools.com/{projectKey}/orders/search -i \\\n--header 'Authorization: Bearer ${BEARER_TOKEN}'"
+        }
+      },
+      "parameters": [
+        {
+          "name": "projectKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "x-annotation-includePath": "resources/ByProjectKeyOrdersSearch.raml",
+            "type": "string"
+          },
+          "description": "`key` of the [Project](/../api/projects/project#project).",
+          "x-annotation-builtinType": "string"
+        }
+      ],
+      "x-annotation-resourceName": "ByProjectKeyOrdersSearch",
+      "x-annotation-resourcePathUri": "/{projectKey}/orders/search"
+    },
     "/{projectKey}/orders/{id}": {
       "get": {
         "responses": {
@@ -58228,6 +58322,43 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-types.html#money",
         "type": "string"
       },
+      "Hit": {
+        "title": "Hit",
+        "x-annotation-includePath": "types/Order/Hit.raml",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique ID of the Order.",
+            "type": "string",
+            "x-annotation-builtinType": "string",
+            "x-annotation-identifier": true,
+            "x-annotation-inherited": false
+          },
+          "version": {
+            "format": "int64",
+            "description": "Current version of the Order.",
+            "type": "integer",
+            "x-annotation-builtinType": "integer",
+            "x-annotation-inherited": false
+          },
+          "relevance": {
+            "minimum": 0,
+            "maximum": 1,
+            "format": "float",
+            "description": "The higher the value is, the more relevant the hit is for the search request.",
+            "type": "number",
+            "x-annotation-builtinType": "number",
+            "x-annotation-inherited": false
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "relevance"
+        ],
+        "x-annotation-builtinType": "object",
+        "x-annotation-package": "Order"
+      },
       "Image": {
         "title": "Image",
         "x-annotation-includePath": "types/Common/Image.raml",
@@ -69075,6 +69206,50 @@
         "x-annotation-package": "Order",
         "x-annotation-java-extends": "com.commercetools.api.models.ResourcePagedQueryResponse<Order>"
       },
+      "OrderPagedSearchResponse": {
+        "title": "OrderPagedSearchResponse",
+        "x-annotation-includePath": "types/Order/OrderPagedSearchResponse.raml",
+        "type": "object",
+        "properties": {
+          "total": {
+            "format": "int64",
+            "description": "Total number of results matching the query.",
+            "type": "integer",
+            "x-annotation-builtinType": "integer",
+            "x-annotation-inherited": false
+          },
+          "offset": {
+            "format": "int64",
+            "description": "Number of results skipped, used for pagination.",
+            "type": "integer",
+            "x-annotation-builtinType": "integer",
+            "x-annotation-inherited": false
+          },
+          "limit": {
+            "maximum": 100,
+            "format": "int64",
+            "description": "Number of results the response should contain at maximum, used for pagination.",
+            "type": "integer",
+            "x-annotation-builtinType": "integer",
+            "x-annotation-inherited": false
+          },
+          "hits": {
+            "description": "Actual results.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hit"
+            },
+            "x-annotation-builtinType": "array",
+            "x-annotation-inherited": false
+          }
+        },
+        "required": [
+          "total",
+          "hits"
+        ],
+        "x-annotation-builtinType": "object",
+        "x-annotation-package": "Order"
+      },
       "OrderPaymentStateChangedMessage": {
         "title": "OrderPaymentStateChangedMessage",
         "x-annotation-includePath": "types/Message/OrderPaymentStateChangedMessage.raml",
@@ -69796,6 +69971,75 @@
         "x-annotation-builtinType": "object",
         "x-annotation-package": "Message",
         "type": "string"
+      },
+      "OrderSearchQuery": {
+        "title": "OrderSearchQuery",
+        "x-annotation-includePath": "types/OrderSearchQuery.raml",
+        "type": "string",
+        "x-annotation-builtinType": "string",
+        "x-annotation-package": "Order"
+      },
+      "OrderSearchRequest": {
+        "title": "OrderSearchRequest",
+        "x-annotation-includePath": "types/Order/OrderSearchRequest.raml",
+        "type": "object",
+        "properties": {
+          "query": {
+            "description": "The Order search query.",
+            "$ref": "#/components/schemas/OrderSearchQuery",
+            "x-annotation-builtinType": "string",
+            "x-annotation-inherited": false
+          },
+          "sort": {
+            "default": "desc",
+            "description": "Controls how results to your query are sorted. If not provided, the results are sorted by relevance in descending order.",
+            "$ref": "#/components/schemas/OrderSearchSorting",
+            "x-annotation-builtinType": "string",
+            "x-annotation-inherited": false
+          },
+          "limit": {
+            "default": 10,
+            "maximum": 100,
+            "format": "int32",
+            "description": "The maximum number of search results to be returned.",
+            "type": "integer",
+            "x-annotation-builtinType": "integer",
+            "x-annotation-inherited": false
+          },
+          "offset": {
+            "default": 0,
+            "maximum": 10000,
+            "format": "int32",
+            "description": "The number of search results to be skipped in the response for pagination.",
+            "type": "integer",
+            "x-annotation-builtinType": "integer",
+            "x-annotation-inherited": false
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "x-annotation-builtinType": "object",
+        "x-annotation-package": "Order"
+      },
+      "OrderSearchSorting": {
+        "title": "OrderSearchSorting",
+        "x-annotation-includePath": "types/OrderSearchSorting.raml",
+        "type": "string",
+        "x-annotation-builtinType": "string",
+        "x-annotation-package": "Order"
+      },
+      "OrderSearchStatus": {
+        "title": "OrderSearchStatus",
+        "description": "Activated indicates that the Order Search feature is active. Deactivated means that the namely feature is currently configured to be inactive.",
+        "enum": [
+          "Activated",
+          "Deactivated"
+        ],
+        "x-annotation-includePath": "types/Project/OrderSearchStatus.raml",
+        "type": "string",
+        "x-annotation-package": "Project",
+        "x-annotation-beta": true
       },
       "OrderSetBillingAddressAction": {
         "title": "OrderSetBillingAddressAction",
@@ -83969,6 +84213,43 @@
         "x-annotation-docs-uri": "https://docs.commercetools.com/http-api-projects-project.html#change-name",
         "type": "string"
       },
+      "ProjectChangeOrderSearchStatusAction": {
+        "title": "ProjectChangeOrderSearchStatusAction",
+        "x-annotation-includePath": "types/Project/ProjectChangeOrderSearchStatusAction.raml",
+        "x-annotation-example": {
+          "action": "changeOrderSearchStatus",
+          "status": "Activated"
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProjectUpdateAction"
+          },
+          {
+            "properties": {
+              "action": {
+                "enum": [
+                  "changeOrderSearchStatus"
+                ],
+                "type": "string",
+                "x-annotation-builtinType": "string",
+                "x-annotation-inherited": true
+              },
+              "status": {
+                "description": "Activated indicates that the Order Search feature is active. Deactivated means that the namely feature is currently configured to be inactive.",
+                "$ref": "#/components/schemas/OrderSearchStatus",
+                "x-annotation-builtinType": "string",
+                "x-annotation-inherited": false
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "x-annotation-builtinType": "object",
+        "x-annotation-package": "Project",
+        "x-annotation-docs-uri": "https://docs.commercetools.com/api/projects/project#change-order-search-status-",
+        "x-annotation-beta": true,
+        "type": "string"
+      },
       "ProjectChangeProductSearchIndexingEnabledAction": {
         "title": "ProjectChangeProductSearchIndexingEnabledAction",
         "x-annotation-includePath": "types/Project/ProjectChangeProductSearchIndexingEnabledAction.raml",
@@ -84198,6 +84479,7 @@
           "ProjectChangeMessagesConfigurationAction",
           "ProjectChangeMessagesEnabledAction",
           "ProjectChangeNameAction",
+          "ProjectChangeOrderSearchStatusAction",
           "ProjectChangeProductSearchIndexingEnabledAction",
           "ProjectChangeShoppingListsConfigurationAction",
           "ProjectSetExternalOAuthAction",
@@ -86703,8 +86985,16 @@
         "type": "object",
         "properties": {
           "products": {
+            "description": "Configuration for endpoints serving indexed [Product](ctp:api:type:Product) information.",
             "$ref": "#/components/schemas/SearchIndexingConfigurationValues",
             "x-annotation-builtinType": "object",
+            "x-annotation-inherited": false
+          },
+          "orders": {
+            "description": "Configuration for the [Order Search](/../api/projects/order-search) feature.",
+            "$ref": "#/components/schemas/SearchIndexingConfigurationValues",
+            "x-annotation-builtinType": "object",
+            "x-annotation-beta": true,
             "x-annotation-inherited": false
           }
         },
