@@ -230,3 +230,28 @@ post:
         body:
           application/json:
             example: !include ../examples/order.example.json
+/search:
+  type: base
+  displayName: Order Search
+  description: |
+    This endpoint provides high performance search queries over Orders. The order search allows searching through all orders (currently supporting a limit of the 10.000.000 newest orders) in your project.
+  post:
+    displayName: Search Orders
+    securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
+    body:
+      application/json:
+        type: OrderSearchRequest
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/OrderSearch/order-search.example.json
+            type: OrderPagedSearchResponse
+  head:
+    securedBy: [oauth_2_0: { scopes: ['project_settings:{projectKey}'] }]
+    description: Checks whether a search index for the Project's Orders exists.
+    responses:
+      200:
+        description: The index exists and the Search Orders endpoint can be used.
+      404:
+        description: The index does not exist and the Search Orders endpoint returns Error 404 only.
