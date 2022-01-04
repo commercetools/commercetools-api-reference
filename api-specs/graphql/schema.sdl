@@ -216,10 +216,6 @@ input AddProductPrice {
   staged: Boolean = true
 }
 
-input AddProductSelectionProduct {
-  product: ResourceIdentifierInput!
-}
-
 input AddProductToCategory {
   category: ResourceIdentifierInput!
   orderHint: String
@@ -389,11 +385,6 @@ input AddStateRoles {
 
 input AddStoreDistributionChannel {
   distributionChannel: ResourceIdentifierInput!
-}
-
-input AddStoreProductSelection {
-  productSelection: ResourceIdentifierInput!
-  active: Boolean
 }
 
 input AddStoreSupplyChannel {
@@ -1530,10 +1521,6 @@ input ChangeProductPrice {
   staged: Boolean = true
 }
 
-input ChangeProductSelectionName {
-  name: [LocalizedStringItemInputType!]!
-}
-
 input ChangeProductSlug {
   slug: [LocalizedStringItemInputType!]!
   staged: Boolean = true
@@ -1723,11 +1710,6 @@ input ChangeStateKey {
 
 input ChangeStateType {
   type: StateType!
-}
-
-input ChangeStoreProductSelectionActive {
-  productSelection: ResourceIdentifierInput!
-  active: Boolean!
 }
 
 type ChangeSubscription {
@@ -1938,18 +1920,12 @@ input CreateApiClient {
   scope: String!
 }
 
-input CreateProductSelectionDraft {
-  key: String
-  name: [LocalizedStringItemInputType!]!
-}
-
 input CreateStore {
   key: String!
   name: [LocalizedStringItemInputType!]
   languages: [Locale!]
   distributionChannels: [ResourceIdentifierInput!]
   supplyChannels: [ResourceIdentifierInput!]
-  productSelections: [ProductSelectionSettingDraft!]
   custom: CustomFieldsDraft
 }
 
@@ -3199,10 +3175,9 @@ type InStore implements CartQueryInterface & CustomerActiveCartInterface & Order
     "Queries with specified key"
     key: String): ShoppingList
   shoppingLists(where: String, sort: [String!], limit: Int, offset: Int): ShoppingListQueryResult!
-  productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
 }
 
-type InStoreMe implements MeQueryInterface {
+type InStoreMe implements MeQueryInterface & CartQueryInterface & ActiveCartInterface & OrderQueryInterface & ShoppingListQueryInterface {
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
   customer: Customer
 
@@ -3697,7 +3672,7 @@ type Location {
   state: String
 }
 
-type Me implements MeQueryInterface {
+type Me implements MeQueryInterface & CartQueryInterface & ActiveCartInterface & OrderQueryInterface & ShoppingListQueryInterface {
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
   customer: Customer
 
@@ -4387,21 +4362,6 @@ type Mutation {
   createMyPayment(draft: MyPaymentDraft!): MyPayment
   updateMyPayment(id: String!, version: Long!, actions: [MyPaymentUpdateAction!]!): MyPayment
   deleteMyPayment(id: String!, version: Long!): MyPayment
-  createProductSelection(draft: CreateProductSelectionDraft!): ProductSelection
-  updateProductSelection(version: Long!, actions: [ProductSelectionUpdateAction!]!,
-
-    "Queries with specified ID"
-    id: String,
-
-    "Queries with specified key"
-    key: String): ProductSelection
-  deleteProductSelection(version: Long!,
-
-    "Queries with specified ID"
-    id: String,
-
-    "Queries with specified key"
-    key: String): ProductSelection
   updateProject(version: Long!, actions: [ProjectSettingsUpdateAction!]!): ProjectProjection
   createStore(draft: CreateStore!): Store
   updateStore(version: Long!, actions: [StoreUpdateAction!]!,
@@ -5397,30 +5357,12 @@ type Product implements Versioned & ReviewTarget {
   reviewRatingStatistics: ReviewRatingStatistics
   createdBy: Initiator
   lastModifiedBy: Initiator
-  productSelectionRefs(where: String, sort: [String!], limit: Int, offset: Int): SelectionOfProductQueryResult!
 }
 
 type ProductAddedToCategory implements MessagePayload {
   category: ReferenceId!
   staged: Boolean!
   type: String!
-}
-
-type ProductAssignment {
-  productRef: Reference!
-  product: Product
-  productSelectionRef: Reference!
-  productSelection: ProductSelection
-}
-
-type ProductAssignmentQueryResult {
-  offset: Int!
-  count: Int!
-  total: Long!
-
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
-  exists: Boolean!
-  results: [ProductAssignment!]!
 }
 
 input ProductAttributeInput {
@@ -5647,21 +5589,6 @@ type ProductImageAdded implements MessagePayload {
 type ProductLimitsProjection {
   pricesPerVariant: Limit!
   variants: Limit!
-}
-
-type ProductOfSelection {
-  productRef: Reference!
-  product: Product
-}
-
-type ProductOfSelectionQueryResult {
-  offset: Int!
-  count: Int!
-  total: Long!
-
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
-  exists: Boolean!
-  results: [ProductOfSelection!]!
 }
 
 type ProductPrice {
@@ -5909,54 +5836,6 @@ type ProductRevertedStagedChanges implements MessagePayload {
   type: String!
 }
 
-type ProductSelection implements Versioned {
-  key: String
-  name(
-    "String is defined for different locales. This argument specifies the desired locale."
-    locale: Locale,
-
-    "List of languages the client is able to understand, and which locale variant is preferred."
-    acceptLanguage: [Locale!]): String
-  nameAllLocales: [LocalizedString!]!
-  productRefs(where: String, sort: [String!], limit: Int, offset: Int): ProductOfSelectionQueryResult!
-  productCount: Int!
-  id: String!
-  version: Long!
-  createdAt: DateTime!
-  lastModifiedAt: DateTime!
-  createdBy: Initiator
-  lastModifiedBy: Initiator
-}
-
-type ProductSelectionQueryResult {
-  offset: Int!
-  count: Int!
-  total: Long!
-  results: [ProductSelection!]!
-}
-
-type ProductSelectionSetting {
-  productSelectionRef: Reference!
-  productSelection: ProductSelection
-  active: Boolean
-}
-
-input ProductSelectionSettingDraft {
-  productSelection: ResourceIdentifierInput!
-  active: Boolean!
-}
-
-input ProductSelectionSettingInActionInput {
-  productSelection: ResourceIdentifierInput!
-  active: Boolean
-}
-
-input ProductSelectionUpdateAction {
-  addProduct: AddProductSelectionProduct
-  changeName: ChangeProductSelectionName
-  removeProduct: RemoveProductSelectionProduct
-  setKey: SetProductSelectionKey
-
 type ProductSearchPriceTier {
   minimumQuantity: Int!
   value: BaseMoney!
@@ -6033,90 +5912,6 @@ type ProductSearchVariantAvailabilityWithChannels {
     If neither `includeChannelIds` nor `excludeChannelIds` are provided, then all channels are returned.
     """
     excludeChannelIds: [String!], limit: Int, offset: Int): ProductSearchVariantAvailabilitiesResult!
-}
-
-type ProductSelection implements Versioned {
-  key: String
-  name(
-    "String is defined for different locales. This argument specifies the desired locale."
-    locale: Locale,
-
-    "List of languages the client is able to understand, and which locale variant is preferred."
-    acceptLanguage: [Locale!]): String
-  nameAllLocales: [LocalizedString!]!
-  productRefs(where: String, sort: [String!], limit: Int, offset: Int): ProductOfSelectionQueryResult!
-  productCount: Int!
-  id: String!
-  version: Long!
-  createdAt: DateTime!
-  lastModifiedAt: DateTime!
-  createdBy: Initiator
-  lastModifiedBy: Initiator
-}
-
-type ProductSelectionCreated implements MessagePayload {
-  name(
-    "String is defined for different locales. This argument specifies the desired locale."
-    locale: Locale,
-
-    "List of languages the client is able to understand, and which locale variant is preferred."
-    acceptLanguage: [Locale!]): String
-  nameAllLocales: [LocalizedString!]!
-  type: String!
-}
-
-type ProductSelectionDeleted implements MessagePayload {
-  type: String!
-}
-
-type ProductSelectionProductAdded implements MessagePayload {
-  product: Product
-  productRef: Reference!
-  type: String!
-}
-
-type ProductSelectionProductRemoved implements MessagePayload {
-  product: Product
-  productRef: Reference!
-  type: String!
-}
-
-"Fields to access product selection assignments."
-interface ProductSelectionQueryInterface {
-  productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
-}
-
-type ProductSelectionQueryResult {
-  offset: Int!
-  count: Int!
-  total: Long!
-
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
-  exists: Boolean!
-  results: [ProductSelection!]!
-}
-
-type ProductSelectionSetting {
-  productSelectionRef: Reference!
-  productSelection: ProductSelection
-  active: Boolean
-}
-
-input ProductSelectionSettingDraft {
-  productSelection: ResourceIdentifierInput!
-  active: Boolean!
-}
-
-input ProductSelectionSettingInActionInput {
-  productSelection: ResourceIdentifierInput!
-  active: Boolean
-}
-
-input ProductSelectionUpdateAction {
-  addProduct: AddProductSelectionProduct
-  changeName: ChangeProductSelectionName
-  removeProduct: RemoveProductSelectionProduct
-  setKey: SetProductSelectionKey
 }
 
 type ProductSlugChanged implements MessagePayload {
@@ -6433,7 +6228,7 @@ enum PublishScope {
   Prices
 }
 
-type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShoppingListQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface & ProductSelectionQueryInterface {
+type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShoppingListQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface {
   """
   This field can only be used with an access token created with the password flow or with an anonymous session.
   
@@ -6668,13 +6463,6 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): Payment
   payments(where: String, sort: [String!], limit: Int, offset: Int): PaymentQueryResult!
-  productSelection(
-    "Queries with specified ID"
-    id: String,
-
-    "Queries with specified key"
-    key: String): ProductSelection
-  productSelections(where: String, sort: [String!], limit: Int, offset: Int): ProductSelectionQueryResult!
   productProjectionsSuggest(searchKeywords: [SearchKeywordArgument!]!, fuzzy: Boolean, limit: Int = 10, staged: Boolean = false): SuggestResult!
   project: ProjectProjection!
   store(
@@ -6712,7 +6500,6 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
 
     "Deprecated: please use 'markMatchingVariants'."
     markMatchingVariant: Boolean = false, storeProjection: String, localeProjection: [Locale!], staged: Boolean = false): ProductProjectionSearchResult!
-  productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
 }
 
 type QueryLimitsProjection {
@@ -6964,10 +6751,6 @@ input RemoveProductPrice {
   staged: Boolean = true
 }
 
-input RemoveProductSelectionProduct {
-  product: ResourceIdentifierInput!
-}
-
 input RemoveProductVariant {
   id: Int
   sku: String
@@ -7071,10 +6854,6 @@ input RemoveStateRoles {
 
 input RemoveStoreDistributionChannel {
   distributionChannel: ResourceIdentifierInput!
-}
-
-input RemoveStoreProductSelection {
-  productSelection: ResourceIdentifierInput!
 }
 
 input RemoveStoreSupplyChannel {
@@ -7443,21 +7222,6 @@ scalar SearchSort
 enum SelectionMode {
   MostExpensive
   Cheapest
-}
-
-type SelectionOfProduct {
-  productSelectionRef: Reference!
-  productSelection: ProductSelection
-}
-
-type SelectionOfProductQueryResult {
-  offset: Int!
-  count: Int!
-  total: Long!
-
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
-  exists: Boolean!
-  results: [SelectionOfProduct!]!
 }
 
 "A set."
@@ -8450,10 +8214,6 @@ input SetProductPrices {
   staged: Boolean = true
 }
 
-input SetProductSelectionKey {
-  key: String
-}
-
 input SetProductSku {
   variantId: Int!
   sku: String
@@ -9237,10 +8997,6 @@ input SetStoreName {
   name: [LocalizedStringItemInputType!]
 }
 
-input SetStoreProductSelections {
-  productSelections: [ProductSelectionSettingInActionInput!]
-}
-
 input SetStoreSupplyChannels {
   supplyChannels: [ResourceIdentifierInput!]
 }
@@ -9861,8 +9617,6 @@ type Store implements Versioned {
     acceptLanguage: [Locale!]): String
   nameAllLocales: [LocalizedString!]
   languages: [Locale!]
-  productSelectionsRef: [Reference!]!
-  productSelections: [ProductSelectionSetting!]!
   distributionChannelsRef: [Reference!]!
   distributionChannels: [Channel!]!
   supplyChannelsRef: [Reference!]!
@@ -9872,7 +9626,6 @@ type Store implements Versioned {
   custom: CustomFieldsType
   createdBy: Initiator
   lastModifiedBy: Initiator
-  productSelections: [ProductSelectionSetting!]!
 }
 
 type StoreCreated implements MessagePayload {
@@ -9888,29 +9641,6 @@ type StoreCreated implements MessagePayload {
   supplyChannels: [Channel!]!
   distributionChannelsRef: [Reference!]!
   supplyChannelsRef: [Reference!]!
-  nameAllLocales: [LocalizedString!]
-  type: String!
-}
-
-type StoreDeleted implements MessagePayload {
-  type: String!
-}
-
-type StoreCreated implements MessagePayload {
-  languages: [Locale!]!
-  custom: CustomFieldsType
-  name(
-    "String is defined for different locales. This argument specifies the desired locale."
-    locale: Locale,
-
-    "List of languages the client is able to understand, and which locale variant is preferred."
-    acceptLanguage: [Locale!]): String
-  productSelections: [ProductSelectionSetting!]!
-  distributionChannels: [Channel!]!
-  supplyChannels: [Channel!]!
-  distributionChannelsRef: [Reference!]!
-  supplyChannelsRef: [Reference!]!
-  productSelectionsRef: [Reference!]!
   nameAllLocales: [LocalizedString!]
   type: String!
 }
@@ -9930,14 +9660,6 @@ type StoreLimitsProjection {
   total: StoreLimitWithCurrent!
 }
 
-type StoreProductSelectionsChanged implements MessagePayload {
-  activeProductSelections: [ProductSelection!]!
-  inactiveProductSelections: [ProductSelection!]!
-  activeProductSelectionsRef: [Reference!]!
-  inactiveProductSelectionsRef: [Reference!]!
-  type: String!
-}
-
 type StoreQueryResult {
   offset: Int!
   count: Int!
@@ -9949,14 +9671,10 @@ type StoreQueryResult {
 }
 
 input StoreUpdateAction {
-  addProductSelection: AddStoreProductSelection
   addDistributionChannel: AddStoreDistributionChannel
   addSupplyChannel: AddStoreSupplyChannel
-  changeProductSelectionActive: ChangeStoreProductSelectionActive
-  removeProductSelection: RemoveStoreProductSelection
   removeDistributionChannel: RemoveStoreDistributionChannel
   removeSupplyChannel: RemoveStoreSupplyChannel
-  setProductSelections: SetStoreProductSelections
   setCustomField: SetStoreCustomField
   setCustomType: SetStoreCustomType
   setDistributionChannels: SetStoreDistributionChannels
