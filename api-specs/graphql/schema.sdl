@@ -171,6 +171,7 @@ input AddOrderParcelToDelivery {
   measurements: ParcelMeasurementsDraftType
   trackingData: TrackingDataDraftType
   items: [DeliveryItemDraftType!] = []
+  custom: CustomFieldsDraft
 }
 
 input AddOrderPayment {
@@ -334,6 +335,7 @@ input AddStagedOrderParcelToDelivery {
   measurements: ParcelMeasurementsDraftType
   trackingData: TrackingDataDraftType
   items: [DeliveryItemDraftType!] = []
+  custom: CustomFieldsDraft
 }
 
 type AddStagedOrderParcelToDeliveryOutput implements StagedOrderUpdateActionOutput {
@@ -342,6 +344,7 @@ type AddStagedOrderParcelToDeliveryOutput implements StagedOrderUpdateActionOutp
   measurements: ParcelMeasurements
   trackingData: TrackingData
   items: [DeliveryItem!]!
+  custom: CustomFieldsCommand
 }
 
 input AddStagedOrderPayment {
@@ -5043,6 +5046,8 @@ input OrderUpdateAction {
   setLineItemShippingDetails: SetOrderLineItemShippingDetails
   setLocale: SetOrderLocale
   setOrderNumber: SetOrderNumber
+  setParcelCustomField: SetOrderParcelCustomField
+  setParcelCustomType: SetOrderParcelCustomType
   setParcelItems: SetOrderParcelItems
   setParcelMeasurements: SetOrderParcelMeasurements
   setParcelTrackingData: SetOrderParcelTrackingData
@@ -5066,6 +5071,7 @@ type Parcel {
   measurements: ParcelMeasurements
   trackingData: TrackingData
   items: [DeliveryItem!]!
+  custom: CustomFieldsType
 }
 
 type ParcelAddedToDelivery implements MessagePayload {
@@ -5078,12 +5084,14 @@ type ParcelData {
   measurements: ParcelMeasurements
   trackingData: TrackingData
   items: [DeliveryItem!]!
+  custom: CustomFieldsCommand
 }
 
 input ParcelDataDraftType {
   measurements: ParcelMeasurementsDraftType
   trackingData: TrackingDataDraftType
   items: [DeliveryItemDraftType!] = []
+  custom: CustomFieldsDraft
 }
 
 type ParcelItemsUpdated implements MessagePayload {
@@ -7921,6 +7929,20 @@ input SetOrderNumber {
   orderNumber: String
 }
 
+input SetOrderParcelCustomField {
+  name: String!
+  value: String
+  parcelId: String!
+}
+
+input SetOrderParcelCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+  parcelId: String!
+}
+
 input SetOrderParcelItems {
   parcelId: String!
   items: [DeliveryItemDraftType!]!
@@ -8785,6 +8807,33 @@ type SetStagedOrderOrderTotalTaxOutput implements StagedOrderUpdateActionOutput 
   externalTaxPortions: [TaxPortion!]!
 }
 
+input SetStagedOrderParcelCustomField {
+  name: String!
+  value: String
+  parcelId: String!
+}
+
+type SetStagedOrderParcelCustomFieldOutput implements StagedOrderUpdateActionOutput {
+  type: String!
+  name: String!
+  value: Json
+  parcelId: String!
+}
+
+input SetStagedOrderParcelCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+  parcelId: String!
+}
+
+type SetStagedOrderParcelCustomTypeOutput implements StagedOrderUpdateActionOutput {
+  type: String!
+  custom: CustomFieldsCommand!
+  parcelId: String!
+}
+
 input SetStagedOrderParcelItems {
   parcelId: String!
   items: [DeliveryItemDraftType!]!
@@ -9502,6 +9551,8 @@ input StagedOrderUpdateAction {
   setLocale: SetStagedOrderLocale
   setOrderNumber: SetStagedOrderOrderNumber
   setOrderTotalTax: SetStagedOrderOrderTotalTax
+  setParcelCustomField: SetStagedOrderParcelCustomField
+  setParcelCustomType: SetStagedOrderParcelCustomType
   setParcelItems: SetStagedOrderParcelItems
   setParcelMeasurements: SetStagedOrderParcelMeasurements
   setParcelTrackingData: SetStagedOrderParcelTrackingData
