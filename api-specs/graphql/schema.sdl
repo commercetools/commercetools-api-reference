@@ -2071,6 +2071,7 @@ type CustomLineItemReturnItem implements ReturnItem {
   comment: String
   shipmentState: ReturnShipmentState!
   paymentState: ReturnPaymentState!
+  custom: CustomFieldsType
   lastModifiedAt: DateTime!
   createdAt: DateTime!
 }
@@ -3524,6 +3525,7 @@ type LineItemReturnItem implements ReturnItem {
   comment: String
   shipmentState: ReturnShipmentState!
   paymentState: ReturnPaymentState!
+  custom: CustomFieldsType
   lastModifiedAt: DateTime!
   createdAt: DateTime!
 }
@@ -5052,6 +5054,8 @@ input OrderUpdateAction {
   setParcelMeasurements: SetOrderParcelMeasurements
   setParcelTrackingData: SetOrderParcelTrackingData
   setReturnInfo: SetOrderReturnInfo
+  setReturnItemCustomField: SetOrderReturnItemCustomField
+  setReturnItemCustomType: SetOrderReturnItemCustomType
   setReturnPaymentState: SetOrderReturnPaymentState
   setReturnShipmentState: SetOrderReturnShipmentState
   setShippingAddress: SetOrderShippingAddress
@@ -6925,6 +6929,7 @@ interface ReturnItem {
   comment: String
   shipmentState: ReturnShipmentState!
   paymentState: ReturnPaymentState!
+  custom: CustomFieldsType
   lastModifiedAt: DateTime!
   createdAt: DateTime!
 }
@@ -6935,6 +6940,7 @@ input ReturnItemDraftType {
   customLineItemId: String
   comment: String
   shipmentState: ReturnShipmentState!
+  custom: CustomFieldsDraft
 }
 
 type ReturnItemDraftTypeOutput {
@@ -6943,6 +6949,7 @@ type ReturnItemDraftTypeOutput {
   customLineItemId: String
   comment: String
   shipmentState: ReturnShipmentState!
+  custom: CustomFieldsCommand
 }
 
 enum ReturnPaymentState {
@@ -7962,6 +7969,20 @@ input SetOrderReturnInfo {
   items: [ReturnInfoDraftType!] = []
 }
 
+input SetOrderReturnItemCustomField {
+  name: String!
+  value: String
+  returnItemId: String!
+}
+
+input SetOrderReturnItemCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+  returnItemId: String!
+}
+
 input SetOrderReturnPaymentState {
   returnItemId: String!
   paymentState: ReturnPaymentState!
@@ -8876,6 +8897,33 @@ type SetStagedOrderReturnInfoOutput implements StagedOrderUpdateActionOutput {
   items: [ReturnInfoDraftTypeOutput!]!
 }
 
+input SetStagedOrderReturnItemCustomField {
+  name: String!
+  value: String
+  returnItemId: String!
+}
+
+type SetStagedOrderReturnItemCustomFieldOutput implements StagedOrderUpdateActionOutput {
+  type: String!
+  name: String!
+  value: Json
+  returnItemId: String!
+}
+
+input SetStagedOrderReturnItemCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+  returnItemId: String!
+}
+
+type SetStagedOrderReturnItemCustomTypeOutput implements StagedOrderUpdateActionOutput {
+  type: String!
+  custom: CustomFieldsCommand!
+  returnItemId: String!
+}
+
 input SetStagedOrderReturnPaymentState {
   returnItemId: String!
   paymentState: ReturnPaymentState!
@@ -9557,6 +9605,8 @@ input StagedOrderUpdateAction {
   setParcelMeasurements: SetStagedOrderParcelMeasurements
   setParcelTrackingData: SetStagedOrderParcelTrackingData
   setReturnInfo: SetStagedOrderReturnInfo
+  setReturnItemCustomField: SetStagedOrderReturnItemCustomField
+  setReturnItemCustomType: SetStagedOrderReturnItemCustomType
   setReturnPaymentState: SetStagedOrderReturnPaymentState
   setReturnShipmentState: SetStagedOrderReturnShipmentState
   setShippingAddress: SetStagedOrderShippingAddress
