@@ -217,6 +217,10 @@ input AddProductPrice {
   staged: Boolean = true
 }
 
+input AddProductSelectionProduct {
+  product: ResourceIdentifierInput!
+}
+
 input AddProductToCategory {
   category: ResourceIdentifierInput!
   orderHint: String
@@ -388,6 +392,11 @@ input AddStateRoles {
 
 input AddStoreDistributionChannel {
   distributionChannel: ResourceIdentifierInput!
+}
+
+input AddStoreProductSelection {
+  productSelection: ResourceIdentifierInput!
+  active: Boolean
 }
 
 input AddStoreSupplyChannel {
@@ -1524,6 +1533,10 @@ input ChangeProductPrice {
   staged: Boolean = true
 }
 
+input ChangeProductSelectionName {
+  name: [LocalizedStringItemInputType!]!
+}
+
 input ChangeProductSlug {
   slug: [LocalizedStringItemInputType!]!
   staged: Boolean = true
@@ -1713,6 +1726,11 @@ input ChangeStateKey {
 
 input ChangeStateType {
   type: StateType!
+}
+
+input ChangeStoreProductSelectionActive {
+  productSelection: ResourceIdentifierInput!
+  active: Boolean!
 }
 
 type ChangeSubscription {
@@ -1923,12 +1941,21 @@ input CreateApiClient {
   scope: String!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+input CreateProductSelectionDraft {
+  key: String
+  name: [LocalizedStringItemInputType!]!
+}
+
 input CreateStore {
   key: String!
   name: [LocalizedStringItemInputType!]
   languages: [Locale!]
   distributionChannels: [ResourceIdentifierInput!]
   supplyChannels: [ResourceIdentifierInput!]
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  productSelections: [ProductSelectionSettingDraft!]
   custom: CustomFieldsDraft
 }
 
@@ -3152,6 +3179,20 @@ type InStore implements CartQueryInterface & CustomerActiveCartInterface & Order
   """
   me: InStoreMe!
   shippingMethodsByCart(id: String!): [ShippingMethod!]!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  product(
+    "Queries for a product with specified SKU"
+    sku: String,
+
+    "Queries for a product with specified [product variant key](https://docs.commercetools.com/api/projects/products#variant_key)"
+    variantKey: String,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): Product
   customer(
     "Queries a customer with specified email token"
     emailToken: String,
@@ -3179,6 +3220,9 @@ type InStore implements CartQueryInterface & CustomerActiveCartInterface & Order
     "Queries with specified key"
     key: String): ShoppingList
   shoppingLists(where: String, sort: [String!], limit: Int, offset: Int): ShoppingListQueryResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
 }
 
 type InStoreMe implements MeQueryInterface & CartQueryInterface & ActiveCartInterface & OrderQueryInterface & ShoppingListQueryInterface {
@@ -3210,6 +3254,18 @@ type InStoreMe implements MeQueryInterface & CartQueryInterface & ActiveCartInte
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
   shoppingLists(where: String, sort: [String!], limit: Int, offset: Int): ShoppingListQueryResult!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type IndividualProductSelectionCreatedPayload implements ProductSelectionCreatedPayload {
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  nameAllLocales: [LocalizedString!]!
+  type: String!
 }
 
 type Initiator {
@@ -4367,6 +4423,32 @@ type Mutation {
   createMyPayment(draft: MyPaymentDraft!): MyPayment
   updateMyPayment(id: String!, version: Long!, actions: [MyPaymentUpdateAction!]!): MyPayment
   deleteMyPayment(id: String!, version: Long!): MyPayment
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  createProductSelection(
+    "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+    draft: CreateProductSelectionDraft!): ProductSelection
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  updateProductSelection(version: Long!,
+
+    "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+    actions: [ProductSelectionUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): ProductSelection
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  deleteProductSelection(version: Long!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): ProductSelection
   updateProject(version: Long!, actions: [ProjectSettingsUpdateAction!]!): ProjectProjection
   createStore(draft: CreateStore!): Store
   updateStore(version: Long!, actions: [StoreUpdateAction!]!,
@@ -5367,6 +5449,9 @@ type Product implements Versioned & ReviewTarget {
   taxCategoryRef: Reference
   taxCategory: TaxCategory
   reviewRatingStatistics: ReviewRatingStatistics
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  productSelectionRefs(where: String, sort: [String!], limit: Int, offset: Int): SelectionOfProductQueryResult!
   createdBy: Initiator
   lastModifiedBy: Initiator
 }
@@ -5375,6 +5460,24 @@ type ProductAddedToCategory implements MessagePayload {
   category: ReferenceId!
   staged: Boolean!
   type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type ProductAssignment {
+  productRef: Reference!
+  product: Product
+  productSelectionRef: Reference!
+  productSelection: ProductSelection
+}
+
+type ProductAssignmentQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  exists: Boolean!
+  results: [ProductAssignment!]!
 }
 
 input ProductAttributeInput {
@@ -5601,6 +5704,22 @@ type ProductImageAdded implements MessagePayload {
 type ProductLimitsProjection {
   pricesPerVariant: Limit!
   variants: Limit!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type ProductOfSelection {
+  productRef: Reference!
+  product: Product
+}
+
+type ProductOfSelectionQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  exists: Boolean!
+  results: [ProductOfSelection!]!
 }
 
 type ProductPrice {
@@ -5927,6 +6046,104 @@ type ProductSearchVariantAvailabilityWithChannels {
     excludeChannelIds: [String!], limit: Int, offset: Int): ProductSearchVariantAvailabilitiesResult!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type ProductSelection implements Versioned {
+  key: String
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  nameAllLocales: [LocalizedString!]!
+  productRefs(where: String, sort: [String!], limit: Int, offset: Int): ProductOfSelectionQueryResult!
+  productCount: Int!
+  id: String!
+  version: Long!
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type ProductSelectionCreated implements MessagePayload {
+  productSelection: ProductSelectionCreatedPayload!
+  type: String!
+}
+
+interface ProductSelectionCreatedPayload {
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  nameAllLocales: [LocalizedString!]!
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type ProductSelectionDeleted implements MessagePayload {
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type ProductSelectionProductAdded implements MessagePayload {
+  product: Product
+  productRef: Reference!
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type ProductSelectionProductRemoved implements MessagePayload {
+  product: Product
+  productRef: Reference!
+  type: String!
+}
+
+"Fields to access product selection assignments. BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+interface ProductSelectionQueryInterface {
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
+}
+
+type ProductSelectionQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  exists: Boolean!
+  results: [ProductSelection!]!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type ProductSelectionSetting {
+  productSelectionRef: Reference!
+  productSelection: ProductSelection
+  active: Boolean!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+input ProductSelectionSettingDraft {
+  productSelection: ResourceIdentifierInput!
+  active: Boolean!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+input ProductSelectionSettingInActionInput {
+  productSelection: ResourceIdentifierInput!
+  active: Boolean
+}
+
+input ProductSelectionUpdateAction {
+  addProduct: AddProductSelectionProduct
+  changeName: ChangeProductSelectionName
+  removeProduct: RemoveProductSelectionProduct
+  setKey: SetProductSelectionKey
+}
+
 type ProductSlugChanged implements MessagePayload {
   slug(
     "String is defined for different locales. This argument specifies the desired locale."
@@ -6241,7 +6458,7 @@ enum PublishScope {
   Prices
 }
 
-type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShoppingListQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface {
+type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShoppingListQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface & ProductSelectionQueryInterface {
   """
   This field can only be used with an access token created with the password flow or with an anonymous session.
   
@@ -6476,6 +6693,17 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): Payment
   payments(where: String, sort: [String!], limit: Int, offset: Int): PaymentQueryResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  productSelection(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): ProductSelection
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  productSelections(where: String, sort: [String!], limit: Int, offset: Int): ProductSelectionQueryResult!
   productProjectionsSuggest(searchKeywords: [SearchKeywordArgument!]!, fuzzy: Boolean, limit: Int = 10, staged: Boolean = false): SuggestResult!
   project: ProjectProjection!
   store(
@@ -6513,6 +6741,9 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
 
     "Deprecated: please use 'markMatchingVariants'."
     markMatchingVariant: Boolean = false, storeProjection: String, localeProjection: [Locale!], staged: Boolean = false): ProductProjectionSearchResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
 }
 
 type QueryLimitsProjection {
@@ -6764,6 +6995,10 @@ input RemoveProductPrice {
   staged: Boolean = true
 }
 
+input RemoveProductSelectionProduct {
+  product: ResourceIdentifierInput!
+}
+
 input RemoveProductVariant {
   id: Int
   sku: String
@@ -6867,6 +7102,10 @@ input RemoveStateRoles {
 
 input RemoveStoreDistributionChannel {
   distributionChannel: ResourceIdentifierInput!
+}
+
+input RemoveStoreProductSelection {
+  productSelection: ResourceIdentifierInput!
 }
 
 input RemoveStoreSupplyChannel {
@@ -7238,6 +7477,21 @@ scalar SearchSort
 enum SelectionMode {
   MostExpensive
   Cheapest
+}
+
+type SelectionOfProduct {
+  productSelectionRef: Reference!
+  productSelection: ProductSelection
+}
+
+type SelectionOfProductQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  exists: Boolean!
+  results: [SelectionOfProduct!]!
 }
 
 "A set."
@@ -8258,6 +8512,10 @@ input SetProductPrices {
   staged: Boolean = true
 }
 
+input SetProductSelectionKey {
+  key: String
+}
+
 input SetProductSku {
   variantId: Int!
   sku: String
@@ -9095,6 +9353,10 @@ input SetStoreName {
   name: [LocalizedStringItemInputType!]
 }
 
+input SetStoreProductSelections {
+  productSelections: [ProductSelectionSettingInActionInput!]
+}
+
 input SetStoreSupplyChannels {
   supplyChannels: [ResourceIdentifierInput!]
 }
@@ -9719,6 +9981,9 @@ type Store implements Versioned {
     acceptLanguage: [Locale!]): String
   nameAllLocales: [LocalizedString!]
   languages: [Locale!]
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  productSelections: [ProductSelectionSetting!]!
   distributionChannelsRef: [Reference!]!
   distributionChannels: [Channel!]!
   supplyChannelsRef: [Reference!]!
@@ -9739,10 +10004,14 @@ type StoreCreated implements MessagePayload {
 
     "List of languages the client is able to understand, and which locale variant is preferred."
     acceptLanguage: [Locale!]): String
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  productSelections: [ProductSelectionSetting!]!
   distributionChannels: [Channel!]!
   supplyChannels: [Channel!]!
   distributionChannelsRef: [Reference!]!
   supplyChannelsRef: [Reference!]!
+  productSelectionsRef: [Reference!]!
   nameAllLocales: [LocalizedString!]
   type: String!
 }
@@ -9762,6 +10031,14 @@ type StoreLimitsProjection {
   total: StoreLimitWithCurrent!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type StoreProductSelectionsChanged implements MessagePayload {
+  addedProductSelections: [ProductSelectionSetting!]
+  removedProductSelections: [ProductSelectionSetting!]
+  updatedProductSelections: [ProductSelectionSetting!]
+  type: String!
+}
+
 type StoreQueryResult {
   offset: Int!
   count: Int!
@@ -9773,10 +10050,14 @@ type StoreQueryResult {
 }
 
 input StoreUpdateAction {
+  addProductSelection: AddStoreProductSelection
   addDistributionChannel: AddStoreDistributionChannel
   addSupplyChannel: AddStoreSupplyChannel
+  changeProductSelectionActive: ChangeStoreProductSelectionActive
+  removeProductSelection: RemoveStoreProductSelection
   removeDistributionChannel: RemoveStoreDistributionChannel
   removeSupplyChannel: RemoveStoreSupplyChannel
+  setProductSelections: SetStoreProductSelections
   setCustomField: SetStoreCustomField
   setCustomType: SetStoreCustomType
   setDistributionChannels: SetStoreDistributionChannels
