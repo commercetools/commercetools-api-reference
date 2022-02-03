@@ -1,20 +1,18 @@
-/**
-* 1. install the below dependencies via "npm install foo" from the project root (local installation, no -g)
-* 2. run node bin/explode.js  from the project root
-* 3. instead of http://olegilyenko.github.io/api-console/dist/?raml=/api-console/sphere/project.raml
-*    open http://olegilyenko.github.io/api-console/dist/?raml=/api-console/sphere/project-exploded.raml
-* 4. decide whether to check in the exploded files or not.
-*
-* FYI: the console output is "markdown", so you can do node bin/explode-raml.js > results.md for large results and look at it
-*
-* FYI: as this is a build/test script and not a server application it is intentionally done synchronous
-* FYI: the traversal code "eats" critical errors under circumstances -> check "done!" output and try/catch calls to libraries
-*
-*/
 
-const traverse = require('traverse');
-const raml = require('raml-1-parser');
-const markdownlint = require("markdownlint");
+import traverse from 'traverse';
+import yaml from 'js-yaml';
+import {globby} from 'globby';
+import fs from 'fs';
+import markdownlint from 'markdownlint';
+
+const IncludeYamlType = new yaml.Type('!include', {
+    kind: 'scalar',
+    construct: (data) => {
+        return data !== null ? data : '';
+    },
+});
+
+const jsYamlSchema = yaml.DEFAULT_SCHEMA.extend([IncludeYamlType]);
 
 const markdownLintDefaults = {
     config: {
@@ -31,30 +29,26 @@ const markdownLintDefaults = {
 // go!
 let numErrors = 0;
 
-// FYI: the "raml.loadFile" call does already:
-// * _validate_ the RAML file against the RAML spec
-// * _inline_ the RAML file references ("!include" statements)
 console.log("\n# RAML markdown lint\n");
 
-raml.loadApi('api-specs/api/api.raml').then(function (api) {
-    return api.expand(true).toJSON();
-}).then( function(raml) {
+const paths = await globby('api-specs/api/**/*.raml');
 
-        validateMarkdown(raml);
+console.log("\n## Description Markdown Check\n");
 
-        // confirm that the traversal hasn't eaten some error:
-        console.log("\n# done!\n");
+paths.forEach(yamlLoad)
 
-        process.exit(numErrors);
+console.log("\n# done!\n");
 
-  }, function(error) {
-          numErrors++;
-          console.log(' * **Error parsing project RAML: ' + error + "**");
-          process.exit(numErrors);
-});
+process.exit(numErrors);
 
-function validateMarkdown(rootNode){
-    console.log("\n## Description Markdown Check\n");
+function yamlLoad(file) {
+    const raml = yaml.load(fs.readFileSync(file, 'utf8'), {schema: jsYamlSchema})
+
+    validateMarkdown(file, raml);
+}
+
+
+function validateMarkdown(file, rootNode){
     traverse(rootNode).forEach(function (node) {
         if (this.key === "description" && typeof this.node === "string" ){
             if (this.path && this.path.indexOf('resourceTypes') === 0) {
@@ -67,6 +61,7 @@ function validateMarkdown(rootNode){
             if (mdLintResultString) {
                 // FYI: the markdown lint does currently not break the test, it's just for warning purpose.
                 numErrors++;
+                console.log("file: " + file)
                 console.log(" * **description markdown \x1b[31mNOT OK\x1b[0m: " + prettifyRamlPath(this).join(" -> ") + "**");
                 console.log("```");
                 console.log(mdLintResultString);
