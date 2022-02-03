@@ -1,6 +1,6 @@
 #%RAML 1.0 DataType
 (package): State
-(docs-uri): https://docs.commercetools.com/http-api-projects-states.html#state
+(docs-uri): https://docs.commercetools.com/api/projects/states#state
 type: BaseResource
 displayName: State
 (updateType): StateUpdate
@@ -9,57 +9,62 @@ properties:
   id:
     (identifier): true
     type: string
-    description: ''
+    description: |
+      Unique ID of the State.
   version:
     type: number
     format: int64
-    description: ''
+    description: |
+      Current version of the State.
   createdAt:
     type: datetime
-    description: ''
+    description: |
+      Date and time (UTC) the State was initially created.
   lastModifiedAt:
     type: datetime
-    description: ''
+    description: |
+      Date and time (UTC) the State was last updated.
   lastModifiedBy?:
     type: LastModifiedBy
     (beta): true
     description: |
-      Present on resources created after 2019-02-01 except for [events not tracked](/client-logging#events-tracked).
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).
   createdBy?:
     type: CreatedBy
     (beta): true
     description: |
-      Present on resources created after 2019-02-01 except for [events not tracked](/client-logging#events-tracked).
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).
   key:
     type: string
-    description: A unique identifier for the state.
+    description: |
+      User-defined unique identifier for the State.
   type:
     type: StateTypeEnum
-    description: ''
+    description: |
+      Indicates to which resource or object types the State is assigned to.
   name?:
     type: LocalizedString
-    description: A human-readable name of the state.
+    description: |
+      Name of the State.
   description?:
     type: LocalizedString
-    description: A human-readable description of the state.
+    description: |
+      Description of the State.
   initial:
     type: boolean
-    description: |-
-      A state can be declared as an initial state for any state machine.
-      When a workflow starts, this first state must be an `initial` state.
+    description: |
+      `true` for an initial State, the first State in a workflow.
   builtIn:
     type: boolean
-    description:
-      Builtin states are integral parts of the project that cannot be deleted
-      nor the key can be changed.
+    description: |
+      `true` for States that are an integral part of the [Project](ctp:api:type:Project). Those States cannot be deleted and their `key` cannot be changed.
   roles?:
     type: StateRoleEnum[]
-    description: ''
+    description: |
+      Roles the State can fulfill for [Reviews](ctp:api:type:Review) and [Line Items](ctp:api:type:LineItem).
   transitions?:
     type: StateReference[]
-    description: |-
-      Transitions are a way to describe possible transformations of the current state to other states of the same `type` (e.g.: _Initial_ -> _Shipped_).
-      When performing a `transitionState` update action and `transitions` is set, the currently referenced state must have a transition to the new state.
-      If `transitions` is an empty list, it means the current state is a final state and no further transitions are allowed.
-      If `transitions` is not set, the validation is turned off.
-      When performing a `transitionState` update action, any other state of the same `type` can be transitioned to.
+    description: |
+      - list of States of the same `type` that the current State can be transitioned to. For example, when the current State is the _Initial_ State of [StateType](ctp:api:type:StateTypeEnum) `OrderState` and this list contains the reference to the _Shipped_ `OrderState`, the transition _Initial_ -> _Shipped_ is allowed.
+      - if empty, no transitions are allowed from the current State, defining the current State as final for this workflow.
+      - if not set, the validation is turned off and the current State can be transitioned to any other State of the same `type` as the current State.

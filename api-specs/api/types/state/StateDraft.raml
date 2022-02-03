@@ -1,27 +1,38 @@
 #%RAML 1.0 DataType
 (package): State
-(docs-uri): https://docs.commercetools.com/http-api-projects-states.html#statedraft
+(docs-uri): https://docs.commercetools.com/api/projects/states#statedraft
 type: object
 displayName: StateDraft
 properties:
   key:
     type: string
-    description: ''
+    description: |
+      User-defined unique identifier for the State.
   type:
     type: StateTypeEnum
-    description: ''
+    description: |
+      Specify to which resource or object type the State is assigned to.
   name?:
     type: LocalizedString
-    description: ''
+    description: |
+      Name of the State.
   description?:
     type: LocalizedString
-    description: ''
+    description: |
+      Description of the State.
   initial?:
     type: boolean
-    description: ''
+    default: true
+    description: |
+      Set to `false` if the State is not the first step in a workflow.
   roles?:
     type: StateRoleEnum[]
-    description: ''
+    description: |
+      If suitable, assign predifined roles the State can fulfill in case the State's `type` is `LineItemState` or `ReviewState`.
   transitions?:
-    description: ''
     type: StateResourceIdentifier[]
+    description: |
+      Define the list of States of the same `type` to which the current State can be transitioned to.
+      - If, for example, the current State is the _Initial_ State of [StateType](ctp:api:type:StateTypeEnum) `OrderState` and you want to allow the transition _Initial_ -> _Shipped_, then add the [StateResourceIdentifier](ctp:api:type:StateResourceIdentifier) to the _Shipped_ `OrderState` to this list.
+      - Set to empty list for not allowing any transition from the current State and defining it as final State for a workflow.
+      - Do not set this field at all to turn off validation and allowing transitions to any other State of the same `type` as the current State.
