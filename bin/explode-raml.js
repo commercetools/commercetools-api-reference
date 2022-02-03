@@ -12,51 +12,35 @@
 *
 */
 
-var fs = require('fs');
-var traverse = require('traverse');
-var raml = require('raml-1-parser');
-var markdownlint = require("markdownlint");
+const traverse = require('traverse');
+const raml = require('raml-1-parser');
+const markdownlint = require("markdownlint");
 
-var markdownLintDefaults = {
+const markdownLintDefaults = {
     config: {
         // TODO agree on markdown style and ruleset
         // find the rules and their well-written rationale here: https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md
         "default": true,
         "MD041": false,  // First line must not necessarily be a top level header because the markdown is a document fragment and not a document.
         "MD002": false, // first heading must not necessarily be a H1 because the markdown is a document fragment and not a document.
-        "MD013": false // ignore line length
+        "MD013": false, // ignore line length
+        "MD047": false // ignore trailing newline
     }
 }
 
 // go!
-var numErrors = 0;
+let numErrors = 0;
 
 // FYI: the "raml.loadFile" call does already:
 // * _validate_ the RAML file against the RAML spec
 // * _inline_ the RAML file references ("!include" statements)
-console.log("\n# RAML consistency check and explosion\n");
+console.log("\n# RAML markdown lint\n");
 
 raml.loadApi('api-specs/api/api.raml').then(function (api) {
     return api.expand(true).toJSON();
 }).then( function(raml) {
 
-        var outputFilename = 'project-exploded';
-
-        var lintedRaml = raml;
-
-        validateMarkdown(lintedRaml);
-
-        console.log("\n## Writing exploded files\n");
-
-        // write out the RAML
-        // FYI: the "writeRAML" implies "linting" the RAML
-        // writeRAML(lintedRaml, outputFilename);
-        // writeRAML(dereferencedRaml, outputFilename+"-dereferencedSchemata");
-
-        // write a JSON version to have a programatically more approachable version at hand.
-        // FYI: this is not a 1:1 representation of the JSON view on the RAML YAML,
-        //      it's the internal representation of the  RAML library.
-        writeJSON(lintedRaml, outputFilename+"-ast");
+        validateMarkdown(raml);
 
         // confirm that the traversal hasn't eaten some error:
         console.log("\n# done!\n");
@@ -69,13 +53,6 @@ raml.loadApi('api-specs/api/api.raml').then(function (api) {
           process.exit(numErrors);
 });
 
-// ####  helpers ###:
-
-function writeJSON(rootNode, filePath){
-    fs.writeFileSync(filePath+".json", JSON.stringify(rootNode, null, 4));
-    console.log(" * RAML (json) saved to " + filePath+".json");
-}
-
 function validateMarkdown(rootNode){
     console.log("\n## Description Markdown Check\n");
     traverse(rootNode).forEach(function (node) {
@@ -83,10 +60,10 @@ function validateMarkdown(rootNode){
             if (this.path && this.path.indexOf('resourceTypes') === 0) {
                 return;
             }
-            var mdLintOptions = traverse.clone(markdownLintDefaults);
+            let mdLintOptions = traverse.clone(markdownLintDefaults);
             mdLintOptions.strings =  { "" : this.node };
-            var mdLintResult = markdownlint.sync(mdLintOptions);
-            var mdLintResultString = mdLintResult.toString();
+            let mdLintResult = markdownlint.sync(mdLintOptions);
+            let mdLintResultString = mdLintResult.toString();
             if (mdLintResultString) {
                 // FYI: the markdown lint does currently not break the test, it's just for warning purpose.
                 numErrors++;
@@ -113,7 +90,7 @@ function prettifyRamlPath(traverseContext, outputArray){
     // skip "resources" and "methods" entries (self-explanatory by context):
     if(traverseContext.key == "resources" || traverseContext.key == "methods") return prettifyRamlPath(traverseContext.parent, outputArray);
 
-    var pretty = "";
+    let pretty = "";
     // decide what's the best name
     if(traverseContext.node["displayName"]){
         pretty += traverseContext.node["displayName"];
