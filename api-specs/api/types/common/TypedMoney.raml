@@ -4,15 +4,28 @@
 displayName: TypedMoney
 type: object
 discriminator: type
+description: |
+  Base polymorphic read-only Money type which is stored in cent precision or high precision. The actual type is determined by the `type` field.
 properties:
   type:
     type: MoneyType
+  currencyCode:
+    type: CurrencyCode
+  centAmount:
+    type: number
+    format: int64
+    description: |
+      amount in the smallest indivisible unit of a currency, such as
+
+      * cents for EUR and USD, pence for GBP, or centime for CHF (5 CHF is specified as 500).
+      * the value in the major unit for currencies without minor units, like JPY (5 JPY is specified as 5).
+
   fractionDigits:
     type: number
     format: int32
     maximum: 12
-  centAmount:
-    type: number
-    format: int64
-  currencyCode:
-    type: CurrencyCode
+    description: |
+      number of digits after the decimal separator
+
+      * equal to the default number of fraction digits for a currency in [CentPrecisionMoney](ctp:api:type:CentPrecisionMoney).
+      * greater than the default number of fraction digits for a currency in [HighPrecisionMoney](ctp:api:type:HighPrecisionMoney).

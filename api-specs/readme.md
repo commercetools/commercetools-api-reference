@@ -564,7 +564,7 @@ The api.raml file contains the base of our APIs and the definition of everything
 We built a RAML validator tool which validates during the CI process the new code written related to our RAML files and for every error will show the related message.
 
 If you want to run locally:
-`yarn run raml:validate`.
+`yarn raml:validate`.
 
 The rules included are:
 
