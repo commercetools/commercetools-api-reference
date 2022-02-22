@@ -1952,6 +1952,7 @@ input CreateApiClient {
 input CreateProductSelectionDraft {
   key: String
   name: [LocalizedStringItemInputType!]!
+  custom: CustomFieldsDraft
 }
 
 input CreateStore {
@@ -3265,6 +3266,7 @@ type InStoreMe implements MeQueryInterface & CartQueryInterface & ActiveCartInte
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
 type IndividualProductSelectionCreatedPayload implements ProductSelectionCreatedPayload {
+  custom: CustomFieldsType
   name(
     "String is defined for different locales. This argument specifies the desired locale."
     locale: Locale,
@@ -6065,6 +6067,7 @@ type ProductSelection implements Versioned {
   nameAllLocales: [LocalizedString!]!
   productRefs(where: String, sort: [String!], limit: Int, offset: Int): ProductOfSelectionQueryResult!
   productCount: Int!
+  custom: CustomFieldsType
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -6087,6 +6090,7 @@ interface ProductSelectionCreatedPayload {
     "List of languages the client is able to understand, and which locale variant is preferred."
     acceptLanguage: [Locale!]): String
   nameAllLocales: [LocalizedString!]!
+  custom: CustomFieldsType
   type: String!
 }
 
@@ -6148,6 +6152,8 @@ input ProductSelectionUpdateAction {
   addProduct: AddProductSelectionProduct
   changeName: ChangeProductSelectionName
   removeProduct: RemoveProductSelectionProduct
+  setCustomField: SetProductSelectionCustomField
+  setCustomType: SetProductSelectionCustomType
   setKey: SetProductSelectionKey
 }
 
@@ -8517,6 +8523,18 @@ input SetProductPrices {
   sku: String
   prices: [ProductPriceDataInput!]!
   staged: Boolean = true
+}
+
+input SetProductSelectionCustomField {
+  name: String!
+  value: String
+}
+
+input SetProductSelectionCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
 }
 
 input SetProductSelectionKey {
