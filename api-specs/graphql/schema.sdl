@@ -1,3 +1,6 @@
+scalar Long
+scalar BigDecimal
+
 "API Clients can be used to obtain OAuth 2 access tokens. The secret is only shown once in the response of creating the API Client."
 type APIClientWithSecret {
   id: String!
@@ -1208,56 +1211,6 @@ type CategoryQueryResult {
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
   exists: Boolean!
   results: [Category!]!
-}
-
-type CategorySearch {
-  id: String!
-  key: String
-  version: Long!
-  name(
-    "String is defined for different locales. This argument specifies the desired locale."
-    locale: Locale,
-
-    "List of languages the client is able to understand, and which locale variant is preferred."
-    acceptLanguage: [Locale!]): String
-  nameAllLocales: [LocalizedString!]!
-  description(
-    "String is defined for different locales. This argument specifies the desired locale."
-    locale: Locale,
-
-    "List of languages the client is able to understand, and which locale variant is preferred."
-    acceptLanguage: [Locale!]): String
-  descriptionAllLocales: [LocalizedString!]
-  slug(
-    "String is defined for different locales. This argument specifies the desired locale."
-    locale: Locale,
-
-    "List of languages the client is able to understand, and which locale variant is preferred."
-    acceptLanguage: [Locale!]): String
-  slugAllLocales: [LocalizedString!]!
-  ancestorsRef: [Reference!]!
-  ancestors: [CategorySearch!]!
-  parentRef: Reference
-  parent: CategorySearch
-  externalId: String
-  stagedProductCount: Int!
-  childCount: Int!
-  productTypeNames: [String!]!
-
-  "Direct child categories."
-  children: [CategorySearch!]!
-  createdAt: DateTime!
-  lastModifiedAt: DateTime!
-  orderHint: String!
-  assets: [Asset!]!
-  custom: CustomFieldsType
-}
-
-type CategorySearchResult {
-  offset: Int!
-  count: Int!
-  total: Int!
-  results: [CategorySearch!]!
 }
 
 type CategorySlugChanged implements MessagePayload {
@@ -6498,74 +6451,6 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): Category
   categories(where: String, sort: [String!], limit: Int, offset: Int): CategoryQueryResult!
-
-  "Autocomplete the categories based on category fields like name, description, etc."
-  categoryAutocomplete(
-    "String is defined for different locales. This argument specifies the desired locale."
-    locale: Locale!,
-
-    "Incomplete user input."
-    text: String!, limit: Int = 10, offset: Int = 0,
-
-    """
-    Filters to apply during the search and autocomplete - supported fields are:
-    * `id`
-    * `slug`
-    * `externalId`
-    * `key`
-    * `ancestors`
-    * `parent.id`
-    * `level`
-    * `createdAt`
-    * `modifiedAt`
-    * `name.{language}:missing`
-    * `externalId:missing`
-    * `description.{language}:missing`
-    * `childCount`
-    * `productCount`
-    * `productTypeNames`
-    """
-    filters: [SearchFilter!]): CategorySearchResult!
-
-  "Search the categories using full-text search, filtering and sorting"
-  categorySearch(
-    "Full-text search input."
-    fulltext: LocalizedText, limit: Int = 10, offset: Int = 0,
-
-    "Filters to apply before the results of facets"
-    queryFilters: [SearchFilter!],
-
-    """
-    Filters to apply during the search and autocomplete - supported fields are:
-    * `id`
-    * `slug`
-    * `externalId`
-    * `key`
-    * `ancestors`
-    * `parent.id`
-    * `level`
-    * `createdAt`
-    * `modifiedAt`
-    * `name.{language}:missing`
-    * `externalId:missing`
-    * `description.{language}:missing`
-    * `childCount`
-    * `productCount`
-    * `productTypeNames`
-    """
-    filters: [SearchFilter!],
-
-    """
-    Sort result - supported fields are:
-
-    * `id`
-    * `name`
-    * `createdAt`
-    * `modifiedAt`
-
-    by default sorted by relevance (a score of matches against the search term in descending order)
-    """
-    sorts: [SearchSort!]): CategorySearchResult!
   channel(
     "Queries with specified ID"
     id: String,
