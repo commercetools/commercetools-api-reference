@@ -2064,7 +2064,7 @@ type CustomLineItemReturnItem implements ReturnItem {
   createdAt: DateTime!
 }
 
-type CustomLineItemStateTransition implements MessagePayload {
+type CustomLineItemStateTransition implements MessagePayload & OrderMessagePayload {
   customLineItemId: String!
   transitionDate: DateTime!
   quantity: Long!
@@ -2539,12 +2539,12 @@ type Delivery {
   custom: CustomFieldsType
 }
 
-type DeliveryAdded implements MessagePayload {
+type DeliveryAdded implements MessagePayload & OrderMessagePayload {
   delivery: Delivery!
   type: String!
 }
 
-type DeliveryAddressSet implements MessagePayload {
+type DeliveryAddressSet implements MessagePayload & OrderMessagePayload {
   deliveryId: String!
   address: Address
   oldAddress: Address
@@ -2561,14 +2561,14 @@ input DeliveryItemDraftType {
   quantity: Long!
 }
 
-type DeliveryItemsUpdated implements MessagePayload {
+type DeliveryItemsUpdated implements MessagePayload & OrderMessagePayload {
   deliveryId: String!
   items: [DeliveryItem!]!
   oldItems: [DeliveryItem!]!
   type: String!
 }
 
-type DeliveryRemoved implements MessagePayload {
+type DeliveryRemoved implements MessagePayload & OrderMessagePayload {
   delivery: Delivery!
   type: String!
 }
@@ -3548,7 +3548,7 @@ type LineItemReturnItem implements ReturnItem {
   createdAt: DateTime!
 }
 
-type LineItemStateTransition implements MessagePayload {
+type LineItemStateTransition implements MessagePayload & OrderMessagePayload {
   lineItemId: String!
   transitionDate: DateTime!
   quantity: Long!
@@ -4736,7 +4736,7 @@ type Order implements Versioned {
   lastModifiedBy: Initiator
 }
 
-type OrderBillingAddressSet implements MessagePayload {
+type OrderBillingAddressSet implements MessagePayload & OrderMessagePayload {
   address: Address
   oldAddress: Address
   type: String!
@@ -4753,43 +4753,43 @@ input OrderCartCommand {
   orderNumber: String
 }
 
-type OrderCreated implements MessagePayload {
+type OrderCreated implements MessagePayload & OrderMessagePayload {
   order: Order!
   type: String!
 }
 
-type OrderCustomLineItemAdded implements MessagePayload {
+type OrderCustomLineItemAdded implements MessagePayload & OrderMessagePayload {
   customLineItem: CustomLineItem!
   type: String!
 }
 
-type OrderCustomLineItemDiscountSet implements MessagePayload {
+type OrderCustomLineItemDiscountSet implements MessagePayload & OrderMessagePayload {
   customLineItemId: String!
   discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity!]!
   taxedPrice: TaxedItemPrice
   type: String!
 }
 
-type OrderCustomLineItemQuantityChanged implements MessagePayload {
+type OrderCustomLineItemQuantityChanged implements MessagePayload & OrderMessagePayload {
   customLineItemId: String!
   quantity: Long!
   oldQuantity: Long
   type: String!
 }
 
-type OrderCustomLineItemRemoved implements MessagePayload {
+type OrderCustomLineItemRemoved implements MessagePayload & OrderMessagePayload {
   customLineItemId: String!
   customLineItem: CustomLineItem
   type: String!
 }
 
-type OrderCustomerEmailSet implements MessagePayload {
+type OrderCustomerEmailSet implements MessagePayload & OrderMessagePayload {
   email: String
   oldEmail: String
   type: String!
 }
 
-type OrderCustomerGroupSet implements MessagePayload {
+type OrderCustomerGroupSet implements MessagePayload & OrderMessagePayload {
   customerGroup: CustomerGroup
   oldCustomerGroup: CustomerGroup
   customerGroupRef: Reference
@@ -4797,7 +4797,7 @@ type OrderCustomerGroupSet implements MessagePayload {
   type: String!
 }
 
-type OrderCustomerSet implements MessagePayload {
+type OrderCustomerSet implements MessagePayload & OrderMessagePayload {
   customer: Customer
   oldCustomer: Customer
   customerGroup: CustomerGroup
@@ -4809,24 +4809,24 @@ type OrderCustomerSet implements MessagePayload {
   type: String!
 }
 
-type OrderDeleted implements MessagePayload {
+type OrderDeleted implements MessagePayload & OrderMessagePayload {
   order: Order
   type: String!
 }
 
-type OrderDiscountCodeAdded implements MessagePayload {
+type OrderDiscountCodeAdded implements MessagePayload & OrderMessagePayload {
   discountCode: DiscountCode
   discountCodeRef: Reference!
   type: String!
 }
 
-type OrderDiscountCodeRemoved implements MessagePayload {
+type OrderDiscountCodeRemoved implements MessagePayload & OrderMessagePayload {
   discountCode: DiscountCode
   discountCodeRef: Reference!
   type: String!
 }
 
-type OrderDiscountCodeStateSet implements MessagePayload {
+type OrderDiscountCodeStateSet implements MessagePayload & OrderMessagePayload {
   state: DiscountCodeState!
   oldState: DiscountCodeState
   discountCode: DiscountCode
@@ -4850,7 +4850,7 @@ type OrderEdit implements Versioned {
   lastModifiedBy: Initiator
 }
 
-type OrderEditApplied implements MessagePayload {
+type OrderEditApplied implements MessagePayload & OrderMessagePayload {
   result: Applied!
   edit: OrderEdit
   editRef: Reference!
@@ -4904,18 +4904,18 @@ type OrderExcerpt {
   version: Long
 }
 
-type OrderImported implements MessagePayload {
+type OrderImported implements MessagePayload & OrderMessagePayload {
   order: Order!
   type: String!
 }
 
-type OrderLineItemAdded implements MessagePayload {
+type OrderLineItemAdded implements MessagePayload & OrderMessagePayload {
   lineItem: LineItem!
   addedQuantity: Long!
   type: String!
 }
 
-type OrderLineItemDiscountSet implements MessagePayload {
+type OrderLineItemDiscountSet implements MessagePayload & OrderMessagePayload {
   lineItemId: String!
   discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity!]!
   totalPrice: Money!
@@ -4923,14 +4923,14 @@ type OrderLineItemDiscountSet implements MessagePayload {
   type: String!
 }
 
-type OrderLineItemDistributionChannelSet implements MessagePayload {
+type OrderLineItemDistributionChannelSet implements MessagePayload & OrderMessagePayload {
   lineItemId: String!
   distributionChannel: Channel
   distributionChannelRef: Reference
   type: String!
 }
 
-type OrderLineItemRemoved implements MessagePayload {
+type OrderLineItemRemoved implements MessagePayload & OrderMessagePayload {
   lineItemId: String!
   removedQuantity: Long!
   newQuantity: Long!
@@ -4942,23 +4942,27 @@ type OrderLineItemRemoved implements MessagePayload {
   type: String!
 }
 
+interface OrderMessagePayload {
+  type: String!
+}
+
 input OrderMyCartCommand {
   id: String!
   version: Long!
 }
 
-type OrderPaymentAdded implements MessagePayload {
+type OrderPaymentAdded implements MessagePayload & OrderMessagePayload {
   paymentRef: Reference!
   type: String!
 }
 
-type OrderPaymentRemoved implements MessagePayload {
+type OrderPaymentRemoved implements MessagePayload & OrderMessagePayload {
   paymentRef: Reference!
   removedPaymentInfo: Boolean!
   type: String!
 }
 
-type OrderPaymentStateChanged implements MessagePayload {
+type OrderPaymentStateChanged implements MessagePayload & OrderMessagePayload {
   paymentState: PaymentState!
   oldPaymentState: PaymentState
   type: String!
@@ -4982,7 +4986,7 @@ type OrderQueryResult {
   results: [Order!]!
 }
 
-type OrderReturnShipmentStateChanged implements MessagePayload {
+type OrderReturnShipmentStateChanged implements MessagePayload & OrderMessagePayload {
   returnItemId: String!
   returnShipmentState: ReturnShipmentState!
   type: String!
@@ -4999,25 +5003,25 @@ enum OrderSearchStatus {
   Deactivated
 }
 
-type OrderShipmentStateChanged implements MessagePayload {
+type OrderShipmentStateChanged implements MessagePayload & OrderMessagePayload {
   shipmentState: ShipmentState!
   oldShipmentState: ShipmentState
   type: String!
 }
 
-type OrderShippingAddressSet implements MessagePayload {
+type OrderShippingAddressSet implements MessagePayload & OrderMessagePayload {
   address: Address
   oldAddress: Address
   type: String!
 }
 
-type OrderShippingInfoSet implements MessagePayload {
+type OrderShippingInfoSet implements MessagePayload & OrderMessagePayload {
   shippingInfo: ShippingInfo
   oldShippingInfo: ShippingInfo
   type: String!
 }
 
-type OrderShippingRateInputSet implements MessagePayload {
+type OrderShippingRateInputSet implements MessagePayload & OrderMessagePayload {
   shippingRateInput: ShippingRateInput
   oldShippingRateInput: ShippingRateInput
   type: String!
@@ -5030,14 +5034,14 @@ enum OrderState {
   Open
 }
 
-type OrderStateChanged implements MessagePayload {
+type OrderStateChanged implements MessagePayload & OrderMessagePayload {
   orderId: String!
   orderState: OrderState!
   oldOrderState: OrderState
   type: String!
 }
 
-type OrderStateTransition implements MessagePayload {
+type OrderStateTransition implements MessagePayload & OrderMessagePayload {
   force: Boolean!
   state: State
   oldState: State
@@ -5046,7 +5050,7 @@ type OrderStateTransition implements MessagePayload {
   type: String!
 }
 
-type OrderStoreSet implements MessagePayload {
+type OrderStoreSet implements MessagePayload & OrderMessagePayload {
   store: Store
   oldStore: Store
   storeRef: KeyReference
@@ -5122,7 +5126,7 @@ type Parcel {
   custom: CustomFieldsType
 }
 
-type ParcelAddedToDelivery implements MessagePayload {
+type ParcelAddedToDelivery implements MessagePayload & OrderMessagePayload {
   delivery: Delivery!
   parcel: Parcel!
   type: String!
@@ -5142,7 +5146,7 @@ input ParcelDataDraftType {
   custom: CustomFieldsDraft
 }
 
-type ParcelItemsUpdated implements MessagePayload {
+type ParcelItemsUpdated implements MessagePayload & OrderMessagePayload {
   deliveryId: String!
   parcelId: String!
   items: [DeliveryItem!]!
@@ -5164,20 +5168,20 @@ input ParcelMeasurementsDraftType {
   weightInGram: Int
 }
 
-type ParcelMeasurementsUpdated implements MessagePayload {
+type ParcelMeasurementsUpdated implements MessagePayload & OrderMessagePayload {
   deliveryId: String!
   parcelId: String!
   measurements: ParcelMeasurements
   type: String!
 }
 
-type ParcelRemovedFromDelivery implements MessagePayload {
+type ParcelRemovedFromDelivery implements MessagePayload & OrderMessagePayload {
   deliveryId: String!
   parcel: Parcel!
   type: String!
 }
 
-type ParcelTrackingDataUpdated implements MessagePayload {
+type ParcelTrackingDataUpdated implements MessagePayload & OrderMessagePayload {
   deliveryId: String!
   parcelId: String!
   trackingData: TrackingData
@@ -5374,6 +5378,7 @@ type PreviewFailure implements OrderEditResult {
 type PreviewSuccess implements OrderEditResult {
   type: String!
   preview: Order!
+  messagePayloads: [OrderMessagePayload!]!
 }
 
 type PriceFunction {
@@ -7037,7 +7042,7 @@ type ReturnInfo {
   returnDate: DateTime
 }
 
-type ReturnInfoAdded implements MessagePayload {
+type ReturnInfoAdded implements MessagePayload & OrderMessagePayload {
   returnInfo: ReturnInfo!
   type: String!
 }
@@ -7054,7 +7059,7 @@ type ReturnInfoDraftTypeOutput {
   returnTrackingId: String
 }
 
-type ReturnInfoSet implements MessagePayload {
+type ReturnInfoSet implements MessagePayload & OrderMessagePayload {
   returnInfo: [ReturnInfo!]
   type: String!
 }
