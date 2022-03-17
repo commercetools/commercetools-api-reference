@@ -7,30 +7,31 @@ Our APIs have to follow our
 
 - How to:
   - [Create a new Resources definition](#create-a-new-resources-definition)
-    - [Create a Query Endpoint](#--create-query-endpoint)
-    - [Create a Create Endpoint](#--create-a-create-endpoint)
-    - [Create an Update Endpoint](#--create-an-update-endpoint)
-    - [Create a Delete Endpoint](#--create-a-delete-endpoint)
+    - [Create a Query Endpoint](#create-a-query-endpoint)
+    - [Create a Create Endpoint](#create-a-create-endpoint)
+    - [Create an Update Endpoint](#create-an-update-endpoint)
+    - [Create a Delete Endpoint](#create-a-delete-endpoint)
   - [Create a Method](#create-a-method)
   - [Create a Type](#create-a-type)
   - [Create a Message](#create-a-message)
-  - [Create a Field](#create-a-field)
-  - [Create a Scope](#create-a-scope)
+  - [Add a Field](#add-a-field)
+  - [Add a Custom Field](#add-a-custom-field)
+  - [Add a Scope](#add-a-scope)
 - Platform API folder structure
   - [/examples](#examples)
   - [/resources](#resources)
   - [/securitySchemes](#securityschemes)
   - [/traits](#traits)
   - [/types](#types)
-    - [Resource Data with the related Draft](#--resource-data-with-the-related-draft)
-    - [Paged Query Response](#--paged-query-response)
-    - [Update and Update Action](#--update-and-update-action)
-    - [/updates](#--updates)
-    - [/common](#--common)
-    - [/error](#--error)
-    - [/message](#--message)
-    - [annotations.raml](#--annotationsraml)
-    - [types.raml](#--typesraml)
+    - [Resource Data with the related Draft](#resource-data-with-the-related-draft)
+    - [Paged Query Response](#paged-query-response)
+    - [Update and Update Action](#update-and-update-action)
+    - [/updates](#updates)
+    - [/common](#common)
+    - [/error](#error)
+    - [/message](#message)
+    - [annotations.raml](#annotationsraml)
+    - [types.raml](#typesraml)
   - [api.raml](#apiraml)
 - [Validator Rules](#validator-rules)
   - [AsMapRule](#asmaprule)
@@ -63,11 +64,11 @@ Our APIs have to follow our
 
 1. Go to the [api.raml](./api/api.raml) file and add at the end preferably, like this:
 
-```raml
-/stores: !include resources/stores.raml
-```
+   ```raml
+   /stores: !include resources/stores.raml
+   ```
 
-2. Then in the [/resources](./api/resources) folder, add a new file called with the name of the resource definition. This is just an example about the content:
+2. In the [/resources](./api/resources) folder, add a new file called with the name of the resource definition. This is just an example about the content:
    [stores.raml](./api/resources/stores.raml)
 
 3. Add the different resource endpoints available to this file
@@ -80,32 +81,32 @@ Our APIs have to follow our
 3. Then, add the main types in the folder created see the [How to create a type section](#create-a-type).
 4. Add, if already available, the update actions like [CartAddCustomLineItemAction.raml](./api/types/cart/updates/CartAddCustomLineItemAction.raml) and the related json file in [/examples](./api/examples) folder.
 
-```raml
-type:
-  baseDomain:
-    resourceType: Cart
-    resourceQueryType: CartPagedQueryResponse
-    resourceDraft: CartDraft
-    whereExample: 'customerEmail = "john.doe@example.com"'
-    sortExample: createdAt asc
-(updateable): Cart
-(deleteable): Cart
-(createable): CartDraft
-description: A shopping cart holds product variants and can be ordered.
-get:
-  (java-implements):
-    'com.commercetools.api.models.PagedQueryResourceRequest<ByProjectKeyCartsGet,
-    com.commercetools.api.models.cart.CartPagedQueryResponse>'
-  securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
-  queryParameters:
-    customerId?:
-      type: string
-  responses:
-    200:
-      body:
-        application/json:
-          example: !include ../examples/carts.example.json
-```
+   ```raml
+   type:
+     baseDomain:
+       resourceType: Cart
+       resourceQueryType: CartPagedQueryResponse
+       resourceDraft: CartDraft
+       whereExample: 'customerEmail = "john.doe@example.com"'
+       sortExample: createdAt asc
+   (updateable): Cart
+   (deleteable): Cart
+   (createable): CartDraft
+   description: A shopping cart holds product variants and can be ordered.
+   get:
+     (java-implements):
+       'com.commercetools.api.models.PagedQueryResourceRequest<ByProjectKeyCartsGet,
+       com.commercetools.api.models.cart.CartPagedQueryResponse>'
+     securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
+     queryParameters:
+       customerId?:
+         type: string
+     responses:
+       200:
+         body:
+           application/json:
+             example: !include ../examples/carts.example.json
+   ```
 
 ##### Create a Create Endpoint
 
@@ -117,37 +118,37 @@ So just as an example about the content:
    [orders.raml](./api/resources/orders.raml), and then add the **POST** method.
    The rest is like the points 2-3-4 of the section [How to Create a Query Endpoint](#create-a-query-endpoint). To have an overview see the example below:
 
-```raml
-type:
-  baseDomain:
-    resourceType: Order
-    resourceQueryType: OrderPagedQueryResponse
-    resourceDraft: OrderFromCartDraft
-    whereExample: 'customerEmail = "john.doe@example.com"'
-    sortExample: createdAt asc
-(updateable): Order
-(deleteable): Order
-(createable): OrderFromCartDraft
-description:
-  An order can be created from a order, usually after a checkout process has
-  been completed.
-post:
-  securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
-  is:
-    - conflicting
-  description: |
-    Creates an order from a Cart.
-    The cart must have a shipping address set before creating an order.
-    When using the Platform TaxMode, the shipping address is used for tax calculation.
-  body:
-    application/json:
-      example: !include ../examples/order-create.example.json
-  responses:
-    201:
-      body:
-        application/json:
-          example: !include ../examples/order.example.json
-```
+   ```raml
+   type:
+     baseDomain:
+       resourceType: Order
+       resourceQueryType: OrderPagedQueryResponse
+       resourceDraft: OrderFromCartDraft
+       whereExample: 'customerEmail = "john.doe@example.com"'
+       sortExample: createdAt asc
+   (updateable): Order
+   (deleteable): Order
+   (createable): OrderFromCartDraft
+   description:
+     An order can be created from a order, usually after a checkout process has
+     been completed.
+   post:
+     securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+     is:
+       - conflicting
+     description: |
+       Creates an order from a Cart.
+       The cart must have a shipping address set before creating an order.
+       When using the Platform TaxMode, the shipping address is used for tax calculation.
+     body:
+       application/json:
+         example: !include ../examples/order-create.example.json
+     responses:
+       201:
+         body:
+           application/json:
+             example: !include ../examples/order.example.json
+   ```
 
 ##### Create an Update Endpoint
 
@@ -158,25 +159,25 @@ To create an update endpoint by URI parameters like Id or Key, it's necessary to
 3. Add the **post** method
    To have an overview see the example below:
 
-```raml
-/{ID}:
-  (methodName): withId
-  type:
-    baseResource:
-      uriParameterName: ID
-      resourceType: Cart
-      resourceUpdateType: CartUpdate
-  post:
-    securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
-    body:
-      application/json:
-        example: !include ../examples/cart-update.example.json
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/cart.example.json
-```
+   ```raml
+   /{ID}:
+     (methodName): withId
+     type:
+       baseResource:
+         uriParameterName: ID
+         resourceType: Cart
+         resourceUpdateType: CartUpdate
+     post:
+       securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+       body:
+         application/json:
+           example: !include ../examples/cart-update.example.json
+       responses:
+         200:
+           body:
+             application/json:
+               example: !include ../examples/cart.example.json
+   ```
 
 ##### Create a Delete Endpoint
 
@@ -187,33 +188,33 @@ To create a delete endpoint by URI parameters like Id or Key, it's necessary to 
 3. Add the **delete** method
    To have an overview see the example below:
 
-```raml
-/key={key}:
-  (methodName): withKey
-  type:
-    baseResource:
-      uriParameterName: key
-      resourceType: Cart
-      resourceUpdateType: CartUpdate
-  delete:
-    is:
-      - dataErasure
-    securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
-    responses:
-      200:
-        body:
-          application/json:
-            example: !include ../examples/cart.example.json
-```
+   ```raml
+   /key={key}:
+     (methodName): withKey
+     type:
+       baseResource:
+         uriParameterName: key
+         resourceType: Cart
+         resourceUpdateType: CartUpdate
+     delete:
+       is:
+         - dataErasure
+       securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+       responses:
+         200:
+           body:
+             application/json:
+               example: !include ../examples/cart.example.json
+   ```
 
 #### Create a Method
 
 To create a new method in the endpoint, we need to:
 
-1. modify the related file in the [/resources](./api/resources) folder;
-2. add a section with the declaration of the new method in the **methodName** annotation;
-3. add in the **type** section the **baseResource** definition which is composed by **uriParameterName** and **resourceType**;
-4. add then, the **http method** response which is gonna be in the most cases **get** or **post**
+1. Modify the related file in the [/resources](./api/resources) folder.
+2. Add a section with the declaration of the new method in the **methodName** annotation.
+3. Add in the **type** section the **baseResource** definition which is composed by **uriParameterName** and **resourceType**.
+4. Add the **http method** response which (in most cases) is usually **get** or **post**
 
 Below an example:
 
@@ -238,13 +239,13 @@ Below an example:
 
 To create a new type, these are the files which have to be created:
 
-1. The **BaseResources** which have the same name of the **package**, generally. There is also the definition of **updateType** and then there are in detail the definition of the **properties**. Here an example of the structure that each **BaseResources** have in common: [Category.raml](./api/types/category/Category.raml);
-2. The **Draft**: it's the object submitted as payload to a create method. To follow the previous example [CategoryDraft.raml](./api/types/category/CategoryDraft.raml);
-3. The **PagedQueryResponse**: here an example [CategoryPagedQueryResponse.raml](./api/types/category/CategoryPagedQueryResponse.raml), which is the extension of our Common API Type [PagedQueryResponse.raml](./api/types/PagedQueryResponse.raml);
-4. The **Reference**: see [CategoryReference.raml](./api/types/category/CategoryReference.raml), which is the extension of our Common API Type [Reference.raml](./api/types/common/Reference.raml);
-5. The **ResourceIdentifier**: see [CategoryResourceIdentifier.raml](./api/types/category/CategoryResourceIdentifier.raml), which is the "extension" of our Common API Type [ResourceIdentifier.raml](./api/types/common/ResourceIdentifier.raml) ;
-6. The **Update**: this is the definition of the **updateType** declared in the **BaseResources**, see [CategoryUpdate.raml](./api/types/category/CategoryUpdate.raml), which is the "extension" of[Update.raml](./api/types/Update.raml);
-7. The **UpdateAction**: this is the definition of the actions declared in the **Update** file, see [CategoryUpdateAction.raml](./api/types/category/CategoryUpdateAction.raml), which is the "extension" of [UpdateAction.raml](./api/types/UpdateAction.raml).
+1. The **BaseResources** which generally have the same name as the **package**. There is also the definition of **updateType** and then there are in detail the definition of the **properties**. Here is an example of the structure that each **BaseResources** have in common: [Category.raml](./api/types/category/Category.raml).
+2. The **Draft**: the object submitted as payload to a create method. Following the previous example: [CategoryDraft.raml](./api/types/category/CategoryDraft.raml).
+3. The **PagedQueryResponse**: for example [CategoryPagedQueryResponse.raml](./api/types/category/CategoryPagedQueryResponse.raml), which is the extension of our Common API Type [PagedQueryResponse.raml](./api/types/PagedQueryResponse.raml).
+4. The **Reference**: see [CategoryReference.raml](./api/types/category/CategoryReference.raml), which is the extension of our Common API Type [Reference.raml](./api/types/common/Reference.raml).
+5. The **ResourceIdentifier**: see [CategoryResourceIdentifier.raml](./api/types/category/CategoryResourceIdentifier.raml), which is the "extension" of our Common API Type [ResourceIdentifier.raml](./api/types/common/ResourceIdentifier.raml).
+6. The **Update**: the definition of the **updateType** declared in the **BaseResources**, see [CategoryUpdate.raml](./api/types/category/CategoryUpdate.raml), which is the "extension" of[Update.raml](./api/types/Update.raml).
+7. The **UpdateAction**: the definition of the actions declared in the **Update** file, see [CategoryUpdateAction.raml](./api/types/category/CategoryUpdateAction.raml), which is the "extension" of [UpdateAction.raml](./api/types/UpdateAction.raml).
    To see the definition and the details of all of them, see our documentation.
 
 ##### Create a Message
@@ -254,95 +255,206 @@ To create a new Message, follow these steps:
 1. Go in the [/types/message](./api/types/message) folder and create the file naming it _something_ + "Message.raml", like [CategoryCreatedMessage.raml](./api/types/message/CategoryCreatedMessage.raml)
 2. Then, create the content like this below:
 
-```raml
-#%RAML 1.0 DataType
-(package): Message
-(docs-uri): https://docs.commercetools.com/http-api-projects-messages.html#categorycreatedmessage
-type: Message
-displayName: CategoryCreatedMessage
-discriminatorValue: CategoryCreated
-properties:
-  category:
-    type: Category
-```
+   ```raml
+   #%RAML 1.0 DataType
+   (package): Message
+   (docs-uri): https://docs.commercetools.com/http-api-projects-messages.html#categorycreatedmessage
+   type: Message
+   displayName: CategoryCreatedMessage
+   discriminatorValue: CategoryCreated
+   properties:
+     category:
+       type: Category
+   ```
 
 3. The MessagePayload type should be automatically created by the Github action. In case it has to be done manually create a file in the [/types/message/payload](./api/types/message/payload) folder and naming the file _something_ + "MessagePayload.raml",
    like [CategoryCreatedMessagePayload.raml](./api/types/message/payload/CategoryCreatedMessagePayload.raml)
 4. And create the content like this below:
 
-```raml
-#%RAML 1.0 DataType
-(package): Message
-(docs-uri): https://docs.commercetools.com/http-api-projects-messages.html#categorycreatedmessage
-type: MessagePayload
-displayName: CategoryCreatedMessagePayload
-discriminatorValue: CategoryCreated
-properties:
-  category:
-    type: Category
-```
+   ```raml
+   #%RAML 1.0 DataType
+   (package): Message
+   (docs-uri): https://docs.commercetools.com/http-api-projects-messages.html#categorycreatedmessage
+   type: MessagePayload
+   displayName: CategoryCreatedMessagePayload
+   discriminatorValue: CategoryCreated
+   properties:
+     category:
+       type: Category
+   ```
 
 5. Finally, include both files created in the [/types/types.raml](./api/types/types.raml). There is an automatism which in the CI pipeline to generate the related line in this file.
 
-#### Add a new Field
+#### Add a Field
 
 To add a new field in the properties:
 
-1. Go in the [/types](./api/types) folder and then in the resource related folder;
-2. Add the name of the field accordingly to our naming convention guideline and in case it's **Optional** add `?`;
+1. Go in the [/types](./api/types) folder and then in the resource related folder.
+2. Add the name of the field based on our naming convention guidelines. If the field is **Optional** add `?`.
 3. Identify if it's an object type and if it is, create a separated file which contains the fields of the object. Like for instance, in the Cart we have in the property the field **customLineItems** which is an object. So there is a file [CustomLineItem.raml](./api/types/cart/CustomLineItem.raml) which defines it in details.
 
-```raml
-  customLineItems:
-    type: CustomLineItem[]
-    description: ''
-```
+   ```raml
+     customLineItems:
+       type: CustomLineItem[]
+       description: ''
+   ```
 
-4. Add `(beta): true` in case of Beta feature related;
-5. Add `(markDeprecated): true` in case of deprecation of a field;
+4. Add `(beta): true` if it relates to a Beta feature.
+5. Add `(markDeprecated): true` if the field is deprecated.
+
+#### Add a Custom Field
+
+To add a new Custom Field to a resource or object:
+
+1. Go in the [/types](./api/types) folder and then navigate to the resource-related folder.
+2. Find the file that is named after the resource or object you want to add the Custom Field to.
+3. Add the `custom` field at the end of the standard fields and make it **Optional** by adding `?`.
+4. Define the `type` as `CustomFields` for the read model type, and as `CustomFieldsDraft` for the write model object.
+
+   ```raml
+     custom?:
+       type: CustomFields
+       description: Custom Fields of this <object>.
+   ```
+
+5. Add the type for the payload of the _Set CustomField_ update action. For this, add a new file in the `/updates` subfolder of the resource named as: `<Resource>SetCustomFieldAction.raml`
+
+   If the custom field is added to an object that is embedded into a resource, the filename should look like this: `<Resource>Set<embeddedObject>CustomFieldAction.raml`
+
+   ```raml
+   #%RAML 1.0 DataType
+   (package): <Resource>
+   (docs-uri): <set by Tech Writers>
+   type: <Resource>UpdateAction
+   displayName: <Resource>Set<embeddedObject>CustomFieldAction
+   discriminatorValue: <id for the update action>
+   example: !include ../../../examples/<Resource>/<Resource>Set<embeddedObject>CustomFieldAction.json
+   properties:
+     name:
+       type: string
+     value?:
+       type: CustomFieldValue
+   ```
+
+   If the updated action offers more fields, like additional identifiers, also add those as properties.
+
+6. Add the type for the payload of the _Set Custom Type_ update action. For this, add a new file in the `/updates` subfolder of the specific resource named as: `<Resource>SetCustomTypeAction.raml`
+
+   If the custom field is added to an object that is embedded into a resource, the filename should look like this: `<Resource>Set<embeddedObject>CustomTypeAction.raml`
+
+   ```raml
+   #%RAML 1.0 DataType
+   (package): <Resource>
+   (docs-uri): <set by Tech Writers>
+   type: <Resource>UpdateAction
+   displayName: <Resource>Set<embeddedObject>CustomTypeAction
+   discriminatorValue: <id for the update action>
+   example: !include ../../../examples/<Resource>/<Resource>Set<embeddedObject>CustomTypeAction.json
+   properties:
+     type?:
+       type: TypeResourceIdentifier
+     fields?:
+       type: FieldContainer
+   ```
+
+   For Order update actions, you may have to add the respective update actions for Order Edits as well. The files are located in the `/order-edits/updates/` folder and their filenames are prefixed with `StagedOrder`, for example, _StagedOrderSetReturnItemCustomTypeAction.raml_.
+
+7. Add example files for update actions (according to the path in the `example` field).
+
+   For `setCustomField` action:
+
+   ```json
+   {
+     "action": "setCustomField",
+     "name": "ExamplaryStringTypeField",
+     "value": "TextString"
+   }
+   ```
+
+   For `setCustomType` action:
+
+   ```json
+   {
+     "action": "setCustomType",
+     "type": {
+       "id": "{{type-id}}",
+       "typeId": "type"
+     },
+     "fields": {
+       "examplaryStringTypeField": "TextString"
+     }
+   }
+   ```
+
+8. Add custom field examples to the examples for the resource and its draft type.
+
+   ```json
+     "custom": {
+       "type": {
+         "typeId": "type",
+         "id": "3ae9bcca-df23-443e-bd22-0c592f9694fa"
+       },
+       "fields": {
+         "offer_name": "SuperMax"
+       }
+     }
+   ```
+
+9. Add the resource type ID for the customizable resource or object to the enumeration in file `api-specs/api/types/type/ResourceTypeId.raml`, and the `(enumDescriptions)` for it in the same file.
+
+   ```yaml
+   enum:
+     - <resourceTypeID_1>
+     - <resourceTypeID_2>
+   (enumDescriptions):
+     <resourceTypeID_1>: |
+       [<Resource>](ctp:api:type:<Resource>)
+     <resourceTypeID_2>: |
+       [<Object>](ctp:api:type:Object) on [<Resource>](ctp:api:type:<Resource>)
+   ```
 
 #### Add a Scope
 
-In the case you need to add a new **scope**, these are the steps that have to be done:
+If you need to add a new **scope**, follow these steps:
 
-1. Go in the [/resources](./api/resources) folder and in the resource domain file like [categories.raml](./api/resources/categories.raml);
-2. In the http methods which require to have it add the scope in the **oauth_2_0** par, like this:
+1. Go in the [/resources](./api/resources) folder and in the resource domain file like [categories.raml](./api/resources/categories.raml).
+2. In the http methods which require to have it add the scope in the **oauth_2_0** part:
 
-```raml
-get:
-  securedBy:
-    [
-      oauth_2_0:
-        {
-          scopes:
-            [
-              'manage_project:{projectKey}',
-              'view_products:{projectKey}',
-              'view_categories:{projectKey}',
-            ],
-        },
-```
+   ```raml
+   get:
+     securedBy:
+       [
+         oauth_2_0:
+           {
+             scopes:
+               [
+                 'manage_project:{projectKey}',
+                 'view_products:{projectKey}',
+                 'view_categories:{projectKey}',
+               ],
+           },
+   ```
 
-3.  Then, you have to add the new **scope** in 4 files (see [/securitySchemes](#security-schemes) section to have more information about it):
+3. Add the new **scope** in 4 files (for more information, check [/securitySchemes](#security-schemes)):
 
-         - [oauth2.raml](./api/securitySchemes/oauth2.raml),
-         - [oauth2_password.raml](./api/securitySchemes/oauth2_password.raml),
-         - [oauth2_refresh.raml](./api/securitySchemes/oauth2_refresh.raml)
-         - [oauth2_anonymous.raml](./api/securitySchemes/oauth2_anonymous.raml)
+   - [oauth2.raml](./api/securitySchemes/oauth2.raml),
+   - [oauth2_password.raml](./api/securitySchemes/oauth2_password.raml),
+   - [oauth2_refresh.raml](./api/securitySchemes/oauth2_refresh.raml)
+   - [oauth2_anonymous.raml](./api/securitySchemes/oauth2_anonymous.raml)
 
-    Precisely, in the **settings/scopes** section like in the example below:
+   Precisely, in the **settings/scopes** section like in the example below:
 
-```raml
-settings:
-  authorizationUri: https://auth.europe-west1.gcp.commercetools.com/oauth/token
-  accessTokenUri: https://auth.europe-west1.gcp.commercetools.com/oauth/token
-  authorizationGrants: [client_credentials]
-  scopes:
-    - 'manage_project:{projectKey}'
-    - 'manage_products:{projectKey}'
-    - 'view_products:{projectKey}'
-    - 'manage_orders:{projectKey}'
-```
+   ```raml
+   settings:
+     authorizationUri: https://auth.europe-west1.gcp.commercetools.com/oauth/token
+     accessTokenUri: https://auth.europe-west1.gcp.commercetools.com/oauth/token
+     authorizationGrants: [client_credentials]
+     scopes:
+       - 'manage_project:{projectKey}'
+       - 'manage_products:{projectKey}'
+       - 'view_products:{projectKey}'
+       - 'manage_orders:{projectKey}'
+   ```
 
 ### Platform API folder structure
 
@@ -400,34 +512,30 @@ These are the steps about how to create and set a trait:
 
 - Define it in the [./api/api.raml](./api/api.raml), like here:
 
-```raml
-traits:
-  priceSelecting: !include traits/price-selecting.raml
-```
+  ```raml
+  traits:
+    priceSelecting: !include traits/price-selecting.raml
+  ```
 
 - After these steps, we can call the trait in the resource like here:
   [product-projections-search.raml](./api/resources/product-projections-search.raml).
 
-```raml
-get:
-  is:
-    - priceSelecting
-```
+  ```raml
+  get:
+    is:
+      - priceSelecting
+  ```
 
 #### /types
 
 In this folder, there is the detailed data definition of all the resources that we are passing through our APIs.
 In common in each of the file there are:
 
-**(package)**: the package name matches the folder name and often the domain name, which it lives in;
-
-**(docs-uri)**: the link of our documentation;
-
-**displayName**: the name of the resource data;
-
-**type**: it could be BaseResource, in case of the main resource data, or one of the type found in the common folder;
-
-**property**: the fields of the resource data.
+- **(package)**: the package name matches the folder name and often the domain name, which it lives in
+- **(docs-uri)**: the link of our documentation
+- **displayName**: the name of the resource data
+- **type**: it could be BaseResource, in case of the main resource data, or one of the type found in the common folder
+- **property**: the fields of the resource data
 
 The most of the folders are named like our endpoints, but with the hyphens, and in each of them there are:
 
@@ -481,7 +589,7 @@ properties:
     items: CartDiscountUpdateAction
 ```
 
-as well as in each Update actions as **type** which are in the [/updates](#--updates) folder:
+as well as in each Update actions as **type** which are in the [/updates](#updates) folder:
 
 ```raml
 (package): CartDiscount
@@ -554,10 +662,10 @@ Every new file created will be add automatically in this file.
 
 The api.raml file contains the base of our APIs and the definition of everything mentioned before, such as:
 
-- the _baseUri_ is defined in base of the regions which are specified in the _baseUriParameters_;
-- the _securitySchemes_: the path where we can find the default security scheme applied on all API endpoint (see [/securitySchemes](#security-schemes));
-- the _annotationTypes_: where the annotations are defined (see [annotations.raml](#--annotationsraml));
-- the _types_: where the types are defined (see [types.raml](#--typesraml));
+- the _baseUri_ is defined in base of the Regions which are specified in the _baseUriParameters_.
+- the _securitySchemes_: the path where we can find the default security scheme applied on all API endpoints (see [/securitySchemes](#security-schemes)).
+- the _annotationTypes_: where the annotations are defined (see [annotations.raml](#annotationsraml)).
+- the _types_: where the types are defined (see [types.raml](#typesraml)).
 
 ### Validator Rules
 
@@ -596,9 +704,9 @@ This means that the hyphens are not allowed on the property name level.
 
 #### DatetimeRule
 
-In the case the property type is **DateTime** or **TimeOnly** or **DateOnly**, this rule checks the name of the property:
+If the property type is **DateTime** or **TimeOnly** or **DateOnly**, this rule checks the name of the property:
 
-- it has to finish with **At** or **From** or **To**;
+- it has to finish with **At** or **From** or **To**.
 - in case of date range, it has to have a property which finishes with **From** and a property which finishes with **To**.
 
 ```raml
@@ -791,8 +899,8 @@ queryParameters:
 
 About this rule, this is how to define a **Query Parameter** with a Placeholder annotation:
 
-- If the query parameter start and end with _"/"_ it has to have a **(placeholderParam)** annotation;
-- The Placeholder object has to have declared the fields: _paramName_, _template_ and _placeholder_;
+- If the query parameter starts and ends with _"/"_ it must have a **(placeholderParam)** annotation.
+- The Placeholder object must have declared the fields: _paramName_, _template_ and _placeholder_.
 
 ```raml
 queryParameters:
