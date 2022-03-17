@@ -702,6 +702,12 @@ input AttributeTypeDraft {
   ltext: SimpleAttributeTypeDraft
 }
 
+"AuthenticationMode values. BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+enum AuthenticationMode {
+  ExternalAuth
+  Password
+}
+
 type AuthorizationHeader implements HttpDestinationAuthentication {
   headerValue: String!
   type: String!
@@ -2142,7 +2148,7 @@ type CustomSuggestTokenizerProductSearch implements SuggestTokenizerProductSearc
 type Customer implements Versioned {
   customerNumber: String
   email: String!
-  password: String!
+  password: String
   addresses: [Address!]!
   defaultShippingAddressId: String
   defaultBillingAddressId: String
@@ -2152,6 +2158,7 @@ type Customer implements Versioned {
   customerGroupRef: Reference
   externalId: String
   key: String
+  authenticationMode: AuthenticationMode
   firstName: String
   lastName: String
   middleName: String
@@ -2383,7 +2390,7 @@ input CustomerSignMeInDraft {
 
 input CustomerSignMeUpDraft {
   email: String!
-  password: String!
+  password: String
   firstName: String
   lastName: String
   middleName: String
@@ -2413,7 +2420,7 @@ input CustomerSignMeUpDraft {
 
 input CustomerSignUpDraft {
   email: String!
-  password: String!
+  password: String
   firstName: String
   lastName: String
   middleName: String
@@ -2448,6 +2455,9 @@ input CustomerSignUpDraft {
   customerGroup: ResourceIdentifierInput
   isEmailVerified: Boolean
   anonymousId: String
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  authenticationMode: AuthenticationMode
 }
 
 type CustomerTitleSet implements MessagePayload {
@@ -2469,6 +2479,7 @@ input CustomerUpdateAction {
   setCompanyName: SetCustomerCompanyName
   setAddressCustomField: SetCustomerAddressCustomField
   setAddressCustomType: SetCustomerAddressCustomType
+  setAuthenticationMode: SetCustomerAuthenticationMode
   setCustomField: SetCustomerCustomField
   setCustomType: SetCustomerCustomType
   setCustomerGroup: SetCustomerGroup
@@ -7775,6 +7786,11 @@ input SetCustomerAddressCustomType {
   typeKey: String
   typeId: String
   addressId: String!
+}
+
+input SetCustomerAuthenticationMode {
+  authMode: AuthenticationMode!
+  password: String
 }
 
 input SetCustomerCompanyName {
