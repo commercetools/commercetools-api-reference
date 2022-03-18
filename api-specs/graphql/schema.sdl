@@ -771,7 +771,7 @@ type BooleanType implements FieldType {
 }
 
 "A shopping cart holds product variants and can be ordered. Each cart either belongs to a registered customer or is an anonymous cart."
-type Cart implements Versioned {
+type Cart implements Versioned & ReferenceExpandable {
   customerId: String
   customer: Customer
   customerEmail: String
@@ -830,7 +830,7 @@ type CartCreated implements MessagePayload {
 }
 
 "\nCart discounts are recalculated every time LineItems or CustomLineItems are added or removed from the Cart or an order is created from the cart.\n\nThe number of active cart discounts that do not require a discount code (isActive=true and requiresDiscountCode=false) is limited to 100.\n      "
-type CartDiscount implements Versioned {
+type CartDiscount implements Versioned & ReferenceExpandable {
   cartPredicate: String!
   validFrom: DateTime
   validUntil: DateTime
@@ -1101,7 +1101,7 @@ input CartsConfigurationInput {
   deleteDaysAfterLastModification: Int
 }
 
-type Category implements Versioned {
+type Category implements Versioned & ReferenceExpandable {
   id: String!
   key: String
   version: Long!
@@ -1755,7 +1755,7 @@ input ChangeZoneName {
   name: String!
 }
 
-type Channel implements Versioned & ReviewTarget {
+type Channel implements Versioned & ReviewTarget & ReferenceExpandable {
   id: String!
   version: Long!
   key: String!
@@ -2090,7 +2090,7 @@ input CustomLineItemsTargetInput {
   predicate: String!
 }
 
-type CustomObject implements Versioned {
+type CustomObject implements Versioned & ReferenceExpandable {
   container: String!
   key: String!
   value: Json!
@@ -2145,7 +2145,7 @@ type CustomSuggestTokenizerProductSearch implements SuggestTokenizerProductSearc
 }
 
 "A customer is a person purchasing products. Carts, Orders and Reviews can be associated to a customer."
-type Customer implements Versioned {
+type Customer implements Versioned & ReferenceExpandable {
   customerNumber: String
   email: String!
   password: String
@@ -2250,7 +2250,7 @@ type CustomerFirstNameSet implements MessagePayload {
 }
 
 "A customer can be a member in a customer group (e.g. reseller, gold member). A customer group can be used in price calculations with special prices being assigned to certain customer groups."
-type CustomerGroup implements Versioned {
+type CustomerGroup implements Versioned & ReferenceExpandable {
   id: String!
   version: Long!
   name: String!
@@ -2613,7 +2613,7 @@ type DimensionsProductSearch {
 }
 
 "With discount codes it is possible to give specific cart discounts to an eligible amount of users. They are defined by a string value which can be added to a cart so that specific cart discounts can be applied to the cart."
-type DiscountCode implements Versioned {
+type DiscountCode implements Versioned & ReferenceExpandable {
   code: String!
   isActive: Boolean!
   maxApplications: Long
@@ -2827,7 +2827,7 @@ input ExistsFilterInput {
   path: String!
 }
 
-type Extension implements Versioned {
+type Extension implements Versioned & ReferenceExpandable {
   key: String
   destination: ExtensionDestination!
   triggers: [Trigger!]!
@@ -3277,7 +3277,7 @@ type InterfaceInteractionsRawResult {
 }
 
 "Inventory allows you to track stock quantity per SKU and optionally per supply channel"
-type InventoryEntry implements Versioned {
+type InventoryEntry implements Versioned & ReferenceExpandable {
   sku: String!
   quantityOnStock: Long!
   availableQuantity: Long!
@@ -3760,7 +3760,7 @@ interface MeQueryInterface {
   shoppingLists(where: String, sort: [String!], limit: Int, offset: Int): ShoppingListQueryResult!
 }
 
-type Message implements Versioned {
+type Message implements Versioned & ReferenceExpandable {
   id: String!
   type: String!
   sequenceNumber: Long!
@@ -4704,7 +4704,7 @@ type NumberType implements FieldType {
 An order can be created from a cart, usually after a checkout process has been completed.
 [documentation](https://docs.commercetools.com/http-api-projects-orders.html)
 """
-type Order implements Versioned {
+type Order implements Versioned & ReferenceExpandable {
   customerId: String
   customer: Customer
   customerEmail: String
@@ -5419,7 +5419,7 @@ input PriceSelectorInput {
   date: DateTime
 }
 
-type Product implements Versioned & ReviewTarget {
+type Product implements Versioned & ReviewTarget & ReferenceExpandable {
   id: String!
   key: String
   version: Long!
@@ -5574,7 +5574,7 @@ type ProductDeleted implements MessagePayload {
 }
 
 "\nA product price can be discounted in two ways:\n\n* with a relative or an absolute product discount, which will be automatically applied to all prices in a product that match a discount predicate.\n  A relative discount reduces the matching price by a fraction (for example 10 % off). An absolute discount reduces the matching price by a fixed amount (for example 10\u20AC off). If more than one product discount matches a price, the discount sort order determines which one will be applied.\n* with an external product discount, which can then be used to explicitly set a discounted value on a particular product price.\n\nThe discounted price is stored in the discounted field of the Product Price.\n\nNote that when a discount is created, updated or removed it can take up to 15 minutes to update all the prices with the discounts.\n\nThe maximum number of ProductDiscounts that can be active at the same time is **200**.\n      "
-type ProductDiscount implements Versioned {
+type ProductDiscount implements Versioned & ReferenceExpandable {
   predicate: String!
   validFrom: DateTime
   validUntil: DateTime
@@ -6158,7 +6158,7 @@ type ProductStateTransition implements MessagePayload {
   type: String!
 }
 
-type ProductTypeDefinition implements Versioned {
+type ProductTypeDefinition implements Versioned & ReferenceExpandable {
   key: String
   name: String!
   description: String!
@@ -6736,6 +6736,12 @@ input RangeFilterInput {
 type RawCustomField {
   name: String!
   value: Json!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  referencedResource: ReferenceExpandable
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  referencedResourceSet: [ReferenceExpandable!]!
 }
 
 type RawProductAttribute {
@@ -6776,6 +6782,10 @@ type ReferenceAttribute implements Attribute {
 type ReferenceAttributeDefinitionType implements AttributeDefinitionType {
   referenceTypeId: String!
   name: String!
+}
+
+interface ReferenceExpandable {
+  id: String!
 }
 
 type ReferenceField implements CustomField {
@@ -7139,7 +7149,7 @@ input RevertStagedVariantChanges {
   variantId: Int!
 }
 
-type Review implements Versioned {
+type Review implements Versioned & ReferenceExpandable {
   key: String
   uniquenessValue: String
   locale: Locale
@@ -9355,7 +9365,7 @@ type ShippingInfo {
   taxCategoryRef: Reference
 }
 
-type ShippingMethod implements Versioned {
+type ShippingMethod implements Versioned & ReferenceExpandable {
   name: String!
   zoneRates: [ZoneRate!]!
   isDefault: Boolean!
@@ -9562,7 +9572,7 @@ input ShippingTargetInput {
   dummy: String
 }
 
-type ShoppingList implements Versioned {
+type ShoppingList implements Versioned & ReferenceExpandable {
   key: String
   name(
     "String is defined for different locales. This argument specifies the desired locale."
@@ -9830,7 +9840,7 @@ interface StagedOrderUpdateActionOutput {
 }
 
 "[State](https://docs.commercetools.com/api/projects/states)"
-type State implements Versioned {
+type State implements Versioned & ReferenceExpandable {
   id: String!
   version: Long!
   key: String
@@ -9906,7 +9916,7 @@ input StateUpdateAction {
 }
 
 "Stores allow defining different contexts for a project."
-type Store implements Versioned {
+type Store implements Versioned & ReferenceExpandable {
   id: String!
   version: Long!
   key: String!
@@ -10104,7 +10114,7 @@ enum TaxCalculationMode {
 }
 
 "Tax Categories define how products are to be taxed in different countries."
-type TaxCategory implements Versioned {
+type TaxCategory implements Versioned & ReferenceExpandable {
   name: String!
   description: String
   rates: [TaxRate!]!
@@ -10483,7 +10493,7 @@ input TriggerInput {
 }
 
 "Types define the structure of custom fields which can be attached to different entities throughout the platform."
-type TypeDefinition implements Versioned {
+type TypeDefinition implements Versioned & ReferenceExpandable {
   key: String!
   name(
     "String is defined for different locales. This argument specifies the desired locale."
@@ -10661,7 +10671,7 @@ type WhitespaceSuggestTokenizerProductSearch implements SuggestTokenizerProductS
 scalar YearMonth
 
 "Zones allow defining ShippingRates for specific Locations."
-type Zone implements Versioned {
+type Zone implements Versioned & ReferenceExpandable {
   name: String!
   key: String
   description: String
