@@ -874,6 +874,189 @@ uriParameters:
             body:
               application/json:
                 example: !include ../examples/shopping-list.example.json
+  get:
+    displayName: Get my customer details in a store
+    is:
+      - sortable:
+          sortExample: createdAt asc
+      - paging
+      - expandable
+      - query:
+          whereExample: 'customerEmail = "foo@bar.com"'
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_profile:{projectKey}',
+                'manage_my_profile:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            type: Customer
+  post:
+    displayName: Update my customer in a store
+    description: Update my customer in a store
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_profile:{projectKey}',
+                'manage_my_profile:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        example: !include ../examples/customer-update.example.json
+        type: MyCustomerUpdate
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customer-update-response.example.json
+            type: Customer
+  delete:
+    displayName: Delete my Customer in a store
+    description: Delete my Customer in a store
+    is:
+      - versioned
+      - conflicting
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_profile:{projectKey}',
+                'manage_my_profile:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/customer.example.json
+            type: Customer
+  /email/confirm:
+    type: base
+    post:
+      displayName: Verify my Customer's Email in a store
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_profile:{projectKey}',
+                  'manage_my_profile:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+  /password:
+    type: base
+    post:
+      displayName: Change my customers password in a store
+      is:
+        - conflicting
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_profile:{projectKey}',
+                  'manage_my_profile:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+      body:
+        application/json:
+          type: MyCustomerChangePassword
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/customer.example.json
+              type: Customer
+    /reset:
+      type: base
+      post:
+        displayName: Reset my Customer's Password in a store
+        securedBy:
+          [
+            oauth_2_0:
+              {
+                scopes:
+                  [
+                    'manage_my_profile:{projectKey}',
+                    'manage_my_profile:{projectKey}:{storeKey}',
+                  ],
+              },
+          ]
+        body:
+          application/json:
+            type: MyCustomerResetPassword
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/customer.example.json
+                type: Customer
+  /signup:
+    type: base
+    post:
+      displayName: Signup my customer in a store
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_profile:{projectKey}',
+                  'manage_my_profile:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+      body:
+        application/json:
+          type: MyCustomerDraft
+      responses:
+        201:
+          body:
+            application/json:
+              type: CustomerSignInResult
+  /login:
+    type: base
+    post:
+      displayName: Authenticate my Customer (Sign In) in a store
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_profile:{projectKey}',
+                  'manage_my_profile:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+      body:
+        application/json:
+          type: CustomerSignin
+      responses:
+        200:
+          body:
+            application/json:
+              type: CustomerSignInResult
 /customers:
   type:
     baseDomain:
