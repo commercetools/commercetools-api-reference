@@ -1682,6 +1682,10 @@ type ChangeStagedOrderTaxRoundingModeOutput implements StagedOrderUpdateActionOu
   taxRoundingMode: RoundingMode!
 }
 
+input ChangeStandalonePriceValue {
+  value: BaseMoneyInput!
+}
+
 input ChangeStateInitial {
   initial: Boolean!
 }
@@ -1915,6 +1919,20 @@ input CreateProductSelectionDraft {
   key: String
   name: [LocalizedStringItemInputType!]!
   custom: CustomFieldsDraft
+}
+
+input CreateStandalonePrice {
+  key: String
+  sku: String!
+  value: BaseMoneyInput!
+  country: Country
+  customerGroup: ResourceIdentifierInput
+  channel: ResourceIdentifierInput
+  validFrom: DateTime
+  validUntil: DateTime
+  tiers: [ProductPriceTierInput!] = []
+  custom: StandalonePriceCustomField
+  discounted: DiscountedProductPriceValueInput
 }
 
 input CreateStore {
@@ -4511,6 +4529,21 @@ type Mutation {
     key: String): Extension
   createApiClient(draft: CreateApiClient!): APIClientWithSecret
   deleteApiClient(id: String!): APIClientWithoutSecret
+  createStandalonePrice(draft: CreateStandalonePrice!): StandalonePrice
+  updateStandalonePrice(version: Long!, actions: [StandalonePriceUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): StandalonePrice
+  deleteStandalonePrice(version: Long!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): StandalonePrice
 }
 
 input MyCartDraft {
@@ -5429,6 +5462,15 @@ input PriceFunctionDraft {
   currencyCode: Currency!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+enum PriceMode {
+  "The platform looks up prices from Standalone Prices, stored separately from Products."
+  Standalone
+
+  "The platform looks up prices from the `prices` field of the ProductVariant inside a Product."
+  Embedded
+}
+
 input PriceSelectorInput {
   currency: Currency!
   country: Country
@@ -5451,6 +5493,7 @@ type Product implements Versioned & ReviewTarget & ReferenceExpandable {
   lastModifiedAt: DateTime!
   stateRef: Reference
   state: State
+  priceMode: PriceMode
   taxCategoryRef: Reference
   taxCategory: TaxCategory
   reviewRatingStatistics: ReviewRatingStatistics
@@ -5695,6 +5738,7 @@ input ProductDraft {
   variants: [ProductVariantInput!] = []
   taxCategory: ResourceIdentifierInput
   state: ResourceIdentifierInput
+  priceMode: PriceMode
   searchKeywords: [SearchKeywordInput!]
   publish: Boolean
 }
@@ -6301,6 +6345,7 @@ input ProductUpdateAction {
   setMetaTitle: SetProductMetaTitle
   setProductPriceCustomField: SetProductPriceCustomField
   setProductPriceCustomType: SetProductPriceCustomType
+  setPriceMode: SetProductPriceMode
   setPrices: SetProductPrices
   setSku: SetProductSku
   setTaxCategory: SetProductTaxCategory
@@ -6687,6 +6732,17 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
 
     "Deprecated: please use 'markMatchingVariants'."
     markMatchingVariant: Boolean = false, storeProjection: String, localeProjection: [Locale!], staged: Boolean = false): ProductProjectionSearchResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  standalonePrice(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): StandalonePrice
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  standalonePrices(where: String, sort: [String!], limit: Int, offset: Int): StandalonePriceQueryResult!
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
@@ -8462,6 +8518,10 @@ input SetProductPriceCustomType {
   typeId: String
 }
 
+input SetProductPriceMode {
+  priceMode: PriceMode
+}
+
 input SetProductPrices {
   variantId: Int
   sku: String
@@ -9282,6 +9342,11 @@ type SetStagedOrderStoreOutput implements StagedOrderUpdateActionOutput {
   storeResId: ResourceIdentifier
 }
 
+input SetStandalonePriceCustomFields {
+  name: String!
+  value: String
+}
+
 input SetStateDescription {
   description: [LocalizedStringItemInputType!]
 }
@@ -9859,6 +9924,51 @@ input StagedOrderUpdateAction {
 
 interface StagedOrderUpdateActionOutput {
   type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type StandalonePrice implements Versioned {
+  id: String!
+  version: Long!
+  key: String
+  sku: String!
+  value: BaseMoney!
+  country: Country
+  customerGroupRef: Reference
+  channelRef: Reference
+  validFrom: DateTime
+  validUntil: DateTime
+  tiers: [ProductPriceTier!]
+  discounted: DiscountedProductPriceValue
+  custom: CustomFieldsType
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+input StandalonePriceCustomField {
+  typeId: String
+  typeKey: String
+  type: ResourceIdentifierInput
+  fields: CustomFieldsDraft!
+}
+
+type StandalonePriceQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  exists: Boolean!
+  results: [StandalonePrice!]!
+}
+
+input StandalonePriceUpdateAction {
+  changeValue: ChangeStandalonePriceValue
+  setCustomType: CustomFieldsDraft
+  setCustomField: SetStandalonePriceCustomFields
 }
 
 "[State](https://docs.commercetools.com/api/projects/states)"
