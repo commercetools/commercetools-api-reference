@@ -7,7 +7,7 @@ install_deps: codegen_install composer_install yarn_install
 
 lint: check_markdown format_raml validate_raml
 
-generate: update_types generate_oas
+generate: generate_oas
 
 oas_convert: oas_convert3
 
@@ -20,19 +20,16 @@ composer_install:
 yarn_install:
 	yarn install
 
-update_types: composer_install
-	bin/types.php && bin/generate-updates.php && bin/types.php
-
 check_markdown: yarn_install
 	node bin/explode-raml.js
 
-lint_raml: yarn_install update_types
+lint_raml: yarn_install
 	yarn run lint:raml
 
-format_raml: yarn_install update_types
+format_raml: yarn_install
 	yarn run format:raml
 
-validate_raml: codegen_install update_types format_raml
+validate_raml: codegen_install format_raml
 	rmf-codegen verify api-specs/api/api.raml
 
 generate_oas: codegen_install format_raml
