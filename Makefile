@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 CHANGES_PENDING := `git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^ || true`
 
-build: install_deps generate lint oas_convert cleanup
+build: install_deps generate lint cleanup
 
 install_deps: codegen_install composer_install yarn_install
 
@@ -55,5 +55,5 @@ oas_convert2: lint raml_doc_convert
 	yarn run swagger-cli validate api.swagger.json
 	rm api.swagger.jsonbak
 
-cleanup: oas_convert
+cleanup:
 	rm -rf tmpdoc
