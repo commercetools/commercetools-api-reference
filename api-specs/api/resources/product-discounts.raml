@@ -36,6 +36,9 @@ post:
   type: base
   post:
     displayName: Get matching product discounts
+    description: |
+      This endpoint can be used to simulate which Product Discounts would be applied if a specified Product Variant had a specified Price.
+      Given Product and Product Variant IDs and a Price, this endpoint will return the [ProductDiscount](ctp:api:type:ProductDiscount) that would have been applied to that Price.
     securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
     body:
       application/json:
@@ -47,12 +50,9 @@ post:
             "staged": false,
             "price": {
               "value": {
-                "type": "centPrecision",
                 "centAmount": 100,
-                "currencyCode": "EUR",
-                "fractionDigits": 2
-              },
-            "id": "2474c2c3-d424-49af-b90a-b71bc74cf51b"
+                "currencyCode": "EUR"
+              }
             }
           }
     responses:
@@ -61,6 +61,11 @@ post:
           application/json:
             type: ProductDiscount
             example: !include ../examples/product-discount.example.json
+      404:
+        body:
+          application/json:
+            type: NoMatchingProductDiscountFoundError
+            example: !include ../examples/no-matching-product-discounts-found-error.example.json
 /key={key}:
   (methodName): withKey
   type:

@@ -1,43 +1,49 @@
 #%RAML 1.0 DataType
 (package): ProductDiscount
-(docs-uri): https://docs.commercetools.com/http-api-projects-productDiscounts.html#productdiscountdraft
+(docs-uri): https://docs.commercetools.com/api/projects/productDiscounts#productdiscountdraft
 type: object
 displayName: ProductDiscountDraft
+example: !include ../../examples/product-discount-create.example.json
 properties:
   name:
     type: LocalizedString
-    description: ''
+    description: |
+      Name of the ProductDiscount.
   key?:
     type: string
-    description: |-
+    description: |
       User-defined unique identifier for the ProductDiscount.
     pattern: ^[A-Za-z0-9_-]+$
     minLength: 2
     maxLength: 256
   description?:
     type: LocalizedString
-    description: ''
+    description: |
+      Description of the ProductDiscount.
   value:
     type: ProductDiscountValueDraft
-    description: ''
+    description: |
+      Type of Discount and its corresponding value.
   predicate:
     type: string
-    description: A valid ProductDiscount Predicate.
+    description: |
+      Valid [ProductDiscount predicate](/../api/projects/predicates#productdiscount-predicates).
   sortOrder:
     type: string
-    description: |-
-      The string must contain a decimal number between 0 and 1.
-      A discount with greater sortOrder is prioritized higher than a discount with lower sortOrder.
+    description: |
+      Decimal value between 0 and 1 (passed as String literal) that defines the order of ProductDiscounts to apply in case more than one is applicable and active. A ProductDiscount with a higher `sortOrder` is prioritized.
+      The value must be **unique** among all ProductDiscounts in the [Project](ctp:api:type:Project).
   isActive:
     type: boolean
-    description: If set to `true` the discount will be applied to product prices.
+    description: |
+      Set to `true` to activate the ProductDiscount, set to `false` to deactivate it (even though the `predicate` matches).
   validFrom?:
     type: datetime
-    description: |-
-      The time from which the discount should be effective.
-      Please take Eventual Consistency into account for calculated product discount values.
+    description: |
+      Date and time (UTC) from which the Discount is effective.
+      Take [Eventual Consistency](/../api/general-concepts#eventual-consistency) into account for calculated discount values.
   validUntil?:
     type: datetime
-    description: |-
-      The time from which the discount should be effective.
-      Please take Eventual Consistency into account for calculated undiscounted values.
+    description: |
+      Date and time (UTC) until which the Discount is effective.
+      Take [Eventual Consistency](/../api/general-concepts#eventual-consistency) into account for calculated undiscounted values.
