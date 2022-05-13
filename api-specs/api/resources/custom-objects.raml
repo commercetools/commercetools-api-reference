@@ -7,6 +7,7 @@ type:
     sortExample: createdAt asc
 description: Store custom JSON values.
 get:
+  (markDeprecated): true
   (java-implements):
     'com.commercetools.api.models.PagedQueryResourceRequest<ByProjectKeyCustomObjectsGet,
     com.commercetools.api.models.custom_object.CustomObjectPagedQueryResponse>'
@@ -19,39 +20,44 @@ get:
           - 'view_products:{projectKey}'
           - 'view_orders:{projectKey}'
           - 'view_customers:{projectKey}'
+          - 'view_key_value_documents:{projectKey}'
   description: |
-    The query endpoint allows to retrieve custom objects in a specific container or all custom objects.
-    For performance reasons, it is highly advisable to query only for custom objects in a container by using
-    the container field in the where predicate.
+    For performance reasons, it is highly advisable to query for Custom Objects in a container by using the `container` field in the `where` predicate.
   responses:
     200:
       body:
         application/json:
           example: !include ../examples/custom-objects.example.json
 post:
+  is:
+    - expandable
   securedBy:
     - oauth_2_0:
         scopes:
           - 'manage_products:{projectKey}'
           - 'manage_orders:{projectKey}'
           - 'manage_customers:{projectKey}'
+          - 'manage_key_value_documents:{projectKey}'
   description: |
-    Creates a new custom object or updates an existing custom object.
-    If an object with the given container/key exists,
-    the object will be replaced with the new value and the version is incremented.
-    If the request contains a version and an object with the given container/key exists then the version
-    must match the version of the existing object. Concurrent updates for the same custom object still can result
-    in a Conflict (409) even if the version is not provided.
-    Fields with null values will not be saved.
+    If an object with the given container/key exists, the object will be replaced with the new value and the version is incremented.
+    If the request contains a version and an object with the given container/key, then the version must match the version of the existing object. Concurrent updates for the same Custom Object can result in a [409 Conflict](/../api/errors#409-conflict) even if the version is not provided.
+
+    Fields with `null` values will **not be saved**.
   body:
     application/json:
       example: !include ../examples/custom-object-create.example.json
+  queryParameters:
+    expand:
+      type: Expansion[]
+      required: false
+      description: |
+        Expands a `value` of type [Reference](ctp:api:type:Reference).
+        In case the referenced object does not exist, the API returns the non-expanded reference.
   responses:
     200:
       body:
         application/json:
           type: CustomObject
-          example: !include ../examples/custom-object.example.json
     201:
       body:
         application/json:
@@ -61,20 +67,30 @@ post:
   uriParameters:
     container:
       type: string
+      description: |
+        `container` of the [CustomObject](ctp:api:type:CustomObject).
     key:
       type: string
+      description: |
+        `key` of the [CustomObject](ctp:api:type:CustomObject).
   type: base
   get:
+    is:
+      - expandable
     securedBy:
       - oauth_2_0:
           scopes:
             - 'view_products:{projectKey}'
             - 'view_orders:{projectKey}'
             - 'view_customers:{projectKey}'
-    is:
-      - expandable
-    displayName: Get CustomObject by container and key
-    description: Get CustomObject by container and key
+            - 'view_key_value_documents:{projectKey}'
+    queryParameters:
+      expand:
+        type: Expansion[]
+        required: false
+        description: |
+          Expands a `value` of type [Reference](ctp:api:type:Reference).
+          In case the referenced object does not exist, the API returns the non-expanded reference.
     responses:
       200:
         body:
@@ -86,18 +102,22 @@ post:
       - dataErasure
       - versioned
       - conflicting
-      - expandable
-    displayName: Delete CustomObject by container and key
-    description: Delete CustomObject by container and key
     securedBy:
       - oauth_2_0:
           scopes:
             - 'manage_products:{projectKey}'
             - 'manage_orders:{projectKey}'
             - 'manage_customers:{projectKey}'
+            - 'manage_key_value_documents:{projectKey}'
     queryParameters:
       version:
         required: false
+      expand:
+        type: Expansion[]
+        required: false
+        description: |
+          Expands a `value` of type [Reference](ctp:api:type:Reference).
+          In case the referenced object does not exist, the API returns the non-expanded reference.
     responses:
       200:
         body:
@@ -117,9 +137,30 @@ post:
             - 'view_products:{projectKey}'
             - 'view_orders:{projectKey}'
             - 'view_customers:{projectKey}'
+            - 'view_key_value_documents:{projectKey}'
     is:
       - query:
           whereExample: <<whereExample>>
+      - paging
+      - expandable
+      - sortable
+    queryParameters:
+      sort:
+        required: false
+        description: |
+          Query results can be sorted by `container`, `key`, `createdAt`, and `lastModifiedAt`.
+      where:
+        required: false
+        description: |
+          `id`, `key`, `version`, `createdAt`, and `lastModifiedAt` can be used as predicate.
+          The `field` value can also be used as predicate but is not checked for validity.
+          For example, you can use any predicates: `value(aValue=true)` or `value(myObject(myValue="abc"))`.
+      expand:
+        type: Expansion[]
+        required: false
+        description: |
+          Expands a `value` of type [Reference](ctp:api:type:Reference).
+          In case the referenced object does not exist, the API returns the non-expanded reference.
     responses:
       200:
         body:
