@@ -1,54 +1,62 @@
 #%RAML 1.0 DataType
 (package): DiscountCode
-(docs-uri): https://docs.commercetools.com/http-api-projects-discountCodes.html#discountcodedraft
+(docs-uri): https://docs.commercetools.com/api/projects/discountCodes#discountcodedraft
 type: object
 displayName: DiscountCodeDraft
 (java-extends): 'com.commercetools.api.models.CustomizableDraft<DiscountCodeDraft>'
 properties:
   name?:
     type: LocalizedString
-    description: ''
+    description: |
+      Name of the DiscountCode.
   description?:
     type: LocalizedString
-    description: ''
+    description: |
+      Description of the DiscountCode.
   code:
     type: string
-    description: |-
-      User-defined unique identifier for the DiscountCode.
-      [Add it to a Cart](/../api/projects/carts#add-discountcode) to enable the related CartDiscounts in that Cart.
+    description: |
+      User-defined unique identifier for the DiscountCode that can be [added to the Cart](/../api/projects/carts#add-discountcode) to apply the related [CartDiscounts](ctp:api:type:CartDiscount).
+      It cannot be modified after the DiscountCode is created.
   cartDiscounts:
-    description: |-
-      The referenced matching cart discounts can be applied to the cart once the discount code is added.
-      The number of cart discounts in a discount code is limited to **10**.
     type: CartDiscountResourceIdentifier[]
+    description: |
+      Specify the CartDiscounts the Platform applies when you add the DiscountCode to the Cart.
+    minItems: 1
+    maxItems: 10
   cartPredicate?:
-    description: The discount code can only be applied to carts that match this predicate.
     type: string
+    description: |
+      DiscountCode can only be applied to Carts that match this predicate.
   isActive?:
     type: boolean
-    description: ''
+    description: |
+      Only active DiscountCodes can be applied to the Cart.
+    default: true
   maxApplications?:
     type: number
     format: int64
-    description: ''
+    description: |
+      Number of times the DiscountCode can be applied.
   maxApplicationsPerCustomer?:
     type: number
     format: int64
-    description: ''
+    description: |
+      Number of times the DiscountCode can be applied per Customer.
   custom?:
     type: CustomFieldsDraft
-    description: ''
+    description: |
+      Custom Fields for the DiscountCode.
   groups?:
     type: array
     items: string
-    description: The groups to which this discount code shall belong to.
+    description: |
+      Groups to which the DiscountCode will belong to.
   validFrom?:
     type: datetime
-    description: |-
-      The time from which the discount can be applied on a cart.
-      Before that time the code is invalid.
+    description: |
+      Date and time (UTC) from which the DiscountCode is effective. Must be earlier than `validUntil`.
   validUntil?:
     type: datetime
-    description: |-
-      The time until the discount can be applied on a cart.
-      After that time the code is invalid.
+    description: |
+      Date and time (UTC) until which the DiscountCode is effective. Must be later than `validFrom`.
