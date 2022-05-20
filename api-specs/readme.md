@@ -1,29 +1,51 @@
-# RAML Update Guideline
+# RAML update guideline
 
 Our APIs have to follow our
 [API Design Guideline](https://github.com/commercetools/api-design-guidelines/blob/master/guidelines.md) to maintain a consistent developer experience.
 
-## Table of Contents
+## Table of contents
 
 - How to:
-  - [Create a new Resources definition](#create-a-new-resources-definition)
-    - [Create a Query Endpoint](#create-a-query-endpoint)
-    - [Create a Create Endpoint](#create-a-create-endpoint)
-    - [Create an Update Endpoint](#create-an-update-endpoint)
-    - [Create a Delete Endpoint](#create-a-delete-endpoint)
-  - [Create a Method](#create-a-method)
-  - [Create a Type](#create-a-type)
-  - [Create a Message](#create-a-message)
-  - [Add a Field](#add-a-field)
-  - [Add a Custom Field](#add-a-custom-field)
-  - [Add a Scope](#add-a-scope)
+  - [Create a new resources definition](#create-a-new-resources-definition)
+    - [Create a query endpoint](#create-a-query-endpoint)
+    - [Create a create endpoint](#create-a-create-endpoint)
+    - [Create an update endpoint](#create-an-update-endpoint)
+    - [Create a delete endpoint](#create-a-delete-endpoint)
+    - [Create an endpoint for InStore](#create-an-endpoint-for-the-instore)
+  - [Create a method](#create-a-method)
+  - [Create a type](#create-a-type)
+  - [Create a message](#create-a-message)
+  - [Add a field](#add-a-field)
+  - [Add a custom field](#add-a-custom-field)
+  - [Add a scope](#add-a-scope)
+  - [Use discriminator and discriminatorValue](#use-discriminator-and-discriminatorvalue)
+  - [Introduce a new annotation](#introduce-a-new-annotation)
+    - [(package)](#package)
+    - [(identifier)](#identifier)
+    - [(elementIdentifier)](#elementidentifier)
+    - [(placeholderParam)](#placeholderparam)
+    - [(docs-uri)](#docs-uri)
+    - [(updateType)](#updatetype)
+    - [(updateable)](#updateable)
+    - [(deleteable)](#deleteable)
+    - [(createable)](#createable)
+    - [(methodName)](#methodname)
+    - [(asMap)](#asmap)
+    - [(deprecated)](#deprecated)
+    - [(markDeprecated)](#markdeprecated)
+    - [(actionType)](#actiontype)
+    - [(java-implements) or (csharp-implements)](#java-implements-or-csharp-implements)
+    - [(java-extends) or (csharp-extends)](#java-extends-or-csharp-extends)
+    - [(beta)](#beta)
+    - [(sdkBaseUri)](#sdkbaseuri)
+    - [(enumDescriptions)](#enumdescriptions)
 - Platform API folder structure
   - [/examples](#examples)
   - [/resources](#resources)
   - [/securitySchemes](#securityschemes)
   - [/traits](#traits)
   - [/types](#types)
-    - [Resource Data with the related Draft](#resource-data-with-the-related-draft)
+    - [Resource data with the related Draft](#resource-data-with-the-related-draft)
     - [Paged Query Response](#paged-query-response)
     - [Update and Update Action](#update-and-update-action)
     - [/updates](#updates)
@@ -60,7 +82,7 @@ Our APIs have to follow our
 
 ### How to:
 
-#### Create a new Resources definition
+#### Create a new resources definition
 
 1. Go to the [api.raml](./api/api.raml) file and add at the end preferably, like this:
 
@@ -68,18 +90,18 @@ Our APIs have to follow our
    /stores: !include resources/stores.raml
    ```
 
-2. In the [/resources](./api/resources) folder, add a new file called with the name of the resource definition. This is just an example about the content:
-   [stores.raml](./api/resources/stores.raml)
+2. In the [/resources](./api/resources) folder, add a new file called with the name of the resource definition. This is an example for the content:
+   [stores.raml](./api/resources/stores.raml).
 
-3. Add the different resource endpoints available to this file
+3. Add the different resource endpoints available to this file.
 
-##### Create a Query Endpoint
+##### Create a query endpoint
 
-1. Go to the respective resources file in the [/resources](./api/resources) folder, add a new file called with the name of the endpoint and this is just an example about the content:
-   [stores.raml](./api/resources/stores.raml), see in the [How to create a Method section](#create-a-method) to add methods.
-2. In addition, create a folder in [/types](./api/types) which will contain the **updates** folder as well like here [/updates](./api/types/cart/updates).
-3. Then, add the main types in the folder created see the [How to create a type section](#create-a-type).
-4. Add, if already available, the update actions like [CartAddCustomLineItemAction.raml](./api/types/cart/updates/CartAddCustomLineItemAction.raml) and the related json file in [/examples](./api/examples) folder.
+1. Go to the respective resources file in the [/resources](./api/resources) folder, add a new file called with the name of the endpoint. This is an example for the content:
+   [stores.raml](./api/resources/stores.raml). Refer to [How to create a Method section](#create-a-method) for information on how to add methods.
+2. In addition, create a folder in [/types](./api/types) that contains the **updates** folder, like here [/updates](./api/types/cart/updates).
+3. Add the main types in the folder created see the [How to create a type section](#create-a-type).
+4. Add, if already available, the update actions like [CartAddCustomLineItemAction.raml](./api/types/cart/updates/CartAddCustomLineItemAction.raml) and the related JSON file to the [/examples](./api/examples) folder.
 
    ```raml
    type:
@@ -108,15 +130,16 @@ Our APIs have to follow our
              example: !include ../examples/carts.example.json
    ```
 
-##### Create a Create Endpoint
+##### Create a create endpoint
 
 In this case, it's pretty much like in the section [How to Create a Query Endpoint](#create-a-query-endpoint), the only difference is in the method to add.
 
 So just as an example about the content:
 
-1. in the respective resources file in the [/resources](./api/resources) folder, add a new file called with the name of the endpoint and this is just an example about the content, in this case was
+1. Add the reference to the new endpoint to the [api-specs/api/types/common/ReferenceTypeId.raml](api-specs/api/types/common/ReferenceTypeId.raml) file.
+2. In the respective resources file in the [/resources](./api/resources) folder, add a new file called with the name of the endpoint and this is just an example about the content, in this case was
    [orders.raml](./api/resources/orders.raml), and then add the **POST** method.
-   The rest is like the points 2-3-4 of the section [How to Create a Query Endpoint](#create-a-query-endpoint). To have an overview see the example below:
+   The rest is like the points 2-3-4 of the section [How to Create a Query Endpoint](#create-a-query-endpoint). To get an overview, see the example below:
 
    ```raml
    type:
@@ -154,9 +177,9 @@ So just as an example about the content:
 
 To create an update endpoint by URI parameters like Id or Key, it's necessary to add to the parts of the code mentioned in the sections [How to Create a Query Endpoint](#create-a-query-endpoint) and [How to Create a Create Endpoint](#create-a-create-endpoint), the following parts:
 
-1. Add the URI parameter, in the example below is the **Id**
-2. Add the **methodName**
-3. Add the **post** method
+1. Add the URI parameter, in the example below it is the **Id**.
+2. Add the **methodName**.
+3. Add the **post** method.
    To have an overview see the example below:
 
    ```raml
@@ -179,13 +202,13 @@ To create an update endpoint by URI parameters like Id or Key, it's necessary to
                example: !include ../examples/cart.example.json
    ```
 
-##### Create a Delete Endpoint
+##### Create a delete endpoint
 
 To create a delete endpoint by URI parameters like Id or Key, it's necessary to add to the parts of the code mentioned in the sections [How to Create a Query Endpoint](#create-a-query-endpoint) and [How to Create a Create Endpoint](#create-a-create-endpoint), the following parts:
 
-1. Add the URI parameter, in the example below is the **Key**
-2. Add the **methodName**
-3. Add the **delete** method
+1. Add the URI parameter, in the example below is the **Key**.
+2. Add the **methodName**.
+3. Add the **delete** method.
    To have an overview see the example below:
 
    ```raml
@@ -207,14 +230,22 @@ To create a delete endpoint by URI parameters like Id or Key, it's necessary to 
                example: !include ../examples/cart.example.json
    ```
 
-#### Create a Method
+##### Create an endpoint for the instore
 
-To create a new method in the endpoint, we need to:
+For an endpoint to be connected to the Store and have a structure similar to `/{projectKey}/stores/key={key}/new-endpoint`, you need to:
+
+1. Modify the [/resources/in-store.raml](./api/resources/in-store.raml) file.
+2. Add the new endpoint here.
+3. The other changes depend on the structure of the new API itself.
+
+#### Create a method
+
+To create a new method for the endpoint, you need to:
 
 1. Modify the related file in the [/resources](./api/resources) folder.
 2. Add a section with the declaration of the new method in the **methodName** annotation.
-3. Add in the **type** section the **baseResource** definition which is composed by **uriParameterName** and **resourceType**.
-4. Add the **http method** response which (in most cases) is usually **get** or **post**
+3. Add the **baseResource** definition composed of **uriParameterName** and **resourceType** to the **type** section.
+4. Add the **HTTP method** response which (in most cases) is usually **get** or **post**.
 
 Below an example:
 
@@ -235,7 +266,7 @@ Below an example:
             example: !include ../examples/customer.example.json
 ```
 
-#### Create a Type
+#### Create a type
 
 To create a new type, these are the files which have to be created:
 
@@ -248,11 +279,11 @@ To create a new type, these are the files which have to be created:
 7. The **UpdateAction**: the definition of the actions declared in the **Update** file, see [CategoryUpdateAction.raml](./api/types/category/CategoryUpdateAction.raml), which is the "extension" of [UpdateAction.raml](./api/types/UpdateAction.raml).
    To see the definition and the details of all of them, see our documentation.
 
-##### Create a Message
+##### Create a message
 
 To create a new Message, follow these steps:
 
-1. Go in the [/types/message](./api/types/message) folder and create the file naming it _something_ + "Message.raml", like [CategoryCreatedMessage.raml](./api/types/message/CategoryCreatedMessage.raml)
+1. Go in the [/types/message](./api/types/message) folder and create the file naming it _something_ + "Message.raml", like [CategoryCreatedMessage.raml](./api/types/message/CategoryCreatedMessage.raml).
 2. Then, create the content like this below:
 
    ```raml
@@ -268,7 +299,7 @@ To create a new Message, follow these steps:
    ```
 
 3. The MessagePayload type should be automatically created by the Github action. In case it has to be done manually create a file in the [/types/message/payload](./api/types/message/payload) folder and naming the file _something_ + "MessagePayload.raml",
-   like [CategoryCreatedMessagePayload.raml](./api/types/message/payload/CategoryCreatedMessagePayload.raml)
+   like [CategoryCreatedMessagePayload.raml](./api/types/message/payload/CategoryCreatedMessagePayload.raml).
 4. And create the content like this below:
 
    ```raml
@@ -285,7 +316,7 @@ To create a new Message, follow these steps:
 
 5. Finally, include both files created in the [/types/types.raml](./api/types/types.raml). There is an automatism which in the CI pipeline to generate the related line in this file.
 
-#### Add a Field
+#### Add a field
 
 To add a new field in the properties:
 
@@ -302,7 +333,7 @@ To add a new field in the properties:
 4. Add `(beta): true` if it relates to a Beta feature.
 5. Add `(markDeprecated): true` if the field is deprecated.
 
-#### Add a Custom Field
+#### Add a custom field
 
 To add a new Custom Field to a resource or object:
 
@@ -413,12 +444,12 @@ To add a new Custom Field to a resource or object:
        [<Object>](ctp:api:type:Object) on [<Resource>](ctp:api:type:<Resource>)
    ```
 
-#### Add a Scope
+#### Add a scope
 
 If you need to add a new **scope**, follow these steps:
 
 1. Go in the [/resources](./api/resources) folder and in the resource domain file like [categories.raml](./api/resources/categories.raml).
-2. In the http methods which require to have it add the scope in the **oauth_2_0** part:
+2. In the HTTP methods which require to have it add the scope in the **oauth_2_0** part:
 
    ```raml
    get:
@@ -439,7 +470,7 @@ If you need to add a new **scope**, follow these steps:
 
    - [oauth2.raml](./api/securitySchemes/oauth2.raml),
    - [oauth2_password.raml](./api/securitySchemes/oauth2_password.raml),
-   - [oauth2_refresh.raml](./api/securitySchemes/oauth2_refresh.raml)
+   - [oauth2_refresh.raml](./api/securitySchemes/oauth2_refresh.raml),
    - [oauth2_anonymous.raml](./api/securitySchemes/oauth2_anonymous.raml)
 
    Precisely, in the **settings/scopes** section like in the example below:
@@ -456,19 +487,154 @@ If you need to add a new **scope**, follow these steps:
        - 'manage_orders:{projectKey}'
    ```
 
+#### Use discriminator and discriminatorValue
+
+**discriminator** is used to define an object as **action** or **type**, while **discriminatorValue** is used to name the UpdateActions and map them in the request.
+
+#### Introduce a new annotation
+
+If you want to introduce a new annotation for your APIs, you have to add it to the [annotations.raml](./api/types/annotations.raml) file.
+The example below illustrates the structure:
+
+```raml
+ placeholderParam:
+   type: object
+   allowedTargets: TypeDeclaration
+   properties:
+     paramName: string
+     template: string
+     placeholder: string
+ builder:
+   type: array
+   items:
+     type: object
+     properties:
+       paramNames: string[]
+   allowedTargets: TypeDeclaration
+```
+
+##### (package)
+
+This annotation is included in the [/types](#types) folder of every RAML file. The scope is to indicate to which resource the data belongs to.
+
+##### (identifier)
+
+Use this annotation to specify the main key as identifier. To do this, add it to the **id**:
+
+```raml
+  id:
+    (identifier): true
+    type: string
+```
+
+##### (elementIdentifier)
+
+Use this annotation in combination with the [(identifier)](#identifier), if the key is not identical to the **id**:
+
+```raml
+  name:
+    (identifier): true
+    (elementIdentifier): true
+    type: string
+    description: ''
+```
+
+##### (placeholderParam)
+
+Use this annotation when defining a **Query Parameter** that has a REGEX parameter:
+
+```raml
+queryParameters:
+  /text\.[a-z]{2}(-[A-Z]{2})?/:
+    (placeholderParam):
+      paramName: text
+      template: text.<locale>
+      placeholder: locale
+```
+
+##### (docs-uri)
+
+Use this annotation to link the specification to the documentation.
+
+##### (updateType)
+
+This annotation has to be mentioned in the definition of the resource itself in the [/types](#types) folder in the resource data, so for instance in [CartDiscount.raml](./api/types/cart-discount/CartDiscount.raml). It's necessary to assign the related `<Resource>Update` to the resource.
+
+##### (updateable)
+
+This annotation gets the resource data assigned and has to be defined in the [/resources](#resources) files like this:
+`(updateable): Cart`
+
+##### (deleteable)
+
+This annotation gets the resource data assigned and has to be defined in the [/resources](#resources) files like this:
+`(deleteable): Cart`
+
+##### (createable)
+
+This annotation gets the resource data draft assigned and has to be defined in the [/resources](#resources) files like this:
+`(createable): CartDraft`
+
+##### (methodName)
+
+Use this annotation to declare which method is used in our SDKs for that specific request.
+
+##### (asMap)
+
+The scope of this annotation for key => value mapping, it's used for instance to map properties which are in REGEX format. See the example below:
+
+```raml
+(asMap):
+  key: string
+  value: string
+properties:
+  /^[a-z]{2}(-[A-Z]{2})?$/:
+    type: string
+```
+
+##### (deprecated)
+
+This annotation indicates that an endpoint, property or class is deprecated and therefore removed from the SDKs.
+
+##### (markDeprecated)
+
+This annotation is used to inform customers that an endpoint, property or class is deprecated and that a replacement already exists.
+
+##### (actionType)
+
+This annotation has to be mentioned in the definition of the resource itself in the [/types](#types) folder in the resource data, so for instance in [CartDiscount.raml](./api/types/cart-discount/CartDiscount.raml). It's necessary to assign the related `<Resource>Action` to the resource.
+
+##### (java-implements) or (csharp-implements)
+
+This annotation is included in the [/resources](#resources) files. Use this annotation for mapping with the related class in the Java V2 and Dotnet V2 SDKs.
+
+##### (java-extends) or (csharp-extends)
+
+This annotation is included in the [/types](#types) files. The scope is mapping the related name of the **PagedQueryResourceRequest** and **PagedQueryResponse** classes in the Java V2 and Dotnet V2 SDKs.
+
+##### (beta)
+
+Use this annotation to indicate that the related feature is still in a beta phase.
+
+##### (sdkBaseUri)
+
+This annotation is declared on the API settings level, so in the [api-specs/api/api.raml](./api/api.raml) file.
+
+##### (enumDescriptions)
+
+Use this annotation to add descriptions to an enum property, like here [ChannelRoleEnum.raml](./api/types/channel/ChannelRoleEnum.raml).
+
 ### Platform API folder structure
 
 #### /examples
 
-This folder contains files in json format which are the response samples of the api call.
-The update examples are divided per package, so like here: [CategoryChangeNameAction.json](./api/examples/Category/CategoryChangeNameAction.json),
-while the generic api response are directly under the **examples** folder such as:
+This folder contains files in JSON format which are the response samples of the API call.
+The update examples are divided per package, like here: [CategoryChangeNameAction.json](./api/examples/Category/CategoryChangeNameAction.json), while the generic API responses are directly under the **examples** folder such as:
 
-[category.example.json](./api/examples/category.example.json)
+- [category.example.json](./api/examples/category.example.json)
+- [category-create.example.json](./api/examples/category-create.example.json)
 
-[category-create.example.json](./api/examples/category-create.example.json)
-
-As convention, the names of the json files of the Actions are exactly the same of the related RAML in the [/types](#types) folder.
+As convention, the names of the JSON files of the Actions are exactly the same of the related RAML in the [/types](#types) folder.
 
 The RAML files related to the actions or the main endpoint, contain the path of these examples as described in details in the [/update](#update) section.
 
@@ -537,28 +703,27 @@ In common in each of the file there are:
 - **type**: it could be BaseResource, in case of the main resource data, or one of the type found in the common folder
 - **property**: the fields of the resource data
 
-The most of the folders are named like our endpoints, but with the hyphens, and in each of them there are:
+Most of the folders are named like our endpoints, but with the hyphens, and in each of them there are:
 
-##### - Resource Data with the related Draft
+##### - Resource data with the related draft
 
-The **resourceType** and the **resourceDraft** of our **baseDomain** are explained here in details such as the definition of the **properties** and also, there is the definition of the name of the **(updateType)**.
+Here the **resourceType** and the **resourceDraft** of our **baseDomain** are explained in detail, including for example the definition of the **properties** and the definition of the name of the **(updateType)**.
 
-Here an example:
+Example:
 
-[CartDiscount.raml](./api/types/cart-discount/CartDiscount.raml)
+- [CartDiscount.raml](./api/types/cart-discount/CartDiscount.raml)
+- [CartDiscountDraft.raml](./api/types/cart-discount/CartDiscountDraft.raml)
 
-[CartDiscountDraft.raml](./api/types/cart-discount/CartDiscountDraft.raml)
-
-Our properties names are following our naming convention, see our
+Our properties names follow our naming convention, see our
 [API Design Guideline](https://github.com/commercetools/api-design-guidelines/blob/master/guidelines.md).
 
-##### - Paged Query Response
+##### - Paged query response
 
 The **resourceQueryType** of our **baseDomain** is written here in details.
 Each new endpoint has to have this response defined, so this response has to be named: (_resource data name_) + _"PagedQueryResponse.raml"_ as implicit convention, here an example:
-[CartDiscountPagedQueryResponse.raml](./api/types/cart-discount/CartDiscountPagedQueryResponse.raml)
+[CartDiscountPagedQueryResponse.raml](./api/types/cart-discount/CartDiscountPagedQueryResponse.raml).
 
-##### - Update and Update Action
+##### - Update and update action
 
 The Update is defined generically in the main resource data as **(updateType)** and here an example of update file:
 
@@ -607,7 +772,7 @@ properties:
 ##### - /updates
 
 As said in the previous point [Update and Update Action](#update-and-update-action), in this folders there are all the update actions available for each endpoint.
-In each of them is defined the **examples**, so the json file which is present in the example folder and the properties.
+In each of them is defined the **examples**, so the JSON file which is present in the example folder and the properties.
 There is an implicit convention about how to name these files: (_name of the package_) + (_update action_) + _"Action.raml"_ like _"CartDiscountChangeNameAction.raml"_.
 
 ##### - /common
@@ -667,7 +832,7 @@ The api.raml file contains the base of our APIs and the definition of everything
 - the _annotationTypes_: where the annotations are defined (see [annotations.raml](#annotationsraml)).
 - the _types_: where the types are defined (see [types.raml](#typesraml)).
 
-### Validator Rules
+### Validator rules
 
 We built a RAML validator tool which validates during the CI process the new code written related to our RAML files and for every error will show the related message.
 
@@ -952,7 +1117,7 @@ But, in general, all the array resources names have to be in plural.
 
 #### SdkBaseUriRule
 
-This rule checks on the API settings level if the **baseUri**, the annotation **(sdkBaseUri)** are declared.
+This rule checks on the API settings level if the **baseUri**, the annotation **(sdkBaseUri)** is declared.
 
 ```raml
 annotationTypes:
@@ -981,7 +1146,7 @@ types:
 
 #### SuccessBodyRule
 
-On the http method level, it checks if it has the body type for success responses defined.
+On the HTTP method level, it checks if it has the body type for success responses defined.
 
 ```raml
 /categories:
