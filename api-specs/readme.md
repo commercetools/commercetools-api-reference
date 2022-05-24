@@ -39,7 +39,7 @@ Our APIs have to follow our
     - [(beta)](#beta)
     - [(sdkBaseUri)](#sdkbaseuri)
     - [(enumDescriptions)](#enumdescriptions)
-- Platform API folder structure
+- Composable Commerce API folder structure
   - [/examples](#examples)
   - [/resources](#resources)
   - [/securitySchemes](#securityschemes)
@@ -624,7 +624,7 @@ This annotation is declared on the API settings level, so in the [api-specs/api/
 
 Use this annotation to add descriptions to an enum property, like here [ChannelRoleEnum.raml](./api/types/channel/ChannelRoleEnum.raml).
 
-### Platform API folder structure
+### Composable Commerce API folder structure
 
 #### /examples
 
