@@ -392,12 +392,16 @@ jobs:
           git log -1
         working-directory: commercetools-dotnet-core-sdk-v2
 
+      - name: "Apply dotnet SDK mixin"
+        run: |
+          cp commercetools-dotnet-core-sdk-v2/api-csharp-mixin.raml commercetools-api-reference/api-specs/api/csharp-mixin.raml
+
       - name: "Generate Csharp SDK"
         run: sudo chmod 777 /usr/local/bin && make build
         working-directory: commercetools-dotnet-core-sdk-v2
         env:
           RAML_FILE: "../commercetools-api-reference/api-specs/api/api.raml"
-          API_RAML: "../commercetools-api-reference/api-specs/api/api.raml"
+          API_RAML: "../commercetools-api-reference/api-specs/api/csharp-mixin.raml"
           IMPORT_RAML: "../commercetools-api-reference/api-specs/importapi/api.raml"
           ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
           HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
@@ -431,3 +435,7 @@ jobs:
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
           commit_author: Auto Mation <automation@commercetools.com>
+
+  check:
+    runs-on: ubuntu-latest
+    needs: [ 'php', 'postman', 'java', 'typescript', 'csharp']
