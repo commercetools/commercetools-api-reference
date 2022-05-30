@@ -4024,6 +4024,8 @@ paths:
             - "view_products:{projectKey}"
             - "view_categories:{projectKey}"
       operationId: ByProjectKeyCategoriesGet
+      description: |-
+        Either the [scope](/../api/scopes) `view_products:{projectKey}` or `view_categories:{projectKey}` is required.
       parameters:
         - name: expand
           in: query
@@ -4223,10 +4225,12 @@ paths:
       security:
         - oauth_2_0:
             - "manage_products:{projectKey}"
-            - "view_categories:{projectKey}"
+            - "manage_categories:{projectKey}"
       operationId: ByProjectKeyCategoriesPost
       description: |-
-        Creating a category produces the CategoryCreated message.
+        Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.
+
+        Creating a Category produces the [CategoryCreatedMessage](/../api/message-types#categorycreatedmessage).
       parameters:
         - name: expand
           in: query
@@ -4395,6 +4399,8 @@ paths:
             - "view_products:{projectKey}"
             - "view_categories:{projectKey}"
       operationId: ByProjectKeyCategoriesKeyByKeyGet
+      description: |-
+        Either the [scope](/../api/scopes) `view_products:{projectKey}` or `view_categories:{projectKey}` is required.
       parameters:
         - name: expand
           in: query
@@ -4545,6 +4551,8 @@ paths:
             - "manage_products:{projectKey}"
             - "manage_categories:{projectKey}"
       operationId: ByProjectKeyCategoriesKeyByKeyPost
+      description: |-
+        Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.
       parameters:
         - name: expand
           in: query
@@ -4723,6 +4731,8 @@ paths:
             - "manage_products:{projectKey}"
             - "manage_categories:{projectKey}"
       operationId: ByProjectKeyCategoriesKeyByKeyDelete
+      description: |-
+        Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.
       parameters:
         - name: version
           in: query
@@ -4915,6 +4925,8 @@ paths:
             - "view_products:{projectKey}"
             - "view_categories:{projectKey}"
       operationId: ByProjectKeyCategoriesByIDGet
+      description: |-
+        Either the [scope](/../api/scopes) `view_products:{projectKey}` or `view_categories:{projectKey}` is required.
       parameters:
         - name: expand
           in: query
@@ -5065,6 +5077,8 @@ paths:
             - "manage_products:{projectKey}"
             - "manage_categories:{projectKey}"
       operationId: ByProjectKeyCategoriesByIDPost
+      description: |-
+        Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.
       parameters:
         - name: expand
           in: query
@@ -5243,6 +5257,8 @@ paths:
             - "manage_products:{projectKey}"
             - "manage_categories:{projectKey}"
       operationId: ByProjectKeyCategoriesByIDDelete
+      description: |-
+        Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.
       parameters:
         - name: version
           in: query
@@ -62715,13 +62731,13 @@ components:
         limit:
           type: "integer"
           format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
         count:
           type: "integer"
           format: "int64"
         total:
-          type: "integer"
-          format: "int64"
-        offset:
           type: "integer"
           format: "int64"
         results:
@@ -62825,7 +62841,7 @@ components:
           money:
             type: "array"
             items:
-              $ref: '#/components/schemas/TypedMoney'
+              $ref: '#/components/schemas/CentPrecisionMoney'
     CartDiscountValueAbsoluteDraft:
       allOf:
       - $ref: '#/components/schemas/CartDiscountValueDraft'
@@ -62859,7 +62875,7 @@ components:
           money:
             type: "array"
             items:
-              $ref: '#/components/schemas/TypedMoney'
+              $ref: '#/components/schemas/CentPrecisionMoney'
     CartDiscountValueFixedDraft:
       allOf:
       - $ref: '#/components/schemas/CartDiscountValueDraft'
@@ -62969,12 +62985,19 @@ components:
       - Cheapest
       - MostExpensive
       x-annotation-package: "CartDiscount"
+      x-annotation-enumDescriptions:
+        Cheapest: "Select the cheapest items."
+        MostExpensive: "Select the most expensive items."
     StackingMode:
       type: "string"
       enum:
       - Stacking
       - StopAfterThisDiscount
       x-annotation-package: "CartDiscount"
+      x-annotation-enumDescriptions:
+        Stacking: "Applies other matching Discounts after applying this one."
+        StopAfterThisDiscount: "Doesn't apply any more matching Discounts after this one if
+         it's successfully applied."
     CartDiscountChangeCartPredicateAction:
       allOf:
       - $ref: '#/components/schemas/CartDiscountUpdateAction'
@@ -64670,13 +64693,13 @@ components:
         limit:
           type: "integer"
           format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
         count:
           type: "integer"
           format: "int64"
         total:
-          type: "integer"
-          format: "int64"
-        offset:
           type: "integer"
           format: "int64"
         results:
@@ -64863,7 +64886,7 @@ components:
           type:
             $ref: '#/components/schemas/TypeResourceIdentifier'
           fields:
-            $ref: '#/components/schemas/object'
+            $ref: '#/components/schemas/FieldContainer'
     CategorySetAssetDescriptionAction:
       allOf:
       - $ref: '#/components/schemas/CategoryUpdateAction'
