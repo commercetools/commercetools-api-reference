@@ -1,6 +1,6 @@
 #%RAML 1.0 DataType
 (package): Store
-(docs-uri): https://docs.commercetools.com/http-api-projects-stores#store
+(docs-uri): https://docs.commercetools.com/api/projects/stores#store
 type: BaseResource
 displayName: Store
 (updateType): StoreUpdate
@@ -9,56 +9,64 @@ properties:
   id:
     (identifier): true
     type: string
-    description: ''
+    description: |
+      Unique ID of the Store.
   version:
     type: number
     format: int64
-    description: ''
+    description: |
+      Current version of the Store.
   createdAt:
     type: datetime
-    description: ''
+    description: |
+      Date and time (UTC) the Store was initially created.
   lastModifiedAt:
     type: datetime
-    description: ''
+    description: |
+      Date and time (UTC) the Store was last updated.
   lastModifiedBy?:
     type: LastModifiedBy
     (beta): true
     description: |
-      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).
   createdBy?:
     type: CreatedBy
     (beta): true
     description: |
-      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).
   key:
     type: string
-    description: |-
-      User-specific unique identifier for the store.
-      The `key` is mandatory and immutable.
-      It is used to reference the store.
+    description: |
+      User-defined unique and immutable identifier for the Store.
     pattern: ^[A-Za-z0-9_-]+$
     minLength: 2
     maxLength: 256
   name?:
     type: LocalizedString
-    description: The name of the store
-  languages?:
-    type: string[]
-    description: ''
+    description: |
+      Name of the Store.
+  languages:
+    type: Locale[]
+    description: |
+      Languages configured for the Store.
   distributionChannels:
     type: ChannelReference[]
-    description: |-
-      Set of References to a Channel with `ProductDistribution` role
-  supplyChannels?:
+    description: |
+      Product Distribution Channels allowed for the Store.
+  supplyChannels:
     type: ChannelReference[]
-    description: |-
-      Set of ResourceIdentifiers of Channels with `InventorySupply` role
-  productSelections?:
+    description: |
+      Inventory Supply Channels allowed for the Store.
+  productSelections:
+    (beta): true
     type: ProductSelectionSetting[]
     description: |-
-      Set of References to Product Selections along with settings.
-      If `productSelections` is empty all products in the project are available in this Store.
-      If `productSelections` is not empty but there exists no `active` Product Selection then no Product is available in this Store.
+      Controls availability of Products for this Store via active Product Selections.
+
+      - If empty all Products in the [Project](ctp:api:type:Project) are available in this Store.
+      - If provided, Products from `active` Product Selections are available in this Store.
+
   custom?:
     type: CustomFields
-    description: ''
+    description: |
+      Custom fields for the Store.

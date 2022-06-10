@@ -1,39 +1,44 @@
 #%RAML 1.0 DataType
 (package): Store
-(docs-uri): https://docs.commercetools.com/http-api-projects-stores#storedraft
+(docs-uri): https://docs.commercetools.com/api/projects/stores#storedraft
 displayName: StoreDraft
 type: object
 (java-extends): 'com.commercetools.api.models.CustomizableDraft<StoreDraft>'
 properties:
   key:
     type: string
-    description: |-
-      User-specific unique identifier for the store.
-      The `key` is mandatory and immutable.
-      It is used to reference the store.
+    description: |
+      User-defined unique and immutable identifier for the Store.
+      Keys can only contain alphanumeric characters, underscores, and hyphens.
     pattern: ^[A-Za-z0-9_-]+$
     minLength: 2
     maxLength: 256
   name?:
     type: LocalizedString
-    description: The name of the store
+    description: |
+      Name of the Store.
   languages?:
-    type: string[]
-    description: ''
+    type: Locale[]
+    description: |
+      Languages defined in [Project](ctp:api:type:Project). Only languages defined in the Project can be used.
   distributionChannels?:
     type: ChannelResourceIdentifier[]
-    description: |-
-      Set of ResourceIdentifiers to a Channel with `ProductDistribution` role
+    description: |
+      ResourceIdentifier to a Channel with `ProductDistribution` [ChannelRoleEnum](ctp:api:type:ChannelRoleEnum).
   supplyChannels?:
     type: ChannelResourceIdentifier[]
-    description: |-
-      Set of ResourceIdentifiers of Channels with `InventorySupply` role
+    description: |
+      ResourceIdentifier to a Channel with `InventorySupply` [ChannelRoleEnum](ctp:api:type:ChannelRoleEnum).
   productSelections?:
+    (beta): true
     type: ProductSelectionSettingDraft[]
-    description: |-
-      Set of ResourceIdentifiers of Product Selections along with settings.
-      If `productSelections` is empty all products in the project are available in this Store.
-      If `productSelections` is not empty but there exists no `active` Product Selection then no Product is available in this Store.
+    description: |
+      Controls availability of Products for this Store via active Product Selections.
+
+      - Leave empty if all Products in the [Project](ctp:api:type:Project) should be available in this Store.
+      - If provided, Products from `active` Product Selections are available in this Store.
+
   custom?:
     type: CustomFieldsDraft
-    description: ''
+    description: |
+      Custom fields for the Store.
