@@ -1,6 +1,3 @@
-scalar Long
-scalar BigDecimal
-
 "API Clients can be used to obtain OAuth 2 access tokens. The secret is only shown once in the response of creating the API Client."
 type APIClientWithSecret {
   id: String!
@@ -66,6 +63,10 @@ enum ActionType {
 "A field to access the active cart."
 interface ActiveCartInterface {
   activeCart: Cart
+}
+
+input AddAttributeGroupAttribute {
+  attribute: String!
 }
 
 input AddCartCustomLineItem {
@@ -671,6 +672,58 @@ interface AttributeDefinitionType {
   name: String!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type AttributeGroup implements Versioned {
+  id: String!
+  version: Long!
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  nameAllLocales: [LocalizedString!]!
+  description(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  descriptionAllLocales: [LocalizedString!]
+  key: String
+  attributes: [String!]!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+input AttributeGroupDraft {
+  name: [LocalizedStringItemInputType!]!
+  description: [LocalizedStringItemInputType!]
+  key: String
+  attributes: [String!]!
+}
+
+type AttributeGroupQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  exists: Boolean!
+  results: [AttributeGroup!]!
+}
+
+input AttributeGroupUpdateAction {
+  addAttribute: AddAttributeGroupAttribute
+  changeName: ChangeAttributeGroupName
+  removeAttribute: RemoveAttributeGroupAttribute
+  setDescription: SetAttributeGroupDescription
+  setKey: SetAttributeGroupKey
+  setAttributes: SetAttributeGroupAttributes
+}
+
 input AttributeSetElementTypeDraft {
   text: SimpleAttributeTypeDraft
   number: SimpleAttributeTypeDraft
@@ -704,7 +757,7 @@ input AttributeTypeDraft {
   ltext: SimpleAttributeTypeDraft
 }
 
-"AuthenticationMode values. BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+"AuthenticationMode values. BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 enum AuthenticationMode {
   ExternalAuth
   Password
@@ -778,8 +831,9 @@ type Cart implements Versioned & ReferenceExpandable {
   customer: Customer
   customerEmail: String
   anonymousId: String
-  lineItems: [LineItem!]!
-  totalLineItemQuantity: Long
+  lineItems(
+    "Queries with specified ID"
+    id: String): [LineItem!]!
   customLineItems: [CustomLineItem!]!
   totalPrice: Money!
   taxedPrice: TaxedPrice
@@ -807,6 +861,7 @@ type Cart implements Versioned & ReferenceExpandable {
   key: String
   custom: CustomFieldsType
   deleteDaysAfterLastModification: Int
+  totalLineItemQuantity: Long
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -981,6 +1036,9 @@ type CartLimitsProjection {
 }
 
 enum CartOrigin {
+  "The cart was created by our platform and belongs to a Quote"
+  Quote
+
   "The cart was created by the merchant on behalf of the customer"
   Merchant
 
@@ -1262,6 +1320,10 @@ input CategoryUpdateAction {
   setMetaKeywords: SetCategoryMetaKeywords
   setMetaTitle: SetCategoryMetaTitle
   setExternalId: SetCategoryExternalId
+}
+
+input ChangeAttributeGroupName {
+  name: [LocalizedStringItemInputType!]!
 }
 
 input ChangeCartCustomLineItemMoney {
@@ -4089,6 +4151,27 @@ type Mutation {
 
     "Queries with specified key"
     key: String): ProductDiscount
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  createAttributeGroup(draft: AttributeGroupDraft!): AttributeGroup
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  updateAttributeGroup(version: Long!, actions: [AttributeGroupUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): AttributeGroup
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  deleteAttributeGroup(version: Long!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): AttributeGroup
   createProduct(draft: ProductDraft!): Product
   updateProduct(version: Long!, actions: [ProductUpdateAction!]!,
 
@@ -4325,7 +4408,8 @@ type Mutation {
 
     "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
     storeKey: KeyReferenceInput): Cart
-  # BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   replicateMyCart(reference: ReferenceInput!): Cart
   createOrderFromCart(draft: OrderCartCommand!,
 
@@ -4641,7 +4725,7 @@ input MyLineItemDraft {
 
 """
 My Payments endpoint provides access to payments scoped to a specific user.
-[documentation](https://docs.commercetools.com/http-api-projects-me-payments#mypayment)
+[documentation](https://docs.commercetools.com/api/projects/me-payments#mypayment)
 """
 type MyPayment {
   id: String!
@@ -4754,14 +4838,16 @@ type NumberType implements FieldType {
 
 """
 An order can be created from a cart, usually after a checkout process has been completed.
-[documentation](https://docs.commercetools.com/http-api-projects-orders.html)
+[documentation](https://docs.commercetools.com/api/projects/orders)
 """
 type Order implements Versioned & ReferenceExpandable {
   customerId: String
   customer: Customer
   customerEmail: String
   anonymousId: String
-  lineItems: [LineItem!]!
+  lineItems(
+    "Queries with specified ID"
+    id: String): [LineItem!]!
   customLineItems: [CustomLineItem!]!
   totalPrice: Money!
   taxedPrice: TaxedPrice
@@ -5260,7 +5346,7 @@ type ParcelTrackingDataUpdated implements MessagePayload & OrderMessagePayload {
 
 """
 Payments hold information about the current state of receiving and/or refunding money.
-[documentation](https://docs.commercetools.com/http-api-projects-payments)
+[documentation](https://docs.commercetools.com/api/projects/payments)
 """
 type Payment implements Versioned {
   key: String
@@ -5461,7 +5547,7 @@ input PriceFunctionDraft {
   currencyCode: Currency!
 }
 
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 enum PriceMode {
   "The API looks up prices from Standalone Prices, stored separately from Products."
   Standalone
@@ -5773,6 +5859,7 @@ type ProductOfSelectionQueryResult {
 type ProductPrice {
   id: String
   value: BaseMoney!
+  key: String
   country: Country
   customerGroup: CustomerGroup
   customerGroupRef: Reference
@@ -5787,6 +5874,7 @@ type ProductPrice {
 
 input ProductPriceDataInput {
   value: BaseMoneyInput!
+  key: String
   country: Country
   customerGroup: ReferenceInput
   channel: ResourceIdentifierInput
@@ -5823,6 +5911,7 @@ type ProductPriceExternalDiscountSet implements MessagePayload {
 type ProductPriceSearch {
   id: String
   value: BaseMoney!
+  key: String
   country: Country
   customerGroup: CustomerGroup
   customerGroupRef: Reference
@@ -6605,6 +6694,17 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): ProductDiscount
   productDiscounts(where: String, sort: [String!], limit: Int, offset: Int): ProductDiscountQueryResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  attributeGroup(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): AttributeGroup
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  attributeGroups(where: String, sort: [String!], limit: Int, offset: Int): AttributeGroupQueryResult!
   product(
     "Queries for a product with specified SKU"
     sku: String,
@@ -6732,7 +6832,7 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Deprecated: please use 'markMatchingVariants'."
     markMatchingVariant: Boolean = false, storeProjection: String, localeProjection: [Locale!], staged: Boolean = false): ProductProjectionSearchResult!
 
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   standalonePrice(
     "Queries with specified ID"
     id: String,
@@ -6740,7 +6840,7 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): StandalonePrice
 
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   standalonePrices(where: String, sort: [String!], limit: Int, offset: Int): StandalonePriceQueryResult!
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
@@ -6910,6 +7010,10 @@ type RelativeDiscountValue implements CartDiscountValue & ProductDiscountValue {
 
 input RelativeDiscountValueInput {
   permyriad: Int!
+}
+
+input RemoveAttributeGroupAttribute {
+  attribute: String!
 }
 
 input RemoveCartCustomLineItem {
@@ -7332,7 +7436,7 @@ input ReviewUpdateAction {
 }
 
 enum RoundingMode {
-  "[Round half down](https://en.wikipedia.org/wiki/Rounding#Round_half_down). Rounding mode used by, e.g., [Avalara Sales TaxII](https://help.avalara.com/kb/001/How_does_Rounding_with_SalesTaxII_work%3F)"
+  "[Round half down](https://en.wikipedia.org/wiki/Rounding#Round_half_down)"
   HalfDown
 
   "[Round half up](https://en.wikipedia.org/wiki/Rounding#Round_half_up)"
@@ -7489,6 +7593,7 @@ enum SelectionMode {
 type SelectionOfProduct {
   productSelectionRef: Reference!
   productSelection: ProductSelection
+  createdAt: DateTime!
 }
 
 type SelectionOfProductQueryResult {
@@ -7507,6 +7612,18 @@ scalar Set
 type SetAttributeDefinitionType implements AttributeDefinitionType {
   elementType: AttributeDefinitionType!
   name: String!
+}
+
+input SetAttributeGroupAttributes {
+  attributes: [String!]!
+}
+
+input SetAttributeGroupDescription {
+  description: [LocalizedStringItemInputType!]
+}
+
+input SetAttributeGroupKey {
+  key: String
 }
 
 input SetCartAnonymousId {
@@ -9929,7 +10046,7 @@ interface StagedOrderUpdateActionOutput {
   type: String!
 }
 
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 type StandalonePrice implements Versioned {
   id: String!
   version: Long!
@@ -9982,7 +10099,7 @@ type StandalonePriceQueryResult {
   count: Int!
   total: Long!
 
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   exists: Boolean!
   results: [StandalonePrice!]!
 }

@@ -8,7 +8,7 @@ type:
 (updateable): ShippingMethod
 (deleteable): ShippingMethod
 (createable): ShippingMethodDraft
-description: Shipping Methods define where orders can be shipped and what the costs are.
+description: ShippingMethods define where orders can be shipped and what the costs are.
 get:
   (java-implements):
     'com.commercetools.api.models.PagedQueryResourceRequest<ByProjectKeyShippingMethodsGet,
@@ -21,7 +21,11 @@ get:
       oauth_2_0:
         {
           scopes:
-            ['view_orders:{projectKey}', 'view_shipping_methods:{projectKey}'],
+            [
+              'view_orders:{projectKey}',
+              'view_shipping_methods:{projectKey}',
+              'manage_my_orders:{projectKey}',
+            ],
         },
     ]
   responses:
@@ -65,6 +69,7 @@ post:
               [
                 'view_orders:{projectKey}',
                 'view_shipping_methods:{projectKey}',
+                'manage_my_orders:{projectKey}',
               ],
           },
       ]
@@ -115,6 +120,10 @@ post:
   description: Get ShippingMethods for a cart
   get:
     displayName: Get ShippingMethods for a cart
+    description: |
+      Retrieves all the ShippingMethods that can ship to the shipping address of the given Cart.
+      Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
+      This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
     is:
       - expandable
     securedBy:
@@ -125,12 +134,15 @@ post:
               [
                 'view_orders:{projectKey}',
                 'view_shipping_methods:{projectKey}',
+                'manage_my_orders:{projectKey}',
               ],
           },
       ]
     queryParameters:
       cartId:
         type: string
+        description: |
+          ID of the Cart with a shipping address set.
     responses:
       200:
         body:
@@ -142,6 +154,9 @@ post:
   description: Get ShippingMethods for an order edit
   get:
     displayName: Get ShippingMethods for an order edit
+    description: |
+      Retrieves all the ShippingMethods that can ship to the given [Location](/projects/zones#location) for an [OrderEdit](/projects/order-edits).
+      In case the OrderEdit preview cannot be created an [EditPreviewFailed](ctp:api:type:EditPreviewFailedError) error is raised.
     securedBy:
       [
         oauth_2_0:
@@ -156,10 +171,15 @@ post:
     queryParameters:
       orderEditId:
         type: string
+        description: The ID of the [OrderEdit](/projects/order-edits).
       country:
         type: string
+        description: |
+          A two-digit country code as per [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
       state?:
         type: string
+        description: |
+          Name of the state, for example, Colorado.
     responses:
       200:
         body:
@@ -171,6 +191,11 @@ post:
   description: Get ShippingMethods for a location
   get:
     displayName: Get ShippingMethods for a location
+    description: |
+      Retrieves all the ShippingMethods that can ship to the given [Location](/projects/zones#location).
+      If the `currency` parameter is given, then the ShippingMethods must also have a rate defined in the specified currency.
+      Each ShippingMethod contains at least one ShippingRate with the flag `isMatching` set to `true`.
+      If the `currency` parameter is given, exactly one ShippingRate will contain it.
     is:
       - expandable
       - sortable
@@ -182,16 +207,23 @@ post:
               [
                 'view_orders:{projectKey}',
                 'view_shipping_methods:{projectKey}',
+                'manage_my_orders:{projectKey}',
               ],
           },
       ]
     queryParameters:
       country:
         type: string
+        description: |
+          A two-digit country code as per [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
       state?:
         type: string
+        description: |
+          Name of the state, for example, Colorado.
       currency?:
         type: string
+        description: |
+          The currency code compliant to [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
     responses:
       200:
         body:
@@ -214,6 +246,7 @@ post:
               [
                 'view_orders:{projectKey}',
                 'view_shipping_methods:{projectKey}',
+                'manage_my_orders:{projectKey}',
               ],
           },
       ]

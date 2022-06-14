@@ -1,15 +1,30 @@
 #%RAML 1.0 DataType
 (package): ShippingMethod
-(docs-uri): https://docs.commercetools.com/http-api-projects-shippingMethods.html#cartscore-with-fixed-price
+(docs-uri): https://docs.commercetools.com/api/projects/shippingMethods#cartscore-with-fixed-price
 displayName: CartScoreTier
 type: ShippingRatePriceTier
+description: |
+  Used when the ShippingRate maps to an abstract Cart categorization expressed by integers (such as shipping scores or weight ranges).
+  Either `price` or `priceFunction` is required.
+examples:
+  price: !include ../../examples/ShippingMethod/CartScoreTierPrice.json
+  priceFunction: !include ../../examples/ShippingMethod/CartScoreTierFunction.json
 discriminatorValue: CartScore
 properties:
   score:
     type: number
+    format: int32
+    description: |
+      Abstract value for categorizing a Cart. The range starts at `0`. The default price covers `0`, tiers start at `1`. See [Using Tiered Shipping Rates](/../tutorials/shipping-rate) for details and examples.
   price?:
     type: Money
+    description: |
+      Defines a fixed price for the `score`.
   priceFunction?:
     type: PriceFunction
+    description: |
+      Dynamically calculates a Price for a range of scores.
   isMatching?:
     type: boolean
+    description: |
+      Appears in response to [Get ShippingMethods for a Cart](#get-shippingmethods-for-a-cart) if the shipping rate matches the search query.
