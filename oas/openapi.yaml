@@ -24485,9 +24485,16 @@ paths:
       security:
         - oauth_2_0:
             - "view_orders:{projectKey}"
+            - "view_orders:{projectKey}:{storeKey}"
             - "manage_customers:{projectKey}:{storeKey}"
             - "view_shipping_methods:{projectKey}"
+            - "manage_my_orders:{projectKey}"
+            - "manage_my_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShippingMethodsMatchingCartGet
+      description: |-
+        Retrieves all the ShippingMethods that can ship to the shipping address of the given Cart in a given Store.
+        Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
+        This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
       parameters:
         - name: cartId
           in: query
@@ -49351,7 +49358,7 @@ paths:
 
   /{projectKey}/shipping-methods:
     description: |-
-      Shipping Methods define where orders can be shipped and what the costs are.
+      ShippingMethods define where orders can be shipped and what the costs are.
     parameters:
       - name: projectKey
         in: path
@@ -49363,6 +49370,7 @@ paths:
         - oauth_2_0:
             - "view_orders:{projectKey}"
             - "view_shipping_methods:{projectKey}"
+            - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyShippingMethodsGet
       parameters:
         - name: expand
@@ -49732,6 +49740,7 @@ paths:
         - oauth_2_0:
             - "view_orders:{projectKey}"
             - "view_shipping_methods:{projectKey}"
+            - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyShippingMethodsKeyByKeyGet
       parameters:
         - name: expand
@@ -50249,7 +50258,12 @@ paths:
         - oauth_2_0:
             - "view_orders:{projectKey}"
             - "view_shipping_methods:{projectKey}"
+            - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingCartGet
+      description: |-
+        Retrieves all the ShippingMethods that can ship to the shipping address of the given Cart.
+        Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
+        This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
       parameters:
         - name: cartId
           in: query
@@ -50415,7 +50429,13 @@ paths:
         - oauth_2_0:
             - "view_orders:{projectKey}"
             - "view_shipping_methods:{projectKey}"
+            - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingLocationGet
+      description: |-
+        Retrieves all the ShippingMethods that can ship to the given [Location](/projects/zones#location).
+        If the `currency` parameter is given, then the ShippingMethods must also have a rate defined in the specified currency.
+        Each ShippingMethod contains at least one ShippingRate with the flag `isMatching` set to `true`.
+        If the `currency` parameter is given, exactly one ShippingRate will contain it.
       parameters:
         - name: country
           in: query
@@ -50605,6 +50625,9 @@ paths:
             - "view_orders:{projectKey}"
             - "view_shipping_methods:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingOrdereditGet
+      description: |-
+        Retrieves all the ShippingMethods that can ship to the given [Location](/projects/zones#location) for an [OrderEdit](/projects/order-edits).
+        In case the OrderEdit preview cannot be created an [EditPreviewFailed](ctp:api:type:EditPreviewFailedError) error is raised.
       parameters:
         - name: orderEditId
           in: query
@@ -50778,6 +50801,7 @@ paths:
         - oauth_2_0:
             - "view_orders:{projectKey}"
             - "view_shipping_methods:{projectKey}"
+            - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyShippingMethodsByIDGet
       parameters:
         - name: expand
@@ -81420,8 +81444,8 @@ components:
           type:
             $ref: '#/components/schemas/ShippingRateTierType'
           score:
-            type: "number"
-            format: "double"
+            type: "integer"
+            format: "int32"
           price:
             $ref: '#/components/schemas/Money'
           priceFunction:
@@ -81631,21 +81655,7 @@ components:
       - CartClassification
       - CartScore
       x-annotation-package: "ShippingMethod"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-shippingMethods.html#shippingratepricetier"
-      x-annotation-enumDescriptions:
-        CartValue: "Used when the shipping rate maps to the sum of the [LineItem](ctp:api:type:LineItem)
-         prices. The value of the Cart is used to select a tier. If chosen, it is not possible
-         to set a value for the `shippingRateInput` on the [Cart](ctp:api:type:Cart). Tiers
-         contain the `centAmount` (a value of `100` in the currency `USD` corresponds to
-         `$ 1.00`), and start at `1`.'n"
-        CartClassification: "Used when the shipping rate maps to an abstract Cart categorization
-         expressed by strings, for example, `Light`, `Medium`, and `Heavy`. Only keys defined
-         in the `values` array can be used to create a tier or to set a value of the `shippingRateInput`
-         on the [Cart](ctp:api:type:Cart). The keys must be unique, and the request is
-         rejected otherwise.n"
-        CartScore: "Used when the shipping rate maps to an abstract Cart categorization expressed
-         by integers such as shipping scores and weight ranges. The range starts at `0`.
-         The default price covers the `0`, tiers start at `1`.n"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/shippingMethods#shippingratepricetier"
     ZoneRate:
       type: "object"
       properties:
