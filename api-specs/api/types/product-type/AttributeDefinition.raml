@@ -1,47 +1,45 @@
 #%RAML 1.0 DataType
 (package): ProductType
-(docs-uri): https://docs.commercetools.com/http-api-projects-productTypes.html#attributedefinition
+(docs-uri): https://docs.commercetools.com/api/projects/productTypes#attributedefinition
 displayName: AttributeDefinition
 type: object
+description: |
+  Describes a Product Attribute and allows you to define meta-information associated with the Attribute (like whether it should be searchable, or its constraints).
 properties:
   type:
     type: AttributeType
-    description: Describes the type of the attribute.
+    description: Describes the Type of the Attribute.
   name:
     type: string
-    description: |-
-      The unique name of the attribute used in the API.
-      The name must be between two and 256 characters long and can contain the ASCII letters A to Z in lowercase or uppercase, digits, underscores (`_`) and the hyphen-minus (`-`).
-      When using the same `name` for an attribute in two or more product types all fields of the AttributeDefinition of this attribute need to be the same across the product types, otherwise an AttributeDefinitionAlreadyExists error code will be returned.
-      An exception to this are the values of an `enum` or `lenum` type and sets thereof.
+    pattern: ^[A-Za-z0-9_-]+$
+    minLength: 2
+    maxLength: 256
+    description: |
+      User-defined name of the Attribute that is unique within the [Project](ctp:api:type:Project).
   label:
     type: LocalizedString
-    description: A human-readable label for the attribute.
+    description: Human-readable label for the Attribute.
   isRequired:
     type: boolean
-    description: Whether the attribute is required to have a value.
+    description: If `true`, the Attribute must have a value on a [ProductVariant](ctp:api:type:ProductVariant).
   attributeConstraint:
     type: AttributeConstraintEnum
-    description:
-      Describes how an attribute or a set of attributes should be validated
-      across all variants of a product.
+    description: |
+      Specifies how Attributes are validated across all variants of a Product.
   inputTip?:
     type: LocalizedString
-    description:
-      Additional information about the attribute that aids content managers when
-      setting product details.
+    description: |
+      Provides additional Attribute information to aid content managers configure Product details.
   inputHint:
     type: TextInputHint
     description: |-
-      Provides a visual representation type for this attribute.
-      only relevant for text-based attribute types
-      like TextType and LocalizableTextType.
+      Provides a visual representation directive for values of this Attribute (only relevant for [AttributeTextType](ctp:api:type:AttributeTextType) and [AttributeLocalizableTextType](ctp:api:type:AttributeLocalizableTextType)).
   isSearchable:
     type: boolean
     description: |-
-      Whether the attribute's values should generally be enabled in product search.
-      This determines whether the value is stored in products for matching terms in the context of full-text search queries  and can be used in facets & filters as part of product search queries.
-      The exact features that are enabled/disabled with this flag depend on the concrete attribute type and are described there.
-      The max size of a searchable field is **restricted to 10922 characters**.
-      This constraint is enforced at both product creation and product update.
-      If the length of the input exceeds the maximum size an InvalidField error is returned.
+      If `true`, the Attribute's values are available for the [Product Projections Search API](/../api/projects/products-search) for use in full-text search queries, filters, and facets.
+
+      Which exact features are available with this flag depends on the specific [AttributeType](ctp:api:type:AttributeType).
+      The maximum size of a searchable field is **restricted** by the [Field content size limit](/../api/limits#field-content-size).
+      This constraint is enforced at both [Product creation](/../api/projects/products#create-a-product) and [Product update](/../api/projects/products#update-product).
+      If the length of the input exceeds the maximum size, an [InvalidFieldError](ctp:api:type:InvalidFieldError) is returned.

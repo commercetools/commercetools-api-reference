@@ -1,11 +1,25 @@
 #%RAML 1.0 DataType
 (package): ProductType
-(docs-uri): https://docs.commercetools.com/http-api-projects-productTypes.html#change-attributedefinition-name
+(docs-uri): https://docs.commercetools.com/api/projects/productTypes#change-attributedefinition-name
 type: ProductTypeUpdateAction
 displayName: ProductTypeChangeAttributeNameAction
 discriminatorValue: changeAttributeName
+example: !include ../../../examples/ProductType/ProductTypeChangeAttributeNameAction.json
+description: |
+  Renames an AttributeDefinition and also renames all corresponding Attributes on all [Products](/projects/products) with this ProductType. The renaming of the Attributes is [eventually consistent](/general-concepts#eventual-consistency).
 properties:
   attributeName:
     type: string
+    description: Name of the AttributeDefinition to update.
+    pattern: ^[A-Za-z0-9_-]+$
+    minLength: 2
+    maxLength: 256
   newAttributeName:
     type: string
+    pattern: ^[A-Za-z0-9_-]+$
+    minLength: 2
+    maxLength: 256
+    description: |-
+      New user-defined name of the Attribute that is unique with the [Project](ctp:api:type:Project).
+      When using the same `name` for an Attribute in two or more ProductTypes all fields of the AttributeDefinition of this Attribute need to be the same across the ProductTypes, otherwise an [AttributeDefinitionAlreadyExistsError](ctp:api:type:AttributeDefinitionAlreadyExistsError) will be returned.
+      An exception to this are the values of an `enum` or `lenum` type and sets thereof.
