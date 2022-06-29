@@ -229,6 +229,7 @@ input AddProductPrice {
 
 input AddProductSelectionProduct {
   product: ResourceIdentifierInput!
+  variantSelection: ProductVariantSelectionDraft
 }
 
 input AddProductToCategory {
@@ -5847,6 +5848,9 @@ type ProductLimitsProjection {
 type ProductOfSelection {
   productRef: Reference!
   product: Product
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  variantSelection: ProductVariantSelection
 }
 
 type ProductOfSelectionQueryResult {
@@ -6232,6 +6236,7 @@ type ProductSelectionDeleted implements MessagePayload {
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 type ProductSelectionProductAdded implements MessagePayload {
+  variantSelection: ProductVariantSelection
   product: Product
   productRef: Reference!
   type: String!
@@ -6286,6 +6291,16 @@ input ProductSelectionUpdateAction {
   setCustomField: SetProductSelectionCustomField
   setCustomType: SetProductSelectionCustomType
   setKey: SetProductSelectionKey
+  setVariantSelection: SetProductSelectionVariantSelection
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductSelectionVariantSelectionChanged implements MessagePayload {
+  oldVariantSelection: ProductVariantSelection
+  newVariantSelection: ProductVariantSelection
+  product: Product
+  productRef: Reference!
+  type: String!
 }
 
 type ProductSlugChanged implements MessagePayload {
@@ -6532,6 +6547,30 @@ input ProductVariantInput {
   images: [ImageInput!] = []
   attributes: [ProductAttributeInput!] = []
   assets: [AssetDraftInput!] = []
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+interface ProductVariantSelection {
+  type: String!
+  skus: [String!]!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+input ProductVariantSelectionDraft {
+  inclusion: [String!]
+  exclusion: [String!]
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type ProductVariantSelectionExclusion implements ProductVariantSelection {
+  type: String!
+  skus: [String!]!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+type ProductVariantSelectionInclusion implements ProductVariantSelection {
+  type: String!
+  skus: [String!]!
 }
 
 "Contains information about the limits of your project."
@@ -7603,6 +7642,8 @@ type SelectionOfProduct {
   productSelectionRef: Reference!
   productSelection: ProductSelection
   createdAt: DateTime!
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#beta-features"
+  variantSelection: ProductVariantSelection
 }
 
 type SelectionOfProductQueryResult {
@@ -8668,6 +8709,11 @@ input SetProductSelectionCustomType {
 
 input SetProductSelectionKey {
   key: String
+}
+
+input SetProductSelectionVariantSelection {
+  product: ResourceIdentifierInput!
+  variantSelection: ProductVariantSelectionDraft
 }
 
 input SetProductSku {
