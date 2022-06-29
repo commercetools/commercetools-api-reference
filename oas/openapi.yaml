@@ -24054,7 +24054,36 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyProductSelectionAssignmentsGet
       description: |-
         Queries Product Selection assignments in a specific Store.
+
+        The response will include duplicate Products whenever more than one active Product Selection of the Store
+        includes a Product. To make clear through which Product Selection a Product is available in the Store
+        the response contains assignments including both the Product and the Product Selection.
+        Only Products of Product Selections that are activated in Store will be returned.
       parameters:
+        - name: limit
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: offset
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: withTotal
+          x-annotation-default: true
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
         - name: expand
           in: query
           required: false
@@ -70810,6 +70839,7 @@ components:
             ProductSelectionDeleted: '#/components/schemas/ProductSelectionDeletedMessage'
             ProductSelectionProductAdded: '#/components/schemas/ProductSelectionProductAddedMessage'
             ProductSelectionProductRemoved: '#/components/schemas/ProductSelectionProductRemovedMessage'
+            ProductSelectionVariantSelectionChanged: '#/components/schemas/ProductSelectionVariantSelectionChangedMessage'
             ProductSlugChanged: '#/components/schemas/ProductSlugChangedMessage'
             ProductStateTransition: '#/components/schemas/ProductStateTransitionMessage'
             ProductUnpublished: '#/components/schemas/ProductUnpublishedMessage'
@@ -72808,6 +72838,8 @@ components:
             $ref: '#/components/schemas/UserProvidedIdentifiers'
           product:
             $ref: '#/components/schemas/ProductReference'
+          variantSelection:
+            $ref: '#/components/schemas/ProductVariantSelection'
     ProductSelectionProductRemovedMessage:
       allOf:
       - $ref: '#/components/schemas/Message'
@@ -72842,6 +72874,44 @@ components:
             $ref: '#/components/schemas/UserProvidedIdentifiers'
           product:
             $ref: '#/components/schemas/ProductReference'
+    ProductSelectionVariantSelectionChangedMessage:
+      allOf:
+      - $ref: '#/components/schemas/Message'
+      - type: "object"
+        properties:
+          id:
+            type: "string"
+          version:
+            type: "integer"
+            format: "int64"
+          createdAt:
+            type: "string"
+            format: "datetime"
+          lastModifiedAt:
+            type: "string"
+            format: "datetime"
+          lastModifiedBy:
+            $ref: '#/components/schemas/LastModifiedBy'
+          createdBy:
+            $ref: '#/components/schemas/CreatedBy'
+          sequenceNumber:
+            type: "integer"
+            format: "int64"
+          resource:
+            $ref: '#/components/schemas/Reference'
+          resourceVersion:
+            type: "integer"
+            format: "int64"
+          type:
+            type: "string"
+          resourceUserProvidedIdentifiers:
+            $ref: '#/components/schemas/UserProvidedIdentifiers'
+          product:
+            $ref: '#/components/schemas/ProductReference'
+          oldVariantSelection:
+            $ref: '#/components/schemas/ProductVariantSelection'
+          newVariantSelection:
+            $ref: '#/components/schemas/ProductVariantSelection'
     ProductSlugChangedMessage:
       allOf:
       - $ref: '#/components/schemas/Message'
@@ -73768,6 +73838,7 @@ components:
           ProductSelectionDeleted: '#/components/schemas/ProductSelectionDeletedMessagePayload'
           ProductSelectionProductAdded: '#/components/schemas/ProductSelectionProductAddedMessagePayload'
           ProductSelectionProductRemoved: '#/components/schemas/ProductSelectionProductRemovedMessagePayload'
+          ProductSelectionVariantSelectionChanged: '#/components/schemas/ProductSelectionVariantSelectionChangedMessagePayload'
           ProductSlugChanged: '#/components/schemas/ProductSlugChangedMessagePayload'
           ProductStateTransition: '#/components/schemas/ProductStateTransitionMessagePayload'
           ProductUnpublished: '#/components/schemas/ProductUnpublishedMessagePayload'
@@ -74391,6 +74462,8 @@ components:
             type: "string"
           product:
             $ref: '#/components/schemas/ProductReference'
+          variantSelection:
+            $ref: '#/components/schemas/ProductVariantSelection'
     ProductSelectionProductRemovedMessagePayload:
       allOf:
       - $ref: '#/components/schemas/MessagePayload'
@@ -74400,6 +74473,19 @@ components:
             type: "string"
           product:
             $ref: '#/components/schemas/ProductReference'
+    ProductSelectionVariantSelectionChangedMessagePayload:
+      allOf:
+      - $ref: '#/components/schemas/MessagePayload'
+      - type: "object"
+        properties:
+          type:
+            type: "string"
+          product:
+            $ref: '#/components/schemas/ProductReference'
+          oldVariantSelection:
+            $ref: '#/components/schemas/ProductVariantSelection'
+          newVariantSelection:
+            $ref: '#/components/schemas/ProductVariantSelection'
     ProductSlugChangedMessagePayload:
       allOf:
       - $ref: '#/components/schemas/MessagePayload'
@@ -78432,11 +78518,15 @@ components:
       properties:
         product:
           $ref: '#/components/schemas/ProductReference'
+        variantSelection:
+          $ref: '#/components/schemas/ProductVariantSelection'
     AssignedProductSelection:
       type: "object"
       properties:
         productSelection:
           $ref: '#/components/schemas/ProductSelectionReference'
+        variantSelection:
+          $ref: '#/components/schemas/ProductVariantSelection'
     AssignedProductSelectionPagedQueryResponse:
       type: "object"
       properties:
@@ -78503,6 +78593,8 @@ components:
           $ref: '#/components/schemas/ProductReference'
         productSelection:
           $ref: '#/components/schemas/ProductSelectionReference'
+        variantSelection:
+          $ref: '#/components/schemas/ProductVariantSelection'
     ProductSelectionDraft:
       type: "object"
       properties:
@@ -78611,9 +78703,49 @@ components:
           setCustomField: '#/components/schemas/ProductSelectionSetCustomFieldAction'
           setCustomType: '#/components/schemas/ProductSelectionSetCustomTypeAction'
           setKey: '#/components/schemas/ProductSelectionSetKeyAction'
+          setVariantSelection: '#/components/schemas/ProductSelectionSetVariantSelectionAction'
       properties:
         action:
           type: "string"
+    ProductVariantSelection:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          exclusion: '#/components/schemas/ProductVariantSelectionExclusion'
+          inclusion: '#/components/schemas/ProductVariantSelectionInclusion'
+      properties:
+        type:
+          $ref: '#/components/schemas/ProductVariantSelectionTypeEnum'
+    ProductVariantSelectionExclusion:
+      allOf:
+      - $ref: '#/components/schemas/ProductVariantSelection'
+      - type: "object"
+        properties:
+          type:
+            $ref: '#/components/schemas/ProductVariantSelectionTypeEnum'
+          skus:
+            type: "array"
+            items:
+              type: "string"
+    ProductVariantSelectionInclusion:
+      allOf:
+      - $ref: '#/components/schemas/ProductVariantSelection'
+      - type: "object"
+        properties:
+          type:
+            $ref: '#/components/schemas/ProductVariantSelectionTypeEnum'
+          skus:
+            type: "array"
+            items:
+              type: "string"
+    ProductVariantSelectionTypeEnum:
+      type: "string"
+      enum:
+      - inclusion
+      - exclusion
+      x-annotation-package: "ProductSelection"
+      x-annotation-docs-uri: --- ""
     ProductsInStorePagedQueryResponse:
       type: "object"
       properties:
@@ -78642,6 +78774,8 @@ components:
             type: "string"
           product:
             $ref: '#/components/schemas/ProductResourceIdentifier'
+          variantSelection:
+            $ref: '#/components/schemas/ProductVariantSelection'
     ProductSelectionChangeNameAction:
       allOf:
       - $ref: '#/components/schemas/ProductSelectionUpdateAction'
@@ -78697,6 +78831,17 @@ components:
             type: "string"
           key:
             type: "string"
+    ProductSelectionSetVariantSelectionAction:
+      allOf:
+      - $ref: '#/components/schemas/ProductSelectionUpdateAction'
+      - type: "object"
+        properties:
+          action:
+            type: "string"
+          product:
+            $ref: '#/components/schemas/ProductResourceIdentifier'
+          variantSelection:
+            $ref: '#/components/schemas/ProductVariantSelection'
     AttributeBooleanType:
       allOf:
       - $ref: '#/components/schemas/AttributeType'
