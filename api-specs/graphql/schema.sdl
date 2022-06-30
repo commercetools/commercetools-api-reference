@@ -826,6 +826,10 @@ type BooleanType implements FieldType {
   name: String!
 }
 
+input CancelQuoteRequest {
+  dummy: String
+}
+
 "A shopping cart holds product variants and can be ordered. Each cart either belongs to a registered customer or is an anonymous cart."
 type Cart implements Versioned & ReferenceExpandable {
   customerId: String
@@ -1468,6 +1472,10 @@ input ChangeMyCartTaxMode {
   taxMode: TaxMode!
 }
 
+input ChangeMyQuoteMyQuoteState {
+  quoteState: MyQuoteState!
+}
+
 input ChangeOrderPaymentState {
   paymentState: PaymentState!
 }
@@ -1615,6 +1623,14 @@ input ChangeProjectSettingsShoppingListsConfiguration {
   shoppingListsConfiguration: ShoppingListsConfigurationInput!
 }
 
+input ChangeQuoteRequestState {
+  quoteRequestState: QuoteRequestState!
+}
+
+input ChangeQuoteState {
+  quoteState: MyQuoteState!
+}
+
 input ChangeShippingMethodIsDefault {
   isDefault: Boolean!
 }
@@ -1743,6 +1759,10 @@ input ChangeStagedOrderTaxRoundingMode {
 type ChangeStagedOrderTaxRoundingModeOutput implements StagedOrderUpdateActionOutput {
   type: String!
   taxRoundingMode: RoundingMode!
+}
+
+input ChangeStagedQuoteState {
+  stagedQuoteState: StagedQuoteState!
 }
 
 input ChangeStandalonePriceValue {
@@ -2251,7 +2271,6 @@ type CustomSuggestTokenizerProductSearch implements SuggestTokenizerProductSearc
 type Customer implements Versioned & ReferenceExpandable {
   customerNumber: String
   email: String!
-  password: String
   addresses: [Address!]!
   defaultShippingAddressId: String
   defaultBillingAddressId: String
@@ -2271,6 +2290,7 @@ type Customer implements Versioned & ReferenceExpandable {
   dateOfBirth: Date
   companyName: String
   vatId: String
+  password: String
   customerGroup: CustomerGroup
   defaultShippingAddress: Address
   defaultBillingAddress: Address
@@ -3839,6 +3859,28 @@ type Me implements MeQueryInterface & CartQueryInterface & ActiveCartInterface &
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   payments(where: String, sort: [String!], limit: Int, offset: Int): MyPaymentQueryResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  quoteRequest(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): QuoteRequest
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  quoteRequests(where: String, sort: [String!], limit: Int, offset: Int): QuoteRequestQueryResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  quote(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): Quote
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  quotes(where: String, sort: [String!], limit: Int, offset: Int): QuoteQueryResult!
 }
 
 "The me field gives access to the data that is specific to the customer or anonymous session linked to the access token."
@@ -4436,6 +4478,10 @@ type Mutation {
 
     "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
     storeKey: KeyReferenceInput): Order
+  createOrderFromQuote(draft: OrderQuoteCommand!): Order
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  createMyOrderFromQuote(draft: OrderMyQuoteCommand!): Order
   createOrderEdit(draft: OrderEditDraft!): OrderEdit
   updateOrderEdit(version: Long!, actions: [OrderEditUpdateAction!]!, dryRun: Boolean = false,
 
@@ -4629,6 +4675,66 @@ type Mutation {
 
     "Queries with specified key"
     key: String): StandalonePrice
+  createQuoteRequest(draft: QuoteRequestDraft!): QuoteRequest
+  updateQuoteRequest(version: Long!, actions: [QuoteRequestUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): QuoteRequest
+  deleteQuoteRequest(version: Long!, personalDataErasure: Boolean = false,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): QuoteRequest
+  createMyQuoteRequest(draft: MyQuoteRequestDraft!): QuoteRequest
+  updateMyQuoteRequest(version: Long!, actions: [MyQuoteRequestUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): QuoteRequest
+  createStagedQuote(draft: StagedQuoteDraft!): StagedQuote
+  updateStagedQuote(version: Long!, actions: [StagedQuoteUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): StagedQuote
+  deleteStagedQuote(version: Long!, personalDataErasure: Boolean = false,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): StagedQuote
+  createQuote(draft: QuoteDraft!): Quote
+  updateQuote(version: Long!, actions: [QuoteUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): Quote
+  deleteQuote(version: Long!, personalDataErasure: Boolean = false,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): Quote
+  updateMyQuote(version: Long!, actions: [MyQuoteUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): Quote
 }
 
 input MyCartDraft {
@@ -4766,6 +4872,30 @@ input MyPaymentUpdateAction {
   setMethodInfoName: SetPaymentMethodInfoName
 }
 
+input MyQuoteRequestDraft {
+  cartId: String!
+  comment: String
+  cartVersion: Long!
+}
+
+input MyQuoteRequestUpdateAction {
+  cancelQuoteRequest: CancelQuoteRequest
+  setCustomField: SetMyQuoteRequestCustomField
+  setCustomType: SetMyQuoteRequestCustomType
+}
+
+enum MyQuoteState {
+  Accepted
+  Declined
+  Failed
+}
+
+input MyQuoteUpdateAction {
+  changeMyQuoteState: ChangeMyQuoteMyQuoteState
+  setCustomField: SetQuoteCustomField
+  setCustomType: SetQuoteCustomType
+}
+
 input MyShoppingListDraft {
   name: [LocalizedStringItemInputType!]!
   description: [LocalizedStringItemInputType!]
@@ -4881,6 +5011,7 @@ type Order implements Versioned & ReferenceExpandable {
   paymentState: PaymentState
   syncInfo: [SyncInfo!]!
   returnInfo: [ReturnInfo!]!
+  lastMessageSequenceNumber: Long! @deprecated(reason: "An internal field that should not be used in customer logic")
   cartRef: Reference
   cart: Cart
   custom: CustomFieldsType
@@ -5108,6 +5239,11 @@ input OrderMyCartCommand {
   version: Long!
 }
 
+input OrderMyQuoteCommand {
+  id: String!
+  version: Long!
+}
+
 type OrderPaymentAdded implements MessagePayload & OrderMessagePayload {
   paymentRef: Reference!
   type: String!
@@ -5141,6 +5277,17 @@ type OrderQueryResult {
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   exists: Boolean!
   results: [Order!]!
+}
+
+input OrderQuoteCommand {
+  quote: ResourceIdentifierInput
+  version: Long!
+  paymentState: PaymentState
+  orderState: OrderState
+  state: ReferenceInput
+  shipmentState: ShipmentState
+  orderNumber: String
+  custom: CustomFieldsDraft
 }
 
 type OrderReturnShipmentStateChanged implements MessagePayload & OrderMessagePayload {
@@ -6890,6 +7037,27 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
   and associated to a ProductVariant through the sku field.
   """
   standalonePrices(where: String, sort: [String!], limit: Int, offset: Int): StandalonePriceQueryResult!
+  quoteRequest(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): QuoteRequest
+  quoteRequests(where: String, sort: [String!], limit: Int, offset: Int): QuoteRequestQueryResult!
+  stagedQuote(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): StagedQuote
+  stagedQuotes(where: String, sort: [String!], limit: Int, offset: Int): StagedQuoteQueryResult!
+  quote(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): Quote
+  quotes(where: String, sort: [String!], limit: Int, offset: Int): QuoteQueryResult!
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
@@ -6897,6 +7065,142 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
 
 type QueryLimitsProjection {
   offset: Limit!
+}
+
+type Quote implements Versioned {
+  customerRef: Reference
+  customer: Customer
+  lineItems(
+    "Queries with specified ID"
+    id: String): [LineItem!]!
+  customLineItems: [CustomLineItem!]!
+  totalPrice: Money!
+  taxedPrice: TaxedPrice
+  shippingAddress: Address
+  billingAddress: Address
+  itemShippingAddresses: [Address!]!
+  inventoryMode: InventoryMode!
+  taxMode: TaxMode!
+  taxRoundingMode: RoundingMode!
+  taxCalculationMode: TaxCalculationMode!
+  country: Country
+  shippingInfo: ShippingInfo
+  paymentInfo: PaymentInfo
+  shippingRateInput: ShippingRateInput
+  storeRef: KeyReference
+  store: Store
+  key: String
+  quoteState: QuoteState!
+  stagedQuoteRef: Reference!
+  stagedQuote: StagedQuote
+  quoteRequestRef: Reference!
+  quoteRequest: QuoteRequest
+  validTo: DateTime
+  custom: CustomFieldsType
+  id: String!
+  version: Long!
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+input QuoteDraft {
+  key: String
+  stagedQuote: ResourceIdentifierInput
+  stagedQuoteVersion: Long
+  custom: CustomFieldsDraft
+}
+
+type QuoteQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  exists: Boolean!
+  results: [Quote!]!
+}
+
+type QuoteRequest implements Versioned {
+  customerRef: Reference
+  customer: Customer
+  lineItems(
+    "Queries with specified ID"
+    id: String): [LineItem!]!
+  customLineItems: [CustomLineItem!]!
+  totalPrice: Money!
+  taxedPrice: TaxedPrice
+  shippingAddress: Address
+  billingAddress: Address
+  itemShippingAddresses: [Address!]!
+  inventoryMode: InventoryMode!
+  taxMode: TaxMode!
+  taxRoundingMode: RoundingMode!
+  taxCalculationMode: TaxCalculationMode!
+  country: Country
+  shippingInfo: ShippingInfo
+  paymentInfo: PaymentInfo
+  shippingRateInput: ShippingRateInput
+  storeRef: KeyReference
+  store: Store
+  key: String
+  quoteRequestState: QuoteRequestState!
+  comment: String
+  custom: CustomFieldsType
+  id: String!
+  version: Long!
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+input QuoteRequestDraft {
+  key: String
+  cart: ResourceIdentifierInput
+  comment: String
+  cartVersion: Long
+  custom: CustomFieldsDraft
+}
+
+type QuoteRequestQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  exists: Boolean!
+  results: [QuoteRequest!]!
+}
+
+enum QuoteRequestState {
+  Closed
+  UnderReview
+  Submitted
+  Cancelled
+  Accepted
+  Rejected
+}
+
+input QuoteRequestUpdateAction {
+  changeQuoteRequestState: ChangeQuoteRequestState
+  setCustomField: SetQuoteRequestCustomField
+  setCustomType: SetQuoteRequestCustomType
+}
+
+enum QuoteState {
+  Accepted
+  Declined
+  Failed
+  Pending
+  Withdrawn
+}
+
+input QuoteUpdateAction {
+  changeQuoteState: ChangeQuoteState
+  setCustomField: SetQuoteCustomField
+  setCustomType: SetQuoteCustomType
 }
 
 interface RangeCount {
@@ -8211,6 +8515,18 @@ input SetMyCartShippingMethod {
   shippingMethod: ResourceIdentifierInput
 }
 
+input SetMyQuoteRequestCustomField {
+  name: String!
+  value: String
+}
+
+input SetMyQuoteRequestCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
 input SetOrderBillingAddress {
   address: AddressInput
 }
@@ -8739,6 +9055,30 @@ input SetProjectSettingsExternalOAuth {
 
 input SetProjectSettingsShippingRateInputType {
   shippingRateInputType: ShippingRateInputTypeInput
+}
+
+input SetQuoteCustomField {
+  name: String!
+  value: String
+}
+
+input SetQuoteCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
+input SetQuoteRequestCustomField {
+  name: String!
+  value: String
+}
+
+input SetQuoteRequestCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
 }
 
 input SetReviewAuthorName {
@@ -9513,6 +9853,26 @@ type SetStagedOrderStoreOutput implements StagedOrderUpdateActionOutput {
   storeResId: ResourceIdentifier
 }
 
+input SetStagedQuoteCustomField {
+  name: String!
+  value: String
+}
+
+input SetStagedQuoteCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
+input SetStagedQuoteSellerComment {
+  sellerComment: String
+}
+
+input SetStagedQuoteValidTo {
+  validTo: DateTime
+}
+
 input SetStandalonePriceCustomFields {
   name: String!
   value: String
@@ -10099,6 +10459,56 @@ input StagedOrderUpdateAction {
 
 interface StagedOrderUpdateActionOutput {
   type: String!
+}
+
+type StagedQuote implements Versioned {
+  key: String
+  stagedQuoteState: StagedQuoteState!
+  quoteRequestRef: Reference!
+  quoteRequest: QuoteRequest
+  quotationCartRef: Reference!
+  quotationCart: Cart
+  customerRef: Reference
+  customer: Customer
+  validTo: DateTime
+  custom: CustomFieldsType
+  id: String!
+  version: Long!
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+input StagedQuoteDraft {
+  key: String
+  quoteRequest: ResourceIdentifierInput
+  quoteRequestVersion: Long
+  custom: CustomFieldsDraft
+}
+
+type StagedQuoteQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  exists: Boolean!
+  results: [StagedQuote!]!
+}
+
+enum StagedQuoteState {
+  Closed
+  InProgress
+  Sent
+}
+
+input StagedQuoteUpdateAction {
+  changeStagedQuoteState: ChangeStagedQuoteState
+  setSellerComment: SetStagedQuoteSellerComment
+  setCustomField: SetStagedQuoteCustomField
+  setCustomType: SetStagedQuoteCustomType
+  setValidTo: SetStagedQuoteValidTo
 }
 
 """

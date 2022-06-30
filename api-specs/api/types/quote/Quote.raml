@@ -1,0 +1,148 @@
+#%RAML 1.0 DataType
+(package): Quote
+(docs-uri): https://docs.commercetools.com/http-api-projects-quotes#quote
+type: BaseResource
+displayName: Quote
+(updateType): QuoteUpdate
+properties:
+  id:
+    (identifier): true
+    type: string
+    description: |
+      Unique identifier of the Quote.
+  version:
+    type: number
+    format: int64
+    description: |
+      Current version of the Quote.
+  key?:
+    type: string
+    description: |
+      User-defined unique identifier of the Quote.
+    pattern: ^[A-Za-z0-9_-]+$
+    minLength: 2
+    maxLength: 256
+  createdAt:
+    type: datetime
+    description: |
+      Date and time (UTC) the Quote was initially created.
+  lastModifiedAt:
+    type: datetime
+    description: |
+      Date and time (UTC) the Quote was last updated.
+  lastModifiedBy?:
+    type: LastModifiedBy
+    (beta): true
+    description: |
+      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
+  createdBy?:
+    type: CreatedBy
+    (beta): true
+    description: |
+      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
+  quoteRequest:
+    type: QuoteRequestReference
+    description: |
+      The Quote Request related to this Quote.
+  stagedQuote:
+    type: StagedQuoteReference
+    description: |
+      The Staged Quote related to this Quote.
+  customer?:
+    type: CustomerReference
+    description: |
+      The [Buyer](/../api/quotes-overview#buyer) who requested this Quote.
+  customerGroup?:
+    type: CustomerGroupReference
+    description: |
+      Set automatically when `customer` is set and the Customer is a member of a Customer Group.
+      Used for Product Variant price selection.
+  validTo?:
+    type: datetime
+    description: |
+      Expiration date for the Quote.
+  sellerComment?:
+    type: string
+    description: |
+      The text message included in the offer from the [Seller](/../api/quotes-overview#seller).
+  store?:
+    type: StoreKeyReference
+    description: |
+      The Store to which the [Buyer](/../api/quotes-overview#buyer) belongs.
+  lineItems:
+    type: LineItem[]
+    description: |
+      The Line Items for which the Quote is requested.
+  customLineItems:
+    type: CustomLineItem[]
+    description: |
+      The Custom Line Items for which the Quote is requested.
+  totalPrice:
+    description: |
+      The sum of all `totalPrice` fields of the `lineItems` and `customLineItems`, as well as the `price` field of `shippingInfo` (if it exists).
+      `totalPrice` may or may not include the taxes: it depends on the taxRate.includedInPrice property of each price.
+    type: TypedMoney
+  taxedPrice?:
+    type: TaxedPrice
+    description: |-
+      Not set until the shipping address is set.
+      Will be set automatically in the `Platform` TaxMode.
+      For the `External` tax mode it will be set  as soon as the external tax rates for all line items, custom line items, and shipping in the cart are set.
+  shippingAddress?:
+    type: Address
+    description: |
+      Used to determine the eligible [ShippingMethods](ctp:api:type:ShippingMethod)
+      and rates as well as the tax rate of the Line Items.
+  billingAddress?:
+    type: Address
+    description: |
+      The address used for invoicing.
+  inventoryMode?:
+    type: InventoryMode
+    description: |
+      The inventory mode of the Cart referenced in the [QuoteRequestDraft](ctp:api:type:QuoteRequestDraft).
+  taxMode:
+    type: TaxMode
+    description: |
+      The tax mode of the Cart referenced in the [QuoteRequestDraft](ctp:api:type:QuoteRequestDraft).
+  taxRoundingMode:
+    type: RoundingMode
+    description: |
+      When calculating taxes for `taxedPrice`, the selected mode is used for rounding.
+  taxCalculationMode:
+    type: TaxCalculationMode
+    description:
+      When calculating taxes for `taxedPrice`, the selected mode is used for
+      calculating the price with `LineItemLevel` (horizontally) or
+      `UnitPriceLevel` (vertically) calculation mode.
+  country?:
+    type: CountryCode
+    description: |
+      Used for Product Variant price selection.
+  shippingInfo?:
+    type: ShippingInfo
+    description: |
+      Set automatically once the [ShippingMethod](ctp:api:type:ShippingMethod) is set.
+  paymentInfo?:
+    type: PaymentInfo
+    description: |
+      Log of payment transactions related to this quote.
+  shippingRateInput?:
+    type: ShippingRateInput
+    description: |
+      Used to select a [ShippingRatePriceTier](ctp:api:type:ShippingRatePriceTier).
+  itemShippingAddresses?:
+    type: Address[]
+    description: |
+      Contains addresses for carts with multiple shipping addresses.
+      Line items reference these addresses under their `shippingDetails`.
+      The addresses captured here are not used to determine eligible shipping methods or the applicable tax rate.
+      Only the cart's `shippingAddress` is used for this.
+  directDiscounts?:
+    type: DirectDiscount[]
+    description: |
+      Discounts only valid for this Quote, those cannot be associated to any other Cart or Order.
+  custom?:
+    type: CustomFields
+    description: |
+      Custom Fields of this Quote.
