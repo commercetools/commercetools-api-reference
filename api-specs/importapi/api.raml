@@ -33,7 +33,6 @@ uses:
 
   error: types/error.raml
   import-operation: types/import-operation.raml
-  import-sink: types/import-sink.raml
   import-container: types/import-container.raml
   import-summary: types/import-summary.raml
   import-request: types/import-request.raml
@@ -46,6 +45,7 @@ uses:
   customer-import: types/customer-import.raml
   order-import: types/order-import.raml
   order-patch-import: types/order-patch-import.raml
+  inventory-import: types/inventory-import.raml
   custom-field: types/custom-field.raml
   common: types/common.raml
 
@@ -79,17 +79,6 @@ securitySchemes:
 securedBy: [oauth_2_0]
 
 traits:
-  secured_by_manage_import_sinks:
-    securedBy:
-      - oauth_2_0:
-          scopes:
-            - manage_import_sinks:{projectKey}
-  secured_by_view_import_sinks:
-    securedBy:
-      - oauth_2_0:
-          scopes:
-            - manage_import_sinks:{projectKey}
-            - view_import_sinks:{projectKey}
   secured_by_manage_import_containers:
     securedBy:
       - oauth_2_0:
@@ -141,116 +130,6 @@ traits:
     projectKey:
       description: The Project key.
       type: string
-  /import-sinks:
-    (annotations.markDeprecated): true
-    type: base
-    post:
-      displayName: Creates a new import sink.
-      description: Creates a new import sink.
-      is:
-        - secured_by_manage_import_sinks
-      body:
-        type: import-sink.ImportSinkDraft
-      responses:
-        201:
-          body:
-            type: import-sink.ImportSink
-        400:
-          description: The request was invalid.
-          body:
-            type: error.ErrorResponse
-    get:
-      queryParameters:
-        limit?:
-          type: number
-          description: |
-            Number of [results requested](/../api/general-concepts#limit).
-        offset?:
-          type: number
-          description: |
-            Number of [elements skipped](/../api/general-concepts#offset).
-        sort?:
-          description: |
-            See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
-          type: string[]
-      description: Retrieves all import sinks of a project key.
-      is:
-        - secured_by_view_import_sinks
-      responses:
-        200:
-          body:
-            type: import-sink.ImportSinkPagedResponse
-    /{importSinkKey}:
-      type: baseByParam
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: The key of the import sink.
-          type: string
-      put:
-        description: Updates the import sink given by the key.
-        is:
-          - secured_by_manage_import_sinks
-        body:
-          type: import-sink.ImportSinkUpdateDraft
-        responses:
-          200:
-            description: The import sink was successfully updated.
-            body:
-              type: import-sink.ImportSink
-          409:
-            description:
-              A concurrent modification was detected. The client should retry
-              and resolve the conflict.
-            body:
-              type: error.ErrorResponse
-      get:
-        description: Retrieves the import sink given by the key.
-        is:
-          - secured_by_view_import_sinks
-        responses:
-          200:
-            description: The requested import sink was found.
-            body:
-              type: import-sink.ImportSink
-          404:
-            description: The requested import sink wasn't found.
-            body:
-              type: error.ErrorResponse
-      delete:
-        description: Deletes the import sink given by the key.
-        is:
-          - secured_by_manage_import_sinks
-        responses:
-          200:
-            description: The deleted import sink.
-            body:
-              type: import-sink.ImportSink
-          404:
-            description: The import sink to delete wasn't found.
-            body:
-              type: error.ErrorResponse
-  /import-summaries:
-    (annotations.markDeprecated): true
-    /importSinkKey={importSinkKey}:
-      type: base
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: |
-            The key of the import sink.
-          type: string
-      get:
-        is:
-          - secured_by_view_import_sinks
-        description: |
-          Retrieves an import summary for the given import sink.
-
-          The import summary is calculated on demand.
-        responses:
-          200:
-            body:
-              type: import-summary.ImportSummary
   /import-containers:
     post:
       displayName: Creates a new import container.
@@ -441,88 +320,6 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-    /importSinkKey={importSinkKey}:
-      (annotations.markDeprecated): true
-      type: base
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: The ImportSink used to create the new resource
-          type: string
-      post:
-        description:
-          Creates import request for creating new categories or updating
-          existing ones.
-        is:
-          - secured_by_manage_products
-        body:
-          type: import-request.CategoryImportRequest
-          example: !include examples/category-import-request.json
-        responses:
-          201:
-            body:
-              type: import-request.ImportResponse
-              example: !include examples/category-import-response.json
-      /import-operations:
-        type: base
-        get:
-          description: |
-            Retrieves all category import operations of an import sink key.
-          is:
-            - secured_by_view_products
-          queryParameters:
-            limit?:
-              type: number
-              description: |
-                Number of [results requested](/../api/general-concepts#limit).
-            offset?:
-              type: number
-              description: |
-                Number of [elements skipped](/../api/general-concepts#offset).
-            sort?:
-              description: |
-                See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
-              type: string[]
-            resourceKey?:
-              description: |
-                The key of the ImportOperation to retrieve.
-              type: string
-            state?:
-              description: |
-                The state of the ImportOperations to retrieve.
-              type: common.ProcessingState
-            debug?:
-              description: |
-                In case of `unresolved`, it will show the unresolved references.
-              type: boolean
-              default: false
-          responses:
-            200:
-              body:
-                type: import-operation.ImportOperationPagedResponse
-                example: !include examples/import-operation-paged.response.json
-        /{id}:
-          type: baseByParam
-          uriParameters:
-            id:
-              description: |
-                The operation identifier
-              type: string
-          get:
-            description: |
-              Retrieves the ImportOperation of a given ID.
-            is:
-              - secured_by_view_products
-            responses:
-              200:
-                body:
-                  type: import-operation.ImportOperation
-              404:
-                body:
-                  type: error.ErrorResponse
-              503:
-                body:
-                  type: error.ErrorResponse
   /prices:
     /import-containers:
       /{importContainerKey}:
@@ -548,85 +345,6 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-    /importSinkKey={importSinkKey}:
-      (annotations.markDeprecated): true
-      type: base
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: The import sink used to create the new resource
-          type: string
-      post:
-        description:
-          Creates import request for creating new prices or updating existing
-          ones.
-        is:
-          - secured_by_manage_products
-        body:
-          type: import-request.PriceImportRequest
-        responses:
-          201:
-            body:
-              type: import-request.ImportResponse
-      /import-operations:
-        type: base
-        get:
-          description: Retrieves all price import operations of an import sink key.
-          is:
-            - secured_by_view_products
-          queryParameters:
-            limit?:
-              type: number
-              description: |
-                Number of [results requested](/../api/general-concepts#limit).
-            offset?:
-              type: number
-              description: |
-                Number of [elements skipped](/../api/general-concepts#offset).
-            sort?:
-              description: |
-                See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
-              type: string[]
-            resourceKey?:
-              description: |
-                The key of the import operation to retrieve.
-              type: string
-            state?:
-              description: |
-                The state of the import operations to retrieve.
-              type: common.ProcessingState
-            debug?:
-              description: |
-                In case of `unresolved`, it will show the unresolved references.
-              type: boolean
-              default: false
-          responses:
-            200:
-              body:
-                type: import-operation.ImportOperationPagedResponse
-        /{id}:
-          type: baseByParam
-          uriParameters:
-            id:
-              description: |
-                The operation identifier
-              type: string
-          get:
-            description: |
-              Retrieves the import operation with the given id.
-            is:
-              - secured_by_view_products
-            responses:
-              200:
-                body:
-                  type: import-operation.ImportOperation
-              404:
-                body:
-                  type: error.ErrorResponse
-              503:
-                body:
-                  type: error.ErrorResponse
-
   /products:
     /import-containers:
       /{importContainerKey}:
@@ -652,84 +370,6 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-    /importSinkKey={importSinkKey}:
-      (annotations.markDeprecated): true
-      type: base
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: The import sink used to create the new resource
-          type: string
-      post:
-        description:
-          Creates import request for creating new products or updating existing
-          ones.
-        is:
-          - secured_by_manage_products
-        body:
-          type: import-request.ProductImportRequest
-        responses:
-          201:
-            body:
-              type: import-request.ImportResponse
-      /import-operations:
-        type: base
-        get:
-          description: Retrieves all product import operations of an import sink key.
-          is:
-            - secured_by_view_products
-          queryParameters:
-            limit?:
-              type: number
-              description: |
-                Number of [results requested](/../api/general-concepts#limit).
-            offset?:
-              type: number
-              description: |
-                Number of [elements skipped](/../api/general-concepts#offset).
-            sort?:
-              description: |
-                See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
-              type: string[]
-            resourceKey?:
-              description: |
-                The key of the import operation to retrieve.
-              type: string
-            state?:
-              description: |
-                The state of the import operations to retrieve.
-              type: common.ProcessingState
-            debug?:
-              description: |
-                In case of `unresolved`, it will show the unresolved references.
-              type: boolean
-              default: false
-          responses:
-            200:
-              body:
-                type: import-operation.ImportOperationPagedResponse
-        /{id}:
-          type: baseByParam
-          uriParameters:
-            id:
-              description: |
-                The operation identifier
-              type: string
-          get:
-            description: |
-              Retrieves the import operation with the given id.
-            is:
-              - secured_by_view_products
-            responses:
-              200:
-                body:
-                  type: import-operation.ImportOperation
-              404:
-                body:
-                  type: error.ErrorResponse
-              503:
-                body:
-                  type: error.ErrorResponse
   /product-drafts:
     /import-containers:
       /{importContainerKey}:
@@ -755,85 +395,6 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-    /importSinkKey={importSinkKey}:
-      (annotations.markDeprecated): true
-      type: base
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: |
-            The import sink used to create the new resource
-          type: string
-      post:
-        description: |
-          Creates import request for creating new product drafts or updating existing ones.
-        is:
-          - secured_by_manage_products
-        body:
-          type: import-request.ProductDraftImportRequest
-        responses:
-          201:
-            body:
-              type: import-request.ImportResponse
-      /import-operations:
-        type: base
-        get:
-          description: Retrieves all import operations of an import sink key.
-          is:
-            - secured_by_view_products
-          queryParameters:
-            limit?:
-              type: number
-              description: |
-                Number of [results requested](/../api/general-concepts#limit).
-            offset?:
-              type: number
-              description: |
-                Number of [elements skipped](/../api/general-concepts#offset).
-            sort?:
-              description: |
-                See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
-              type: string[]
-            resourceKey?:
-              description: |
-                The key of the import operation to retrieve.
-              type: string
-            state?:
-              description: |
-                The state of the import operations to retrieve.
-              type: common.ProcessingState
-            debug?:
-              description: |
-                In case of `unresolved`, it will show the unresolved references.
-              type: boolean
-              default: false
-          responses:
-            200:
-              body:
-                type: import-operation.ImportOperationPagedResponse
-        /{id}:
-          type: baseByParam
-          uriParameters:
-            id:
-              description: |
-                The operation identifier
-              type: string
-          get:
-            description: |
-              Retrieves the import operation with the given id.
-            is:
-              - secured_by_view_products
-            responses:
-              200:
-                body:
-                  type: import-operation.ImportOperation
-              404:
-                body:
-                  type: error.ErrorResponse
-              503:
-                body:
-                  type: error.ErrorResponse
-
   /product-types:
     /import-containers:
       /{importContainerKey}:
@@ -859,84 +420,6 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-    /importSinkKey={importSinkKey}:
-      (annotations.markDeprecated): true
-      type: base
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: The import sink used to create the new resource
-          type: string
-      post:
-        description:
-          Creates import request for creating new product types or updating
-          existing ones.
-        is:
-          - secured_by_manage_products
-        body:
-          type: import-request.ProductTypeImportRequest
-        responses:
-          201:
-            body:
-              type: import-request.ImportResponse
-      /import-operations:
-        type: base
-        get:
-          description: Retrieves all import operations of an import sink key.
-          is:
-            - secured_by_view_products
-          queryParameters:
-            limit?:
-              type: number
-              description: |
-                Number of [results requested](/../api/general-concepts#limit).
-            offset?:
-              type: number
-              description: |
-                Number of [elements skipped](/../api/general-concepts#offset).
-            sort?:
-              description: |
-                See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
-              type: string[]
-            resourceKey?:
-              description: |
-                The key of the import operation to retrieve.
-              type: string
-            state?:
-              description: |
-                The state of the import operations to retrieve.
-              type: common.ProcessingState
-            debug?:
-              description: |
-                In case of `unresolved`, it will show the unresolved references.
-              type: boolean
-              default: false
-          responses:
-            200:
-              body:
-                type: import-operation.ImportOperationPagedResponse
-        /{id}:
-          type: baseByParam
-          uriParameters:
-            id:
-              description: |
-                The operation identifier
-              type: string
-          get:
-            description: |
-              Retrieves the import operation with the given id.
-            is:
-              - secured_by_view_products
-            responses:
-              200:
-                body:
-                  type: import-operation.ImportOperation
-              404:
-                body:
-                  type: error.ErrorResponse
-              503:
-                body:
-                  type: error.ErrorResponse
   /product-variants:
     /import-containers:
       /{importContainerKey}:
@@ -962,86 +445,6 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-    /importSinkKey={importSinkKey}:
-      (annotations.markDeprecated): true
-      type: base
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: The import sink used to create the new resource
-          type: string
-      post:
-        description:
-          Creates import request for creating new product variants or updating
-          existing ones.
-        is:
-          - secured_by_manage_products
-        body:
-          type: import-request.ProductVariantImportRequest
-        responses:
-          201:
-            body:
-              type: import-request.ImportResponse
-      /import-operations:
-        type: base
-        get:
-          description:
-            Retrieves all product-variant import operations of an import sink
-            key.
-          is:
-            - secured_by_view_products
-          queryParameters:
-            limit?:
-              type: number
-              description: |
-                Number of [results requested](/../api/general-concepts#limit).
-            offset?:
-              type: number
-              description: |
-                Number of [elements skipped](/../api/general-concepts#offset).
-            sort?:
-              description: |
-                See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
-              type: string[]
-            resourceKey?:
-              description: |
-                The key of the import operation to retrieve.
-              type: string
-            state?:
-              description: |
-                The state of the import operations to retrieve.
-              type: common.ProcessingState
-            debug?:
-              description: |
-                In case of `unresolved`, it will show the unresolved references.
-              type: boolean
-              default: false
-          responses:
-            200:
-              body:
-                type: import-operation.ImportOperationPagedResponse
-        /{id}:
-          type: baseByParam
-          uriParameters:
-            id:
-              description: |
-                The operation identifier
-              type: string
-          get:
-            description: |
-              Retrieves the import operation with the given id.
-            is:
-              - secured_by_view_products
-            responses:
-              200:
-                body:
-                  type: import-operation.ImportOperation
-              404:
-                body:
-                  type: error.ErrorResponse
-              503:
-                body:
-                  type: error.ErrorResponse
   /product-variant-patches:
     /import-containers:
       /{importContainerKey}:
@@ -1065,84 +468,6 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-    /importSinkKey={importSinkKey}:
-      (annotations.markDeprecated): true
-      type: base
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: The import sink used to create the new resource
-          type: string
-      post:
-        description: Creates a new import request for product variant patches
-        is:
-          - secured_by_manage_products
-        body:
-          type: import-request.ProductVariantPatchRequest
-        responses:
-          201:
-            body:
-              type: import-request.ImportResponse
-      /import-operations:
-        type: base
-        get:
-          description:
-            Retrieves all product-variant-patches import operations of an import
-            sink key.
-          is:
-            - secured_by_view_products
-          queryParameters:
-            limit?:
-              type: number
-              description: |
-                Number of [results requested](/../api/general-concepts#limit).
-            offset?:
-              type: number
-              description: |
-                Number of [elements skipped](/../api/general-concepts#offset).
-            sort?:
-              description: |
-                See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
-              type: string[]
-            resourceKey?:
-              description: |
-                The key of the import operation to retrieve.
-              type: string
-            state?:
-              description: |
-                The state of the import operations to retrieve.
-              type: common.ProcessingState
-            debug?:
-              description: |
-                In case of `unresolved`, it will show the unresolved references.
-              type: boolean
-              default: false
-          responses:
-            200:
-              body:
-                type: import-operation.ImportOperationPagedResponse
-        /{id}:
-          type: baseByParam
-          uriParameters:
-            id:
-              description: |
-                The operation identifier
-              type: string
-          get:
-            description: |
-              Retrieves the import operation with the given id.
-            is:
-              - secured_by_view_products
-            responses:
-              200:
-                body:
-                  type: import-operation.ImportOperation
-              404:
-                body:
-                  type: error.ErrorResponse
-              503:
-                body:
-                  type: error.ErrorResponse
   /orders:
     /import-containers:
       /{importContainerKey}:
@@ -1169,86 +494,6 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-    /importSinkKey={importSinkKey}:
-      (annotations.markDeprecated): true
-      type: base
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: The import sink used to create the new resource
-          type: string
-      post:
-        description:
-          Creates import request for creating new orders or updating existing
-          ones.
-        is:
-          - secured_by_manage_orders
-        body:
-          type: import-request.OrderImportRequest
-          example: !include examples/order-import-request.json
-        responses:
-          201:
-            body:
-              type: import-request.ImportResponse
-      /import-operations:
-        type: base
-        get:
-          description: Retrieves all order import operations of an import sink key.
-          is:
-            - secured_by_view_orders
-          queryParameters:
-            limit?:
-              type: number
-              description: |
-                Number of [results requested](/../api/general-concepts#limit).
-            offset?:
-              type: number
-              description: |
-                Number of [elements skipped](/../api/general-concepts#offset).
-            sort?:
-              description: |
-                See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
-              type: string[]
-            resourceKey?:
-              description: |
-                The key of the import operation to retrieve.
-              type: string
-            state?:
-              description: |
-                The state of the import operations to retrieve.
-              type: common.ProcessingState
-            debug?:
-              description: |
-                In case of `unresolved`, it will show the unresolved references.
-              type: boolean
-              default: false
-          responses:
-            200:
-              body:
-                type: import-operation.ImportOperationPagedResponse
-                example: !include examples/import-operation-paged.response.json
-        /{id}:
-          type: baseByParam
-          uriParameters:
-            id:
-              description: |
-                The operation identifier
-              type: string
-          get:
-            description: |
-              Retrieves the import operation with the given id.
-            is:
-              - secured_by_view_orders
-            responses:
-              200:
-                body:
-                  type: import-operation.ImportOperation
-              404:
-                body:
-                  type: error.ErrorResponse
-              503:
-                body:
-                  type: error.ErrorResponse
   /order-patches:
     /import-containers:
       /{importContainerKey}:
@@ -1272,82 +517,6 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-    /importSinkKey={importSinkKey}:
-      (annotations.markDeprecated): true
-      type: base
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: The import sink used to create the resource
-          type: string
-      post:
-        description: Creates a new import request for order patches
-        is:
-          - secured_by_manage_orders
-        body:
-          type: import-request.OrderPatchImportRequest
-        responses:
-          201:
-            body:
-              type: import-request.ImportResponse
-      /import-operations:
-        type: base
-        get:
-          description: Retrieves all order-patches import operations of an import sink key.
-          is:
-            - secured_by_view_orders
-          queryParameters:
-            limit?:
-              type: number
-              description: |
-                Number of [results requested](/../api/general-concepts#limit).
-            offset?:
-              type: number
-              description: |
-                Number of [elements skipped](/../api/general-concepts#offset).
-            sort?:
-              description: |
-                See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
-              type: string[]
-            resourceKey?:
-              description: |
-                The key of the import operation to retrieve.
-              type: string
-            state?:
-              description: |
-                The state of the import operations to retrieve.
-              type: common.ProcessingState
-            debug?:
-              description: |
-                In case of `unresolved`, it will show the unresolved references.
-              type: boolean
-              default: false
-          responses:
-            200:
-              body:
-                type: import-operation.ImportOperationPagedResponse
-        /{id}:
-          type: baseByParam
-          uriParameters:
-            id:
-              description: |
-                The operation identifier
-              type: string
-          get:
-            description: |
-              Retrieves the import operation with the given id.
-            is:
-              - secured_by_view_orders
-            responses:
-              200:
-                body:
-                  type: import-operation.ImportOperation
-              404:
-                body:
-                  type: error.ErrorResponse
-              503:
-                body:
-                  type: error.ErrorResponse
   /customers:
     /import-containers:
       /{importContainerKey}:
@@ -1375,84 +544,30 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-    /importSinkKey={importSinkKey}:
-      (annotations.markDeprecated): true
-      type: base
-      uriParameters:
-        importSinkKey:
-          (postman.paramName): import-sink-key
-          description: The import sink used to create the new resource
-          type: string
-      post:
-        description:
-          Creates import request for creating new customers or updating existing
-          ones.
-        is:
-          - secured_by_manage_customers
-        body:
-          type: import-request.CustomerImportRequest
-          example: !include examples/customer-import-request.json
-        responses:
-          201:
-            body:
-              type: import-request.ImportResponse
-              example: !include examples/customer-import-response.json
-      /import-operations:
+  /inventories:
+    /import-containers:
+      /{importContainerKey}:
         type: base
-        get:
-          description: Retrieves all customer import operations of an import sink key.
+        uriParameters:
+          importContainerKey:
+            (postman.paramName): import-container-key
+            description: The ImportContainer used to create the new resource
+            type: string
+        post:
+          description:
+            Creates a request for creating new Inventories or updating
+            existing ones.
           is:
-            - secured_by_view_customers
-          queryParameters:
-            limit?:
-              type: number
-              description: |
-                Number of [results requested](/../api/general-concepts#limit).
-            offset?:
-              type: number
-              description: |
-                Number of [elements skipped](/../api/general-concepts#offset).
-            sort?:
-              description: |
-                See [Sorting](https://docs.commercetools.com/api/general-concepts#sorting).
-              type: string[]
-            resourceKey?:
-              description: |
-                The key of the import operation to retrieve.
-              type: string
-            state?:
-              description: |
-                The state of the import operations to retrieve.
-              type: common.ProcessingState
-            debug?:
-              description: |
-                In case of `unresolved`, it will show the unresolved references.
-              type: boolean
-              default: false
+            - secured_by_manage_products
+          body:
+            type: import-request.InventoryImportRequest
+            example: !include examples/inventory-import-request.json
           responses:
-            200:
+            201:
               body:
-                type: import-operation.ImportOperationPagedResponse
-                example: !include examples/import-operation-paged.response.json
-        /{id}:
-          type: baseByParam
-          uriParameters:
-            id:
-              description: |
-                The operation identifier
-              type: string
-          get:
-            description: |
-              Retrieves the import operation with the given id.
-            is:
-              - secured_by_view_customers
-            responses:
-              200:
-                body:
-                  type: import-operation.ImportOperation
-              404:
-                body:
-                  type: error.ErrorResponse
-              503:
-                body:
-                  type: error.ErrorResponse
+                type: import-request.ImportResponse
+                example: !include examples/inventory-import-response.json
+            400:
+              description: The request was invalid.
+              body:
+                type: error.ErrorResponse
