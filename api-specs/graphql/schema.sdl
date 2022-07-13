@@ -2161,6 +2161,18 @@ type CustomLineItemDraftOutput {
   nameAllLocales: [LocalizedString!]!
 }
 
+input CustomLineItemImportDraft {
+  name: [LocalizedStringItemInputType!]!
+  quantity: Long!
+  money: BaseMoneyInput!
+  slug: String!
+  state: [ItemStateDraftType!]
+  taxRate: TaxRateInput
+  taxCategory: ResourceIdentifierInput
+  custom: CustomFieldsDraft
+  shippingDetails: ItemShippingDetailsDraft
+}
+
 type CustomLineItemReturnItem implements ReturnItem {
   type: String!
   customLineItemId: String!
@@ -2685,6 +2697,15 @@ type DeliveryAddressSet implements MessagePayload & OrderMessagePayload {
   type: String!
 }
 
+input DeliveryDraft {
+  id: String!
+  createdAt: DateTime!
+  items: [DeliveryItemDraftType!]!
+  parcels: [ParcelDraft!]!
+  address: AddressInput
+  custom: CustomFieldsDraft
+}
+
 type DeliveryItem {
   id: String!
   quantity: Long!
@@ -2848,9 +2869,19 @@ type DiscountedLineItemPortion {
   discountedAmount: BaseMoney!
 }
 
+input DiscountedLineItemPortionDraft {
+  discount: ReferenceInput!
+  discountedAmount: BaseMoneyInput!
+}
+
 type DiscountedLineItemPrice {
   value: BaseMoney!
   includedDiscounts: [DiscountedLineItemPortion!]!
+}
+
+input DiscountedLineItemPriceDraft {
+  value: BaseMoneyInput!
+  includedDiscounts: [DiscountedLineItemPortionDraft!] = []
 }
 
 type DiscountedLineItemPriceForQuantity {
@@ -3237,6 +3268,34 @@ type ImageProductSearch {
 input ImportOrderCustomLineItemState {
   customLineItemId: String!
   state: [ItemStateDraftType!]!
+}
+
+input ImportOrderDraft {
+  orderNumber: String
+  customerId: String
+  customerEmail: String
+  store: ReferenceInput
+  lineItems: [LineItemImportDraft!]! = []
+  customLineItems: [CustomLineItemImportDraft!]! = []
+  totalPrice: MoneyInput!
+  taxedPrice: TaxedPriceDraft
+  shippingAddress: AddressInput
+  billingAddress: AddressInput
+  customerGroup: ReferenceInput
+  country: Country
+  orderState: OrderState
+  shipmentState: ShipmentState
+  paymentState: PaymentState
+  shippingInfo: ShippingInfoImportDraft
+  completedAt: DateTime
+  custom: CustomFieldsDraft
+  inventoryMode: InventoryMode = None
+  shippingDetails: ItemShippingDetailsDraft
+  taxCalculationMode: TaxCalculationMode = LineItemLevel
+  origin: CartOrigin = Customer
+  itemShippingAddresses: [AddressInput!] = []
+  state: ReferenceInput
+  paymentInfo: ReferenceInput
 }
 
 input ImportOrderLineItemState {
@@ -3639,6 +3698,20 @@ type LineItemDraftOutput {
   addedAt: DateTime
   distributionChannelResId: ResourceIdentifier
   supplyChannelResId: ResourceIdentifier
+}
+
+input LineItemImportDraft {
+  productId: String
+  name: [LocalizedStringItemInputType!]!
+  price: ProductPriceDataInput!
+  quantity: Long!
+  supplyChannel: ResourceIdentifierInput
+  distributionChannel: ResourceIdentifierInput
+  taxRate: TaxRateInput
+  variant: ProductVariantImportDraft!
+  state: [ItemStateDraftType!]
+  custom: CustomFieldsDraft
+  shippingDetails: ItemShippingDetailsDraft
 }
 
 enum LineItemMode {
@@ -4482,6 +4555,7 @@ type Mutation {
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   createMyOrderFromQuote(draft: OrderMyQuoteCommand!): Order
+  importOrder(draft: ImportOrderDraft!): Order
   createOrderEdit(draft: OrderEditDraft!): OrderEdit
   updateOrderEdit(version: Long!, actions: [OrderEditUpdateAction!]!, dryRun: Boolean = false,
 
@@ -5444,6 +5518,15 @@ type ParcelData {
 }
 
 input ParcelDataDraftType {
+  measurements: ParcelMeasurementsDraftType
+  trackingData: TrackingDataDraftType
+  items: [DeliveryItemDraftType!] = []
+  custom: CustomFieldsDraft
+}
+
+input ParcelDraft {
+  id: String!
+  createdAt: DateTime!
   measurements: ParcelMeasurementsDraftType
   trackingData: TrackingDataDraftType
   items: [DeliveryItemDraftType!] = []
@@ -6685,6 +6768,14 @@ type ProductVariantDeleted implements MessagePayload {
   removedImageUrls: Set!
   variant: ProductVariant
   type: String!
+}
+
+input ProductVariantImportDraft {
+  id: Int
+  sku: String
+  prices: [ProductPriceDataInput!] = []
+  images: [ImageInput!] = []
+  attributes: [ProductAttributeInput!] = []
 }
 
 input ProductVariantInput {
@@ -9987,6 +10078,18 @@ type ShippingInfo {
   taxCategoryRef: Reference
 }
 
+input ShippingInfoImportDraft {
+  shippingMethodName: String!
+  price: MoneyInput!
+  shippingRate: ShippingRateDraft!
+  taxRate: TaxRateInput
+  taxCategory: ResourceIdentifierInput
+  deliveries: [DeliveryDraft!]! = []
+  shippingMethod: ResourceIdentifierInput
+  discountedPrice: DiscountedLineItemPriceDraft
+  shippingMethodState: ShippingMethodState! = MatchesCart
+}
+
 type ShippingMethod implements Versioned & ReferenceExpandable {
   name: String!
   zoneRates: [ZoneRate!]!
@@ -10990,6 +11093,16 @@ input TaxRateDraft {
   subRates: [SubRateDraft!] = []
 }
 
+input TaxRateInput {
+  name: String!
+  amount: Float!
+  includedInPrice: Boolean!
+  country: Country!
+  state: String
+  id: String
+  subRates: [SubRateDraft!] = []
+}
+
 type TaxedItemPrice {
   totalNet: Money!
   totalGross: Money!
@@ -11001,6 +11114,13 @@ type TaxedPrice {
   totalGross: Money!
   taxPortions: [TaxPortion!]!
   totalTax: Money
+}
+
+input TaxedPriceDraft {
+  totalNet: BaseMoneyInput!
+  totalGross: BaseMoneyInput!
+  taxPortions: [TaxPortionDraft!]!
+  totalTax: BaseMoneyInput
 }
 
 type TermCount {
