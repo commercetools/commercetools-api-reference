@@ -69248,6 +69248,7 @@ components:
           applyDeltaToCustomLineItemShippingDetailsTargets: '#/components/schemas/CartApplyDeltaToCustomLineItemShippingDetailsTargetsAction'
           applyDeltaToLineItemShippingDetailsTargets: '#/components/schemas/CartApplyDeltaToLineItemShippingDetailsTargetsAction'
           changeCustomLineItemMoney: '#/components/schemas/CartChangeCustomLineItemMoneyAction'
+          changeCustomLineItemPriceMode: '#/components/schemas/CartChangeCustomLineItemPriceModeAction'
           changeCustomLineItemQuantity: '#/components/schemas/CartChangeCustomLineItemQuantityAction'
           changeLineItemQuantity: '#/components/schemas/CartChangeLineItemQuantityAction'
           changeTaxCalculationMode: '#/components/schemas/CartChangeTaxCalculationModeAction'
@@ -69358,6 +69359,8 @@ components:
           $ref: '#/components/schemas/CustomFields'
         shippingDetails:
           $ref: '#/components/schemas/ItemShippingDetails'
+        priceMode:
+          $ref: '#/components/schemas/CustomLineItemPriceMode'
     CustomLineItemDraft:
       type: "object"
       properties:
@@ -69378,6 +69381,17 @@ components:
           $ref: '#/components/schemas/CustomFieldsDraft'
         shippingDetails:
           $ref: '#/components/schemas/ItemShippingDetailsDraft'
+    CustomLineItemPriceMode:
+      type: "string"
+      enum:
+        - Standard
+        - External
+      x-annotation-package: "Cart"
+      x-annotation-enumDescriptions:
+        Standard: "Lets Composable Commerce apply Cart Discounts for the Custom Line Item.
+         This is the default mode for backwards compatibility."
+        External: "Deactivates application of Cart Discounts for the Custom Line Item despite
+         a matching [CartDiscountCustomLineItemsTarget](ctp:api:type:CartDiscountCustomLineItemsTarget)."
     DirectDiscount:
       type: "object"
       properties:
@@ -69880,6 +69894,17 @@ components:
               type: "string"
             money:
               $ref: '#/components/schemas/Money'
+    CartChangeCustomLineItemPriceModeAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            customLineItemId:
+              type: "string"
+            mode:
+              $ref: '#/components/schemas/CustomLineItemPriceMode'
     CartChangeCustomLineItemQuantityAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
