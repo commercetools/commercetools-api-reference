@@ -23728,14 +23728,14 @@ paths:
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -23758,7 +23758,7 @@ paths:
           schema:
             type: "array"
             items:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
           explode: true
         - name: expand
           in: query
@@ -23934,14 +23934,14 @@ paths:
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -23964,7 +23964,7 @@ paths:
           schema:
             type: "array"
             items:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
           explode: true
         - name: expand
           in: query
@@ -42040,14 +42040,14 @@ paths:
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -42070,7 +42070,7 @@ paths:
           schema:
             type: "array"
             items:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
           explode: true
         - name: storeProjection
           in: query
@@ -42308,14 +42308,14 @@ paths:
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -42338,7 +42338,7 @@ paths:
           schema:
             type: "array"
             items:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
           explode: true
         - name: storeProjection
           in: query
@@ -42771,14 +42771,14 @@ paths:
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -42801,7 +42801,7 @@ paths:
           schema:
             type: "array"
             items:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
           explode: true
         - name: storeProjection
           in: query
@@ -43194,14 +43194,14 @@ paths:
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -43224,7 +43224,7 @@ paths:
           schema:
             type: "array"
             items:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
           explode: true
         - name: storeProjection
           in: query
@@ -46959,8 +46959,7 @@ paths:
 
   /{projectKey}/products:
     description: |-
-      Products are the sellable goods in an e-commerce project on CTP. This document explains some design concepts
-      of products on CTP and describes the available HTTP APIs for working with them.
+      Products themselves are not sellable. Instead, they act as a parent structure for sellable Product Variants.
     parameters:
       - name: projectKey
         in: path
@@ -46973,23 +46972,30 @@ paths:
             - "view_products:{projectKey}"
       operationId: ByProjectKeyProductsGet
       description: |-
-        You can use the query endpoint to get the full representations of products.
-        REMARK: We suggest to use the performance optimized search endpoint which has a bunch functionalities,
-        the query API lacks like sorting on custom attributes, etc.
+        If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
       parameters:
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
         - name: priceCurrency
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -47046,15 +47052,6 @@ paths:
           style: form
           schema:
             type: "boolean"
-          explode: true
-        - name: where
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              $ref: '#/components/schemas/QueryPredicate'
           explode: true
         - name: /^var[.][a-zA-Z0-9]+$/
           in: query
@@ -47205,7 +47202,17 @@ paths:
             - "view_products:{projectKey}"
       operationId: ByProjectKeyProductsHead
       description: |-
-        Checks if products exist.
+        Check if Products exist. Responds with a `200 OK` status if any Products match the Query Predicate, or `404 Not Found` otherwise.
+      parameters:
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
       responses:
         "200":
           description: |-
@@ -47337,23 +47344,23 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductsPost
       description: |-
-        To create a new product, send a representation that is going to become the initial staged representation
-        of the new product in the master catalog. If price selection query parameters are provided,
-        the selected prices will be added to the response.
+        To create a new Product, send a representation that is going to become the initial _staged_ representation of the new Product in the master catalog.
+        If [Price Selection](ctp:api:type:ProductPriceSelection) query parameters are provided, selected Prices will be added to the response.
+        Produces the [ProductCreatedMessage](/message-types#productcreatedmessage).
       parameters:
         - name: priceCurrency
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -47536,21 +47543,21 @@ paths:
             - "view_products:{projectKey}"
       operationId: ByProjectKeyProductsKeyByKeyGet
       description: |-
-        Gets the full representation of a product by Key.
+        If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
       parameters:
         - name: priceCurrency
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -47715,7 +47722,7 @@ paths:
             - "view_products:{projectKey}"
       operationId: ByProjectKeyProductsKeyByKeyHead
       description: |-
-        Checks if product with given key exists.
+        Check if a Product exists with a specified `key`. Responds with a `200 OK` status if the Product exists or `404 Not Found` otherwise.
       responses:
         "200":
           description: |-
@@ -47852,14 +47859,14 @@ paths:
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -48051,20 +48058,23 @@ paths:
         - oauth_2_0:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductsKeyByKeyDelete
+      description: |-
+        If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
+        Produces the [ProductDeletedMessage](/message-types#productdeletedmessage).
       parameters:
         - name: priceCurrency
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -48483,21 +48493,21 @@ paths:
             - "view_products:{projectKey}"
       operationId: ByProjectKeyProductsByIDGet
       description: |-
-        Gets the full representation of a product by ID.
+        If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
       parameters:
         - name: priceCurrency
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -48662,7 +48672,7 @@ paths:
             - "view_products:{projectKey}"
       operationId: ByProjectKeyProductsByIDHead
       description: |-
-        Checks if product with given ID exists.
+        Check if a Product exists with a specified `id`. Responds with a `200 OK` status if the Product exists or `404 Not Found` otherwise.
       responses:
         "200":
           description: |-
@@ -48793,20 +48803,22 @@ paths:
         - oauth_2_0:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductsByIDPost
+      description: |-
+        If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
       parameters:
         - name: priceCurrency
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -48998,20 +49010,23 @@ paths:
         - oauth_2_0:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductsByIDDelete
+      description: |-
+        If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
+        Produces the [ProductDeletedMessage](/message-types#productdeletedmessage).
       parameters:
         - name: priceCurrency
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CurrencyCode'
           explode: true
         - name: priceCountry
           in: query
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: priceCustomerGroup
           in: query
@@ -49218,7 +49233,7 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductsByIDImagesPost
       description: |-
-        Uploads a binary image file to a given product variant. The supported image formats are JPEG, PNG and GIF.
+        Upload a JPEG, PNG and GIF file to a [ProductVariant](ctp:api:type:ProductVariant). The maximum file size of the image is 10MB. `variant` or `sku` is required to update a specific ProductVariant. The image is uploaded to the Master Variant if `variant` or `sku` are not included. Produces the [ProductImageAddedMessage](/message-types#productimageaddedmessage) when the `Small` version of the image has been uploaded to the CDN.
       parameters:
         - name: filename
           in: query
@@ -85941,8 +85956,6 @@ components:
       {}
     CategoryOrderHints:
       type: "object"
-      additionalProperties:
-        type: "string"
     CustomTokenizer:
       allOf:
         - $ref: '#/components/schemas/SuggestTokenizer'
@@ -85954,6 +85967,58 @@ components:
               type: "array"
               items:
                 type: "string"
+    EmbeddedPrice:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        value:
+          $ref: '#/components/schemas/TypedMoney'
+        country:
+          $ref: '#/components/schemas/CountryCode'
+        customerGroup:
+          $ref: '#/components/schemas/CustomerGroupReference'
+        channel:
+          $ref: '#/components/schemas/ChannelReference'
+        validFrom:
+          type: "string"
+          format: "datetime"
+        validUntil:
+          type: "string"
+          format: "datetime"
+        tiers:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PriceTier'
+        discounted:
+          $ref: '#/components/schemas/DiscountedPrice'
+        custom:
+          $ref: '#/components/schemas/CustomFields'
+    EmbeddedPriceDraft:
+      type: "object"
+      properties:
+        value:
+          $ref: '#/components/schemas/Money'
+        country:
+          $ref: '#/components/schemas/CountryCode'
+        customerGroup:
+          $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
+        channel:
+          $ref: '#/components/schemas/ChannelResourceIdentifier'
+        discounted:
+          $ref: '#/components/schemas/DiscountedPriceDraft'
+        validFrom:
+          type: "string"
+          format: "datetime"
+        validUntil:
+          type: "string"
+          format: "datetime"
+        tiers:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PriceTier'
+        custom:
+          $ref: '#/components/schemas/CustomFieldsDraft'
     FacetRange:
       type: "object"
       properties:
@@ -86152,13 +86217,13 @@ components:
         limit:
           type: "integer"
           format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
         count:
           type: "integer"
           format: "int64"
         total:
-          type: "integer"
-          format: "int64"
-        offset:
           type: "integer"
           format: "int64"
         results:
@@ -86174,7 +86239,7 @@ components:
       x-beta: true
       x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/products#productpricemode"
       x-annotation-enumDescriptions:
-        Embedded: "The API uses the prices located inside the `prices` field in [Product](ctp:api:type:ProductVariant)."
+        Embedded: "The API uses the Prices located inside the `prices` field in [ProductVariant](ctp:api:type:ProductVariant)."
         Standalone: "The API uses [StandalonePrices](ctp:api:type:StandalonePrice), which
          are associated with the [ProductVariant](ctp:api:type:ProductVariant) through
          the `sku` field."
@@ -86281,6 +86346,17 @@ components:
         - Prices
       x-annotation-package: "Cart"
       x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-carts.html#cartorigin"
+      x-annotation-enumDescriptions:
+        All: "Publishes a Product that causes the _staged_ projection of the Product to override
+         the _current_ projection. If the Product is published for the first time, the
+         _current_ projection is created. This is the default scope."
+        Prices: "Publishes the Prices of the Product (only if the Product is already published).
+         All Product Variants' Prices in the _staged_ projection are published into the
+         _current_ projection with the same `id`. Prices in a _staged_ Product Variant
+         that has no _current_ projection are not published. Prices in a _current_ Product
+         Variant that has no _staged_ projection are unchanged. The `hasStagedChanges`
+         [flag](ctp:api:type:ProductCatalogData) is updated according to whether the _staged_
+         and _current_ projections still differ after the prices are published."
     ProductReference:
       allOf:
         - $ref: '#/components/schemas/Reference'
@@ -86381,7 +86457,7 @@ components:
         prices:
           type: "array"
           items:
-            $ref: '#/components/schemas/Price'
+            $ref: '#/components/schemas/EmbeddedPrice'
         attributes:
           type: "array"
           items:
@@ -86407,6 +86483,8 @@ components:
     ProductVariantAvailability:
       type: "object"
       properties:
+        channels:
+          $ref: '#/components/schemas/ProductVariantChannelAvailabilityMap'
         isOnStock:
           type: "boolean"
         restockableInDays:
@@ -86415,8 +86493,6 @@ components:
         availableQuantity:
           type: "integer"
           format: "int64"
-        channels:
-          $ref: '#/components/schemas/ProductVariantChannelAvailabilityMap'
     ProductVariantChannelAvailability:
       type: "object"
       properties:
@@ -86428,10 +86504,13 @@ components:
         availableQuantity:
           type: "integer"
           format: "int64"
+        id:
+          type: "string"
+        version:
+          type: "integer"
+          format: "int64"
     ProductVariantChannelAvailabilityMap:
       type: "object"
-      additionalProperties:
-        type: "string"
     ProductVariantDraft:
       type: "object"
       properties:
@@ -86442,7 +86521,7 @@ components:
         prices:
           type: "array"
           items:
-            $ref: '#/components/schemas/PriceDraft'
+            $ref: '#/components/schemas/EmbeddedPriceDraft'
         attributes:
           type: "array"
           items:
@@ -86475,8 +86554,6 @@ components:
           $ref: '#/components/schemas/SuggestTokenizer'
     SearchKeywords:
       type: "object"
-      additionalProperties:
-        type: "string"
     SuggestTokenizer:
       type: "object"
       discriminator:
@@ -86583,7 +86660,7 @@ components:
             sku:
               type: "string"
             price:
-              $ref: '#/components/schemas/PriceDraft'
+              $ref: '#/components/schemas/EmbeddedPriceDraft'
             staged:
               type: "boolean"
     ProductAddToCategoryAction:
@@ -86613,7 +86690,7 @@ components:
             prices:
               type: "array"
               items:
-                $ref: '#/components/schemas/PriceDraft'
+                $ref: '#/components/schemas/EmbeddedPriceDraft'
             images:
               type: "array"
               items:
@@ -86701,7 +86778,7 @@ components:
             priceId:
               type: "string"
             price:
-              $ref: '#/components/schemas/PriceDraft'
+              $ref: '#/components/schemas/EmbeddedPriceDraft'
             staged:
               type: "boolean"
     ProductChangeSlugAction:
@@ -87120,7 +87197,7 @@ components:
             prices:
               type: "array"
               items:
-                $ref: '#/components/schemas/PriceDraft'
+                $ref: '#/components/schemas/EmbeddedPriceDraft'
             staged:
               type: "boolean"
     ProductSetProductPriceCustomFieldAction:
