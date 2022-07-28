@@ -1,26 +1,44 @@
 #%RAML 1.0 DataType
 (package): Product
-(docs-uri): https://docs.commercetools.com/http-api-projects-products.html#set-attribute
+(docs-uri): https://docs.commercetools.com/api/projects/products#set-attribute
 type: ProductUpdateAction
 displayName: ProductSetAttributeAction
 discriminatorValue: setAttribute
+description: |
+  Either `variantId` or `sku` is required.
 example: !include ../../../examples/Product/ProductSetAttributeAction.json
 properties:
   variantId?:
     type: number
     format: int64
-    description: ''
+    description: |
+      The `id` of the ProductVariant to update.
   sku?:
     type: string
+    description: |
+      The `sku` of the ProductVariant to update.
   name:
     type: string
-    description: ''
+    description: |
+      The name of the Attribute to set.
   value?:
     type: any
-    description: |-
-      If the attribute exists and the value is omitted or set to `null`, the attribute is removed.
-      If the attribute exists and a value is provided, the new value is applied.
-      If the attribute does not exist and a value is provided, it is added as a new attribute.
+    description: |
+      Value to set for the Attribute. If empty, any existing value will be removed.
+
+      The [AttributeType](ctp:api:type:AttributeType) determines the format of the Attribute `value` to be provided:
+
+      - For [Enum Type](ctp:api:type:AttributeEnumType) and [Localized Enum Type](ctp:api:type:AttributeLocalizedEnumType),
+        use the `key` of the [Plain Enum Value](ctp:api:type:AttributePlainEnumValue) or [Localized Enum Value](ctp:api:type:AttributeLocalizedEnumValue) objects,
+        or the complete objects as `value`.
+      - For [Localizable Text Type](ctp:api:type:AttributeLocalizableTextType), use the [LocalizedString](ctp:api:type:LocalizedString) object as `value`.
+      - For [Money Type](ctp:api:type:AttributeMoneyType) Attributes, use the [Money](ctp:api:type:Money) object as `value`.
+      - For [Set Type](ctp:api:type:AttributeSetType) Attributes, use the entire `set` object  as `value`.
+      - For [Nested Type](ctp:api:type:AttributeNestedType) Attributes, use the list of values of all Attributes of the nested Product as `value`.
+      - For [Reference Type](ctp:api:type:AttributeReferenceType) Attributes, use the [Reference](ctp:api:type:Reference) object as `value`.
+
   staged?:
     type: boolean
-    description: ''
+    description: |
+      If `true`, only the staged Attribute is set. If `false`, both current and staged Attribute is set.
+    default: true

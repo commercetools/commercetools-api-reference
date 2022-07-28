@@ -1,0 +1,57 @@
+#%RAML 1.0 DataType
+(package): Product
+(docs-uri): https://docs.commercetools.com/api/projects/products#embeddedprice
+displayName: EmbeddedPrice
+type: object
+properties:
+  id:
+    (identifier): true
+    type: string
+    description: |
+      Unique identifier of the EmbeddedPrice.
+  value:
+    type: TypedMoney
+    description: |
+      Money value of the EmbeddedPrice.
+  country?:
+    type: CountryCode
+    description: |
+      Country for which the EmbeddedPrice is valid.
+  customerGroup?:
+    type: CustomerGroupReference
+    description: |
+      [CustomerGroup](ctp:api:type:CustomerGroup) for which the EmbeddedPrice is valid.
+  channel?:
+    type: ChannelReference
+    description: |
+      Product distribution [Channel](ctp:api:type:Channel) for which the EmbeddedPrice is valid.
+  validFrom?:
+    type: datetime
+    description: |
+      Date from which the EmbeddedPrice is valid.
+  validUntil?:
+    type: datetime
+    description: |
+      Date until the EmbeddedPrice is valid.
+  tiers?:
+    type: PriceTier[]
+    description: |
+      Price tiers if any are defined.
+  discounted?:
+    type: DiscountedPrice
+    description: |
+      Set if a matching [ProductDiscount](ctp:api:type:ProductDiscount) exists.
+      If set, the API uses the `discounted` value for the [LineItem Price selection](ctp:api:type:CartLineItemPriceSelection).
+      When a [relative Discount](ctp:api:type:ProductDiscountValueRelative) is applied and the fraction part of the `discounted` price is 0.5,
+      the discounted Price is rounded in favor of the customer with the [half down rounding](https://en.wikipedia.org/wiki/Rounding#Round_half_down).
+
+      The service will unset or replace the value
+
+      - once a matching relative or absolute Product Discount with a higher `sortOrder` exists,
+      - if the referenced external Product Discount is deactivated, or
+      - if the Product changes and the external Product Discount predicate does not match the discounted Price any more.
+
+  custom?:
+    type: CustomFields
+    description: |
+      Custom Fields for the EmbeddedPrice.

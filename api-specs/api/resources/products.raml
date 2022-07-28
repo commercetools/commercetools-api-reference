@@ -9,8 +9,7 @@ type:
 (deleteable): Product
 (createable): ProductDraft
 description: |
-  Products are the sellable goods in an e-commerce project on CTP. This document explains some design concepts
-  of products on CTP and describes the available HTTP APIs for working with them.
+  Products themselves are not sellable. Instead, they act as a parent structure for sellable Product Variants.
 get:
   (java-implements):
     'com.commercetools.api.models.PagedQueryResourceRequest<ByProjectKeyProductsGet,
@@ -19,12 +18,18 @@ get:
     'commercetools.Sdk.Api.Models.IPagedQueryResourceRequest<ByProjectKeyProductsGet,
     commercetools.Sdk.Api.Models.Products.IProductPagedQueryResponse>'
   securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
-  description: |
-    You can use the query endpoint to get the full representations of products.
-    REMARK: We suggest to use the performance optimized search endpoint which has a bunch functionalities,
-    the query API lacks like sorting on custom attributes, etc.
   is:
     - priceSelecting
+  description: |-
+    If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
+  queryParameters:
+    where:
+      type: QueryPredicate[]
+      description: |-
+        Query Predicates on Product Attributes are limited to [Text](ctp:api:type:AttributeTextType),
+        [Enum](ctp:api:type:AttributeEnumType), [Boolean](ctp:api:type:AttributeBooleanType),
+        [Number](ctp:api:type:AttributeNumberType), [Date](ctp:api:type:AttributeDateType),
+        [Time](ctp:api:type:AttributeTimeType), and [DateTime](ctp:api:type:AttributeDateTimeType) attribute types.
   responses:
     200:
       body:
@@ -32,14 +37,21 @@ get:
           example: !include ../examples/products.example.json
 head:
   securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
-  description: Checks if products exist.
-
+  description: Check if Products exist. Responds with a `200 OK` status if any Products match the Query Predicate, or `404 Not Found` otherwise.
+  queryParameters:
+    where?:
+      type: QueryPredicate[]
+      description: |-
+        Query Predicates on Product Attributes are limited to [Text](ctp:api:type:AttributeTextType),
+        [Enum](ctp:api:type:AttributeEnumType), [Boolean](ctp:api:type:AttributeBooleanType),
+        [Number](ctp:api:type:AttributeNumberType), [Date](ctp:api:type:AttributeDateType),
+        [Time](ctp:api:type:AttributeTimeType), and [DateTime](ctp:api:type:AttributeDateTimeType) attribute types.
 post:
   securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
   description: |
-    To create a new product, send a representation that is going to become the initial staged representation
-    of the new product in the master catalog. If price selection query parameters are provided,
-    the selected prices will be added to the response.
+    To create a new Product, send a representation that is going to become the initial _staged_ representation of the new Product in the master catalog.
+    If [Price Selection](ctp:api:type:ProductPriceSelection) query parameters are provided, selected Prices will be added to the response.
+    Produces the [ProductCreatedMessage](/message-types#productcreatedmessage).
   is:
     - priceSelecting
   body:
@@ -59,9 +71,10 @@ post:
       resourceUpdateType: ProductUpdate
   get:
     securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
-    description: Gets the full representation of a product by Key.
     is:
       - priceSelecting
+    description: |-
+      If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
     responses:
       200:
         body:
@@ -69,7 +82,7 @@ post:
             example: !include ../examples/product.example.json
   head:
     securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
-    description: Checks if product with given key exists.
+    description: Check if a Product exists with a specified `key`. Responds with a `200 OK` status if the Product exists or `404 Not Found` otherwise.
   post:
     securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
     is:
@@ -83,6 +96,9 @@ post:
           application/json:
             example: !include ../examples/product.example.json
   delete:
+    description: |-
+      If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
+      Produces the [ProductDeletedMessage](/message-types#productdeletedmessage).
     securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
     is:
       - priceSelecting
@@ -115,9 +131,10 @@ post:
       resourceUpdateType: ProductUpdate
   get:
     securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
-    description: Gets the full representation of a product by ID.
     is:
       - priceSelecting
+    description: |-
+      If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
     responses:
       200:
         body:
@@ -125,11 +142,13 @@ post:
             example: !include ../examples/product.example.json
   head:
     securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
-    description: Checks if product with given ID exists.
+    description: Check if a Product exists with a specified `id`. Responds with a `200 OK` status if the Product exists or `404 Not Found` otherwise.
   post:
     securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
     is:
       - priceSelecting
+    description: |-
+      If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
     body:
       application/json:
         example: !include ../examples/product-update.example.json
@@ -139,6 +158,9 @@ post:
           application/json:
             example: !include ../examples/product.example.json
   delete:
+    description: |-
+      If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
+      Produces the [ProductDeletedMessage](/message-types#productdeletedmessage).
     securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
     is:
       - priceSelecting
@@ -150,19 +172,23 @@ post:
 
   /images:
     post:
-      displayName: Upload a product image
+      displayName: Upload a Product image
       queryParameters:
         filename?:
           type: string
+          description: Base filename of the image when stored in the Content Delivery Network. The filename will be modified when uploaded to prevent filename conflicts. If not included a random filename will be allocated.
         variant?:
           type: number
           format: int64
+          description: The id of the [ProductVariant](ctp:api:type:ProductVariant) the image should be uploaded to.
         sku?:
           type: string
+          description: The sku of the [ProductVariant](ctp:api:type:ProductVariant) the image should be uploaded to.
         staged?:
           type: boolean
+          description: If `true`, only the staged ProductVariant is updated. If `false`, both the current and staged ProductVariant are updated.
       description: |
-        Uploads a binary image file to a given product variant. The supported image formats are JPEG, PNG and GIF.
+        Upload a JPEG, PNG and GIF file to a [ProductVariant](ctp:api:type:ProductVariant). The maximum file size of the image is 10MB. `variant` or `sku` is required to update a specific ProductVariant. The image is uploaded to the Master Variant if `variant` or `sku` are not included. Produces the [ProductImageAddedMessage](/message-types#productimageaddedmessage) when the `Small` version of the image has been uploaded to the CDN.
       securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
       body:
         type: file

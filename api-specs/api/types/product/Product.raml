@@ -1,10 +1,16 @@
 #%RAML 1.0 DataType
 (package): Product
-(docs-uri): https://docs.commercetools.com/http-api-projects-products.html#product
+(docs-uri): https://docs.commercetools.com/api/projects/products#product
 displayName: Product
 type: BaseResource
 (updateType): ProductUpdate
 (java-extends): 'com.commercetools.api.models.DomainResource<Product>'
+description: |
+  An abstract sellable good with a set of Attributes defined by a Product Type.
+  Products themselves are not sellable. Instead, they act as a parent structure for Product Variants.
+  Each Product must have at least one Product Variant, which is called the Master Variant.
+  A single Product representation contains the _current_ and the _staged_ representation of its product data.
+example: !include ../../examples/product.example.json
 properties:
   id:
     (identifier): true
@@ -13,43 +19,54 @@ properties:
   version:
     type: number
     format: int64
-    description: The current version of the product.
+    description: |
+      Current version of the Product.
   createdAt:
     type: datetime
-    description: ''
+    description: |
+      Date and time (UTC) the Product was initially created.
   lastModifiedAt:
     type: datetime
-    description: ''
+    description: |
+      Date and time (UTC) the Product was last updated.
   lastModifiedBy?:
     type: LastModifiedBy
     (beta): true
     description: |
-      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).
   createdBy?:
     type: CreatedBy
     (beta): true
     description: |
-      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).
   key?:
     type: string
-    description: |-
+    description: |
       User-defined unique identifier of the Product.
-      *Product keys are different from ProductVariant keys.*
+
+      This is different from the `key` of a [ProductVariant](ctp:api:type:ProductVariant).
   productType:
-    description: ''
     type: ProductTypeReference
+    description: |
+      The Product Type defining the Attributes of the Product. Cannot be changed.
   masterData:
     type: ProductCatalogData
-    description: The product data in the master catalog.
+    description: |
+      Contains the current and the staged representation of the product information.
   taxCategory?:
     type: TaxCategoryReference
-    description: ''
+    description: |
+      The [TaxCategory](ctp:api:type:TaxCategory) of the Product.
   state?:
     type: StateReference
-    description: ''
+    description: |
+      [State](ctp:api:type:State) of the Product.
   reviewRatingStatistics?:
     type: ReviewRatingStatistics
-    description: Statistics about the review ratings taken into account for this product.
+    description: |
+      Review statistics of the Product.
   priceMode?:
     type: ProductPriceModeEnum
-    description: Specifies which type of prices should be used when looking up a price for this product. If not set, `Embedded` [ProductPriceMode](ctp:api:type:ProductPriceModeEnum) is used.
+    description: |
+      Type of Price to be used when looking up a price for the Product.
+    default: Embedded

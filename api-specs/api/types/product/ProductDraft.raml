@@ -1,65 +1,79 @@
 #%RAML 1.0 DataType
 (package): Product
-(docs-uri): https://docs.commercetools.com/http-api-projects-products.html#productdraft
+(docs-uri): https://docs.commercetools.com/api/projects/products#productdraft
 displayName: ProductDraft
 type: object
+example: !include ../../examples/product-create.example.json
 properties:
   productType:
-    description: |-
-      A predefined product type assigned to the product.
-      All products must have a product type.
     type: ProductTypeResourceIdentifier
+    description: |
+      The Product Type defining the Attributes for the Product. Cannot be changed later.
   name:
     type: LocalizedString
-    description: ''
+    description: |
+      Name of the Product.
   slug:
     type: LocalizedString
-    description: |-
-      Human-readable identifiers usually used as deep-link URLs for the product.
-      A slug must be unique across a project, but a product can have the same slug for different languages.
-      Slugs have a maximum size of 256.
-      Valid characters are: alphabetic characters (`A-Z, a-z`), numeric characters (`0-9`), underscores (`_`) and hyphens (`-`).
+    description: |
+      User-defined identifier used in a deep-link URL for the Product.
+      It must be unique across a Project, but a Product can have the same slug in different [Locales](ctp:api:type:Locale).
+      It must match the pattern `[a-zA-Z0-9_\\-]{2,256}`.
   key?:
     type: string
-    description: User-defined unique identifier for the Product.
+    description: |
+      User-defined unique identifier for the Product.
   description?:
     type: LocalizedString
-    description: ''
+    description: |
+      Description of the Product.
   categories?:
-    description: Categories assigned to the product.
     type: CategoryResourceIdentifier[]
+    description: |
+      Categories assigned to the Product.
   categoryOrderHints?:
     type: CategoryOrderHints
-    description: ''
+    description: |
+      Numerical values to allow ordering of Products within a specified Category.
   metaTitle?:
     type: LocalizedString
-    description: ''
+    description: |
+      Title of the Product displayed in search results.
   metaDescription?:
     type: LocalizedString
-    description: ''
+    description: |
+      Description of the Product displayed in search results.
   metaKeywords?:
     type: LocalizedString
-    description: ''
+    description: |
+      Keywords that give additional information about the Product to search engines.
   masterVariant?:
     type: ProductVariantDraft
-    description: |-
-      The master product variant.
-      Required if the `variants` array has product variants.
+    description: |
+      The Product Variant to be the Master Variant for the Product. Required if `variants` are provided also.
   variants?:
     type: ProductVariantDraft[]
-    description: An array of related product variants.
+    description: |
+      The additional Product Variants for the Product.
   taxCategory?:
-    description: ''
     type: TaxCategoryResourceIdentifier
+    description: |
+      The Tax Category to be assigned to the Product.
   searchKeywords?:
     type: SearchKeywords
-    description: ''
+    description: |
+      Used by [Product Suggestions](ctp:api:type:ProductSuggestions), but is also considered for a [full text search](/projects/products-search#full-text-search).
   state?:
-    description: ''
     type: StateResourceIdentifier
+    description: |
+      State to be assigned to the Product.
   publish?:
     type: boolean
-    description: If `true`, the product is published immediately.
+    description: |
+      If `true`, the Product is published immediately to the current projection.
+    default: false
   priceMode?:
     type: ProductPriceModeEnum
-    description: Specifies which type of prices should be used when looking up a price for this product. If not set, `Embedded` [ProductPriceMode](ctp:api:type:ProductPriceModeEnum) is used.
+    description: |
+      Specifies the type of prices used when looking up a price for the Product.
+    default: Embedded

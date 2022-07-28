@@ -1,20 +1,29 @@
 #%RAML 1.0 DataType
 (package): Product
-(docs-uri): https://docs.commercetools.com/http-api-projects-products.html#set-embedded-prices
+(docs-uri): https://docs.commercetools.com/api/projects/products#set-embedded-prices
 type: ProductUpdateAction
 displayName: ProductSetPricesAction
 discriminatorValue: setPrices
+description: |
+  Either `variantId` or `sku` is required.
 example: !include ../../../examples/Product/ProductSetPricesAction.json
 properties:
   variantId?:
     type: number
     format: int64
-    description: ''
+    description: |
+      The `id` of the ProductVariant to update.
   sku?:
     type: string
+    description: |
+      The `sku` of the ProductVariant to update.
   prices:
-    type: PriceDraft[]
-    description: ''
+    type: EmbeddedPriceDraft[]
+    description: |
+      The Embedded Prices to set.
+      Each Price must have its unique Price scope (with same currency, country, Customer Group, Channel, `validFrom` and `validUntil`).
   staged?:
     type: boolean
-    description: ''
+    description: |
+      If `true`, only the staged ProductVariant is updated. If `false`, both the current and staged ProductVariant are updated.
+    default: true
