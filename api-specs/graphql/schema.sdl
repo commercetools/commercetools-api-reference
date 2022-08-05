@@ -3629,7 +3629,6 @@ input LineItemDraft {
   supplyChannel: ResourceIdentifierInput
   distributionChannel: ResourceIdentifierInput
   custom: CustomFieldsDraft
-  inventoryMode: InventoryMode
   shippingDetails: ItemShippingDetailsDraft
   addedAt: DateTime
   externalTaxRate: ExternalTaxRateDraft
@@ -6009,7 +6008,6 @@ type ProductLimitsProjection {
 type ProductOfSelection {
   productRef: Reference!
   product: Product
-
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   variantSelection: ProductVariantSelection
 }
@@ -7108,6 +7106,8 @@ type Quote implements Versioned {
   quoteRequest: QuoteRequest
   validTo: DateTime
   custom: CustomFieldsType
+  stateRef: Reference
+  state: State
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -7121,6 +7121,7 @@ input QuoteDraft {
   stagedQuote: ResourceIdentifierInput
   stagedQuoteVersion: Long
   custom: CustomFieldsDraft
+  state: ReferenceInput
 }
 
 type QuoteQueryResult {
@@ -7159,6 +7160,8 @@ type QuoteRequest implements Versioned {
   quoteRequestState: QuoteRequestState!
   comment: String
   custom: CustomFieldsType
+  stateRef: Reference
+  state: State
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -7173,6 +7176,7 @@ input QuoteRequestDraft {
   comment: String
   cartVersion: Long
   custom: CustomFieldsDraft
+  state: ReferenceInput
 }
 
 type QuoteRequestQueryResult {
@@ -7186,18 +7190,19 @@ type QuoteRequestQueryResult {
 }
 
 enum QuoteRequestState {
-  Closed
-  UnderReview
-  Submitted
   Cancelled
-  Accepted
+  Closed
+  Submitted
+  UnderReview
   Rejected
+  Accepted
 }
 
 input QuoteRequestUpdateAction {
   changeQuoteRequestState: ChangeQuoteRequestState
   setCustomField: SetQuoteRequestCustomField
   setCustomType: SetQuoteRequestCustomType
+  transitionState: TransitionQuoteRequestState
 }
 
 enum QuoteState {
@@ -7212,6 +7217,7 @@ input QuoteUpdateAction {
   changeQuoteState: ChangeQuoteState
   setCustomField: SetQuoteCustomField
   setCustomType: SetQuoteCustomType
+  transitionState: TransitionQuoteState
 }
 
 interface RangeCount {
@@ -10479,6 +10485,8 @@ type StagedQuote implements Versioned {
   customer: Customer
   validTo: DateTime
   custom: CustomFieldsType
+  stateRef: Reference
+  state: State
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -10492,6 +10500,7 @@ input StagedQuoteDraft {
   quoteRequest: ResourceIdentifierInput
   quoteRequestVersion: Long
   custom: CustomFieldsDraft
+  state: ReferenceInput
 }
 
 type StagedQuoteQueryResult {
@@ -10516,6 +10525,7 @@ input StagedQuoteUpdateAction {
   setCustomField: SetStagedQuoteCustomField
   setCustomType: SetStagedQuoteCustomType
   setValidTo: SetStagedQuoteValidTo
+  transitionState: TransitionStagedQuoteState
 }
 
 """
@@ -10648,6 +10658,9 @@ enum StateRole {
 }
 
 enum StateType {
+  QuoteState
+  StagedQuoteState
+  QuoteRequestState
   OrderState
   ProductState
   ReviewState
@@ -11197,6 +11210,16 @@ input TransitionProductState {
   force: Boolean
 }
 
+input TransitionQuoteRequestState {
+  state: ResourceIdentifierInput!
+  force: Boolean = false
+}
+
+input TransitionQuoteState {
+  state: ResourceIdentifierInput!
+  force: Boolean = false
+}
+
 input TransitionReviewState {
   state: ResourceIdentifierInput!
   force: Boolean = false
@@ -11245,6 +11268,11 @@ type TransitionStagedOrderStateOutput implements StagedOrderUpdateActionOutput {
   type: String!
   stateResId: ResourceIdentifier!
   force: Boolean!
+}
+
+input TransitionStagedQuoteState {
+  state: ResourceIdentifierInput!
+  force: Boolean = false
 }
 
 input TreeFilterInput {
