@@ -289,7 +289,7 @@ To create a new Message, follow these steps:
    ```raml
    #%RAML 1.0 DataType
    (package): Message
-   (docs-uri): https://docs.commercetools.com/http-api-projects-messages.html#categorycreatedmessage
+   (docs-uri): https://docs.commercetools.com/http-api-projects-messages.html#category-created
    type: Message
    displayName: CategoryCreatedMessage
    discriminatorValue: CategoryCreated
@@ -305,7 +305,7 @@ To create a new Message, follow these steps:
    ```raml
    #%RAML 1.0 DataType
    (package): Message
-   (docs-uri): https://docs.commercetools.com/http-api-projects-messages.html#categorycreatedmessage
+   (docs-uri): https://docs.commercetools.com/http-api-projects-messages.html#category-created
    type: MessagePayload
    displayName: CategoryCreatedMessagePayload
    discriminatorValue: CategoryCreated
@@ -801,7 +801,7 @@ There is an implicit convention about how to name these files: _name of the erro
 
 ##### - /message
 
-As documented [https://docs.commercetools.com/api/message-types](https://docs.commercetools.com/api/message-types), we have messages that are defined in this folder.
+As documented [https://docs.commercetools.com/api/projects/messages#message-types](https://docs.commercetools.com/api/projects/messages#message-types), we have Messages that are defined in this folder.
 If you write at least the Message, automatically it will generate the related Payload in the **/message/payload** folder.
 There is an implicit convention about how to name these files: _name of the error_ + _"Message.raml"_.
 The same dynamic is for the _Payloads_: _name of the error_ + _"MessagePayload.raml"_.

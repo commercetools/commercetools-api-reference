@@ -5,23 +5,28 @@ type: BaseResource
 displayName: Message
 discriminator: type
 (java-extends): 'com.commercetools.api.models.DomainResource<Message>'
+description: |
+  Base representation of a Message containing common fields to all [Message Types](/../api/projects/messages#message-types).
 properties:
   id:
     (identifier): true
     type: string
-    description: Unique identifier of the Message.
+    description: Unique identifier of the Message. Can be used to track which Messages have been processed.
   version:
     type: number
     format: int64
+    description: Version of a resource. In case of Messages, this is always `1`.
   createdAt:
     type: datetime
+    description: Date and time (UTC) the Message was generated.
   lastModifiedAt:
     type: datetime
+    description: Value of `createdAt`.
   lastModifiedBy?:
     type: LastModifiedBy
     (beta): true
     description: |
-      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
+      Value of `createdBy`.
   createdBy?:
     type: CreatedBy
     (beta): true
@@ -30,12 +35,23 @@ properties:
   sequenceNumber:
     type: number
     format: int64
+    description: |
+      Message number in relation to other Messages for a given resource. The `sequenceNumber` of the next Message for the resource is the successor of the `sequenceNumber` of the current Message. Meaning, the `sequenceNumber` of the next Message equals the `sequenceNumber` of the current Message + 1.
+      `sequenceNumber` can be used to ensure that Messages are processed in the correct order for a particular resource.
   resource:
     type: Reference
+    description: |
+      [Reference](ctp:api:type:Reference) to the resource on which the change or action was performed.
   resourceVersion:
     type: number
     format: int64
+    description: |
+      Version of the resource on which the change or action was performed.
   type:
     type: string
+    description: |
+      [Message Type](/../api/projects/messages#message-types) of the Message.
   resourceUserProvidedIdentifiers?:
     type: UserProvidedIdentifiers
+    description: |
+      User-provided identifiers of the resource, such as `key` or `externalId`. Only present if the resource has such identifiers.
