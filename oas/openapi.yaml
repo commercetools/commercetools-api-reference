@@ -49650,7 +49650,7 @@ paths:
 
   /{projectKey}/quote-requests:
     description: |-
-      A request for a quote holds product variants and can be ordered.
+      A request for a Quote holds product variants and can be ordered.
     parameters:
       - name: projectKey
         in: path
@@ -88227,6 +88227,8 @@ components:
               format: "datetime"
             sellerComment:
               type: "string"
+            buyerComment:
+              type: "string"
             store:
               $ref: '#/components/schemas/StoreKeyReference'
             lineItems:
@@ -88333,6 +88335,7 @@ components:
       enum:
         - Pending
         - Declined
+        - DeclinedForRenegotiation
         - Accepted
         - Failed
         - Withdrawn
@@ -88341,11 +88344,13 @@ components:
       x-annotation-enumDescriptions:
         Pending: "A state indicating the Quote has been submitted to the [Buyer](/../api/quotes-overview#buyer),
          but the [Buyer](/../api/quotes-overview#buyer) has not replied yet.n"
-        Declined: "A state indicating the Quote has been declined the [Buyer](/../api/quotes-overview#buyer).n"
+        Declined: "A state indicating the Quote has been declined by the [Buyer](/../api/quotes-overview#buyer).n"
+        DeclinedForRenegotiation: "A state indicating the Quote has been declined by the [Buyer](/../api/quotes-overview#buyer)
+         with the request for [renegotiation](ctp:api:type:QuoteRequestQuoteRenegotiationAction).n"
         Accepted: "A state indicating the [Buyer](/../api/quotes-overview#buyer) has accepted
          the Quote.n"
-        Failed: "A state indicating a circumstance other than declining by the [Buyer](/../api/quotes-overview#buyer)
-         that led the quote to fail.n"
+        Failed: "A state indicating a circumstance - other than the [Buyer](/../api/quotes-overview#buyer)
+         declining - that led to the Quote failing.n"
         Withdrawn: "A state indicating the [Seller](/../api/quotes-overview#seller) has withdrawn
          the Quote before the [Buyer](/../api/quotes-overview#buyer) has accepted it.n"
     QuoteUpdate:
@@ -88364,6 +88369,7 @@ components:
         propertyName: action
         mapping:
           changeQuoteState: '#/components/schemas/QuoteChangeQuoteStateAction'
+          requestQuoteRenegotiation: '#/components/schemas/QuoteRequestQuoteRenegotiationAction'
           setCustomField: '#/components/schemas/QuoteSetCustomFieldAction'
           setCustomType: '#/components/schemas/QuoteSetCustomTypeAction'
           transitionState: '#/components/schemas/QuoteTransitionStateAction'
@@ -88379,6 +88385,15 @@ components:
               type: "string"
             quoteState:
               $ref: '#/components/schemas/QuoteState'
+    QuoteRequestQuoteRenegotiationAction:
+      allOf:
+        - $ref: '#/components/schemas/QuoteUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            buyerComment:
+              type: "string"
     QuoteSetCustomFieldAction:
       allOf:
         - $ref: '#/components/schemas/QuoteUpdateAction'
