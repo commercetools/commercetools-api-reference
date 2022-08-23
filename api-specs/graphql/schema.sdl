@@ -4914,6 +4914,7 @@ enum MyQuoteState {
 
 input MyQuoteUpdateAction {
   changeMyQuoteState: ChangeMyQuoteMyQuoteState
+  requestQuoteRenegotiation: RequestQuoteRenegotiation
   setCustomField: SetQuoteCustomField
   setCustomType: SetQuoteCustomType
 }
@@ -7121,6 +7122,8 @@ type Quote implements Versioned {
   quoteRequestRef: Reference!
   quoteRequest: QuoteRequest
   validTo: DateTime
+  sellerComment: String
+  buyerComment: String
   custom: CustomFieldsType
   stateRef: Reference
   state: State
@@ -7222,6 +7225,7 @@ input QuoteRequestUpdateAction {
 }
 
 enum QuoteState {
+  DeclinedForRenegotiation
   Accepted
   Declined
   Failed
@@ -7231,6 +7235,7 @@ enum QuoteState {
 
 input QuoteUpdateAction {
   changeQuoteState: ChangeQuoteState
+  requestQuoteRenegotiation: RequestQuoteRenegotiation
   setCustomField: SetQuoteCustomField
   setCustomType: SetQuoteCustomType
   transitionState: TransitionQuoteState
@@ -7626,6 +7631,10 @@ input RemoveTypeFieldDefinition {
 
 input RemoveZoneLocation {
   location: ZoneLocation!
+}
+
+input RequestQuoteRenegotiation {
+  buyerComment: String
 }
 
 type ResourceIdentifier {
