@@ -3311,6 +3311,7 @@ type InStore implements CartQueryInterface & CustomerActiveCartInterface & Order
     sku: String,
 
     "Queries for a product with specified [ProductVariant](https://docs.commercetools.com/api/projects/products#productvariant) `key`"
+    "Queries for a product with specified [product variant key](https://docs.commercetools.com/api/projects/products#variant_key)"
     variantKey: String,
 
     "Queries with specified ID"
@@ -5910,6 +5911,7 @@ type ProductData {
     "Queries for a variant with specified SKU"
     sku: String,
 
+    "Queries for a variant with specified [key](https://docs.commercetools.com/api/projects/products#variant_key)"
     key: String): ProductVariant
   skus: [String!]!
 }
@@ -6043,6 +6045,7 @@ type ProductLimitsProjection {
 type ProductOfSelection {
   productRef: Reference!
   product: Product
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   variantSelection: ProductVariantSelection
 }
 
@@ -6940,6 +6943,7 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries for a product with specified SKU"
     sku: String,
 
+    "Queries for a product with specified [product variant key](https://docs.commercetools.com/api/projects/products#variant_key)"
     variantKey: String,
 
     "Queries with specified ID"
@@ -7063,6 +7067,7 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     markMatchingVariant: Boolean = false, storeProjection: String, localeProjection: [Locale!], staged: Boolean = false): ProductProjectionSearchResult!
 
   """
+  StandalonePrices are managed and queried through the StandalonePrices API
   and associated to a ProductVariant through the sku field.
   """
   standalonePrice(
@@ -7073,6 +7078,7 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     key: String): StandalonePrice
 
   """
+  StandalonePrices are managed and queried through the StandalonePrices API
   and associated to a ProductVariant through the sku field.
   """
   standalonePrices(where: String, sort: [String!], limit: Int, offset: Int): StandalonePriceQueryResult!
@@ -8002,6 +8008,8 @@ enum SelectionMode {
 type SelectionOfProduct {
   productSelectionRef: Reference!
   productSelection: ProductSelection
+  createdAt: DateTime!
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   variantSelection: ProductVariantSelection
 }
 
@@ -10580,6 +10588,12 @@ interface StagedOrderUpdateActionOutput {
   type: String!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type StagedStandalonePrice {
+  value: BaseMoney!
+  discounted: DiscountedProductPriceValue
+}
+
 type StagedQuote implements Versioned {
   key: String
   stagedQuoteState: StagedQuoteState!
@@ -11418,6 +11432,7 @@ input TriggerInput {
   condition: String
 }
 
+"Types define the structure of custom fields which can be used to enrich the default representations of entities."
 type TypeDefinition implements Versioned & ReferenceExpandable {
   key: String!
   name(
