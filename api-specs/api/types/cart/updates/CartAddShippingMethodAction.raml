@@ -1,0 +1,45 @@
+#%RAML 1.0 DataType
+(package): Cart
+(docs-uri): https://docs.commercetools.com/api/projects/carts.html#add-shipping-method
+type: CartUpdateAction
+displayName: CartAddShippingMethodAction
+discriminatorValue: addShippingMethod
+example: !include ../../../examples/Cart/CartAddShippingMethodAction.json
+description: |
+  This update action fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error if the referenced shipping method has a predicate that does not match the Cart.
+properties:
+  shippingKey:
+    type: string
+    description: |
+      User-defined unique identifier of the Shipping Method in a Cart with `Multi` [ShippingMode](ctp:api:type:ShippingMode).
+  shippingMethod?:
+    type: ShippingMethodReference
+    description: |
+      Value to set.
+      If empty, any existing value is removed.
+  shippingAddress?:
+    type: BaseAddress
+    description: |
+      Determines the shipping rate and Tax Rate of the Line Items.
+  shippingRateInput?:
+    type: ShippingRateInputDraft
+    description: |
+      Used as an input to select a [ShippingRatePriceTier](ctp:api:type:ShippingRatePriceTier).
+
+      - Must be [ClassificationShippingRateInput](ctp:api:type:ClassificationShippingRateInput) if [ShippingRateInputType](ctp:api:type:ShippingRateInputType) is [CartClassificationType](ctp:api:type:CartClassificationType).
+      - Must be [ScoreShippingRateInput](ctp:api:type:ScoreShippingRateInput) if [ShippingRateInputType](ctp:api:type:ShippingRateInputType) is [CartScoreType](ctp:api:type:CartScoreType).
+
+      The `shippingRateInput` cannot be set on the Cart if [CartValueType](ctp:api:type:CartValueType) is defined.
+  externalTaxRate?:
+    type: string
+    description: |
+      Tax Rate used to tax a shipping expense if a Cart has the `External` [TaxMode](ctp:api:type:TaxMode).
+  deliveries:
+    type: Delivery[]
+    description: |
+      Deliveries tied to a Shipping Method in a multi-shipping method Cart.
+      It holds information on how items are delivered to customers.
+  custom?:
+    type: string
+    description: |
+      Custom Fields for the Shipping Method.

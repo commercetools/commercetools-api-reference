@@ -1,0 +1,50 @@
+#%RAML 1.0 DataType
+(package): Cart
+(docs-uri): https://docs.commercetools.com/api/projects/carts#add-custom-shipping-method
+type: CartUpdateAction
+displayName: CartCustomAddShippingMethodAction
+discriminatorValue: addCustomShippingMethod
+example: !include ../../../examples/Cart/CartAddCustomShippingMethodAction.json
+properties:
+  shippingKey:
+    type: string
+    description: |
+      User-defined unique identifier of the custom Shipping Method in a Cart with `Multi` [ShippingMode](ctp:api:type:ShippingMode).
+  shippingMethodName:
+    type: string
+    description: |
+      Name of the custom Shipping Method.
+  shippingAddress?:
+    type: BaseAddress
+    description: |
+      Determines the shipping rate and Tax Rate of the associated Line Items.
+  shippingRate:
+    type: ShippingRateDraft
+    description: |
+      Determines the shipping price.
+  shippingRateInput?:
+    type: ShippingRateInputDraft
+    description: |
+      Used as an input to select a [ShippingRatePriceTier](ctp:api:type:ShippingRatePriceTier).
+
+      - Must be [ClassificationShippingRateInput](ctp:api:type:ClassificationShippingRateInput) if [ShippingRateInputType](ctp:api:type:ShippingRateInputType) is [CartClassificationType](ctp:api:type:CartClassificationType).
+      - Must be [ScoreShippingRateInput](ctp:api:type:ScoreShippingRateInput) if [ShippingRateInputType](ctp:api:type:ShippingRateInputType) is [CartScoreType](ctp:api:type:CartScoreType).
+
+      The `shippingRateInput` cannot be set on the Cart if [CartValueType](ctp:api:type:CartValueType) is defined.
+  taxCategory?:
+    type: TaxCategoryResourceIdentifier
+    description: |
+      Tax Category used to determine a shipping Tax Rate if a Cart has the `Platform` [TaxMode](ctp:api:type:TaxMode).
+  externalTaxRate?:
+    type: string
+    description: |
+      Tax Rate used to tax a shipping expense if the Cart has the `External` [TaxMode](ctp:api:type:TaxMode).
+  deliveries:
+    type: Delivery[]
+    description: |
+      Deliveries tied to a Shipping Method in a multi-shipping method Cart.
+      It holds information on how items are delivered to customers.
+  custom?:
+    type: string
+    description: |
+      Custom Fields for the custom Shipping Method.

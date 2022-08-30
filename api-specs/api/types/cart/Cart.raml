@@ -67,6 +67,11 @@ properties:
       Not set until the shipping address is set.
       Will be set automatically in the `Platform` TaxMode.
       For the `External` tax mode it will be set  as soon as the external tax rates for all line items, custom line items, and shipping in the cart are set.
+  taxedShippingPrice?:
+    type: TaxedPrice
+    description: |-
+      Sum of `taxedPrice` of [ShippingInfo](ctp:api:type:ShippingInfo) across all Shipping Methods.
+      For `Platform` [TaxMode](ctp:api:type:TaxMode), it is set automatically only if [shipping address is set](ctp:api:type:CartSetShippingAddressAction) or [Shipping Method is added](ctp:api:type:CartAddShippingMethodAction) to the Cart.
   cartState:
     type: CartState
     description: ''
@@ -78,6 +83,17 @@ properties:
   billingAddress?:
     type: Address
     description: ''
+  shippingMode:
+    type: ShippingMode
+    description: |-
+      Indicates whether one or multiple Shipping Methods are added to the Cart.
+    default: Single
+  shipping:
+    type: Shipping[]
+    description: |-
+      Holds all shipping-related information per Shipping Method of a Cart with `Multi` [ShippingMode](ctp:api:type:ShippingMode).
+
+      It is automatically updated after the [Shipping Method is added](ctp:api:type:CartAddShippingMethodAction).
   inventoryMode?:
     type: InventoryMode
     description: ''
@@ -108,7 +124,9 @@ properties:
       Used for product variant price selection.
   shippingInfo?:
     type: ShippingInfo
-    description: Set automatically once the ShippingMethod is set.
+    description: |
+      Shipping-related information of a Cart with `Single` [ShippingMode](ctp:api:type:ShippingMode).
+      Set automatically once the ShippingMethod is set.
   discountCodes?:
     type: DiscountCodeInfo[]
     description: ''

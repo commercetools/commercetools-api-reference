@@ -64,7 +64,6 @@ enum ActionType {
 interface ActiveCartInterface {
   activeCart: Cart
 }
-
 input AddCartCustomLineItem {
   priceMode: CustomLineItemPriceMode = Standard
   shippingDetails: ItemShippingDetailsDraft
@@ -164,6 +163,7 @@ input AddOrderDelivery {
   parcels: [ParcelDataDraftType!] = []
   address: AddressInput
   custom: CustomFieldsDraft
+  shippingKey: String
 }
 
 input AddOrderEditStagedAction {
@@ -294,6 +294,7 @@ input AddStagedOrderDelivery {
   parcels: [ParcelDataDraftType!] = []
   address: AddressInput
   custom: CustomFieldsDraft
+  shippingKey: String
 }
 
 type AddStagedOrderDeliveryOutput implements StagedOrderUpdateActionOutput {
@@ -302,6 +303,7 @@ type AddStagedOrderDeliveryOutput implements StagedOrderUpdateActionOutput {
   parcels: [ParcelData!]!
   address: AddressDraft
   custom: CustomFieldsCommand
+  shippingKey: String
 }
 
 input AddStagedOrderDiscountCode {
@@ -677,7 +679,6 @@ type AttributeDefinitionResult {
 interface AttributeDefinitionType {
   name: String!
 }
-
 input AttributeSetElementTypeDraft {
   text: SimpleAttributeTypeDraft
   number: SimpleAttributeTypeDraft
@@ -778,7 +779,6 @@ type BooleanField implements CustomField {
 type BooleanType implements FieldType {
   name: String!
 }
-
 input CancelQuoteRequest {
   dummy: String
 }
@@ -1092,6 +1092,8 @@ input CartUpdateAction {
   setShippingAddress: SetCartShippingAddress
   setShippingAddressCustomField: SetCartShippingAddressCustomField
   setShippingAddressCustomType: SetCartShippingAddressCustomType
+  setShippingCustomField: SetCartShippingCustomField
+  setShippingCustomType: SetCartShippingCustomType
   setShippingMethod: SetCartShippingMethod
   setShippingMethodTaxAmount: SetCartShippingMethodTaxAmount
   setShippingMethodTaxRate: SetCartShippingMethodTaxRate
@@ -1277,7 +1279,6 @@ input CategoryUpdateAction {
   setMetaTitle: SetCategoryMetaTitle
   setExternalId: SetCategoryExternalId
 }
-
 input ChangeCartCustomLineItemMoney {
   customLineItemId: String!
   money: BaseMoneyInput!
@@ -1530,7 +1531,6 @@ input ChangeProductSlug {
   slug: [LocalizedStringItemInputType!]!
   staged: Boolean = true
 }
-
 input ChangeProjectSettingsCartsConfiguration {
   cartsConfiguration: CartsConfigurationInput!
 }
@@ -1716,7 +1716,6 @@ type ChangeStagedOrderTaxRoundingModeOutput implements StagedOrderUpdateActionOu
 input ChangeStagedQuoteState {
   stagedQuoteState: StagedQuoteState!
 }
-
 input ChangeStandalonePriceValue {
   value: BaseMoneyInput!
 
@@ -2657,6 +2656,7 @@ type Delivery {
 
 type DeliveryAdded implements MessagePayload & OrderMessagePayload {
   delivery: Delivery!
+  shippingKey: String
   type: String!
 }
 
@@ -2664,6 +2664,7 @@ type DeliveryAddressSet implements MessagePayload & OrderMessagePayload {
   deliveryId: String!
   address: Address
   oldAddress: Address
+  shippingKey: String
   type: String!
 }
 
@@ -2688,11 +2689,13 @@ type DeliveryItemsUpdated implements MessagePayload & OrderMessagePayload {
   deliveryId: String!
   items: [DeliveryItem!]!
   oldItems: [DeliveryItem!]!
+  shippingKey: String
   type: String!
 }
 
 type DeliveryRemoved implements MessagePayload & OrderMessagePayload {
   delivery: Delivery!
+  shippingKey: String
   type: String!
 }
 
@@ -3307,7 +3310,7 @@ type InStore implements CartQueryInterface & CustomerActiveCartInterface & Order
     "Queries for a product with specified SKU"
     sku: String,
 
-    "Queries for a product with specified [product variant key](https://docs.commercetools.com/api/projects/products#variant_key)"
+    "Queries for a product with specified [ProductVariant](https://docs.commercetools.com/api/projects/products#productvariant) `key`"
     variantKey: String,
 
     "Queries with specified ID"
@@ -3553,6 +3556,7 @@ input ItemShippingDetailsDraftType {
 type ItemShippingTarget {
   addressKey: String!
   quantity: Long!
+  shippingMethodKey: String
 }
 
 type ItemState {
@@ -3998,6 +4002,11 @@ type MessagesConfiguration {
 input MessagesConfigurationDraft {
   enabled: Boolean!
   deleteDaysAfterCreation: Int!
+}
+
+type MethodTaxedPrice {
+  shippingMethodKey: String!
+  taxedPrice: TaxedItemPrice
 }
 
 input MissingFilterInput {
@@ -4811,6 +4820,8 @@ input MyCartUpdateAction {
   setShippingAddress: SetCartShippingAddress
   setShippingAddressCustomField: SetCartShippingAddressCustomField
   setShippingAddressCustomType: SetCartShippingAddressCustomType
+  setShippingCustomField: SetCartShippingCustomField
+  setShippingCustomType: SetCartShippingCustomType
   updateItemShippingAddress: UpdateCartItemShippingAddress
 }
 
@@ -5231,6 +5242,7 @@ type OrderLineItemDiscountSet implements MessagePayload & OrderMessagePayload {
   discountedPricePerQuantity: [DiscountedLineItemPriceForQuantity!]!
   totalPrice: Money!
   taxedPrice: TaxedItemPrice
+  taxedPricePortions: [MethodTaxedPrice!]!
   type: String!
 }
 
@@ -5436,6 +5448,8 @@ input OrderUpdateAction {
   setShippingAddress: SetOrderShippingAddress
   setShippingAddressCustomField: SetOrderShippingAddressCustomField
   setShippingAddressCustomType: SetOrderShippingAddressCustomType
+  setShippingCustomField: SetOrderShippingCustomField
+  setShippingCustomType: SetOrderShippingCustomType
   setStore: SetOrderStore
   transitionCustomLineItemState: TransitionOrderCustomLineItemState
   transitionLineItemState: TransitionOrderLineItemState
@@ -5456,6 +5470,7 @@ type Parcel {
 type ParcelAddedToDelivery implements MessagePayload & OrderMessagePayload {
   delivery: Delivery!
   parcel: Parcel!
+  shippingKey: String
   type: String!
 }
 
@@ -5487,6 +5502,7 @@ type ParcelItemsUpdated implements MessagePayload & OrderMessagePayload {
   parcelId: String!
   items: [DeliveryItem!]!
   oldItems: [DeliveryItem!]!
+  shippingKey: String
   type: String!
 }
 
@@ -5508,12 +5524,14 @@ type ParcelMeasurementsUpdated implements MessagePayload & OrderMessagePayload {
   deliveryId: String!
   parcelId: String!
   measurements: ParcelMeasurements
+  shippingKey: String
   type: String!
 }
 
 type ParcelRemovedFromDelivery implements MessagePayload & OrderMessagePayload {
   deliveryId: String!
   parcel: Parcel!
+  shippingKey: String
   type: String!
 }
 
@@ -5521,6 +5539,7 @@ type ParcelTrackingDataUpdated implements MessagePayload & OrderMessagePayload {
   deliveryId: String!
   parcelId: String!
   trackingData: TrackingData
+  shippingKey: String
   type: String!
 }
 
@@ -5891,7 +5910,6 @@ type ProductData {
     "Queries for a variant with specified SKU"
     sku: String,
 
-    "Queries for a variant with specified [key](https://docs.commercetools.com/api/projects/products#variant_key)"
     key: String): ProductVariant
   skus: [String!]!
 }
@@ -6025,7 +6043,6 @@ type ProductLimitsProjection {
 type ProductOfSelection {
   productRef: Reference!
   product: Product
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   variantSelection: ProductVariantSelection
 }
 
@@ -6090,7 +6107,6 @@ type ProductPriceExternalDiscountSet implements MessagePayload {
   staged: Boolean!
   type: String!
 }
-
 type ProductPriceSearch {
   id: String
   value: BaseMoney!
@@ -6924,7 +6940,6 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries for a product with specified SKU"
     sku: String,
 
-    "Queries for a product with specified [product variant key](https://docs.commercetools.com/api/projects/products#variant_key)"
     variantKey: String,
 
     "Queries with specified ID"
@@ -7048,7 +7063,6 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     markMatchingVariant: Boolean = false, storeProjection: String, localeProjection: [Locale!], staged: Boolean = false): ProductProjectionSearchResult!
 
   """
-  StandalonePrices are managed and queried through the StandalonePrices API
   and associated to a ProductVariant through the sku field.
   """
   standalonePrice(
@@ -7059,7 +7073,6 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     key: String): StandalonePrice
 
   """
-  StandalonePrices are managed and queried through the StandalonePrices API
   and associated to a ProductVariant through the sku field.
   """
   standalonePrices(where: String, sort: [String!], limit: Int, offset: Int): StandalonePriceQueryResult!
@@ -7989,8 +8002,6 @@ enum SelectionMode {
 type SelectionOfProduct {
   productSelectionRef: Reference!
   productSelection: ProductSelection
-  createdAt: DateTime!
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   variantSelection: ProductVariantSelection
 }
 
@@ -8188,11 +8199,13 @@ input SetCartLineItemSupplyChannel {
 input SetCartLineItemTaxAmount {
   lineItemId: String!
   externalTaxAmount: ExternalTaxAmountDraft
+  shippingKey: String
 }
 
 input SetCartLineItemTaxRate {
   lineItemId: String!
   externalTaxRate: ExternalTaxRateDraft
+  shippingKey: String
 }
 
 input SetCartLineItemTotalPrice {
@@ -8214,6 +8227,20 @@ input SetCartShippingAddressCustomField {
 }
 
 input SetCartShippingAddressCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
+input SetCartShippingCustomField {
+  shippingKey: String
+  name: String!
+  value: String
+}
+
+input SetCartShippingCustomType {
+  shippingKey: String
   fields: [CustomFieldInput!]
   type: ResourceIdentifierInput
   typeKey: String
@@ -8784,6 +8811,20 @@ input SetOrderShippingAddressCustomField {
 }
 
 input SetOrderShippingAddressCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
+input SetOrderShippingCustomField {
+  shippingKey: String
+  name: String!
+  value: String
+}
+
+input SetOrderShippingCustomType {
+  shippingKey: String
   fields: [CustomFieldInput!]
   type: ResourceIdentifierInput
   typeKey: String
@@ -9599,23 +9640,27 @@ type SetStagedOrderLineItemShippingDetailsOutput implements StagedOrderUpdateAct
 input SetStagedOrderLineItemTaxAmount {
   lineItemId: String!
   externalTaxAmount: ExternalTaxAmountDraft
+  shippingKey: String
 }
 
 type SetStagedOrderLineItemTaxAmountOutput implements StagedOrderUpdateActionOutput {
   type: String!
   lineItemId: String!
   externalTaxAmount: ExternalTaxAmountDraftOutput
+  shippingKey: String
 }
 
 input SetStagedOrderLineItemTaxRate {
   lineItemId: String!
   externalTaxRate: ExternalTaxRateDraft
+  shippingKey: String
 }
 
 type SetStagedOrderLineItemTaxRateOutput implements StagedOrderUpdateActionOutput {
   type: String!
   lineItemId: String!
   externalTaxRate: ExternalTaxRateDraftOutput
+  shippingKey: String
 }
 
 input SetStagedOrderLineItemTotalPrice {
@@ -9836,6 +9881,33 @@ type SetStagedOrderShippingAddressCustomTypeOutput implements StagedOrderUpdateA
 type SetStagedOrderShippingAddressOutput implements StagedOrderUpdateActionOutput {
   type: String!
   address: AddressDraft
+}
+
+input SetStagedOrderShippingCustomField {
+  shippingKey: String
+  name: String!
+  value: String
+}
+
+type SetStagedOrderShippingCustomFieldOutput implements StagedOrderUpdateActionOutput {
+  type: String!
+  shippingKey: String
+  name: String!
+  value: Json
+}
+
+input SetStagedOrderShippingCustomType {
+  shippingKey: String
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
+type SetStagedOrderShippingCustomTypeOutput implements StagedOrderUpdateActionOutput {
+  type: String!
+  shippingKey: String
+  custom: CustomFieldsCommand!
 }
 
 input SetStagedOrderShippingMethod {
@@ -10232,6 +10304,7 @@ input ShippingTargetDraft {
 input ShippingTargetDraftType {
   addressKey: String!
   quantity: Long!
+  shippingMethodKey: String
 }
 
 input ShippingTargetInput {
@@ -10489,6 +10562,8 @@ input StagedOrderUpdateAction {
   setShippingAddressAndShippingMethod: SetStagedOrderShippingAddressAndShippingMethod
   setShippingAddressCustomField: SetStagedOrderShippingAddressCustomField
   setShippingAddressCustomType: SetStagedOrderShippingAddressCustomType
+  setShippingCustomField: SetStagedOrderShippingCustomField
+  setShippingCustomType: SetStagedOrderShippingCustomType
   setShippingMethod: SetStagedOrderShippingMethod
   setShippingMethodTaxAmount: SetStagedOrderShippingMethodTaxAmount
   setShippingMethodTaxRate: SetStagedOrderShippingMethodTaxRate
@@ -10503,12 +10578,6 @@ input StagedOrderUpdateAction {
 
 interface StagedOrderUpdateActionOutput {
   type: String!
-}
-
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-type StagedStandalonePrice {
-  value: BaseMoney!
-  discounted: DiscountedProductPriceValue
 }
 
 type StagedQuote implements Versioned {
@@ -11349,7 +11418,6 @@ input TriggerInput {
   condition: String
 }
 
-"Types define the structure of custom fields which can be used to enrich the default representations of entities."
 type TypeDefinition implements Versioned & ReferenceExpandable {
   key: String!
   name(
