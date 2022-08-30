@@ -69206,12 +69206,20 @@ components:
               $ref: '#/components/schemas/TypedMoney'
             taxedPrice:
               $ref: '#/components/schemas/TaxedPrice'
+            taxedShippingPrice:
+              $ref: '#/components/schemas/TaxedPrice'
             cartState:
               $ref: '#/components/schemas/CartState'
             shippingAddress:
               $ref: '#/components/schemas/Address'
             billingAddress:
               $ref: '#/components/schemas/Address'
+            shippingMode:
+              $ref: '#/components/schemas/ShippingMode'
+            shipping:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Shipping'
             inventoryMode:
               $ref: '#/components/schemas/InventoryMode'
             taxMode:
@@ -69310,6 +69318,16 @@ components:
           format: "int64"
         origin:
           $ref: '#/components/schemas/CartOrigin'
+        shippingMode:
+          $ref: '#/components/schemas/ShippingMode'
+        customShipping:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/CustomShippingDraft'
+        shipping:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ShippingDraft'
         shippingRateInput:
           $ref: '#/components/schemas/ShippingRateInputDraft'
         itemShippingAddresses:
@@ -69393,10 +69411,12 @@ components:
         propertyName: action
         mapping:
           addCustomLineItem: '#/components/schemas/CartAddCustomLineItemAction'
+          addCustomShippingMethod: '#/components/schemas/CartAddCustomShippingMethodAction'
           addDiscountCode: '#/components/schemas/CartAddDiscountCodeAction'
           addItemShippingAddress: '#/components/schemas/CartAddItemShippingAddressAction'
           addLineItem: '#/components/schemas/CartAddLineItemAction'
           addPayment: '#/components/schemas/CartAddPaymentAction'
+          addShippingMethod: '#/components/schemas/CartAddShippingMethodAction'
           addShoppingList: '#/components/schemas/CartAddShoppingListAction'
           applyDeltaToCustomLineItemShippingDetailsTargets: '#/components/schemas/CartApplyDeltaToCustomLineItemShippingDetailsTargetsAction'
           applyDeltaToLineItemShippingDetailsTargets: '#/components/schemas/CartApplyDeltaToLineItemShippingDetailsTargetsAction'
@@ -69413,6 +69433,7 @@ components:
           removeItemShippingAddress: '#/components/schemas/CartRemoveItemShippingAddressAction'
           removeLineItem: '#/components/schemas/CartRemoveLineItemAction'
           removePayment: '#/components/schemas/CartRemovePaymentAction'
+          removeShippingMethod: '#/components/schemas/CartRemoveShippingMethodAction'
           setAnonymousId: '#/components/schemas/CartSetAnonymousIdAction'
           setBillingAddress: '#/components/schemas/CartSetBillingAddressAction'
           setBillingAddressCustomField: '#/components/schemas/CartSetBillingAddressCustomFieldAction'
@@ -69450,6 +69471,8 @@ components:
           setShippingAddress: '#/components/schemas/CartSetShippingAddressAction'
           setShippingAddressCustomField: '#/components/schemas/CartSetShippingAddressCustomFieldAction'
           setShippingAddressCustomType: '#/components/schemas/CartSetShippingAddressCustomTypeAction'
+          setShippingCustomField: '#/components/schemas/CartSetShippingCustomFieldAction'
+          setShippingCustomType: '#/components/schemas/CartSetShippingCustomTypeAction'
           setShippingMethod: '#/components/schemas/CartSetShippingMethodAction'
           setShippingMethodTaxAmount: '#/components/schemas/CartSetShippingMethodTaxAmountAction'
           setShippingMethodTaxRate: '#/components/schemas/CartSetShippingMethodTaxRateAction'
@@ -69547,6 +69570,29 @@ components:
          This is the default mode for backwards compatibility."
         External: "Deactivates application of Cart Discounts for the Custom Line Item despite
          a matching [CartDiscountCustomLineItemsTarget](ctp:api:type:CartDiscountCustomLineItemsTarget)."
+    CustomShippingDraft:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        shippingMethodName:
+          type: "string"
+        shippingAddress:
+          $ref: '#/components/schemas/BaseAddress'
+        shippingRate:
+          $ref: '#/components/schemas/ShippingRateDraft'
+        shippingRateInput:
+          $ref: '#/components/schemas/ShippingRateInputDraft'
+        taxCategory:
+          $ref: '#/components/schemas/TaxCategoryResourceIdentifier'
+        externalTaxRate:
+          type: "string"
+        deliveries:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Delivery'
+        custom:
+          type: "string"
     DirectDiscount:
       type: "object"
       properties:
@@ -69669,6 +69715,8 @@ components:
         quantity:
           type: "integer"
           format: "int64"
+        shippingMethodKey:
+          type: "string"
     LineItem:
       type: "object"
       properties:
@@ -69690,6 +69738,10 @@ components:
           $ref: '#/components/schemas/Price'
         taxedPrice:
           $ref: '#/components/schemas/TaxedItemPrice'
+        taxedPricePortions:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/MethodTaxedPrice'
         totalPrice:
           $ref: '#/components/schemas/TypedMoney'
         quantity:
@@ -69704,6 +69756,10 @@ components:
             $ref: '#/components/schemas/ItemState'
         taxRate:
           $ref: '#/components/schemas/TaxRate'
+        perMethodTaxRate:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/MethodTaxRate'
         supplyChannel:
           $ref: '#/components/schemas/ChannelReference'
         distributionChannel:
@@ -69770,6 +69826,20 @@ components:
         - ExternalTotal
         - ExternalPrice
       x-annotation-package: "Cart"
+    MethodTaxRate:
+      type: "object"
+      properties:
+        shippingMethodKey:
+          type: "string"
+        taxRate:
+          $ref: '#/components/schemas/TaxRate'
+    MethodTaxedPrice:
+      type: "object"
+      properties:
+        shippingMethodKey:
+          type: "string"
+        taxedPrice:
+          $ref: '#/components/schemas/TaxedItemPrice'
     ReplicaCartDraft:
       type: "object"
       properties:
@@ -69804,6 +69874,38 @@ components:
             score:
               type: "integer"
               format: "int64"
+    Shipping:
+      type: "object"
+      properties:
+        shippingKey:
+          type: "string"
+        shippingInfo:
+          $ref: '#/components/schemas/ShippingInfo'
+        shippingAddress:
+          $ref: '#/components/schemas/Address'
+        shippingRateInput:
+          $ref: '#/components/schemas/ShippingRateInput'
+        shippingCustomFields:
+          $ref: '#/components/schemas/CustomFields'
+    ShippingDraft:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        shippingMethod:
+          $ref: '#/components/schemas/ShippingMethodReference'
+        shippingAddress:
+          $ref: '#/components/schemas/BaseAddress'
+        shippingRateInput:
+          $ref: '#/components/schemas/ShippingRateInputDraft'
+        externalTaxRate:
+          type: "string"
+        deliveries:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Delivery'
+        custom:
+          type: "string"
     ShippingInfo:
       type: "object"
       properties:
@@ -69836,6 +69938,17 @@ components:
         - MatchesCart
       x-annotation-package: "Cart"
       x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-carts.html#shippingmethodstate"
+    ShippingMode:
+      type: "string"
+      enum:
+        - Single
+        - Multi
+      x-annotation-package: "Cart"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#shippingmode"
+      x-annotation-enumDescriptions:
+        Single: "Cart can contain only a single Shipping Method.nThis is the default mode
+         for backwards compatibilty.n"
+        Multi: "Cart can contain multiple Shipping Methods.n"
     ShippingRateInput:
       type: "object"
       discriminator:
@@ -69947,6 +70060,33 @@ components:
               $ref: '#/components/schemas/ExternalTaxRateDraft'
             priceMode:
               $ref: '#/components/schemas/CustomLineItemPriceMode'
+    CartAddCustomShippingMethodAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            shippingKey:
+              type: "string"
+            shippingMethodName:
+              type: "string"
+            shippingAddress:
+              $ref: '#/components/schemas/BaseAddress'
+            shippingRate:
+              $ref: '#/components/schemas/ShippingRateDraft'
+            shippingRateInput:
+              $ref: '#/components/schemas/ShippingRateInputDraft'
+            taxCategory:
+              $ref: '#/components/schemas/TaxCategoryResourceIdentifier'
+            externalTaxRate:
+              type: "string"
+            deliveries:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Delivery'
+            custom:
+              type: "string"
     CartAddDiscountCodeAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -70005,6 +70145,29 @@ components:
               type: "string"
             payment:
               $ref: '#/components/schemas/PaymentResourceIdentifier'
+    CartAddShippingMethodAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            shippingKey:
+              type: "string"
+            shippingMethod:
+              $ref: '#/components/schemas/ShippingMethodReference'
+            shippingAddress:
+              $ref: '#/components/schemas/BaseAddress'
+            shippingRateInput:
+              $ref: '#/components/schemas/ShippingRateInputDraft'
+            externalTaxRate:
+              type: "string"
+            deliveries:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Delivery'
+            custom:
+              type: "string"
     CartAddShoppingListAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -70184,6 +70347,15 @@ components:
               type: "string"
             payment:
               $ref: '#/components/schemas/PaymentResourceIdentifier'
+    CartRemoveShippingMethodAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            shippingKey:
+              type: "string"
     CartSetAnonymousIdAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -70589,6 +70761,32 @@ components:
         - type: "object"
           properties:
             action:
+              type: "string"
+            type:
+              $ref: '#/components/schemas/TypeResourceIdentifier'
+            fields:
+              $ref: '#/components/schemas/FieldContainer'
+    CartSetShippingCustomFieldAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            shippingKey:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+    CartSetShippingCustomTypeAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            shippingKey:
               type: "string"
             type:
               $ref: '#/components/schemas/TypeResourceIdentifier'
@@ -76625,6 +76823,8 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             delivery:
               $ref: '#/components/schemas/Delivery'
+            shippingKey:
+              type: "string"
     DeliveryAddressSetMessage:
       allOf:
         - $ref: '#/components/schemas/OrderMessage'
@@ -76663,6 +76863,8 @@ components:
               $ref: '#/components/schemas/Address'
             oldAddress:
               $ref: '#/components/schemas/Address'
+            shippingKey:
+              type: "string"
     DeliveryItemsUpdatedMessage:
       allOf:
         - $ref: '#/components/schemas/OrderMessage'
@@ -76705,6 +76907,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/DeliveryItem'
+            shippingKey:
+              type: "string"
     DeliveryRemovedMessage:
       allOf:
         - $ref: '#/components/schemas/OrderMessage'
@@ -76739,6 +76943,8 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             delivery:
               $ref: '#/components/schemas/Delivery'
+            shippingKey:
+              type: "string"
     InventoryEntryCreatedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -77663,6 +77869,10 @@ components:
               $ref: '#/components/schemas/Money'
             taxedPrice:
               $ref: '#/components/schemas/TaxedItemPrice'
+            taxedPricePortions:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/MethodTaxedPrice'
     OrderLineItemDistributionChannelSetMessage:
       allOf:
         - $ref: '#/components/schemas/OrderMessage'
@@ -78177,6 +78387,8 @@ components:
               $ref: '#/components/schemas/Delivery'
             parcel:
               $ref: '#/components/schemas/Parcel'
+            shippingKey:
+              type: "string"
     ParcelItemsUpdatedMessage:
       allOf:
         - $ref: '#/components/schemas/OrderMessage'
@@ -78221,6 +78433,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/DeliveryItem'
+            shippingKey:
+              type: "string"
     ParcelMeasurementsUpdatedMessage:
       allOf:
         - $ref: '#/components/schemas/OrderMessage'
@@ -78259,6 +78473,8 @@ components:
               type: "string"
             measurements:
               $ref: '#/components/schemas/ParcelMeasurements'
+            shippingKey:
+              type: "string"
     ParcelRemovedFromDeliveryMessage:
       allOf:
         - $ref: '#/components/schemas/OrderMessage'
@@ -78295,6 +78511,8 @@ components:
               type: "string"
             parcel:
               $ref: '#/components/schemas/Parcel'
+            shippingKey:
+              type: "string"
     ParcelTrackingDataUpdatedMessage:
       allOf:
         - $ref: '#/components/schemas/OrderMessage'
@@ -78333,6 +78551,8 @@ components:
               type: "string"
             trackingData:
               $ref: '#/components/schemas/TrackingData'
+            shippingKey:
+              type: "string"
     PaymentCreatedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -80530,6 +80750,8 @@ components:
               type: "string"
             delivery:
               $ref: '#/components/schemas/Delivery'
+            shippingKey:
+              type: "string"
     DeliveryAddressSetMessagePayload:
       allOf:
         - $ref: '#/components/schemas/OrderMessagePayload'
@@ -80543,6 +80765,8 @@ components:
               $ref: '#/components/schemas/Address'
             oldAddress:
               $ref: '#/components/schemas/Address'
+            shippingKey:
+              type: "string"
     DeliveryItemsUpdatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/OrderMessagePayload'
@@ -80560,6 +80784,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/DeliveryItem'
+            shippingKey:
+              type: "string"
     DeliveryRemovedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/OrderMessagePayload'
@@ -80569,6 +80795,8 @@ components:
               type: "string"
             delivery:
               $ref: '#/components/schemas/Delivery'
+            shippingKey:
+              type: "string"
     InventoryEntryCreatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -80907,6 +81135,10 @@ components:
               $ref: '#/components/schemas/Money'
             taxedPrice:
               $ref: '#/components/schemas/TaxedItemPrice'
+            taxedPricePortions:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/MethodTaxedPrice'
     OrderLineItemDistributionChannelSetMessagePayload:
       allOf:
         - $ref: '#/components/schemas/OrderMessagePayload'
@@ -81071,6 +81303,8 @@ components:
               $ref: '#/components/schemas/Delivery'
             parcel:
               $ref: '#/components/schemas/Parcel'
+            shippingKey:
+              type: "string"
     ParcelItemsUpdatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/OrderMessagePayload'
@@ -81090,6 +81324,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/DeliveryItem'
+            shippingKey:
+              type: "string"
     ParcelMeasurementsUpdatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/OrderMessagePayload'
@@ -81103,6 +81339,8 @@ components:
               type: "string"
             measurements:
               $ref: '#/components/schemas/ParcelMeasurements'
+            shippingKey:
+              type: "string"
     ParcelRemovedFromDeliveryMessagePayload:
       allOf:
         - $ref: '#/components/schemas/OrderMessagePayload'
@@ -81114,6 +81352,8 @@ components:
               type: "string"
             parcel:
               $ref: '#/components/schemas/Parcel'
+            shippingKey:
+              type: "string"
     ParcelTrackingDataUpdatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/OrderMessagePayload'
@@ -81127,6 +81367,8 @@ components:
               type: "string"
             trackingData:
               $ref: '#/components/schemas/TrackingData'
+            shippingKey:
+              type: "string"
     PaymentCreatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -81993,10 +82235,18 @@ components:
               $ref: '#/components/schemas/TypedMoney'
             taxedPrice:
               $ref: '#/components/schemas/TaxedPrice'
+            taxedShippingPrice:
+              $ref: '#/components/schemas/TaxedPrice'
             shippingAddress:
               $ref: '#/components/schemas/Address'
             billingAddress:
               $ref: '#/components/schemas/Address'
+            shippingMode:
+              $ref: '#/components/schemas/ShippingMode'
+            shipping:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Shipping'
             taxMode:
               $ref: '#/components/schemas/TaxMode'
             taxRoundingMode:
@@ -83473,10 +83723,18 @@ components:
               $ref: '#/components/schemas/TypedMoney'
             taxedPrice:
               $ref: '#/components/schemas/TaxedPrice'
+            taxedShippingPrice:
+              $ref: '#/components/schemas/TaxedPrice'
             shippingAddress:
               $ref: '#/components/schemas/Address'
             billingAddress:
               $ref: '#/components/schemas/Address'
+            shippingMode:
+              $ref: '#/components/schemas/ShippingMode'
+            shipping:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Shipping'
             taxMode:
               $ref: '#/components/schemas/TaxMode'
             taxRoundingMode:
@@ -84020,6 +84278,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/DeliveryItem'
+            shippingKey:
+              type: "string"
             address:
               $ref: '#/components/schemas/BaseAddress'
             parcels:
