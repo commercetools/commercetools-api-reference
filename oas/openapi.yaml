@@ -72136,7 +72136,7 @@ components:
         payment: "References a [Payment](ctp:api:type:Payment).n"
         product: "References a [Product](ctp:api:type:Product).n"
         product-discount: "References a [ProductDiscount](ctp:api:type:ProductDiscount).n"
-        product-price: "References an [EmbeddedPrice](ctp:api:type:EmbeddedPrice).n"
+        product-price: "References an [Embedded Price](ctp:api:type:Price).n"
         product-selection: "References a [ProductSelection](ctp:api:type:ProductSelection).n"
         product-type: "References a [ProductType](ctp:api:type:ProductType).n"
         quote: "References a [Quote](ctp:api:type:Quote).n"
@@ -86665,6 +86665,8 @@ components:
       {}
     CategoryOrderHints:
       type: "object"
+      additionalProperties:
+        type: "string"
     CustomTokenizer:
       allOf:
         - $ref: '#/components/schemas/SuggestTokenizer'
@@ -86676,58 +86678,6 @@ components:
               type: "array"
               items:
                 type: "string"
-    EmbeddedPrice:
-      type: "object"
-      properties:
-        id:
-          type: "string"
-        value:
-          $ref: '#/components/schemas/TypedMoney'
-        country:
-          $ref: '#/components/schemas/CountryCode'
-        customerGroup:
-          $ref: '#/components/schemas/CustomerGroupReference'
-        channel:
-          $ref: '#/components/schemas/ChannelReference'
-        validFrom:
-          type: "string"
-          format: "datetime"
-        validUntil:
-          type: "string"
-          format: "datetime"
-        tiers:
-          type: "array"
-          items:
-            $ref: '#/components/schemas/PriceTier'
-        discounted:
-          $ref: '#/components/schemas/DiscountedPrice'
-        custom:
-          $ref: '#/components/schemas/CustomFields'
-    EmbeddedPriceDraft:
-      type: "object"
-      properties:
-        value:
-          $ref: '#/components/schemas/Money'
-        country:
-          $ref: '#/components/schemas/CountryCode'
-        customerGroup:
-          $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
-        channel:
-          $ref: '#/components/schemas/ChannelResourceIdentifier'
-        discounted:
-          $ref: '#/components/schemas/DiscountedPriceDraft'
-        validFrom:
-          type: "string"
-          format: "datetime"
-        validUntil:
-          type: "string"
-          format: "datetime"
-        tiers:
-          type: "array"
-          items:
-            $ref: '#/components/schemas/PriceTier'
-        custom:
-          $ref: '#/components/schemas/CustomFieldsDraft'
     FacetRange:
       type: "object"
       properties:
@@ -86948,9 +86898,10 @@ components:
       x-beta: true
       x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/products#productpricemode"
       x-annotation-enumDescriptions:
-        Embedded: "The API uses the Prices located inside the `prices` field in [ProductVariant](ctp:api:type:ProductVariant)."
-        Standalone: "The API uses [StandalonePrices](ctp:api:type:StandalonePrice), which
-         are associated with the [ProductVariant](ctp:api:type:ProductVariant) through
+        Embedded: "Composable Commerce uses the [Embedded Prices](ctp:api:type:Price) located
+         inside the `prices` field in [ProductVariant](ctp:api:type:ProductVariant)."
+        Standalone: "Composable Commerce uses [StandalonePrices](ctp:api:type:StandalonePrice),
+         which are associated with the [ProductVariant](ctp:api:type:ProductVariant) through
          the `sku` field."
     ProductProjection:
       allOf:
@@ -87166,7 +87117,7 @@ components:
         prices:
           type: "array"
           items:
-            $ref: '#/components/schemas/EmbeddedPrice'
+            $ref: '#/components/schemas/Price'
         attributes:
           type: "array"
           items:
@@ -87220,6 +87171,8 @@ components:
           format: "int64"
     ProductVariantChannelAvailabilityMap:
       type: "object"
+      additionalProperties:
+        type: "string"
     ProductVariantDraft:
       type: "object"
       properties:
@@ -87230,7 +87183,7 @@ components:
         prices:
           type: "array"
           items:
-            $ref: '#/components/schemas/EmbeddedPriceDraft'
+            $ref: '#/components/schemas/PriceDraft'
         attributes:
           type: "array"
           items:
@@ -87263,6 +87216,8 @@ components:
           $ref: '#/components/schemas/SuggestTokenizer'
     SearchKeywords:
       type: "object"
+      additionalProperties:
+        type: "string"
     SuggestTokenizer:
       type: "object"
       discriminator:
@@ -87369,7 +87324,7 @@ components:
             sku:
               type: "string"
             price:
-              $ref: '#/components/schemas/EmbeddedPriceDraft'
+              $ref: '#/components/schemas/PriceDraft'
             staged:
               type: "boolean"
     ProductAddToCategoryAction:
@@ -87399,7 +87354,7 @@ components:
             prices:
               type: "array"
               items:
-                $ref: '#/components/schemas/EmbeddedPriceDraft'
+                $ref: '#/components/schemas/PriceDraft'
             images:
               type: "array"
               items:
@@ -87487,7 +87442,7 @@ components:
             priceId:
               type: "string"
             price:
-              $ref: '#/components/schemas/EmbeddedPriceDraft'
+              $ref: '#/components/schemas/PriceDraft'
             staged:
               type: "boolean"
     ProductChangeSlugAction:
@@ -87906,7 +87861,7 @@ components:
             prices:
               type: "array"
               items:
-                $ref: '#/components/schemas/EmbeddedPriceDraft'
+                $ref: '#/components/schemas/PriceDraft'
             staged:
               type: "boolean"
     ProductSetProductPriceCustomFieldAction:
@@ -91724,7 +91679,7 @@ components:
         payment: "[Payment](ctp:api:type:Payment)n"
         payment-interface-interaction: "[InterfaceInteraction](ctp:api:type:PaymentAddInterfaceInteractionAction)
          on [Payment](ctp:api:type:Payment)n"
-        product-price: "[Price](ctp:api:type:Price) on [ProductVariant](ctp:api:type:ProductVariant)n"
+        product-price: "[Embedded Price](ctp:api:type:Price) on [ProductVariant](ctp:api:type:ProductVariant)n"
         product-selection: "[ProductSelection](ctp:api:type:ProductSelection)n"
         quote: "[Quote](ctp:api:type:Quote), [QuoteRequest](ctp:api:type:QuoteRequest) and
          [StagedQuote](ctp:api:type:StagedQuote).nWhen a [StagedQuote](ctp:api:type:StagedQuote)
