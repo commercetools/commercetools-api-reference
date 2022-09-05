@@ -1205,3 +1205,7 @@ resourceTypes:
                 type: string
         get:
 ```
+
+# Generate a Postman Collection
+
+Follow the steps in the [Generate a Postman Collection](https://github.com/commercetools/commercetools-docs/blob/main/api-specs/generate-a-postman-collection.md) guide to learn more.
