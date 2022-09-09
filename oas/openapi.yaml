@@ -77174,6 +77174,7 @@ components:
               StagedQuoteStateChanged: '#/components/schemas/StagedQuoteStateChangedMessage'
               StagedQuoteStateTransition: '#/components/schemas/StagedQuoteStateTransitionMessage'
               StagedQuoteValidToSet: '#/components/schemas/StagedQuoteValidToSetMessage'
+              StandalonePriceActiveChanged: '#/components/schemas/StandalonePriceActiveChangedMessage'
               StandalonePriceCreated: '#/components/schemas/StandalonePriceCreatedMessage'
               StandalonePriceDeleted: '#/components/schemas/StandalonePriceDeletedMessage'
               StandalonePriceDiscountSet: '#/components/schemas/StandalonePriceDiscountSetMessage'
@@ -80151,6 +80152,42 @@ components:
             validTo:
               type: "string"
               format: "datetime"
+    StandalonePriceActiveChangedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            active:
+              type: "boolean"
+            oldActive:
+              type: "boolean"
     StandalonePriceCreatedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -80964,6 +81001,7 @@ components:
           StagedQuoteStateChanged: '#/components/schemas/StagedQuoteStateChangedMessagePayload'
           StagedQuoteStateTransition: '#/components/schemas/StagedQuoteStateTransitionMessagePayload'
           StagedQuoteValidToSet: '#/components/schemas/StagedQuoteValidToSetMessagePayload'
+          StandalonePriceActiveChanged: '#/components/schemas/StandalonePriceActiveChangedMessagePayload'
           StandalonePriceCreated: '#/components/schemas/StandalonePriceCreatedMessagePayload'
           StandalonePriceDeleted: '#/components/schemas/StandalonePriceDeletedMessagePayload'
           StandalonePriceDiscountSet: '#/components/schemas/StandalonePriceDiscountSetMessagePayload'
@@ -81899,6 +81937,17 @@ components:
             validTo:
               type: "string"
               format: "datetime"
+    StandalonePriceActiveChangedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            active:
+              type: "boolean"
+            oldActive:
+              type: "boolean"
     StandalonePriceCreatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -90177,6 +90226,8 @@ components:
               $ref: '#/components/schemas/CustomFields'
             staged:
               $ref: '#/components/schemas/StagedStandalonePrice'
+            active:
+              type: "boolean"
     StandalonePriceDraft:
       type: "object"
       properties:
@@ -90206,6 +90257,8 @@ components:
           $ref: '#/components/schemas/DiscountedPriceDraft'
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
+        active:
+          type: "boolean"
     StandalonePricePagedQueryResponse:
       type: "object"
       properties:
@@ -90263,6 +90316,7 @@ components:
         propertyName: action
         mapping:
           applyStagedChanges: '#/components/schemas/StandalonePriceApplyStagedChangesAction'
+          changeActive: '#/components/schemas/StandalonePriceChangeActiveAction'
           changeValue: '#/components/schemas/StandalonePriceChangeValueAction'
           setCustomField: '#/components/schemas/StandalonePriceSetCustomFieldAction'
           setCustomType: '#/components/schemas/StandalonePriceSetCustomTypeAction'
@@ -90277,6 +90331,15 @@ components:
           properties:
             action:
               type: "string"
+    StandalonePriceChangeActiveAction:
+      allOf:
+        - $ref: '#/components/schemas/StandalonePriceUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            active:
+              type: "boolean"
     StandalonePriceChangeValueAction:
       allOf:
         - $ref: '#/components/schemas/StandalonePriceUpdateAction'
