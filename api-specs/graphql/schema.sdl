@@ -1722,6 +1722,12 @@ type ChangeStagedOrderTaxRoundingModeOutput implements StagedOrderUpdateActionOu
 input ChangeStagedQuoteState {
   stagedQuoteState: StagedQuoteState!
 }
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ChangeStandalonePriceActive {
+  active: Boolean!
+}
+
 input ChangeStandalonePriceValue {
   value: BaseMoneyInput!
 
@@ -1979,6 +1985,9 @@ input CreateStandalonePrice {
   tiers: [ProductPriceTierInput!] = []
   custom: StandalonePriceCustomField
   discounted: DiscountedProductPriceValueInput
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  active: Boolean! = true
 }
 
 input CreateStore {
@@ -10640,12 +10649,6 @@ interface StagedOrderUpdateActionOutput {
   type: String!
 }
 
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-type StagedStandalonePrice {
-  value: BaseMoney!
-  discounted: DiscountedProductPriceValue
-}
-
 type StagedQuote implements Versioned {
   key: String
   stagedQuoteState: StagedQuoteState!
@@ -10700,6 +10703,12 @@ input StagedQuoteUpdateAction {
   transitionState: TransitionStagedQuoteState
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type StagedStandalonePrice {
+  value: BaseMoney!
+  discounted: DiscountedProductPriceValue
+}
+
 """
 StandalonePrices are managed and queried through the StandalonePrices API
 and associated to a ProductVariant through the sku field.
@@ -10721,10 +10730,20 @@ type StandalonePrice implements Versioned {
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   staged: StagedStandalonePrice
   custom: CustomFieldsType
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  active: Boolean!
   createdAt: DateTime!
   lastModifiedAt: DateTime!
   createdBy: Initiator
   lastModifiedBy: Initiator
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type StandalonePriceActiveChanged implements MessagePayload {
+  active: Boolean!
+  oldActive: Boolean!
+  type: String!
 }
 
 type StandalonePriceCreated implements MessagePayload {
@@ -10771,11 +10790,12 @@ type StandalonePriceStagedChangesApplied implements MessagePayload {
 }
 
 input StandalonePriceUpdateAction {
+  applyStagedChanges: ApplyStagedChanges
+  changeActive: ChangeStandalonePriceActive
   changeValue: ChangeStandalonePriceValue
   setCustomType: CustomFieldsDraft
   setCustomField: SetStandalonePriceCustomFields
   setDiscountedPrice: SetStandalonePriceDiscountedPrice
-  applyStagedChanges: ApplyStagedChanges
 }
 
 type StandalonePriceValueChanged implements MessagePayload {
