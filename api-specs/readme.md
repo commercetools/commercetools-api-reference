@@ -19,7 +19,7 @@ Our APIs have to follow our
   - [Add a custom field](#add-a-custom-field)
   - [Add a scope](#add-a-scope)
   - [Use discriminator and discriminatorValue](#use-discriminator-and-discriminatorvalue)
-  - [Introduce a new annotation](#introduce-a-new-annotation)
+  - [Use an annotation](#use-an-annotation)
     - [(package)](#package)
     - [(identifier)](#identifier)
     - [(elementIdentifier)](#elementidentifier)
@@ -491,26 +491,33 @@ If you need to add a new **scope**, follow these steps:
 
 **discriminator** is used to define an object as **action** or **type**, while **discriminatorValue** is used to name the UpdateActions and map them in the request.
 
-#### Introduce a new annotation
+#### Use an annotation
 
-If you want to introduce a new annotation for your APIs, you have to add it to the [annotations.raml](./api/types/annotations.raml) file.
-The example below illustrates the structure:
+You can find the list of the annotations available of our APIs in the [annotations.raml](./api/types/annotations.raml) file.
+
+In the RAML spec for the HTTP API (`api-specs/api` folder), use the following format:
 
 ```raml
- placeholderParam:
-   type: object
-   allowedTargets: TypeDeclaration
-   properties:
-     paramName: string
-     template: string
-     placeholder: string
- builder:
-   type: array
-   items:
-     type: object
-     properties:
-       paramNames: string[]
-   allowedTargets: TypeDeclaration
+  (placeholderParam):
+or
+  (markDeprecated): true
+```
+
+In the RAMl spec for other libraries (such as the Machine Learning API in `api-specs/ml`) use the following format:
+
+```raml
+uses:
+  annotations: annotationTypes/annotations.raml
+  postman: annotationTypes/postman.raml
+```
+
+For these APIs the namespaces are defined in the related **api.raml** file. This means that you need to prefix the annotation with the API's namespace when using it.
+For example:
+
+```raml
+  (annotations.placeholderParam):
+or
+  (annotations.markDeprecated): true
 ```
 
 ##### (package)
