@@ -37,6 +37,7 @@ uses:
   import-summary: types/import-summary.raml
   import-request: types/import-request.raml
   price-import: types/price-import.raml
+  standalone-price-import: types/standalone-price-import.raml
   product-import: types/product-import.raml
   product-draft-import: types/product-draft-import.raml
   product-type-import: types/product-type-import.raml
@@ -123,6 +124,12 @@ traits:
           scopes:
             - manage_orders:{projectKey}
             - view_orders:{projectKey}
+  secured_by_manage_standalone_prices:
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - manage_standalone_prices:{projectKey}
+            - view_standalone_prices:{projectKey}
 
 /{projectKey}:
   displayName: Project
@@ -345,6 +352,32 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
+  /standalone-prices:
+    /import-containers:
+      /{importContainerKey}:
+        type: base
+        uriParameters:
+          importContainerKey:
+            (postman.paramName): import-container-key
+            description: The ImportContainer used to create the new resource
+            type: string
+        post:
+          description:
+            Creates a request for creating new Standalone Prices or updating existing
+            ones.
+          is:
+            - secured_by_manage_standalone_prices
+          body:
+            type: import-request.StandalonePriceImportRequest
+            example: !include examples/standalone-price-import-request.json
+          responses:
+            201:
+              body:
+                type: import-request.ImportResponse
+            400:
+              description: The request was invalid.
+              body:
+                type: error.ErrorResponse                
   /products:
     /import-containers:
       /{importContainerKey}:
