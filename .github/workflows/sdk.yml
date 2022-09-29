@@ -7,6 +7,31 @@ on:
 name: "SDKs"
 
 jobs:
+  diff:
+    name: "Show changes"
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: "Checkout api reference"
+        uses: actions/checkout@v2
+        with:
+          path: commercetools-api-reference
+
+      - name: "Checkout previous api reference"
+        uses: actions/checkout@v2
+        with:
+          path: commercetools-api-reference-previous
+
+      - name: "Switch to previous commit"
+        run: git checkout `git log -s --pretty=%h --no-merges -n 1 --skip 1`
+        working-directory: commercetools-api-reference-previous
+
+      - name: "Install codegen"
+        run: curl -o- -s https://raw.githubusercontent.com/commercetools/rmf-codegen/main/scripts/install.sh | bash
+
+      - name: "Calculate diff"
+        run: rmf-codegen diff -f JSON commercetools-api-reference-previous/api-specs/api/api.raml commercetools-api-reference/api-specs/api/api.raml
 
   php:
     name: "Generate PHP SDK"
