@@ -5,7 +5,7 @@ build: install_deps generate lint cleanup
 
 install_deps: codegen_install composer_install yarn_install
 
-lint: check_markdown format_raml validate_raml
+lint: check_markdown validate_raml
 
 generate: generate_oas
 
@@ -26,16 +26,13 @@ check_markdown: yarn_install
 lint_raml: yarn_install
 	yarn run lint:raml
 
-format_raml: yarn_install
-	yarn run format:raml
-
-validate_raml: codegen_install format_raml
+validate_raml: codegen_install
 	rmf-codegen verify api-specs/api/api.raml
 
-generate_oas: codegen_install format_raml
+generate_oas: codegen_install
 	rmf-codegen generate -o oas -t OAS api-specs/api/api.raml
 
-raml_doc_convert: codegen_install format_raml
+raml_doc_convert: codegen_install
 	rmf-codegen generate -o tmpdoc -t RAML_DOC api-specs/api/api.raml
 
 oas_convert3: lint raml_doc_convert
