@@ -65,6 +65,28 @@ interface ActiveCartInterface {
   activeCart: Cart
 }
 
+input AddBusinessUnitAddress {
+  address: AddressInput!
+}
+
+input AddBusinessUnitAssociate {
+  associate: AssociateDraft!
+}
+
+input AddBusinessUnitBillingAddressId {
+  addressId: String
+  addressKey: String
+}
+
+input AddBusinessUnitShippingAddressId {
+  addressId: String
+  addressKey: String
+}
+
+input AddBusinessUnitStore {
+  store: ResourceIdentifierInput!
+}
+
 input AddCartCustomLineItem {
   priceMode: CustomLineItemPriceMode = Standard
   shippingDetails: ItemShippingDetailsDraft
@@ -141,6 +163,20 @@ input AddCustomerStore {
 
 input AddInventoryEntryQuantity {
   quantity: Long!
+}
+
+input AddMyBusinessUnitAddress {
+  address: AddressInput!
+}
+
+input AddMyBusinessUnitBillingAddressId {
+  addressId: String
+  addressKey: String
+}
+
+input AddMyBusinessUnitShippingAddressId {
+  addressId: String
+  addressKey: String
 }
 
 input AddMyCartLineItem {
@@ -617,6 +653,25 @@ input AssetSourceInput {
   contentType: String
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type Associate {
+  roles: [AssociateRole!]!
+  customerRef: Reference
+  customer: Customer
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input AssociateDraft {
+  roles: [AssociateRole!]!
+  customer: ResourceIdentifierInput!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum AssociateRole {
+  Admin
+  Buyer
+}
+
 interface Attribute {
   name: String!
 }
@@ -782,6 +837,241 @@ type BooleanType implements FieldType {
   name: String!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type BusinessUnit implements Versioned {
+  key: String!
+  name: String!
+  contactEmail: String
+  addresses: [Address!]!
+  defaultShippingAddress: Address
+  defaultBillingAddress: Address
+  defaultShippingAddressId: String
+  defaultBillingAddressId: String
+  shippingAddresses: [Address!]!
+  billingAddresses: [Address!]!
+  shippingAddressIds: [String!]!
+  billingAddressIds: [String!]!
+  status: BusinessUnitStatus!
+  storesRef: [KeyReference!]
+  stores: [Store!]
+  storeMode: String
+  unitType: BusinessUnitType!
+  associates: [Associate!]!
+  custom: CustomFieldsType
+  parentUnitRef: KeyReference
+  parentUnit: BusinessUnit
+
+  "This field contains the BusinessUnits KeyReferences from the Company to the parent Division of this BusinessUnit in that order."
+  ancestors: [BusinessUnit!]!
+  topLevelUnitRef: KeyReference
+  topLevelUnit: BusinessUnit!
+  id: String!
+  version: Long!
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+type BusinessUnitAddressAdded implements MessagePayload {
+  address: Address!
+  type: String!
+}
+
+type BusinessUnitAddressChanged implements MessagePayload {
+  address: Address!
+  type: String!
+}
+
+type BusinessUnitAddressRemoved implements MessagePayload {
+  address: Address!
+  type: String!
+}
+
+type BusinessUnitAssociateAdded implements MessagePayload {
+  associate: Associate!
+  type: String!
+}
+
+type BusinessUnitAssociateChanged implements MessagePayload {
+  associate: Associate!
+  type: String!
+}
+
+type BusinessUnitAssociateRemoved implements MessagePayload {
+  associate: Associate!
+  type: String!
+}
+
+type BusinessUnitAssociatesSet implements MessagePayload {
+  associates: [Associate!]!
+  type: String!
+}
+
+type BusinessUnitBillingAddressAdded implements MessagePayload {
+  address: Address!
+  type: String!
+}
+
+type BusinessUnitBillingAddressRemoved implements MessagePayload {
+  address: Address!
+  type: String!
+}
+
+type BusinessUnitConfiguration {
+  myBusinessUnitStatusOnCreation: BusinessUnitStatus!
+}
+
+type BusinessUnitContactEmailSet implements MessagePayload {
+  contactEmail: String
+  type: String!
+}
+
+type BusinessUnitCreated implements MessagePayload {
+  businessUnit: BusinessUnit!
+  type: String!
+}
+
+type BusinessUnitDefaultBillingAddressSet implements MessagePayload {
+  address: Address
+  type: String!
+}
+
+type BusinessUnitDefaultShippingAddressSet implements MessagePayload {
+  address: Address
+  type: String!
+}
+
+type BusinessUnitDeleted implements MessagePayload {
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input BusinessUnitDraft {
+  key: String!
+  name: String!
+  contactEmail: String
+  addresses: [AddressInput!]
+
+  "The index of the address in the `addresses` list. The `defaultBillingAddressId` of the customer will be set to the ID of that address."
+  defaultBillingAddress: Int
+
+  "The index of the address in the `addresses` list. The `defaultShippingAddressId` of the customer will be set to the ID of that address."
+  defaultShippingAddress: Int
+
+  "The indices of the shipping addresses in the `addresses` list. The `shippingAddressIds` of the `Customer` will be set to the IDs of that addresses."
+  shippingAddresses: [Int!] = []
+
+  "The indices of the billing addresses in the `addresses` list. The `billingAddressIds` of the customer will be set to the IDs of that addresses."
+  billingAddresses: [Int!] = []
+  custom: CustomFieldsDraft
+  unitType: BusinessUnitType!
+  storeMode: String
+  parentUnit: ResourceIdentifierInput
+  stores: [ResourceIdentifierInput!]
+  associates: [AssociateDraft!]
+}
+
+type BusinessUnitNameChanged implements MessagePayload {
+  name: String!
+  type: String!
+}
+
+type BusinessUnitParentChanged implements MessagePayload {
+  oldParentUnit: KeyReference
+  newParentUnit: KeyReference
+  type: String!
+}
+
+type BusinessUnitQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  exists: Boolean!
+  results: [BusinessUnit!]!
+}
+
+type BusinessUnitShippingAddressAdded implements MessagePayload {
+  address: Address!
+  type: String!
+}
+
+type BusinessUnitShippingAddressRemoved implements MessagePayload {
+  address: Address!
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum BusinessUnitStatus {
+  Active
+  Inactive
+}
+
+type BusinessUnitStatusChanged implements MessagePayload {
+  status: BusinessUnitStatus!
+  type: String!
+}
+
+type BusinessUnitStoreAdded implements MessagePayload {
+  store: KeyReference!
+  type: String!
+}
+
+type BusinessUnitStoreModeChanged implements MessagePayload {
+  storeMode: String!
+  oldStoreMode: String!
+  stores: [KeyReference!]
+  oldStores: [KeyReference!]
+  type: String!
+}
+
+type BusinessUnitStoreRemoved implements MessagePayload {
+  store: KeyReference!
+  type: String!
+}
+
+type BusinessUnitStoresSet implements MessagePayload {
+  stores: [KeyReference!]!
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum BusinessUnitType {
+  Company
+  Division
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input BusinessUnitUpdateAction {
+  addAddress: AddBusinessUnitAddress
+  addAssociate: AddBusinessUnitAssociate
+  addBillingAddressId: AddBusinessUnitBillingAddressId
+  addShippingAddressId: AddBusinessUnitShippingAddressId
+  addStore: AddBusinessUnitStore
+  changeAddress: ChangeBusinessUnitAddress
+  changeAssociate: ChangeBusinessUnitAssociate
+  changeName: ChangeBusinessUnitName
+  changeParentUnit: ChangeBusinessUnitParentUnit
+  changeStatus: ChangeBusinessUnitStatus
+  removeAddress: RemoveBusinessUnitAddress
+  removeAssociate: RemoveBusinessUnitAssociate
+  removeBillingAddressId: RemoveBusinessUnitBillingAddressId
+  removeShippingAddressId: RemoveBusinessUnitShippingAddressId
+  removeStore: RemoveBusinessUnitStore
+  setAddressCustomField: SetBusinessUnitAddressCustomField
+  setAddressCustomType: SetBusinessUnitAddressCustomType
+  setAssociates: SetBusinessUnitAssociates
+  setContactEmail: SetBusinessUnitContactEmail
+  setCustomField: SetBusinessUnitCustomField
+  setCustomType: SetBusinessUnitCustomType
+  setDefaultBillingAddress: SetBusinessUnitDefaultBillingAddress
+  setDefaultShippingAddress: SetBusinessUnitDefaultShippingAddress
+  setStores: SetBusinessUnitStores
+  setStoreMode: SetBusinessUnitStoreMode
+}
+
 input CancelQuoteRequest {
   dummy: String
 }
@@ -821,6 +1111,7 @@ type Cart implements Versioned & ReferenceExpandable {
   storeRef: KeyReference
   store: Store
   itemShippingAddresses: [Address!]!
+  businessUnit: KeyReference
   cartState: CartState!
   key: String
   custom: CustomFieldsType
@@ -1071,6 +1362,7 @@ input CartUpdateAction {
   setBillingAddress: SetCartBillingAddress
   setBillingAddressCustomField: SetCartBillingAddressCustomField
   setBillingAddressCustomType: SetCartBillingAddressCustomType
+  setBusinessUnit: SetCartBusinessUnit
   setKey: SetCartKey
   setCartTotalTax: SetCartTotalTax
   setCountry: SetCartCountry
@@ -1292,6 +1584,28 @@ input CategoryUpdateAction {
   setExternalId: SetCategoryExternalId
 }
 
+input ChangeBusinessUnitAddress {
+  addressId: String
+  addressKey: String
+  address: AddressInput!
+}
+
+input ChangeBusinessUnitAssociate {
+  associate: AssociateDraft!
+}
+
+input ChangeBusinessUnitName {
+  name: String!
+}
+
+input ChangeBusinessUnitParentUnit {
+  parentUnit: ResourceIdentifierInput!
+}
+
+input ChangeBusinessUnitStatus {
+  status: BusinessUnitStatus!
+}
+
 input ChangeCartCustomLineItemMoney {
   customLineItemId: String!
   money: BaseMoneyInput!
@@ -1434,6 +1748,24 @@ input ChangeInventoryEntryQuantity {
   quantity: Long!
 }
 
+input ChangeMyBusinessUnitAddress {
+  addressId: String
+  addressKey: String
+  address: AddressInput!
+}
+
+input ChangeMyBusinessUnitAssociate {
+  associate: AssociateDraft!
+}
+
+input ChangeMyBusinessUnitName {
+  name: String!
+}
+
+input ChangeMyBusinessUnitParentUnit {
+  parentUnit: ResourceIdentifierInput!
+}
+
 input ChangeMyCartTaxMode {
   taxMode: TaxMode!
 }
@@ -1571,6 +1903,10 @@ input ChangeProjectSettingsMessagesConfiguration {
 
 input ChangeProjectSettingsMessagesEnabled {
   messagesEnabled: Boolean!
+}
+
+input ChangeProjectSettingsMyBusinessUnitStatusOnCreation {
+  status: BusinessUnitStatus!
 }
 
 input ChangeProjectSettingsName {
@@ -3970,6 +4306,17 @@ type Me implements MeQueryInterface & CartQueryInterface & ActiveCartInterface &
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   quotes(where: String, sort: [String!], limit: Int, offset: Int): QuoteQueryResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  businessUnit(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): BusinessUnit
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  businessUnits(where: String, sort: [String!], limit: Int, offset: Int): BusinessUnitQueryResult!
 }
 
 "The me field gives access to the data that is specific to the customer or anonymous session linked to the access token."
@@ -4809,6 +5156,75 @@ type Mutation {
 
     "Queries with specified key"
     key: String): Quote
+  createBusinessUnit(draft: BusinessUnitDraft!): BusinessUnit
+  updateBusinessUnit(version: Long!, actions: [BusinessUnitUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): BusinessUnit
+  deleteBusinessUnit(version: Long!, personalDataErasure: Boolean = false,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): BusinessUnit
+  createMyBusinessUnit(draft: MyBusinessUnitDraft!): BusinessUnit
+  updateMyBusinessUnit(version: Long!, actions: [MyBusinessUnitUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): BusinessUnit
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input MyBusinessUnitDraft {
+  key: String!
+  name: String!
+  contactEmail: String
+  addresses: [AddressInput!]
+
+  "The index of the address in the `addresses` list. The `defaultBillingAddressId` of the customer will be set to the ID of that address."
+  defaultBillingAddress: Int
+
+  "The index of the address in the `addresses` list. The `defaultShippingAddressId` of the customer will be set to the ID of that address."
+  defaultShippingAddress: Int
+
+  "The indices of the shipping addresses in the `addresses` list. The `shippingAddressIds` of the `Customer` will be set to the IDs of that addresses."
+  shippingAddresses: [Int!] = []
+
+  "The indices of the billing addresses in the `addresses` list. The `billingAddressIds` of the customer will be set to the IDs of that addresses."
+  billingAddresses: [Int!] = []
+  custom: CustomFieldsDraft
+  unitType: BusinessUnitType!
+  storeMode: String
+  parentUnit: ResourceIdentifierInput
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input MyBusinessUnitUpdateAction {
+  addAddress: AddMyBusinessUnitAddress
+  addBillingAddressId: AddMyBusinessUnitBillingAddressId
+  addShippingAddressId: AddMyBusinessUnitShippingAddressId
+  changeAddress: ChangeMyBusinessUnitAddress
+  changeAssociate: ChangeMyBusinessUnitAssociate
+  changeName: ChangeMyBusinessUnitName
+  changeParentUnit: ChangeMyBusinessUnitParentUnit
+  removeAddress: RemoveMyBusinessUnitAddress
+  removeAssociate: RemoveMyBusinessUnitAssociate
+  removeBillingAddressId: RemoveMyBusinessUnitBillingAddressId
+  removeShippingAddressId: RemoveMyBusinessUnitShippingAddressId
+  setAddressCustomField: SetMyBusinessUnitAddressCustomField
+  setAddressCustomType: SetMyBusinessUnitAddressCustomType
+  setContactEmail: SetMyBusinessUnitContactEmail
+  setCustomField: SetMyBusinessUnitCustomField
+  setCustomType: SetMyBusinessUnitCustomType
+  setDefaultBillingAddress: SetMyBusinessUnitDefaultBillingAddress
+  setDefaultShippingAddress: SetMyBusinessUnitDefaultShippingAddress
 }
 
 input MyCartDraft {
@@ -4846,6 +5262,7 @@ input MyCartUpdateAction {
   setBillingAddress: SetCartBillingAddress
   setBillingAddressCustomField: SetCartBillingAddressCustomField
   setBillingAddressCustomType: SetCartBillingAddressCustomType
+  setBusinessUnit: SetCartBusinessUnit
   setCountry: SetCartCountry
   setCustomField: SetCartCustomField
   setCustomType: SetCartCustomType
@@ -5085,6 +5502,7 @@ type Order implements Versioned & ReferenceExpandable {
   storeRef: KeyReference
   store: Store
   itemShippingAddresses: [Address!]!
+  businessUnit: KeyReference
   completedAt: DateTime
   orderNumber: String
   orderState: OrderState!
@@ -6873,6 +7291,7 @@ input ProjectSettingsUpdateAction {
   changeLanguages: ChangeProjectSettingsLanguages
   changeMessagesConfiguration: ChangeProjectSettingsMessagesConfiguration
   changeMessagesEnabled: ChangeProjectSettingsMessagesEnabled
+  changeMyBusinessUnitStatusOnCreation: ChangeProjectSettingsMyBusinessUnitStatusOnCreation
   changeName: ChangeProjectSettingsName
   changeOrderSearchStatus: ChangeProjectSettingsOrderSearchStatus
   changeProductSearchIndexingEnabled: ChangeProjectSettingsProductSearchIndexingEnabled
@@ -7153,6 +7572,17 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
   quotes(where: String, sort: [String!], limit: Int, offset: Int): QuoteQueryResult!
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  businessUnit(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): BusinessUnit
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  businessUnits(where: String, sort: [String!], limit: Int, offset: Int): BusinessUnitQueryResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
 }
 
@@ -7185,6 +7615,7 @@ type Quote implements Versioned {
   shippingRateInput: ShippingRateInput
   storeRef: KeyReference
   store: Store
+  businessUnit: KeyReference
   key: String
   quoteState: QuoteState!
   stagedQuoteRef: Reference!
@@ -7248,6 +7679,7 @@ type QuoteRequest implements Versioned {
   shippingRateInput: ShippingRateInput
   storeRef: KeyReference
   store: Store
+  businessUnit: KeyReference
   key: String
   quoteRequestState: QuoteRequestState!
   comment: String
@@ -7283,11 +7715,11 @@ type QuoteRequestQueryResult {
 
 enum QuoteRequestState {
   UnderReview
-  Cancelled
-  Closed
-  Accepted
   Submitted
+  Closed
+  Cancelled
   Rejected
+  Accepted
 }
 
 input QuoteRequestUpdateAction {
@@ -7481,6 +7913,29 @@ input RelativeDiscountValueInput {
   permyriad: Int!
 }
 
+input RemoveBusinessUnitAddress {
+  addressId: String
+  addressKey: String
+}
+
+input RemoveBusinessUnitAssociate {
+  customer: ResourceIdentifierInput!
+}
+
+input RemoveBusinessUnitBillingAddressId {
+  addressId: String
+  addressKey: String
+}
+
+input RemoveBusinessUnitShippingAddressId {
+  addressId: String
+  addressKey: String
+}
+
+input RemoveBusinessUnitStore {
+  store: ResourceIdentifierInput!
+}
+
 input RemoveCartCustomLineItem {
   customLineItemId: String!
 }
@@ -7535,6 +7990,25 @@ input RemoveCustomerStore {
 
 input RemoveInventoryEntryQuantity {
   quantity: Long!
+}
+
+input RemoveMyBusinessUnitAddress {
+  addressId: String
+  addressKey: String
+}
+
+input RemoveMyBusinessUnitAssociate {
+  customer: ResourceIdentifierInput!
+}
+
+input RemoveMyBusinessUnitBillingAddressId {
+  addressId: String
+  addressKey: String
+}
+
+input RemoveMyBusinessUnitShippingAddressId {
+  addressId: String
+  addressKey: String
 }
 
 input RemoveOrderDelivery {
@@ -8085,6 +8559,62 @@ type SetAttributeDefinitionType implements AttributeDefinitionType {
   name: String!
 }
 
+input SetBusinessUnitAddressCustomField {
+  addressId: String
+  addressKey: String
+  name: String!
+  value: String
+}
+
+input SetBusinessUnitAddressCustomType {
+  addressId: String
+  addressKey: String
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
+input SetBusinessUnitAssociates {
+  associates: [AssociateDraft!] = []
+}
+
+input SetBusinessUnitContactEmail {
+  contactEmail: String
+}
+
+input SetBusinessUnitCustomField {
+  name: String!
+  value: String
+}
+
+input SetBusinessUnitCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
+input SetBusinessUnitDefaultBillingAddress {
+  addressId: String
+  addressKey: String
+}
+
+input SetBusinessUnitDefaultShippingAddress {
+  addressId: String
+  addressKey: String
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetBusinessUnitStoreMode {
+  stores: [ResourceIdentifierInput!]
+  storeMode: String
+}
+
+input SetBusinessUnitStores {
+  stores: [ResourceIdentifierInput!]!
+}
+
 input SetCartAnonymousId {
   anonymousId: String
 }
@@ -8103,6 +8633,10 @@ input SetCartBillingAddressCustomType {
   type: ResourceIdentifierInput
   typeKey: String
   typeId: String
+}
+
+input SetCartBusinessUnit {
+  businessUnit: ResourceIdentifierInput!
 }
 
 input SetCartCountry {
@@ -8634,6 +9168,48 @@ input SetInventoryEntryRestockableInDays {
 
 input SetInventoryEntrySupplyChannel {
   supplyChannel: ResourceIdentifierInput
+}
+
+input SetMyBusinessUnitAddressCustomField {
+  addressId: String
+  addressKey: String
+  name: String!
+  value: String
+}
+
+input SetMyBusinessUnitAddressCustomType {
+  addressId: String
+  addressKey: String
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
+input SetMyBusinessUnitContactEmail {
+  contactEmail: String
+}
+
+input SetMyBusinessUnitCustomField {
+  name: String!
+  value: String
+}
+
+input SetMyBusinessUnitCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
+input SetMyBusinessUnitDefaultBillingAddress {
+  addressId: String
+  addressKey: String
+}
+
+input SetMyBusinessUnitDefaultShippingAddress {
+  addressId: String
+  addressKey: String
 }
 
 input SetMyCartShippingMethod {
@@ -10672,6 +11248,7 @@ type StagedQuote implements Versioned {
   custom: CustomFieldsType
   stateRef: Reference
   state: State
+  businessUnit: KeyReference
   sellerComment: String
   id: String!
   version: Long!

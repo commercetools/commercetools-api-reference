@@ -1,0 +1,74 @@
+#%RAML 1.0 DataType
+(package): BusinessUnit
+(docs-uri): https://docs.commercetools.com/api/projects/business-units#businessunitdraft
+displayName: BusinessUnitDraft
+discriminator: unitType
+description: |
+  Generic draft type to model those fields all Business Units have in common.
+properties:
+  key:
+    type: string
+    description: |
+      User-defined unique identifier for the Business Unit.
+    pattern: ^[A-Za-z0-9_-]+$
+    minLength: 2
+    maxLength: 256
+  status?:
+    type: BusinessUnitStatus
+    description: |
+      Indicates whether the Business Unit can be edited and used in [Orders](/../api/projects/orders).
+    default: Active
+  stores?:
+    type: StoreKeyReference[]
+    description: |
+      References to [Stores](ctp:api:type:Store) the Business Unit is associated with. Can only be set when `storeMode` is `Explicit`.
+      If not empty, the Business Unit can only be linked to [Carts](ctp:api:type:Cart) and [Orders](ctp:api:type:Order) of a referenced Store.
+      If empty, the Business Unit can only create [Carts](ctp:api:type:Cart), [Orders](ctp:api:type:Order), or [Quotes](/../api/quotes-overview) that have no `store` value.
+      Defaults to empty for [Companies](ctp:api:type:BusinessUnitType) and not set for [Divisions](ctp:api:type:BusinessUnitType).
+  storeMode?:
+    type: BusinessUnitStoreMode
+    description: |
+      Defines whether the Stores of the Business Unit are set on the Business Unit or are inherited from a parent.
+      Defaults to `Explicit` for [Companies](ctp:api:type:BusinessUnitType) and to `FromParent` for [Divisions](ctp:api:type:BusinessUnitType).
+  unitType:
+    type: BusinessUnitType
+    description: |
+      Type of the Business Unit indicating its position in a hierarchy.
+  name:
+    type: string
+    description: |
+      Name of the Business Unit.
+  contactEmail?:
+    type: string
+    description: |
+      Email address of the Business Unit.
+  associates?:
+    type: AssociateDraft[]
+    description: |
+      List of members that are part of the Business Unit in specific [roles](ctp:api:type:AssociateRole).
+  addresses?:
+    type: BaseAddress[]
+    description: |
+      Addresses used by the Business Unit.
+  shippingAddresses?:
+    type: integer[]
+    description: |
+      Indexes of entries in `addresses` to set as shipping addresses.
+      The `shippingAddressIds` of the [Customer](ctp:api:type:Customer) will be replaced by these addresses.
+  defaultShipingAddress?:
+    type: integer
+    description: |
+      Index of the entry in `addresses` to set as the default shipping address.
+  billingAddresses?:
+    type: integer[]
+    description: |
+      Indexes of entries in `addresses` to set as billing addresses.
+      The `billingAddressIds` of the [Customer](ctp:api:type:Customer) will be replaced by these addresses.
+  defaultBillingAddress?:
+    type: integer
+    description: |
+      Index of the entry in `addresses` to set as the default billing address.
+  custom?:
+    type: CustomFieldsDraft
+    description: |
+      Custom Fields for the Business Unit.
