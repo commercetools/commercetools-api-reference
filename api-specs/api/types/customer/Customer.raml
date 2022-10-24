@@ -1,118 +1,145 @@
 #%RAML 1.0 DataType
 (package): Customer
-(docs-uri): https://docs.commercetools.com/http-api-projects-customers.html#customer
+(docs-uri): https://docs.commercetools.com/api/projects/customers#customer
 displayName: Customer
 (updateType): CustomerUpdate
 type: BaseResource
 (java-extends): 'com.commercetools.api.models.DomainResource<Customer>, com.commercetools.api.models.Customizable<Customer>'
+description: |
+  If `stores` is not empty, the Customer is specific to those Stores.
 properties:
   id:
     (identifier): true
     type: string
-    description: Unique identifier of the Customer.
+    description: |
+      Unique identifier of the Customer.
   version:
     type: number
     format: int64
-    description: The current version of the customer.
-  createdAt:
-    type: datetime
-    description: ''
-  lastModifiedAt:
-    type: datetime
-    description: ''
-  lastModifiedBy?:
-    type: LastModifiedBy
-    (beta): true
     description: |
-      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
-  createdBy?:
-    type: CreatedBy
-    (beta): true
-    description: |
-      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
-  customerNumber?:
-    type: string
-    description: |-
-      The customer number can be used to create a more human-readable (in contrast to ID) identifier for the customer.
-      It should be unique across a project.
-      Once the field was set it cannot be changed anymore.
-  email:
-    type: string
-    description: |-
-      The customer's email address and the main identifier of uniqueness for a customer account.
-      Email addresses are either unique to the store they're specified for, _or_ for the entire project.
-      For more information, see Email uniquenes.
-  password?:
-    type: string
-    description: 'Only present with the default `authenticationMode`, `Password`.'
-  firstName?:
-    type: string
-    description: ''
-  lastName?:
-    type: string
-    description: ''
-  middleName?:
-    type: string
-    description: ''
-  title?:
-    type: string
-    description: ''
-  dateOfBirth?:
-    type: date-only
-    description: ''
-  companyName?:
-    type: string
-    description: ''
-  vatId?:
-    type: string
-    description: ''
-  addresses:
-    type: Address[]
-    description: The addresses have unique IDs in the addresses list
-  defaultShippingAddressId?:
-    type: string
-    description: The address ID in the addresses list
-  shippingAddressIds?:
-    type: string[]
-    description: The IDs from the addresses list which are used as shipping addresses
-  defaultBillingAddressId?:
-    type: string
-    description: The address ID in the addresses list
-  billingAddressIds?:
-    type: string[]
-    description: The IDs from the addresses list which are used as billing addresses
-  isEmailVerified:
-    type: boolean
-    description: ''
-  externalId?:
-    type: string
-    description: ''
-  customerGroup?:
-    type: CustomerGroupReference
-    description: ''
-  custom?:
-    type: CustomFields
-    description: ''
-  locale?:
-    type: string
-    description: ''
-  salutation?:
-    type: string
-    description: ''
+      Current version of the Customer.
   key?:
     type: string
-    description: |-
+    description: |
       User-defined unique identifier of the Customer.
     pattern: ^[A-Za-z0-9_-]+$
     minLength: 2
     maxLength: 256
+  customerNumber?:
+    type: string
+    description: |
+      User-defined unique identifier of the Customer.
+
+      Can be used to refer to a Customer in a human-readable way (in emails, invoices, and other correspondence).
+  externalId?:
+    type: string
+    description: |
+      Optional identifier for use in external systems like Customer Relationship Management (CRM) or Enterprise Resource Planning (ERP).
+  createdAt:
+    type: datetime
+    description: |
+      Date and time (UTC) the Customer was initially created.
+  lastModifiedAt:
+    type: datetime
+    description: |
+      Date and time (UTC) the Customer was last updated.
+  lastModifiedBy?:
+    type: LastModifiedBy
+    (beta): true
+    description: |
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).
+  createdBy?:
+    type: CreatedBy
+    (beta): true
+    description: |
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).
+  email:
+    type: string
+    description: |
+      Email address of the Customer that is [unique](/../api/customers-overview#customer-uniqueness) for an entire Project or to a Store the Customer is assigned to.
+      It is the mandatory unique identifier of a Customer.
+  password?:
+    type: string
+    description: |
+      Present only when `authenticationMode` is set to `Password`.
+  firstName?:
+    type: string
+    description: |
+      Given name (first name) of the Customer.
+  lastName?:
+    type: string
+    description: |
+      Family name (last name) of the Customer.
+  middleName?:
+    type: string
+    description: |
+      Middle name of the Customer.
+  title?:
+    type: string
+    description: |
+      Title of the Customer, for example, 'Dr.'.
+  dateOfBirth?:
+    type: date-only
+    description: |
+      Date of birth of the Customer.
+  companyName?:
+    type: string
+    description: |
+      Company name of the Customer.
+  vatId?:
+    type: string
+    description: |
+      Unique VAT ID of the Customer.
+  addresses:
+    type: Address[]
+    description: |
+      Addresses used by the Customer.
+  defaultShippingAddressId?:
+    type: string
+    description: |
+      ID of the address in `addresses` used as the default shipping address.
+  shippingAddressIds?:
+    type: string[]
+    description: |
+      IDs of addresses in `addresses` used as shipping addresses.
+  defaultBillingAddressId?:
+    type: string
+    description: |
+      ID of the address in `addresses` used as the default billing address.
+  billingAddressIds?:
+    type: string[]
+    description: |
+      IDs of addresses in `addresses` used as billing addresses.
+  isEmailVerified:
+    type: boolean
+    description: |
+      Indicates whether the email address of the Customer is [verified](#email-verification-of-customer).
+  customerGroup?:
+    type: CustomerGroupReference
+    description: |
+      [CustomerGroup](ctp:api:type:CustomerGroup) to which the Customer belongs.
+  custom?:
+    type: CustomFields
+    description: |
+      Custom Fields for the Customer.
+  locale?:
+    type: Locale
+    description: |
+      Preferred language of the Customer.
+  salutation?:
+    type: string
+    description: |
+      Salutation of the Customer, for example, 'Mr.' or 'Mrs.'.
   stores?:
     type: StoreKeyReference[]
-    description: |-
-      References to the stores the customer account is associated with.
-      If no stores are specified, the customer is a global customer, and can log in using the Password Flow for global Customers.
-      If one or more stores are specified, the customer can only log in using the Password Flow for Customers in a Store for those specific stores.
-  authenticationMode?:
+    description: |
+      [Stores](ctp:api:type:Store) to which the Customer is assigned to.
+
+      - If no Stores are specified, the Customer is a global customer, and can log in using the [Password Flow for global Customers](/../api/authorization#password-flow-for-global-customers).
+      - If any Stores are specified, the Customer can only log in using the [Password Flow for Customers in a Store](/../api/authorization#password-flow-for-customers-in-a-store) for those specific Stores.
+  authenticationMode:
     type: AuthenticationMode
     (beta): true
-    description: Defines whether a Customer has a password.
+    description: |
+      Indicates whether the `password` is required for the Customer.
+    default: Password

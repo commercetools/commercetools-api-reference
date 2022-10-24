@@ -898,10 +898,10 @@ uriParameters:
       200:
         body:
           application/json:
+            example: !include ../examples/customer.example.json
             type: Customer
   post:
     displayName: Update my customer in a store
-    description: Update my customer in a store
     securedBy:
       [
         oauth_2_0:
@@ -925,7 +925,6 @@ uriParameters:
             type: Customer
   delete:
     displayName: Delete my Customer in a store
-    description: Delete my Customer in a store
     is:
       - versioned
       - conflicting
@@ -950,6 +949,8 @@ uriParameters:
     type: base
     post:
       displayName: Verify my Customer's Email in a store
+      description: |
+        This is the last step in the [email verification process of a Customer](/../api/projects/customers#email-verification-of-customer-in-store).
       securedBy:
         [
           oauth_2_0:
@@ -963,7 +964,8 @@ uriParameters:
         ]
       body:
         application/json:
-          type: CustomerEmailVerify
+          example: !include ../examples/Customer/CustomerEmailVerify.json
+          type: MyCustomerEmailVerify
       responses:
         200:
           description: The email was verified.
@@ -971,11 +973,12 @@ uriParameters:
             application/json:
               example: !include ../examples/customer.example.json
               type: Customer
-
   /password:
     type: base
     post:
       displayName: Change my customers password in a store
+      description: |
+        Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
       is:
         - conflicting
       securedBy:
@@ -991,6 +994,7 @@ uriParameters:
         ]
       body:
         application/json:
+          example: !include ../examples/Customer/MyCustomerChangePassword.json
           type: MyCustomerChangePassword
       responses:
         200:
@@ -1002,6 +1006,10 @@ uriParameters:
       type: base
       post:
         displayName: Reset my Customer's Password in a store
+        description: |
+          This is the last step in the [password reset process of the authenticated Customer](/../api/projects/customers#password-reset-of-customer-in-store).
+
+          Resetting a password produces the of the Customer [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
         securedBy:
           [
             oauth_2_0:
@@ -1015,6 +1023,7 @@ uriParameters:
           ]
         body:
           application/json:
+            example: !include ../examples/Customer/CustomerResetPassword.json
             type: MyCustomerResetPassword
         responses:
           200:
@@ -1026,6 +1035,10 @@ uriParameters:
     type: base
     post:
       displayName: Signup my customer in a store
+      description: |
+        If omitted in the request body, the [Customer](ctp:api:type:Customer) `stores` field is set to the Store specified in the path parameter.
+
+        Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
       securedBy:
         [
           oauth_2_0:
@@ -1039,16 +1052,27 @@ uriParameters:
         ]
       body:
         application/json:
+          example: !include ../examples/customer-create.example.json
           type: MyCustomerDraft
       responses:
         201:
           body:
             application/json:
+              example: !include ../examples/customer-sign-in-result.example.json
               type: CustomerSignInResult
   /login:
     type: base
     post:
       displayName: Authenticate my Customer (Sign In) in a store
+      description: |
+        Retrieves the authenticated Customer (that matches the given email/password pair) if they are part of a specific [Store](ctp:api:type:Store).
+
+        - If the Customer does not have a Cart, the most recently modified anonymous cart becomes the Customer's Cart.
+        - If the Customer already has a Cart, the most recently modified anonymous cart is handled according to [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
+
+        If a Cart is returned as part of [CustomerSignInResult](ctp:api:type:CustomerSignInResult), it has been [recalculated](/../api/projects/carts#recalculate) with up-to-date prices, taxes, discounts, and invalid line items removed.
+
+        If an account with the given credentials is not found, an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error is returned.
       securedBy:
         [
           oauth_2_0:
@@ -1063,10 +1087,12 @@ uriParameters:
       body:
         application/json:
           type: MyCustomerSignin
+          example: !include ../examples/Customer/CustomerSignIn.json
       responses:
         200:
           body:
             application/json:
+              example: !include ../examples/customer-sign-in-result.example.json
               type: CustomerSignInResult
 /customers:
   type:
@@ -1080,8 +1106,8 @@ uriParameters:
   (deleteable): Customer
   (createable): CustomerDraft
   description: |
-    A customer is a person purchasing products. customers, Orders,
-    Comments and Reviews can be associated to a customer.
+    A Customer is a person purchasing products. Carts, Orders,
+    Comments and Reviews can be associated to a Customer.
   get:
     displayName: Query customers in store
     securedBy:
@@ -1102,14 +1128,12 @@ uriParameters:
             - 'manage_customers:{projectKey}'
             - 'manage_customers:{projectKey}:{storeKey}'
     description: |
-      Creates a customer in a specific Store.
-      When using this endpoint, if omitted,
-      the customer's stores field is set to the store specified in the path parameter.
-      If an anonymous cart is passed in as when using this method,
-      then the cart is assigned to the created customer and the version number of the Cart increases.
-      If the ID of an anonymous session is given, all carts and orders will be assigned to the created customer and
-      the store specified. If you pass in a cart with a store field specified,
-      the store field must reference the same store specified in the {storeKey} path parameter.
+      When using this endpoint, if omitted, the Customer `stores` field is set to the Store specified in the path parameter.
+
+      If the `anonymousCart` field is set on the [CustomerDraft](ctp:api:type:CustomerDraft), then the newly created Customer will be assigned to that [Cart](ctp:api:type:Cart).
+      Similarly, if the `anonymousId` field is set, the Customer will be set on all [Carts](ctp:api:type:Cart), [Orders](ctp:api:type:Order), [ShoppingLists](ctp:api:type:ShoppingList) and [Payments](ctp:api:type:Payment) with the same `anonymousId`.
+      If a Cart with a `store` field specified, the `store` field must reference the same Store specified in the `{storeKey}` path parameter.
+      Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
     body:
       application/json:
         example: !include ../examples/customer-create.example.json
@@ -1117,7 +1141,7 @@ uriParameters:
       201:
         body:
           application/json:
-            example: !include ../examples/customer-sign-in.example.json
+            example: !include ../examples/customer-sign-in-result.example.json
             type: CustomerSignInResult
   /password-token={passwordToken}:
     (methodName): withPasswordToken
@@ -1127,6 +1151,8 @@ uriParameters:
         resourceType: Customer
     get:
       displayName: Get customer by password verification token in store
+      description: |
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       securedBy:
         - oauth_2_0:
             scopes:
@@ -1145,6 +1171,8 @@ uriParameters:
         resourceType: Customer
     get:
       displayName: Get customer by email verification token in store
+      description: |
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       securedBy:
         - oauth_2_0:
             scopes:
@@ -1158,14 +1186,10 @@ uriParameters:
   /email-token:
     type: base
     displayName: Customer's Email Verification in store
-    description: |
-      To verify a customer's email, an email token can be created. This should be embedded in a link and sent to the
-      customer via email. When the customer clicks on the link,
-      the "verify customer's email" endpoint should be called,
-      which sets customer's isVerifiedEmail field to true.
     post:
       displayName: Create a Token for verifying the Customer's Email in store
-      description: Create a Token for verifying the Customer's Email in store
+      description: |
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       securedBy:
         - oauth_2_0:
             scopes:
@@ -1173,6 +1197,7 @@ uriParameters:
               - 'manage_customers:{projectKey}:{storeKey}'
       body:
         application/json:
+          example: !include ../examples/Customer/CustomerCreateEmailToken.json
           type: CustomerCreateEmailToken
       responses:
         200:
@@ -1183,7 +1208,11 @@ uriParameters:
     type: base
     post:
       displayName: Verify Customer's Email in store
-      description: Verifies customer's email using a token.
+      description: |
+        The customer verifies the email using the token value.
+        Verifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.
+
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       securedBy:
         - oauth_2_0:
             scopes:
@@ -1191,6 +1220,7 @@ uriParameters:
               - 'manage_customers:{projectKey}:{storeKey}'
       body:
         application/json:
+          example: !include ../examples/Customer/CustomerEmailVerify.json
           type: CustomerEmailVerify
       responses:
         200:
@@ -1203,7 +1233,8 @@ uriParameters:
     type: base
     post:
       displayName: Change a customers password in store
-      description: Change a customers password
+      description: |
+        Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
       securedBy:
         - oauth_2_0:
             scopes:
@@ -1211,6 +1242,7 @@ uriParameters:
               - 'manage_customers:{projectKey}:{storeKey}'
       body:
         application/json:
+          example: !include ../examples/Customer/CustomerChangePassword.json
           type: CustomerChangePassword
       responses:
         200:
@@ -1222,7 +1254,10 @@ uriParameters:
     type: base
     post:
       displayName: Reset Customer's Password in store
-      description: Set a new password using a token.
+      description: |
+        Resetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
+
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       securedBy:
         - oauth_2_0:
             scopes:
@@ -1230,7 +1265,8 @@ uriParameters:
               - 'manage_customers:{projectKey}:{storeKey}'
       body:
         application/json:
-          type: MyCustomerResetPassword
+          example: !include ../examples/Customer/CustomerResetPassword.json
+          type: CustomerResetPassword
       responses:
         200:
           body:
@@ -1240,17 +1276,10 @@ uriParameters:
   /password-token:
     type: base
     displayName: Create a Token for Resetting the Customer's Password in store
-    description: |
-      The following workflow can be used to reset the customer's password:
-
-      * Create a password reset token and send it embedded in a link to the customer.
-      * When the customer clicks on the link, the customer is retrieved with the token.
-      * The customer enters a new password and the "reset customer's password" endpoint is called.
     post:
       displayName: Create a Token for Resetting the Customer's Password in store
       description: |
-        The token value is used to reset the password of the customer with the given email. The token is
-        valid only for 10 minutes.
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       securedBy:
         - oauth_2_0:
             scopes:
@@ -1259,6 +1288,7 @@ uriParameters:
       body:
         application/json:
           type: CustomerCreatePasswordResetToken
+          example: !include ../examples/Customer/CustomerCreatePasswordResetToken.json
       responses:
         200:
           body:
@@ -1273,16 +1303,13 @@ uriParameters:
         resourceUpdateType: CustomerUpdate
     get:
       displayName: Get customer by key in store
+      description: |
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       securedBy:
         - oauth_2_0:
             scopes:
               - 'view_customers:{projectKey}'
               - 'view_customers:{projectKey}:{storeKey}'
-      description: |
-        Returns a customer by its Key from a specific Store.
-        It also considers customers that do not have the stores field.
-        If the customer exists in the project but the stores field references different stores,
-        this method returns a ResourceNotFound error.
       responses:
         200:
           body:
@@ -1290,14 +1317,13 @@ uriParameters:
               example: !include ../examples/customer.example.json
     post:
       displayName: Update customer by key in store
+      description: |
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       securedBy:
         - oauth_2_0:
             scopes:
               - 'manage_customers:{projectKey}'
               - 'manage_customers:{projectKey}:{storeKey}'
-      description: |
-        If the customer exists in the project but the stores field references a different store,
-        this method returns a ResourceNotFound error.
       body:
         application/json:
           example: !include ../examples/customer-update.example.json
@@ -1308,6 +1334,10 @@ uriParameters:
               example: !include ../examples/customer.example.json
     delete:
       displayName: Delete customer by key in store
+      description: |
+        Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.
+
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       is:
         - dataErasure
       securedBy:
@@ -1329,32 +1359,27 @@ uriParameters:
         resourceUpdateType: CustomerUpdate
     get:
       displayName: Get customer by id in store
+      description: |
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       securedBy:
         - oauth_2_0:
             scopes:
               - 'view_customers:{projectKey}'
               - 'view_customers:{projectKey}:{storeKey}'
-      description: |
-        Returns a customer by its ID from a specific Store.
-        It also considers customers that do not have the stores field.
-        If the customer exists in the project but the stores field references different stores,
-        this method returns a ResourceNotFound error.
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/customer.example.json
     post:
-      displayName: Post customer by id in store
+      displayName: Update customer by id in store
+      description: |
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       securedBy:
         - oauth_2_0:
             scopes:
               - 'manage_customers:{projectKey}'
               - 'manage_customers:{projectKey}:{storeKey}'
-      description: |
-        Updates a customer in the store specified by {storeKey}.
-        If the customer exists in the project but the stores field references a different store,
-        this method returns a ResourceNotFound error.
       body:
         application/json:
           example: !include ../examples/customer-update.example.json
@@ -1365,6 +1390,10 @@ uriParameters:
               example: !include ../examples/customer.example.json
     delete:
       displayName: Delete customer by id in store
+      description: |
+        Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.
+
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       is:
         - dataErasure
       securedBy:
@@ -1383,7 +1412,10 @@ uriParameters:
   description: Retrieves the authenticated customer.
   post:
     displayName: Authenticate Customer (Sign In) in store
-    description: Authenticate Customer (Sign In) in store
+    description: |
+      Authenticates a Customer associated with a Store. For more information, see [Global versus Store-specific Customers](/../api/customers-overview#global-versus-store-specific-customers).
+
+      If the Customer exists in the Project but the `stores` field references a different Store, this method returns an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error.
     securedBy:
       - oauth_2_0:
           scopes:
@@ -1392,11 +1424,12 @@ uriParameters:
     body:
       application/json:
         type: CustomerSignin
+        example: !include ../examples/Customer/CustomerSignIn.json
     responses:
       200:
         body:
           application/json:
-            example: !include ../examples/customer-sign-in.example.json
+            example: !include ../examples/customer-sign-in-result.example.json
             type: CustomerSignInResult
 /shipping-methods:
   /matching-cart:

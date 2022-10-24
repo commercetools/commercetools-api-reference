@@ -1,119 +1,139 @@
 #%RAML 1.0 DataType
 (package): Customer
-(docs-uri): https://docs.commercetools.com/http-api-projects-customers.html#customerdraft
+(docs-uri): https://docs.commercetools.com/api/projects/customers#customerdraft
 displayName: CustomerDraft
 type: object
 (java-extends): 'com.commercetools.api.models.CustomizableDraft<CustomerDraft>'
 properties:
-  customerNumber?:
-    type: string
-    description: |-
-      String that uniquely identifies a customer.
-      It can be used to create more human-readable (in contrast to ID) identifier for the customer.
-      It should be **unique** across a project.
-      Once it's set it cannot be changed.
-  email:
-    type: string
-    description: |-
-      The customer's email address and the main identifier of uniqueness for a customer account.
-      Email addresses are either unique to the store they're specified for, _or_ for the entire project, and are case insensitive.
-      For more information, see Email uniquenes.
-  password?:
-    type: string
-    description: 'Only optional with `authenticationMode` set to `ExternalAuth`.'
-  firstName?:
-    type: string
-    description: ''
-  lastName?:
-    type: string
-    description: ''
-  middleName?:
-    type: string
-    description: ''
-  title?:
-    type: string
-    description: ''
-  anonymousCartId?:
-    (markDeprecated): true
-    type: string
-    description:
-      Identifies a single cart that will be assigned to the new customer
-      account.
-  anonymousCart?:
-    type: CartResourceIdentifier
-    description:
-      Identifies a single cart that will be assigned to the new customer
-      account.
-  anonymousId?:
-    type: string
-    description:
-      Identifies carts and orders belonging to an anonymous session that will be
-      assigned to the new customer account.
-  dateOfBirth?:
-    type: date-only
-    description: ''
-  companyName?:
-    type: string
-    description: ''
-  vatId?:
-    type: string
-    description: ''
-  addresses?:
-    type: BaseAddress[]
-    description: Sets the ID of each address to be unique in the addresses list.
-  defaultShippingAddress?:
-    type: number
-    format: int32
-    description: |-
-      The index of the address in the addresses array.
-      The `defaultShippingAddressId` of the customer will be set to the ID of that address.
-  shippingAddresses?:
-    type: integer[]
-    description: |-
-      The indices of the shipping addresses in the addresses array.
-      The `shippingAddressIds` of the Customer will be set to the IDs of that addresses.
-  defaultBillingAddress?:
-    type: number
-    format: int32
-    description: |-
-      The index of the address in the addresses array.
-      The `defaultBillingAddressId` of the customer will be set to the ID of that address.
-  billingAddresses?:
-    type: integer[]
-    description: |-
-      The indices of the billing addresses in the addresses array.
-      The `billingAddressIds` of the customer will be set to the IDs of that addresses.
-  isEmailVerified?:
-    type: boolean
-    description: ''
-  externalId?:
-    type: string
-    description: ''
-  customerGroup?:
-    description: ''
-    type: CustomerGroupResourceIdentifier
-  custom?:
-    type: CustomFieldsDraft
-    description: The custom fields.
-  locale?:
-    type: string
-    description: Must be one of the languages supported for this project
-  salutation?:
-    type: string
-    description: ''
   key?:
     type: string
-    description: |-
+    description: |
       User-defined unique identifier for the Customer.
+      The `key` field is preferred over `customerNumber` as it is mutable and provides more flexibility.
     pattern: ^[A-Za-z0-9_-]+$
     minLength: 2
     maxLength: 256
+  customerNumber?:
+    type: string
+    description: |
+      User-defined unique identifier for a Customer.
+      Once set, it cannot be changed.
+
+      Can be used to refer to a Customer in a human-readable way (in emails, invoices, and other correspondence).
+  externalId?:
+    type: string
+    description: |
+      Optional identifier for use in external systems like Customer Relationship Management (CRM) or Enterprise Resource Planning (ERP).
+  email:
+    type: string
+    description: |
+      Email address of the Customer that must be [unique](/../api/customers-overview#customer-uniqueness) for an entire Project or to a Store the Customer is assigned to.
+      It is the mandatory unique identifier of a Customer.
+  password?:
+    type: string
+    description: |
+      Required when `authenticationMode` is set to `Password`.
+      Provide the Customer's password in plain text. The API stores passwords in an encrypted format.
+  firstName?:
+    type: string
+    description: |
+      Given name (first name) of the Customer.
+  lastName?:
+    type: string
+    description: |
+      Family name (last name) of the Customer.
+  middleName?:
+    type: string
+    description: |
+      Middle name of the Customer.
+  title?:
+    type: string
+    description: |
+      Title of the Customer, for example, 'Dr.'.
+  anonymousCartId?:
+    (markDeprecated): true
+    type: string
+    description: |
+      Deprecated since an anonymous [Cart](ctp:api:type:Cart) can be identified by its `id` or external `key`.
+  anonymousCart?:
+    type: CartResourceIdentifier
+    description: |
+      Identifies a [Cart](ctp:api:type:Cart) that will be assigned to the new Customer.
+  anonymousId?:
+    type: string
+    description: |
+      Identifies Carts and Orders belonging to an anonymous session that will be assigned to the new Customer.
+  dateOfBirth?:
+    type: date-only
+    description: |
+      Date of birth of the Customer.
+  companyName?:
+    type: string
+    description: |
+      Company name of the Customer. When representing a company as a Customer, [Business Units](ctp:api:type:BusinessUnit) provide extended funtionality.
+  vatId?:
+    type: string
+    description: |
+      Unique VAT ID of the Customer.
+  addresses?:
+    type: BaseAddress[]
+    description: |
+      Addresses of the Customer.
+  defaultShippingAddress?:
+    type: number
+    format: int32
+    description: |
+      Index of the address in the `addresses` array to use as the default shipping address.
+      The `defaultShippingAddressId` of the Customer will be set to the `id` of that address.
+  shippingAddresses?:
+    type: integer[]
+    description: |
+      Indices of the shipping addresses in the `addresses` array.
+      The `shippingAddressIds` of the Customer will be set to the IDs of these addresses.
+  defaultBillingAddress?:
+    type: number
+    format: int32
+    description: |
+      Index of the address in the `addresses` array to use as the default billing address.
+      The `defaultBillingAddressId` of the Customer will be set to the `id` of that address.
+  billingAddresses?:
+    type: integer[]
+    description: |
+      Indices of the billing addresses in the `addresses` array.
+      The `billingAddressIds` of the Customer will be set to the IDs of these addresses.
+  isEmailVerified?:
+    type: boolean
+    default: false
+    description: |
+      Set to `true` if the email address of the Customer has been verified already.
+      The intended use is to leave this field unset upon sign-up of the Customer and initiate the [email verification](#email-verification-of-customer) afterwards.
+  customerGroup?:
+    type: CustomerGroupResourceIdentifier
+    description: |
+      Sets the [CustomerGroup](ctp:api:type:CustomerGroup) for the Customer.
+  custom?:
+    type: CustomFieldsDraft
+    description: |
+      Custom Fields for the Customer.
+  locale?:
+    type: Locale
+    description: |
+      Preferred language of the Customer.
+      Must be one of the languages supported by the [Project](ctp:api:type:Project).
+  salutation?:
+    type: string
+    description: |
+      Salutation of the Customer, for example, 'Mr.' or 'Mrs.'.
   stores?:
     type: StoreResourceIdentifier[]
-    description: |-
-      References to the stores the customer account is associated with.
-      If no stores are specified, the customer is a global customer, and can log in using the Password Flow for global Customers.
-      If one or more stores are specified, the customer can only log in using the Password Flow for Customers in a Store for those specific stores.
+    description: |
+      Sets the [Stores](ctp:api:type:Store) for the Customer.
+
+      - If no Stores are specified, the Customer is a global customer, and can log in using the [Password Flow for global Customers](/../api/authorization#password-flow-for-global-customers).
+      - If any Stores are specified, the Customer can only log in using the [Password Flow for Customers in a Store](/../api/authorization#password-flow-for-customers-in-a-store) for those specific Stores.
   authenticationMode?:
     type: AuthenticationMode
-    description: Defines whether a password field is a required field for the Customer.
+    description: |
+      - Set to `Password` to make the `password` field required for the Customer.
+      - Set to `ExternalAuth` when the password is not required for the Customer.
+    default: Password

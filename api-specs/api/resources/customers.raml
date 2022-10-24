@@ -9,7 +9,7 @@ type:
 (deleteable): Customer
 (createable): CustomerDraft
 description: |
-  A customer is a person purchasing products. customers, Orders, Comments and Reviews can be associated to a customer.
+  A Customer is a person purchasing products. Carts, Orders, Quotes, Reviews and Payments can be associated to a Customer.
 get:
   (java-implements):
     'com.commercetools.api.models.PagedQueryResourceRequest<ByProjectKeyCustomersGet,
@@ -26,9 +26,9 @@ get:
 post:
   securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
   description: |
-    Creates a customer. If an anonymous cart is passed in,
-    then the cart is assigned to the created customer and the version number of the Cart will increase.
-    If the ID of an anonymous session is given, all carts and orders will be assigned to the created customer.
+    If the `anonymousCart` field is set on the [CustomerDraft](ctp:api:type:CustomerDraft), then the newly created Customer will be assigned to that [Cart](ctp:api:type:Cart).
+    Similarly, if the `anonymousId` field is set, the Customer will be set on all [Carts](ctp:api:type:Cart), [Orders](ctp:api:type:Order), [ShoppingLists](ctp:api:type:ShoppingList) and [Payments](ctp:api:type:Payment) with the same `anonymousId`.
+    Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
   body:
     application/json:
       example: !include ../examples/customer-create.example.json
@@ -36,7 +36,7 @@ post:
     201:
       body:
         application/json:
-          example: !include ../examples/customer-sign-in.example.json
+          example: !include ../examples/customer-sign-in-result.example.json
           type: CustomerSignInResult
 /password-token={passwordToken}:
   (methodName): withPasswordToken
@@ -68,16 +68,12 @@ post:
             example: !include ../examples/customer.example.json
 /email-token:
   type: base
-  description: |
-    To verify a customer's email, an email token can be created. This should be embedded in a link and sent to the
-    customer via email. When the customer clicks on the link, the "verify customer's email" endpoint should be called,
-    which sets customer's isVerifiedEmail field to true.
   post:
     displayName: Create a Token for verifying the Customer's Email
-    description: Create a Token for verifying the Customer's Email
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     body:
       application/json:
+        example: !include ../examples/Customer/CustomerCreateEmailToken.json
         type: CustomerCreateEmailToken
     responses:
       200:
@@ -89,10 +85,12 @@ post:
   displayName: Verify Customer's Email
   post:
     displayName: Verifies customer's email.
-    description: Verifies customer's email using a token.
+    description: |
+      Verifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     body:
       application/json:
+        example: !include ../examples/Customer/CustomerEmailVerify.json
         type: CustomerEmailVerify
     responses:
       200:
@@ -106,10 +104,12 @@ post:
   displayName: Change Customers Password
   post:
     displayName: Change a customers password
-    description: Change a customers password
+    description: |
+      Changing the password produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     body:
       application/json:
+        example: !include ../examples/Customer/CustomerChangePassword.json
         type: CustomerChangePassword
     responses:
       200:
@@ -121,10 +121,12 @@ post:
   type: base
   post:
     displayName: Reset Customer's Password
-    description: Set a new password using a token.
+    description: |
+      Resetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     body:
       application/json:
+        example: !include ../examples/Customer/CustomerResetPassword.json
         type: CustomerResetPassword
     responses:
       200:
@@ -135,20 +137,12 @@ post:
 /password-token:
   type: base
   displayName: Create a Token for Resetting the Customer's Password
-  description: |
-    The following workflow can be used to reset the customer's password:
-
-    * Create a password reset token and send it embedded in a link to the customer.
-    * When the customer clicks on the link, the customer is retrieved with the token.
-    * The customer enters a new password and the "reset customer's password" endpoint is called.
   post:
     displayName: Create a Token for Resetting the Customer's Password
-    description: |
-      The token value is used to reset the password of the customer with the given email. The token is
-      valid only for 10 minutes.
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     body:
       application/json:
+        example: !include ../examples/Customer/CustomerCreatePasswordResetToken.json
         type: CustomerCreatePasswordResetToken
     responses:
       200:
@@ -183,6 +177,8 @@ post:
     is:
       - dataErasure
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
+    description: |
+      Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.
     responses:
       200:
         body:
@@ -216,6 +212,8 @@ post:
     is:
       - dataErasure
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
+    description: |
+      Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.
     responses:
       200:
         body:

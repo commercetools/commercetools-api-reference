@@ -2,19 +2,40 @@
 (package): Customer
 displayName: CustomerSignin
 type: object
+example: !include ../../examples/Customer/CustomerSignIn.json
 properties:
   email:
     type: string
+    description: |
+      Email address of the Customer treated as [case-insensitive](/../api/customers-overview#email-case-insensitivity).
   password:
     type: string
+    description: |
+      Password of the Customer.
   anonymousCartId?:
     (markDeprecated): true
     type: string
+    description: |
+      Deprecated since it is now possible to identify an anonymous cart by using its `id` or external `key`.
   anonymousCart?:
     type: CartResourceIdentifier
+    description: |
+      Identifies a [Cart](ctp:api:type:Cart) that will be assigned to the Customer.
   anonymousCartSignInMode?:
     type: AnonymousCartSignInMode
+    description: |
+      - Set to `MergeWithExistingCustomerCart` if [LineItems](ctp:api:type:LineItem) of the anonymous Cart should be merged with the active Customer Cart that has been modified most recently.
+      - Set to `UseAsNewActiveCustomerCart` if the anonymous Cart should be used as the new active Customer Cart and no [LineItems](ctp:api:type:LineItem) are to be merged.
+    default: MergeWithExistingCustomerCart
   anonymousId?:
     type: string
+    description: |
+      If both `anonymousCart` and `anonymousId` are provided, the `anonymousId` on the CustomerSignin must match that of the anonymous [Cart](ctp:api:type:Cart].
+      Otherwise a [400 Bad Request](ctp:api:type:InvalidOperationError) `Invalid Operation` error is returned with the message:
+      "Cart with the ID cart-id does not have the expected anonymousId.".
   updateProductData?:
     type: boolean
+    description: |
+      - If `true`, the [LineItem](ctp:api:type:LineItem) Product data (`name`, `variant`, and `productType`) of the returned Cart will be updated.
+      - If `false`, only the prices, discounts, and tax rates will be updated.
+    default: false
