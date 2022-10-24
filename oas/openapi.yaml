@@ -10079,7 +10079,7 @@ paths:
 
   /{projectKey}/customers:
     description: |-
-      A customer is a person purchasing products. customers, Orders, Comments and Reviews can be associated to a customer.
+      A Customer is a person purchasing products. Carts, Orders, Quotes, Reviews and Payments can be associated to a Customer.
     parameters:
       - name: projectKey
         in: path
@@ -10292,9 +10292,9 @@ paths:
             - "manage_customers:{projectKey}"
       operationId: ByProjectKeyCustomersPost
       description: |-
-        Creates a customer. If an anonymous cart is passed in,
-        then the cart is assigned to the created customer and the version number of the Cart will increase.
-        If the ID of an anonymous session is given, all carts and orders will be assigned to the created customer.
+        If the `anonymousCart` field is set on the [CustomerDraft](ctp:api:type:CustomerDraft), then the newly created Customer will be assigned to that [Cart](ctp:api:type:Cart).
+        Similarly, if the `anonymousId` field is set, the Customer will be set on all [Carts](ctp:api:type:Cart), [Orders](ctp:api:type:Order), [ShoppingLists](ctp:api:type:ShoppingList) and [Payments](ctp:api:type:Payment) with the same `anonymousId`.
+        Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
       parameters:
         - name: expand
           in: query
@@ -10446,10 +10446,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 
   /{projectKey}/customers/email-token:
-    description: |-
-      To verify a customer's email, an email token can be created. This should be embedded in a link and sent to the
-      customer via email. When the customer clicks on the link, the "verify customer's email" endpoint should be called,
-      which sets customer's isVerifiedEmail field to true.
     parameters:
       - name: projectKey
         in: path
@@ -10461,8 +10457,6 @@ paths:
         - oauth_2_0:
             - "manage_customers:{projectKey}"
       operationId: ByProjectKeyCustomersEmailTokenPost
-      description: |-
-        Create a Token for verifying the Customer's Email
       requestBody:
         content:
           application/json:
@@ -10777,7 +10771,7 @@ paths:
             - "manage_customers:{projectKey}"
       operationId: ByProjectKeyCustomersEmailConfirmPost
       description: |-
-        Verifies customer's email using a token.
+        Verifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.
       requestBody:
         content:
           application/json:
@@ -11261,6 +11255,8 @@ paths:
         - oauth_2_0:
             - "manage_customers:{projectKey}"
       operationId: ByProjectKeyCustomersKeyByKeyDelete
+      description: |-
+        Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.
       parameters:
         - name: dataErasure
           in: query
@@ -11455,7 +11451,7 @@ paths:
             - "manage_customers:{projectKey}"
       operationId: ByProjectKeyCustomersPasswordPost
       description: |-
-        Change a customers password
+        Changing the password produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
       requestBody:
         content:
           application/json:
@@ -11597,12 +11593,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 
   /{projectKey}/customers/password-token:
-    description: |-
-      The following workflow can be used to reset the customer's password:
-
-      * Create a password reset token and send it embedded in a link to the customer.
-      * When the customer clicks on the link, the customer is retrieved with the token.
-      * The customer enters a new password and the "reset customer's password" endpoint is called.
     parameters:
       - name: projectKey
         in: path
@@ -11614,9 +11604,6 @@ paths:
         - oauth_2_0:
             - "manage_customers:{projectKey}"
       operationId: ByProjectKeyCustomersPasswordTokenPost
-      description: |-
-        The token value is used to reset the password of the customer with the given email. The token is
-        valid only for 10 minutes.
       requestBody:
         content:
           application/json:
@@ -11931,7 +11918,7 @@ paths:
             - "manage_customers:{projectKey}"
       operationId: ByProjectKeyCustomersPasswordResetPost
       description: |-
-        Set a new password using a token.
+        Resetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
       requestBody:
         content:
           application/json:
@@ -12415,6 +12402,8 @@ paths:
         - oauth_2_0:
             - "manage_customers:{projectKey}"
       operationId: ByProjectKeyCustomersByIDDelete
+      description: |-
+        Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.
       parameters:
         - name: dataErasure
           in: query
@@ -16881,8 +16870,8 @@ paths:
 
   /{projectKey}/in-store/key={storeKey}/customers:
     description: |-
-      A customer is a person purchasing products. customers, Orders,
-      Comments and Reviews can be associated to a customer.
+      A Customer is a person purchasing products. Carts, Orders,
+      Comments and Reviews can be associated to a Customer.
     parameters:
       - name: projectKey
         in: path
@@ -17102,14 +17091,12 @@ paths:
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersPost
       description: |-
-        Creates a customer in a specific Store.
-        When using this endpoint, if omitted,
-        the customer's stores field is set to the store specified in the path parameter.
-        If an anonymous cart is passed in as when using this method,
-        then the cart is assigned to the created customer and the version number of the Cart increases.
-        If the ID of an anonymous session is given, all carts and orders will be assigned to the created customer and
-        the store specified. If you pass in a cart with a store field specified,
-        the store field must reference the same store specified in the {storeKey} path parameter.
+        When using this endpoint, if omitted, the Customer `stores` field is set to the Store specified in the path parameter.
+
+        If the `anonymousCart` field is set on the [CustomerDraft](ctp:api:type:CustomerDraft), then the newly created Customer will be assigned to that [Cart](ctp:api:type:Cart).
+        Similarly, if the `anonymousId` field is set, the Customer will be set on all [Carts](ctp:api:type:Cart), [Orders](ctp:api:type:Order), [ShoppingLists](ctp:api:type:ShoppingList) and [Payments](ctp:api:type:Payment) with the same `anonymousId`.
+        If a Cart with a `store` field specified, the `store` field must reference the same Store specified in the `{storeKey}` path parameter.
+        Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
       parameters:
         - name: expand
           in: query
@@ -17261,11 +17248,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 
   /{projectKey}/in-store/key={storeKey}/customers/email-token:
-    description: |-
-      To verify a customer's email, an email token can be created. This should be embedded in a link and sent to the
-      customer via email. When the customer clicks on the link,
-      the "verify customer's email" endpoint should be called,
-      which sets customer's isVerifiedEmail field to true.
     parameters:
       - name: projectKey
         in: path
@@ -17284,7 +17266,7 @@ paths:
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersEmailTokenPost
       description: |-
-        Create a Token for verifying the Customer's Email in store
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       requestBody:
         content:
           application/json:
@@ -17448,6 +17430,8 @@ paths:
             - "view_customers:{projectKey}"
             - "view_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersEmailTokenByEmailTokenGet
+      description: |-
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -17611,7 +17595,10 @@ paths:
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersEmailConfirmPost
       description: |-
-        Verifies customer's email using a token.
+        The customer verifies the email using the token value.
+        Verifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.
+
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       requestBody:
         content:
           application/json:
@@ -17776,10 +17763,7 @@ paths:
             - "view_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersKeyByKeyGet
       description: |-
-        Returns a customer by its Key from a specific Store.
-        It also considers customers that do not have the stores field.
-        If the customer exists in the project but the stores field references different stores,
-        this method returns a ResourceNotFound error.
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -17931,8 +17915,7 @@ paths:
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersKeyByKeyPost
       description: |-
-        If the customer exists in the project but the stores field references a different store,
-        this method returns a ResourceNotFound error.
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -18111,6 +18094,10 @@ paths:
             - "manage_customers:{projectKey}"
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersKeyByKeyDelete
+      description: |-
+        Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.
+
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: dataErasure
           in: query
@@ -18311,7 +18298,7 @@ paths:
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersPasswordPost
       description: |-
-        Change a customers password
+        Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
       requestBody:
         content:
           application/json:
@@ -18453,12 +18440,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 
   /{projectKey}/in-store/key={storeKey}/customers/password-token:
-    description: |-
-      The following workflow can be used to reset the customer's password:
-
-      * Create a password reset token and send it embedded in a link to the customer.
-      * When the customer clicks on the link, the customer is retrieved with the token.
-      * The customer enters a new password and the "reset customer's password" endpoint is called.
     parameters:
       - name: projectKey
         in: path
@@ -18477,8 +18458,7 @@ paths:
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersPasswordTokenPost
       description: |-
-        The token value is used to reset the password of the customer with the given email. The token is
-        valid only for 10 minutes.
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       requestBody:
         content:
           application/json:
@@ -18642,6 +18622,8 @@ paths:
             - "view_customers:{projectKey}"
             - "view_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersPasswordTokenByPasswordTokenGet
+      description: |-
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -18805,12 +18787,14 @@ paths:
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersPasswordResetPost
       description: |-
-        Set a new password using a token.
+        Resetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
+
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MyCustomerResetPassword'
+              $ref: '#/components/schemas/CustomerResetPassword'
 
       responses:
         "200":
@@ -18970,10 +18954,7 @@ paths:
             - "view_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersByIDGet
       description: |-
-        Returns a customer by its ID from a specific Store.
-        It also considers customers that do not have the stores field.
-        If the customer exists in the project but the stores field references different stores,
-        this method returns a ResourceNotFound error.
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -19125,9 +19106,7 @@ paths:
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersByIDPost
       description: |-
-        Updates a customer in the store specified by {storeKey}.
-        If the customer exists in the project but the stores field references a different store,
-        this method returns a ResourceNotFound error.
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -19306,6 +19285,10 @@ paths:
             - "manage_customers:{projectKey}"
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersByIDDelete
+      description: |-
+        Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.
+
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: dataErasure
           in: query
@@ -19508,7 +19491,9 @@ paths:
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyLoginPost
       description: |-
-        Authenticate Customer (Sign In) in store
+        Authenticates a Customer associated with a Store. For more information, see [Global versus Store-specific Customers](/../api/customers-overview#global-versus-store-specific-customers).
+
+        If the Customer exists in the Project but the `stores` field references a different Store, this method returns an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error.
       requestBody:
         content:
           application/json:
@@ -19743,8 +19728,6 @@ paths:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMePost
-      description: |-
-        Update my customer in a store
       requestBody:
         content:
           application/json:
@@ -19766,8 +19749,6 @@ paths:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeDelete
-      description: |-
-        Delete my Customer in a store
       parameters:
         - name: version
           in: query
@@ -20874,11 +20855,13 @@ paths:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeEmailConfirmPost
+      description: |-
+        This is the last step in the [email verification process of a Customer](/../api/projects/customers#email-verification-of-customer-in-store).
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CustomerEmailVerify'
+              $ref: '#/components/schemas/MyCustomerEmailVerify'
 
       responses:
         "200":
@@ -21032,6 +21015,15 @@ paths:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeLoginPost
+      description: |-
+        Retrieves the authenticated Customer (that matches the given email/password pair) if they are part of a specific [Store](ctp:api:type:Store).
+
+        - If the Customer does not have a Cart, the most recently modified anonymous cart becomes the Customer's Cart.
+        - If the Customer already has a Cart, the most recently modified anonymous cart is handled according to [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
+
+        If a Cart is returned as part of [CustomerSignInResult](ctp:api:type:CustomerSignInResult), it has been [recalculated](/../api/projects/carts#recalculate) with up-to-date prices, taxes, discounts, and invalid line items removed.
+
+        If an account with the given credentials is not found, an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error is returned.
       requestBody:
         content:
           application/json:
@@ -21750,6 +21742,8 @@ paths:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMePasswordPost
+      description: |-
+        Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
       requestBody:
         content:
           application/json:
@@ -21930,6 +21924,10 @@ paths:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMePasswordResetPost
+      description: |-
+        This is the last step in the [password reset process of the authenticated Customer](/../api/projects/customers#password-reset-of-customer-in-store).
+
+        Resetting a password produces the of the Customer [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
       requestBody:
         content:
           application/json:
@@ -23529,6 +23527,10 @@ paths:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeSignupPost
+      description: |-
+        If omitted in the request body, the [Customer](ctp:api:type:Customer) `stores` field is set to the Store specified in the path parameter.
+
+        Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
       requestBody:
         content:
           application/json:
@@ -28775,13 +28777,11 @@ paths:
             - "manage_customers:{projectKey}"
       operationId: ByProjectKeyLoginPost
       description: |-
-        Authenticate Customer (Sign In). Retrieves the authenticated
-        customer (a customer that matches the given email/password pair).
-        If used with an access token for Anonymous Sessions,
-        all orders and carts belonging to the anonymousId will be assigned to the newly created customer.
-        If a cart is is returned as part of the CustomerSignInResult,
-        it has been recalculated (It will have up-to-date prices, taxes and discounts,
-        and invalid line items have been removed.).
+        Authenticates a global Customer not associated with a Store.
+        For more information, see [Global versus Store-specific Customers](/../api/customers-overview#global-versus-store-specific-customers).
+        If the Customer is registered in a Store, use the [Authenticate (sign in) Customer in Store](/../api/projects/customers#authenticate-sign-in-customer-in-store) method.
+
+        If an account with the given credentials is not found, an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error is returned.
       requestBody:
         content:
           application/json:
@@ -29134,8 +29134,6 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
       operationId: ByProjectKeyMePost
-      description: |-
-        Update my customer
       requestBody:
         content:
           application/json:
@@ -29281,8 +29279,6 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
       operationId: ByProjectKeyMeDelete
-      description: |-
-        Delete my Customer
       parameters:
         - name: version
           in: query
@@ -32564,11 +32560,13 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
       operationId: ByProjectKeyMeEmailConfirmPost
+      description: |-
+        This is the last step in the [email verification process of a Customer](/../api/projects/customers#email-verification-of-customer).
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CustomerEmailVerify'
+              $ref: '#/components/schemas/MyCustomerEmailVerify'
 
       responses:
         "200":
@@ -32716,6 +32714,17 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
       operationId: ByProjectKeyMeLoginPost
+      description: |-
+        Retrieves the authenticated customer (that matches the given email/password pair).
+
+        If used with [an access token for an anonymous session](/../api/authorization#tokens-for-anonymous-sessions), all Orders and Carts that belong to the `anonymousId` are assigned to the newly logged-in Customer.
+
+        - If the Customer does not have a Cart yet, the most recently modified anonymous cart becomes the Customer's Cart.
+        - If the Customer already has a Cart, the most recently modified anonymous cart is handled in accordance with [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
+
+        A Cart returned as part of the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) is [recalculated](ctp:api:type:Recalculate) with up-to-date prices, taxes, discounts, and invalid line items removed.
+
+        If an account with the given credentials is not found, an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error is returned.
       requestBody:
         content:
           application/json:
@@ -33415,6 +33424,10 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
       operationId: ByProjectKeyMePasswordPost
+      description: |-
+        Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
+
+        If the current password does not match, an [InvalidCurrentPassword](ctp:api:type:InvalidCurrentPasswordError) error is returned.
       requestBody:
         content:
           application/json:
@@ -33589,6 +33602,10 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
       operationId: ByProjectKeyMePasswordResetPost
+      description: |-
+        This is the last step in the [password reset process of a Customer](/../api/projects/customers#password-reset-of-customer).
+
+        Resetting a password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
       requestBody:
         content:
           application/json:
@@ -38820,6 +38837,10 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
       operationId: ByProjectKeyMeSignupPost
+      description: |-
+        If used with an [access token for an anonymous session](/../api/authorization#tokens-for-anonymous-sessions), all Orders and Carts that belong to the `anonymousId` are assigned to the newly created Customer.
+
+        Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
       requestBody:
         content:
           application/json:
@@ -76960,6 +76981,16 @@ components:
         - MergeWithExistingCustomerCart
         - UseAsNewActiveCustomerCart
       x-annotation-package: "Customer"
+      x-annotation-enumDescriptions:
+        MergeWithExistingCustomerCart: "If set, [LineItems](ctp:api:type:LineItem) of an anonymous
+         Cart are merged with the active Customer Cart that has been modified most recently.
+         The [CartState](ctp:api:type:CartState) of the anonymous Cart changes to `Merged`
+         while the [CartState](ctp:api:type:CartState) of the Customer's Cart remains `Active`.
+         If a [LineItem](ctp:api:type:LineItem) or [CustomLineItem](ctp:api:type:CustomLineItem)
+         in the anonymous Cart matches an existing Line Item or Custom Line Item in the
+         Customer's Cart, the maximum quantity of both line items is used as the new quantity."
+        UseAsNewActiveCustomerCart: "If set, an anonymous Cart is used as the new active Customer
+         Cart, and no [LineItems](ctp:api:type:LineItem) are merged."
     AuthenticationMode:
       type: "string"
       enum:
@@ -76967,6 +76998,11 @@ components:
         - ExternalAuth
       x-annotation-package: "Customer"
       x-beta: true
+      x-annotation-enumDescriptions:
+        Password: "This is the default value. If set, the `password` field is required on
+         [CustomerDraft](ctp:api:type:CustomerDraft) and is present on [Customer](ctp:api:type:Customer)."
+        ExternalAuth: "If set, the `password` field is optional on [CustomerDraft](ctp:api:type:CustomerDraft)
+         and is not present on [Customer](ctp:api:type:Customer)."
     Customer:
       allOf:
         - $ref: '#/components/schemas/BaseResource'
@@ -76983,12 +77019,16 @@ components:
             lastModifiedAt:
               type: "string"
               format: "datetime"
+            key:
+              type: "string"
+            customerNumber:
+              type: "string"
+            externalId:
+              type: "string"
             lastModifiedBy:
               $ref: '#/components/schemas/LastModifiedBy'
             createdBy:
               $ref: '#/components/schemas/CreatedBy'
-            customerNumber:
-              type: "string"
             email:
               type: "string"
             password:
@@ -77026,17 +77066,13 @@ components:
                 type: "string"
             isEmailVerified:
               type: "boolean"
-            externalId:
-              type: "string"
             customerGroup:
               $ref: '#/components/schemas/CustomerGroupReference'
             custom:
               $ref: '#/components/schemas/CustomFields'
             locale:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
             salutation:
-              type: "string"
-            key:
               type: "string"
             stores:
               type: "array"
@@ -77078,7 +77114,11 @@ components:
     CustomerDraft:
       type: "object"
       properties:
+        key:
+          type: "string"
         customerNumber:
+          type: "string"
+        externalId:
           type: "string"
         email:
           type: "string"
@@ -77127,17 +77167,13 @@ components:
             format: "int32"
         isEmailVerified:
           type: "boolean"
-        externalId:
-          type: "string"
         customerGroup:
           $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
         locale:
-          type: "string"
+          $ref: '#/components/schemas/Locale'
         salutation:
-          type: "string"
-        key:
           type: "string"
         stores:
           type: "array"
@@ -77159,13 +77195,13 @@ components:
         limit:
           type: "integer"
           format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
         count:
           type: "integer"
           format: "int64"
         total:
-          type: "integer"
-          format: "int64"
-        offset:
           type: "integer"
           format: "int64"
         results:
@@ -77304,6 +77340,11 @@ components:
         currentPassword:
           type: "string"
         newPassword:
+          type: "string"
+    MyCustomerEmailVerify:
+      type: "object"
+      properties:
+        tokenValue:
           type: "string"
     MyCustomerResetPassword:
       type: "object"
@@ -77447,12 +77488,12 @@ components:
           properties:
             action:
               type: "string"
+            addressId:
+              type: "string"
             type:
               $ref: '#/components/schemas/TypeResourceIdentifier'
             fields:
               $ref: '#/components/schemas/FieldContainer'
-            addressId:
-              type: "string"
     CustomerSetAuthenticationModeAction:
       allOf:
         - $ref: '#/components/schemas/CustomerUpdateAction'
@@ -77589,7 +77630,7 @@ components:
             action:
               type: "string"
             locale:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
     CustomerSetMiddleNameAction:
       allOf:
         - $ref: '#/components/schemas/CustomerUpdateAction'
@@ -79697,6 +79738,8 @@ components:
           type: "string"
         title:
           type: "string"
+        salutation:
+          type: "string"
         dateOfBirth:
           type: "string"
           format: "date-only"
@@ -79717,7 +79760,7 @@ components:
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
         locale:
-          type: "string"
+          $ref: '#/components/schemas/Locale'
         stores:
           type: "array"
           items:
@@ -80723,7 +80766,7 @@ components:
             action:
               type: "string"
             locale:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
     MyCustomerSetMiddleNameAction:
       allOf:
         - $ref: '#/components/schemas/MyCustomerUpdateAction'
