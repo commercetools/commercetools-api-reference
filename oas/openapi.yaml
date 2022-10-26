@@ -66829,11 +66829,7 @@ paths:
             - "manage_subscriptions:{projectKey}"
       operationId: ByProjectKeySubscriptionsPost
       description: |-
-        The creation of a Subscription is eventually consistent, it may take up to a minute before it becomes fully active.
-        In order to test that the destination is correctly configured, a test message will be put into the queue.
-        If the message could not be delivered, the subscription will not be created.
-        The payload of the test message is a notification of type ResourceCreated for the resourceTypeId subscription.
-        Currently, a maximum of 25 subscriptions can be created per project.
+        A test message is sent to ensure the correct configuration of the Destination. If the message cannot be delivered, the Subscription will not be created. The payload of the test message is a notification of type [ResourceCreated](/../api/projects/subscriptions#resourcecreateddeliverypayload) for the `resourceTypeId` `subscription`.
       parameters:
         - name: expand
           in: query
@@ -67001,8 +66997,6 @@ paths:
         - oauth_2_0:
             - "manage_subscriptions:{projectKey}"
       operationId: ByProjectKeySubscriptionsKeyByKeyGet
-      description: |-
-        Retrieves the representation of a subscription by its key.
       parameters:
         - name: expand
           in: query
@@ -67520,8 +67514,6 @@ paths:
         - oauth_2_0:
             - "manage_subscriptions:{projectKey}"
       operationId: ByProjectKeySubscriptionsByIDGet
-      description: |-
-        Retrieves the representation of a subscription by its id.
       parameters:
         - name: expand
           in: query
@@ -68022,6 +68014,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /{projectKey}/subscriptions/{ID}/health:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: ByProjectKeySubscriptionsByIDHealthGet
+      description: |-
+        This endpoint can be polled by a monitoring or alerting system that checks the health of your Subscriptions. To ease integration with such systems this endpoint does not require [Authorization](/../api/authorization).
+      responses:
+        "200":
+          description: |-
+            Healthy
+          content: {}
+        "400":
+          description: |-
+            ConfigurationError and ConfigurationErrorDeliveryStopped
+          content: {}
+        "503":
+          description: |-
+            TemporaryError
+          content: {}
   /{projectKey}/tax-categories:
     description: |-
       Tax Categories define how products are to be taxed in different countries.
@@ -97051,6 +97072,14 @@ components:
         - Credentials
         - IAM
       x-annotation-package: "Subscription"
+      x-annotation-enumDescriptions:
+        Credentials: "Subscriptions with `Credentials` authentication mode are authenticated
+         using an `accessKey` and `accessSecret` pair. This is the default authentication
+         mode for backwards compatibility.n"
+        IAM: "Subscriptions with `IAM` authentication mode are authenticated using Identity
+         and Access Management (IAM). In this case, the user `arn:aws:iam::362576667341:user/subscriptions`
+         requires permissions to send messages to the queue or publish to the topic. This
+         is the recommended authentication mode, as it doesn't require additional key management.n"
     AzureEventGridDestination:
       allOf:
         - $ref: '#/components/schemas/Destination'
@@ -97075,7 +97104,82 @@ components:
       type: "object"
       properties:
         resourceTypeId:
-          type: "string"
+          $ref: '#/components/schemas/ChangeSubscriptionResourceTypeId'
+    ChangeSubscriptionResourceTypeId:
+      type: "string"
+      enum:
+        - business-unit
+        - cart
+        - cart-discount
+        - category
+        - channel
+        - customer
+        - customer-email-token
+        - customer-group
+        - customer-password-token
+        - discount-code
+        - extension
+        - inventory-entry
+        - key-value-document
+        - order
+        - order-edit
+        - payment
+        - product
+        - product-discount
+        - product-price
+        - product-selection
+        - product-type
+        - quote
+        - quote-request
+        - review
+        - shipping-method
+        - shopping-list
+        - staged-quote
+        - standalone-price
+        - state
+        - store
+        - subscription
+        - tax-category
+        - type
+        - zone
+      x-annotation-package: "Subscription"
+      x-annotation-enumDescriptions:
+        business-unit: "Changes to [Business Units](ctp:api:type:BusinessUnit).n"
+        cart: "Changes to [Carts](ctp:api:type:Cart).n"
+        cart-discount: "Changes to [CartDiscounts](ctp:api:type:CartDiscount).n"
+        category: "Changes to [Categories](ctp:api:type:Category).n"
+        channel: "Changes to [Channels](ctp:api:type:Channel).n"
+        customer: "Changes to [Customers](ctp:api:type:Customer).n"
+        customer-email-token: "Changes to [CustomerTokens](ctp:api:type:CustomerToken).n"
+        customer-group: "Changes to [CustomerGroups](ctp:api:type:CustomerGroup).n"
+        customer-password-token: "Changes to [CustomerTokens](ctp:api:type:CustomerToken).n"
+        discount-code: "Changes to [DiscountCodes](ctp:api:type:DiscountCode).n"
+        extension: "Changes to [Extensions](ctp:api:type:Extension).n"
+        inventory-entry: "Changes to [InventoryEntries](ctp:api:type:InventoryEntry).n"
+        key-value-document: "Changes to [CustomObjects](ctp:api:type:CustomObject).n"
+        order: "Changes to [Orders](ctp:api:type:Order). Changes to Orders via [Order Edits](/../api/projects/order-edits)
+         do not trigger a Message. To achieve this, a [MessageSubscription](ctp:api:type:MessageSubscription)
+         to [Order Edit Applied Message](ctp:api:type:OrderEditAppliedMessage) is necessary.n"
+        order-edit: "Changes to [OrderEdits](ctp:api:type:OrderEdit).n"
+        payment: "Changes to [Payments](ctp:api:type:Payment).n"
+        product: "Changes to [Products](ctp:api:type:Product).n"
+        product-discount: "Changes to [ProductDiscount](ctp:api:type:ProductDiscount).n"
+        product-price: "Changes to [EmbeddedPrices](ctp:api:type:Price).n"
+        product-selection: "Changes to [ProductSelections](ctp:api:type:ProductSelection).n"
+        product-type: "Changes to [ProductTypes](ctp:api:type:ProductType).n"
+        quote: "Changes to [Quotes](ctp:api:type:Quote).n"
+        quote-request: "Changes to [Quote Requests](ctp:api:type:QuoteRequest).n"
+        review: "Changes to [Reviews](ctp:api:type:Review).n"
+        shipping-method: "Changes to [ShippingMethods](ctp:api:type:ShippingMethod).n"
+        shopping-list: "Changes to [ShoppingLists](ctp:api:type:ShoppingList).n"
+        staged-quote: "Changes to [Staged Quotes](ctp:api:type:StagedQuote).n"
+        standalone-price: "Changes to [StandalonePrices](ctp:api:type:StandalonePrice).n"
+        state: "Changes to [States](ctp:api:type:State).n"
+        store: "Changes to [Stores](ctp:api:type:Store).n"
+        subscription: "Changes to [Subscriptions](ctp:api:type:Subscription).n"
+        tax-category: "Changes to [TaxCategories](ctp:api:type:TaxCategory).n"
+        type: "Changes to [Types](ctp:api:type:Type).n"
+        zone: "Changes to [Zones](ctp:api:type:Zone).n"
     CloudEventsFormat:
       allOf:
         - $ref: '#/components/schemas/DeliveryFormat'
@@ -97085,6 +97189,30 @@ components:
               type: "string"
             cloudEventsVersion:
               type: "string"
+    CloudEventsPayload:
+      type: "object"
+      properties:
+        specversion:
+          type: "string"
+        id:
+          type: "string"
+        type:
+          type: "string"
+        source:
+          type: "string"
+        subject:
+          type: "string"
+        time:
+          type: "string"
+          format: "datetime"
+        sequence:
+          type: "string"
+        sequencetype:
+          type: "string"
+        dataref:
+          type: "string"
+        data:
+          $ref: '#/components/schemas/DeliveryPayload'
     DeliveryFormat:
       type: "object"
       discriminator:
@@ -97195,11 +97323,44 @@ components:
       type: "object"
       properties:
         resourceTypeId:
-          type: "string"
+          $ref: '#/components/schemas/MessageSubscriptionResourceTypeId'
         types:
           type: "array"
           items:
             type: "string"
+    MessageSubscriptionResourceTypeId:
+      type: "string"
+      enum:
+        - business-unit
+        - category
+        - customer
+        - inventory-entry
+        - order
+        - payment
+        - product
+        - product-selection
+        - quote
+        - quote-request
+        - review
+        - staged-quote
+        - standalone-price
+        - store
+      x-annotation-package: "Subscription"
+      x-annotation-enumDescriptions:
+        business-unit: "Messages related to [Business Units](ctp:api:type:BusinessUnit).n"
+        category: "Messages related to [Categories](ctp:api:type:Category).n"
+        customer: "Messages related to [Customers](ctp:api:type:Customer).n"
+        inventory-entry: "Messages related to [InventoryEntries](ctp:api:type:InventoryEntry).n"
+        order: "Messages related to [Orders](ctp:api:type:Order).n"
+        payment: "Messages related to [Payments](ctp:api:type:Payment).n"
+        product: "Messages related to [Products](ctp:api:type:Product).n"
+        product-selection: "Messages related to [ProductSelections](ctp:api:type:ProductSelection).n"
+        quote: "Messages related to [Quotes](ctp:api:type:Quote).n"
+        quote-request: "Messages related to [Quote Requests](ctp:api:type:QuoteRequest).n"
+        review: "Messages related to [Reviews](ctp:api:type:Review).n"
+        staged-quote: "Messages related to [Staged Quotes](ctp:api:type:StagedQuote).n"
+        standalone-price: "Messages related to [StandalonePrices](ctp:api:type:StandalonePrice).n"
+        store: "Messages related to [Stores](ctp:api:type:Store).n"
     PayloadNotIncluded:
       type: "object"
       properties:
@@ -97369,20 +97530,38 @@ components:
         - ConfigurationErrorDeliveryStopped
         - TemporaryError
       x-annotation-package: "Subscription"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-subscriptions.html#subscription-health-status"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/subscriptions#subscriptionhealthstatus"
+      x-annotation-enumDescriptions:
+        Healthy: "Delivers messages as expected."
+        ConfigurationError: "Messages cannot be delivered with the current configuration.
+         Common causes are deleting the Destination queue, deleting access credentials,
+         or removing the necessary permissions. The configuration can be fixed by re-creating
+         the configuration on the Destination side, or by setting a new configuration with
+         the [Change Destination](/../api/projects/subscriptions#change-destination) update
+         action. If the configuration is fixed, undelivered messages will be delivered
+         and the `status` will change to [Healthy](ctp:api:type:SubscriptionHealthStatus).
+         `ConfigurationError` is automatically turned into `ConfigurationErrorDeliveryStopped`
+         after some time. For more information, see [Delivery Guarantees](#delivery-guarantees)."
+        ConfigurationErrorDeliveryStopped: "Does not deliver messages with the current configuration
+         and the delivery of the messages is no longer attempted. If the configuration
+         is fixed, undelivered messages are not retained and will not be delivered. The
+         `status` will change to [Healthy](ctp:api:type:SubscriptionHealthStatus) as soon
+         as new messages can be delivered."
+        TemporaryError: "Does not deliver messages temporarily due to reasons other than a
+         configuration error. For example, the Destination has a temporary outage."
     SubscriptionPagedQueryResponse:
       type: "object"
       properties:
         limit:
           type: "integer"
           format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
         count:
           type: "integer"
           format: "int64"
         total:
-          type: "integer"
-          format: "int64"
-        offset:
           type: "integer"
           format: "int64"
         results:
