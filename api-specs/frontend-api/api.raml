@@ -1,0 +1,76 @@
+#%RAML 1.0
+---
+title: Frontastic API hub
+annotationTypes:
+  resourceName:
+    type: string
+    allowedTargets: [Resource, Method]
+  resourcePathUri:
+    type: string
+    allowedTargets: [Resource, Method]
+  builtinType:
+    type: string
+    allowedTargets: TypeDeclaration
+  oneOf:
+    type: array
+    items: string
+    allowedTargets: TypeDeclaration
+  inherited:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  codeExamples:
+    type: object
+    allowedTargets: Method
+  package:
+    type: string
+    allowedTargets: TypeDeclaration
+
+baseUri: https://{project}-{customer}.frontastic.io
+baseUriParameters:
+  project:
+    description: Project Name
+    type: string
+    (builtinType): string
+    required: true
+  customer:
+    description: Customer Name
+    type: string
+    (builtinType): string
+    required: true
+version: 2.0.0
+
+types:
+  PageElementConfiguration: !include types/PageElementConfiguration.raml
+  Section: !include types/Section.raml
+  Error: !include types/Error.raml
+  Locale: !include types/Locale.raml
+  LayoutElement: !include types/LayoutElement.raml
+  Tastic: !include types/Tastic.raml
+  PageFolder: !include types/PageFolder.raml
+  DataSourceConfiguration: !include types/DataSourceConfiguration.raml
+  Page: !include types/Page.raml
+  PathConfiguration: !include types/PathConfiguration.raml
+
+traits:
+  right-header:
+    headers:
+      Accept:
+        displayName: Accept Header
+        type: string
+        (builtinType): string
+        description: Accept Header
+        required: true
+        pattern: ^application/json$
+        default: application/json
+  frontastic-locale:
+    headers:
+      Frontastic-Locale:
+        displayName: Frontastic Locale
+        type: Locale
+        (builtinType): string
+        description: Locale
+
+/frontastic/context: !include resources/FrontasticContext.raml
+/frontastic/page: !include resources/FrontasticPage.raml
+/frontastic/preview: !include resources/FrontasticPreview.raml
+/frontastic/action/{namespace}/{action}: !include resources/FrontasticActionByNamespaceAction.raml

@@ -1,0 +1,22 @@
+#%RAML 1.0 Extension
+---
+usage: Add postman test scripts
+extends: api.raml
+annotationTypes:
+  postman-test-script:
+    type: string
+    allowedTargets: TypeDeclaration
+  postman-default-value:
+    type: string
+    allowedTargets: TypeDeclaration
+traits:
+  versioned:
+    queryParameters:
+      version:
+        (postman-default-value): '{{version}}'
+types:
+  CartAddLineItemAction:
+    (postman-test-script): |
+      if (data.lineItems && data.lineItems[0]) {
+        postman.setEnvironmentVariable("lineItemId", data.lineItems[0].id);
+      }
