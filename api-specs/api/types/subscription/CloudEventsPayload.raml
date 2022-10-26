@@ -1,0 +1,51 @@
+#%RAML 1.0 DataType
+(package): Subscription
+(docs-uri): https://docs.commercetools.com/api/projects/subscriptions#delivery-payloads-for-the-cloudeventsformat
+type: object
+displayName: CloudEventsPayload
+discriminatorValue: CloudEvents
+example: !include ../../examples/Subscription/cloudevents-payload.example.json
+description: |
+  The [CloudEventsFormat](ctp:api:type:CloudEventsFormat) represents event data in a way that conforms to a common specification. The message payload can be found inside the `data` field.
+properties:
+  specversion:
+    type: string
+    description: |
+      The version of the [CloudEvents](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md) specification which the event uses.
+  id:
+    type: string
+    description: |
+      Unique identifier of the event.
+  type:
+    type: string
+    description: |
+      The `type` is namespaced with `com.commercetools`, followed by the [ReferenceTypeId](ctp:api:type:ReferenceTypeId), the type of Subscription (either `message` or `change`), and the message or change type.
+      For example, `com.commercetools.product.message.ProductPublished` or `com.commercetools.order.change.ResourceCreated`.
+  source:
+    type: string
+    description: |
+      The default REST URI of the [ReferenceTypeId](ctp:api:type:ReferenceTypeId) that triggered this event, including the project key.
+  subject:
+    type: string
+    description: |
+      Unique identifier of the resource that triggered the event.
+  time:
+    type: datetime
+    description: |
+      Corresponds to the `lastModifiedAt` of the resource at the time the event was triggered.
+  sequence?:
+    type: string
+    description: |
+      Corresponds to the `sequenceNumber` of a [MessageSubscription](ctp:api:type:MessageSubscription). Can be used to process messages in the correct order.
+  sequencetype?:
+    type: string
+    description: |
+      `"Integer"`
+  dataref?:
+    type: string
+    description: |
+      The URI from which the message can be retrieved if messages are [enabled](/../api/projects/messages#enable-querying-messages-via-the-api). Only set for [MessageSubscriptions](ctp:api:type:MessageSubscription).
+  data:
+    type: DeliveryPayload
+    description: |
+      [MessageDeliveryPayload](ctp:api:type:MessageDeliveryPayload), [ResourceCreatedDeliveryPayload](ctp:api:type:ResourceCreatedDeliveryPayload), [ResourceUpdatedDeliveryPayload](ctp:api:type:ResourceUpdatedDeliveryPayload), or [ResourceDeletedDeliveryPayload](ctp:api:type:ResourceDeletedDeliveryPayload).
