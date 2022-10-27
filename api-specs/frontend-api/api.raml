@@ -2,25 +2,6 @@
 ---
 title: Frontastic API hub
 annotationTypes:
-  resourceName:
-    type: string
-    allowedTargets: [Resource, Method]
-  resourcePathUri:
-    type: string
-    allowedTargets: [Resource, Method]
-  builtinType:
-    type: string
-    allowedTargets: TypeDeclaration
-  oneOf:
-    type: array
-    items: string
-    allowedTargets: TypeDeclaration
-  inherited:
-    type: boolean
-    allowedTargets: TypeDeclaration
-  codeExamples:
-    type: object
-    allowedTargets: Method
   package:
     type: string
     allowedTargets: TypeDeclaration
@@ -30,26 +11,29 @@ baseUriParameters:
   project:
     description: Project Name
     type: string
-    (builtinType): string
     required: true
   customer:
     description: Customer Name
     type: string
-    (builtinType): string
     required: true
 version: 2.0.0
 
 types:
-  PageElementConfiguration: !include types/PageElementConfiguration.raml
-  Section: !include types/Section.raml
-  Error: !include types/Error.raml
-  Locale: !include types/Locale.raml
-  LayoutElement: !include types/LayoutElement.raml
-  Tastic: !include types/Tastic.raml
-  PageFolder: !include types/PageFolder.raml
+  Data: !include types/Data.raml
   DataSourceConfiguration: !include types/DataSourceConfiguration.raml
+  Environment: !include types/Environment.raml
+  Error: !include types/Error.raml
+  LayoutElement: !include types/LayoutElement.raml
+  Locale: !include types/Locale.raml
   Page: !include types/Page.raml
+  PageElementConfiguration: !include types/PageElementConfiguration.raml
+  PageFolder: !include types/PageFolder.raml
+  PageResource: !include types/PageResource.raml
+  PageSections: !include types/PageSections.raml
   PathConfiguration: !include types/PathConfiguration.raml
+  ProjectContext: !include types/ProjectContext.raml
+  Section: !include types/Section.raml
+  Tastic: !include types/Tastic.raml
 
 traits:
   right-header:
@@ -57,7 +41,6 @@ traits:
       Accept:
         displayName: Accept Header
         type: string
-        (builtinType): string
         description: Accept Header
         required: true
         pattern: ^application/json$
@@ -67,10 +50,17 @@ traits:
       Frontastic-Locale:
         displayName: Frontastic Locale
         type: Locale
-        (builtinType): string
         description: Locale
-
-/frontastic/context: !include resources/FrontasticContext.raml
-/frontastic/page: !include resources/FrontasticPage.raml
-/frontastic/preview: !include resources/FrontasticPreview.raml
-/frontastic/action/{namespace}/{action}: !include resources/FrontasticActionByNamespaceAction.raml
+  action-errorable:
+    responses:
+      400:
+        description: Action not registered.
+        body:
+          application/json:
+            type: Error
+            example: !include ./examples/action-error.json
+/frontastic:
+  /context: !include resources/FrontasticContext.raml
+  /page: !include resources/FrontasticPage.raml
+  /preview: !include resources/FrontasticPreview.raml
+  /action: !include resources/FrontasticAction.raml
