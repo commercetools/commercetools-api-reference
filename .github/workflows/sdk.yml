@@ -24,6 +24,12 @@ jobs:
           fetch-depth: 50
           path: commercetools-api-reference-previous
 
+      - name: 'Setup Java'
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '16'
+
       - name: Show commit ID
         run: echo "previous=$(git log --format='%H' --no-merges -n 1 --skip 1)" >> $GITHUB_ENV
         working-directory: commercetools-api-reference-previous
@@ -54,10 +60,11 @@ jobs:
           tools: composer
           ini-values: assert.exception=1, zend.assertions=1
 
-      - name: "Install Java"
-        uses: actions/setup-java@v1
+      - name: 'Setup Java'
+        uses: actions/setup-java@v3
         with:
-          java-version: '13'
+          distribution: temurin
+          java-version: '16'
 
       - name: "Cache dependencies installed with composer"
         uses: actions/cache@v1
@@ -68,7 +75,7 @@ jobs:
             php7.4-composer-
 
       - name: "Checkout api reference"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: commercetools-api-reference
 
@@ -80,9 +87,8 @@ jobs:
           echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
         working-directory: commercetools-api-reference
 
-
       - name: "Checkout PHP SDK"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'commercetools/commercetools-sdk-php-v2'
           path: commercetools-sdk-php-v2
@@ -153,12 +159,12 @@ jobs:
           java-version: '13'
 
       - name: "Checkout api reference"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: commercetools-api-reference
 
       - name: "Checkout postman collection"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'commercetools/commercetools-postman-collection'
           path: postman
@@ -205,12 +211,12 @@ jobs:
           java-version: '8'
 
       - name: "Checkout api reference"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: commercetools-api-reference
 
       - name: "Checkout Java SDK"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'commercetools/commercetools-sdk-java-v2'
           path: commercetools-sdk-java-v2
@@ -256,6 +262,26 @@ jobs:
           ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
           HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
 
+      - name: "Checkout previous api reference"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 50
+          path: commercetools-api-reference-previous
+
+      - name: "Store api reference version"
+        run: |
+          if [ ! -f reference.txt ]; then
+            git log --format='%H' --no-merges -n 1 --skip 1 > reference.txt
+          fi
+          echo "previous=$(cat reference.txt)" >> $GITHUB_ENV
+
+      - name: "Switch to previous commit"
+        run: git checkout ${{ env.previous }}
+        working-directory: commercetools-api-reference-previous
+
+      - name: "Calculate diff"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes.md commercetools-api-reference-previous/api-specs/api/api.raml commercetools-api-reference/api-specs/api/api.raml
+
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
         working-directory: commercetools-sdk-java-v2
@@ -288,12 +314,12 @@ jobs:
 
     steps:
       - name: "Checkout api reference"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: commercetools-api-reference
 
       - name: "Checkout Typescript SDK"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'commercetools/commercetools-sdk-typescript'
           path: commercetools-sdk-typescript
@@ -385,12 +411,12 @@ jobs:
         run: dotnet tool install --global dotnet-format --version 5.1.225507
 
       - name: "Checkout api reference"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: commercetools-api-reference
 
       - name: "Checkout Csharp SDK"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'commercetools/commercetools-dotnet-core-sdk-v2'
           path: commercetools-dotnet-core-sdk-v2
