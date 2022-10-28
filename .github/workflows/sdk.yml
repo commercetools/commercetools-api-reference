@@ -24,6 +24,12 @@ jobs:
           fetch-depth: 50
           path: commercetools-api-reference-previous
 
+      - name: 'Setup Java'
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '16'
+
       - name: Show commit ID
         run: echo "previous=$(git log --format='%H' --no-merges -n 1 --skip 1)" >> $GITHUB_ENV
         working-directory: commercetools-api-reference-previous
@@ -54,10 +60,11 @@ jobs:
           tools: composer
           ini-values: assert.exception=1, zend.assertions=1
 
-      - name: "Install Java"
-        uses: actions/setup-java@v1
+      - name: 'Setup Java'
+        uses: actions/setup-java@v3
         with:
-          java-version: '13'
+          distribution: temurin
+          java-version: '16'
 
       - name: "Cache dependencies installed with composer"
         uses: actions/cache@v1
@@ -68,7 +75,7 @@ jobs:
             php7.4-composer-
 
       - name: "Checkout api reference"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: commercetools-api-reference
 
@@ -80,9 +87,8 @@ jobs:
           echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
         working-directory: commercetools-api-reference
 
-
       - name: "Checkout PHP SDK"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'commercetools/commercetools-sdk-php-v2'
           path: commercetools-sdk-php-v2
@@ -114,6 +120,67 @@ jobs:
           IMPORT_RAML: "../commercetools-api-reference/api-specs/importapi/api.raml"
           ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
           HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
+
+      - name: "Checkout previous api reference"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: commercetools-api-reference-previous
+
+      - name: "Store api reference version"
+        run: |
+          if [ ! -f ../commercetools-sdk-php-v2/reference.txt ]; then
+            git log --format='%H' --no-merges -n 1 --skip 1 > ../commercetools-sdk-php-v2/reference.txt
+          fi
+          echo "previous=$(cat ../commercetools-sdk-php-v2/reference.txt)" >> $GITHUB_ENV
+        working-directory: commercetools-api-reference-previous
+
+      - name: "Switch to previous commit"
+        run: git checkout ${{ env.previous }}
+        working-directory: commercetools-api-reference-previous
+
+      - name: "Calculate diff (API)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_api.md commercetools-api-reference-previous/api-specs/api/api.raml commercetools-api-reference/api-specs/api/api.raml
+
+      - name: "Calculate diff (Import API)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_import.md commercetools-api-reference-previous/api-specs/importapi/api.raml commercetools-api-reference/api-specs/importapi/api.raml
+
+      - name: "Calculate diff (History)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_history.md commercetools-api-reference-previous/api-specs/history/api.raml commercetools-api-reference/api-specs/history/api.raml
+
+      - name: "Calculate diff (ML)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_ml.md commercetools-api-reference-previous/api-specs/ml/api.raml commercetools-api-reference/api-specs/ml/api.raml
+
+      - name: 'Create change file'
+        run: |
+          if [ -f ./changes_api.md ]; then
+            echo "**Api changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_api.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_import.md ]; then
+            echo "**Import changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_import.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_history.md ]; then
+            echo "**History changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_history.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_ml.md ]; then
+            echo "**ML changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_ml.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes.md ]; then
+            cat ./changes.md
+          fi
+          cp ./changes.md ./commercetools-sdk-php-v2/changes.md
 
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
@@ -147,18 +214,19 @@ jobs:
 
     steps:
 
-      - name: "Install Java"
-        uses: actions/setup-java@v1
+      - name: 'Setup Java'
+        uses: actions/setup-java@v3
         with:
-          java-version: '13'
+          distribution: temurin
+          java-version: '16'
 
       - name: "Checkout api reference"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: commercetools-api-reference
 
       - name: "Checkout postman collection"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'commercetools/commercetools-postman-collection'
           path: postman
@@ -199,18 +267,19 @@ jobs:
     continue-on-error: true
 
     steps:
-      - name: "Install Java"
-        uses: actions/setup-java@v1
+      - name: 'Setup Java'
+        uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          distribution: temurin
+          java-version: '16'
 
       - name: "Checkout api reference"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: commercetools-api-reference
 
       - name: "Checkout Java SDK"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'commercetools/commercetools-sdk-java-v2'
           path: commercetools-sdk-java-v2
@@ -256,6 +325,67 @@ jobs:
           ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
           HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
 
+      - name: "Checkout previous api reference"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: commercetools-api-reference-previous
+
+      - name: "Store api reference version"
+        run: |
+          if [ ! -f ../commercetools-sdk-java-v2/reference.txt ]; then
+            git log --format='%H' --no-merges -n 1 --skip 1 > ../commercetools-sdk-java-v2/reference.txt
+          fi
+          echo "previous=$(cat ../commercetools-sdk-java-v2/reference.txt)" >> $GITHUB_ENV
+        working-directory: commercetools-api-reference-previous
+
+      - name: "Switch to previous commit"
+        run: git checkout ${{ env.previous }}
+        working-directory: commercetools-api-reference-previous
+
+      - name: "Calculate diff (API)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_api.md commercetools-api-reference-previous/api-specs/api/api.raml commercetools-api-reference/api-specs/api/api.raml
+
+      - name: "Calculate diff (Import API)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_import.md commercetools-api-reference-previous/api-specs/importapi/api.raml commercetools-api-reference/api-specs/importapi/api.raml
+
+      - name: "Calculate diff (History)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_history.md commercetools-api-reference-previous/api-specs/history/api.raml commercetools-api-reference/api-specs/history/api.raml
+
+      - name: "Calculate diff (ML)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_ml.md commercetools-api-reference-previous/api-specs/ml/api.raml commercetools-api-reference/api-specs/ml/api.raml
+
+      - name: 'Create change file'
+        run: |
+          if [ -f ./changes_api.md ]; then
+            echo "**Api changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_api.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_import.md ]; then
+            echo "**Import changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_import.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_history.md ]; then
+            echo "**History changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_history.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_ml.md ]; then
+            echo "**ML changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_ml.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes.md ]; then
+            cat ./changes.md
+          fi
+          cp ./changes.md ./commercetools-sdk-java-v2/changes.md
+
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
         working-directory: commercetools-sdk-java-v2
@@ -288,21 +418,22 @@ jobs:
 
     steps:
       - name: "Checkout api reference"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: commercetools-api-reference
 
       - name: "Checkout Typescript SDK"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'commercetools/commercetools-sdk-typescript'
           path: commercetools-sdk-typescript
           ssh-key: ${{ secrets.TS_SDK_DEPLOY_KEY }}
 
-      - name: "Install Java"
-        uses: actions/setup-java@v1
+      - name: 'Setup Java'
+        uses: actions/setup-java@v3
         with:
-          java-version: '13'
+          distribution: temurin
+          java-version: '16'
 
       - name: Setup Node (uses version in .nvmrc)
         uses: actions/setup-node@v2
@@ -345,6 +476,67 @@ jobs:
           ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
           HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
 
+      - name: "Checkout previous api reference"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: commercetools-api-reference-previous
+
+      - name: "Store api reference version"
+        run: |
+          if [ ! -f ../commercetools-sdk-typescript/reference.txt ]; then
+            git log --format='%H' --no-merges -n 1 --skip 1 > ../commercetools-sdk-typescript/reference.txt
+          fi
+          echo "previous=$(cat ../commercetools-sdk-typescript/reference.txt)" >> $GITHUB_ENV
+        working-directory: commercetools-api-reference-previous
+
+      - name: "Switch to previous commit"
+        run: git checkout ${{ env.previous }}
+        working-directory: commercetools-api-reference-previous
+
+      - name: "Calculate diff (API)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_api.md commercetools-api-reference-previous/api-specs/api/api.raml commercetools-api-reference/api-specs/api/api.raml
+
+      - name: "Calculate diff (Import API)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_import.md commercetools-api-reference-previous/api-specs/importapi/api.raml commercetools-api-reference/api-specs/importapi/api.raml
+
+      - name: "Calculate diff (History)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_history.md commercetools-api-reference-previous/api-specs/history/api.raml commercetools-api-reference/api-specs/history/api.raml
+
+      - name: "Calculate diff (ML)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_ml.md commercetools-api-reference-previous/api-specs/ml/api.raml commercetools-api-reference/api-specs/ml/api.raml
+
+      - name: 'Create change file'
+        run: |
+          if [ -f ./changes_api.md ]; then
+            echo "**Api changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_api.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_import.md ]; then
+            echo "**Import changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_import.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_history.md ]; then
+            echo "**History changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_history.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_ml.md ]; then
+            echo "**ML changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_ml.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes.md ]; then
+            cat ./changes.md
+          fi
+          cp ./changes.md ./commercetools-sdk-typescript/changes.md
+
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
         working-directory: commercetools-sdk-typescript
@@ -376,6 +568,12 @@ jobs:
     continue-on-error: true
 
     steps:
+      - name: 'Setup Java'
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '16'
+
       - name: "Install Csharp"
         uses: actions/setup-dotnet@v1
         with:
@@ -385,12 +583,12 @@ jobs:
         run: dotnet tool install --global dotnet-format --version 5.1.225507
 
       - name: "Checkout api reference"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: commercetools-api-reference
 
       - name: "Checkout Csharp SDK"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'commercetools/commercetools-dotnet-core-sdk-v2'
           path: commercetools-dotnet-core-sdk-v2
@@ -441,6 +639,67 @@ jobs:
           dotnet-format
           dotnet-format --fix-style warn
         working-directory: commercetools-dotnet-core-sdk-v2/commercetools.Sdk
+
+      - name: "Checkout previous api reference"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: commercetools-api-reference-previous
+
+      - name: "Store api reference version"
+        run: |
+          if [ ! -f ../commercetools-dotnet-core-sdk-v2/reference.txt ]; then
+            git log --format='%H' --no-merges -n 1 --skip 1 > ../commercetools-dotnet-core-sdk-v2/reference.txt
+          fi
+          echo "previous=$(cat ../commercetools-dotnet-core-sdk-v2/reference.txt)" >> $GITHUB_ENV
+        working-directory: commercetools-api-reference-previous
+
+      - name: "Switch to previous commit"
+        run: git checkout ${{ env.previous }}
+        working-directory: commercetools-api-reference-previous
+
+      - name: "Calculate diff (API)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_api.md commercetools-api-reference-previous/api-specs/api/api.raml commercetools-api-reference/api-specs/api/api.raml
+
+      - name: "Calculate diff (Import API)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_import.md commercetools-api-reference-previous/api-specs/importapi/api.raml commercetools-api-reference/api-specs/importapi/api.raml
+
+      - name: "Calculate diff (History)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_history.md commercetools-api-reference-previous/api-specs/history/api.raml commercetools-api-reference/api-specs/history/api.raml
+
+      - name: "Calculate diff (ML)"
+        run: rmf-codegen diff -f MARKDOWN -o ./changes_ml.md commercetools-api-reference-previous/api-specs/ml/api.raml commercetools-api-reference/api-specs/ml/api.raml
+
+      - name: 'Create change file'
+        run: |
+          if [ -f ./changes_api.md ]; then
+            echo "**Api changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_api.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_import.md ]; then
+            echo "**Import changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_import.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_history.md ]; then
+            echo "**History changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_history.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_ml.md ]; then
+            echo "**ML changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_ml.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes.md ]; then
+            cat ./changes.md
+          fi
+          cp ./changes.md ./commercetools-dotnet-core-sdk-v2/changes.md
 
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
