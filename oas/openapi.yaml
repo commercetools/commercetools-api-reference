@@ -84524,6 +84524,7 @@ components:
               StandalonePriceExternalDiscountSet: '#/components/schemas/StandalonePriceExternalDiscountSetMessage'
               StandalonePriceStagedChangesApplied: '#/components/schemas/StandalonePriceStagedChangesAppliedMessage'
               StandalonePriceValueChanged: '#/components/schemas/StandalonePriceValueChangedMessage'
+              StoreCountriesChanged: '#/components/schemas/StoreCountriesChangedMessage'
               StoreCreated: '#/components/schemas/StoreCreatedMessage'
               StoreDeleted: '#/components/schemas/StoreDeletedMessage'
               StoreDistributionChannelsChanged: '#/components/schemas/StoreDistributionChannelsChangedMessage'
@@ -87736,6 +87737,46 @@ components:
               $ref: '#/components/schemas/Money'
             staged:
               type: "boolean"
+    StoreCountriesChangedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            addedCountries:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreCountry'
+            removedCountries:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreCountry'
     StoreCreatedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -87774,6 +87815,10 @@ components:
               type: "array"
               items:
                 type: "string"
+            countries:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreCountry'
             distributionChannels:
               type: "array"
               items:
@@ -88636,6 +88681,7 @@ components:
           StandalonePriceExternalDiscountSet: '#/components/schemas/StandalonePriceExternalDiscountSetMessagePayload'
           StandalonePriceStagedChangesApplied: '#/components/schemas/StandalonePriceStagedChangesAppliedMessagePayload'
           StandalonePriceValueChanged: '#/components/schemas/StandalonePriceValueChangedMessagePayload'
+          StoreCountriesChanged: '#/components/schemas/StoreCountriesChangedMessagePayload'
           StoreCreated: '#/components/schemas/StoreCreatedMessagePayload'
           StoreDeleted: '#/components/schemas/StoreDeletedMessagePayload'
           StoreDistributionChannelsChanged: '#/components/schemas/StoreDistributionChannelsChangedMessagePayload'
@@ -89631,6 +89677,21 @@ components:
               $ref: '#/components/schemas/Money'
             staged:
               type: "boolean"
+    StoreCountriesChangedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            addedCountries:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreCountry'
+            removedCountries:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreCountry'
     StoreCreatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -89644,6 +89705,10 @@ components:
               type: "array"
               items:
                 type: "string"
+            countries:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreCountry'
             distributionChannels:
               type: "array"
               items:
@@ -98386,6 +98451,10 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/Locale'
+            countries:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreCountry'
             distributionChannels:
               type: "array"
               items:
@@ -98400,6 +98469,11 @@ components:
                 $ref: '#/components/schemas/ProductSelectionSetting'
             custom:
               $ref: '#/components/schemas/CustomFields'
+    StoreCountry:
+      type: "object"
+      properties:
+        code:
+          $ref: '#/components/schemas/CountryCode'
     StoreDraft:
       type: "object"
       properties:
@@ -98411,6 +98485,10 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/Locale'
+        countries:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/StoreCountry'
         distributionChannels:
           type: "array"
           items:
@@ -98490,13 +98568,16 @@ components:
       discriminator:
         propertyName: action
         mapping:
+          addCountry: '#/components/schemas/StoreAddCountryAction'
           addDistributionChannel: '#/components/schemas/StoreAddDistributionChannelAction'
           addProductSelection: '#/components/schemas/StoreAddProductSelectionAction'
           addSupplyChannel: '#/components/schemas/StoreAddSupplyChannelAction'
           changeProductSelectionActive: '#/components/schemas/StoreChangeProductSelectionAction'
+          removeCountry: '#/components/schemas/StoreRemoveCountryAction'
           removeDistributionChannel: '#/components/schemas/StoreRemoveDistributionChannelAction'
           removeProductSelection: '#/components/schemas/StoreRemoveProductSelectionAction'
           removeSupplyChannel: '#/components/schemas/StoreRemoveSupplyChannelAction'
+          setCountries: '#/components/schemas/StoreSetCountriesAction'
           setCustomField: '#/components/schemas/StoreSetCustomFieldAction'
           setCustomType: '#/components/schemas/StoreSetCustomTypeAction'
           setDistributionChannels: '#/components/schemas/StoreSetDistributionChannelsAction'
@@ -98507,6 +98588,15 @@ components:
       properties:
         action:
           type: "string"
+    StoreAddCountryAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            country:
+              $ref: '#/components/schemas/StoreCountry'
     StoreAddDistributionChannelAction:
       allOf:
         - $ref: '#/components/schemas/StoreUpdateAction'
@@ -98547,6 +98637,15 @@ components:
               $ref: '#/components/schemas/ProductSelectionResourceIdentifier'
             active:
               type: "boolean"
+    StoreRemoveCountryAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            country:
+              $ref: '#/components/schemas/StoreCountry'
     StoreRemoveDistributionChannelAction:
       allOf:
         - $ref: '#/components/schemas/StoreUpdateAction'
@@ -98574,6 +98673,17 @@ components:
               type: "string"
             supplyChannel:
               $ref: '#/components/schemas/ChannelResourceIdentifier'
+    StoreSetCountriesAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            countries:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreCountry'
     StoreSetCustomFieldAction:
       allOf:
         - $ref: '#/components/schemas/StoreUpdateAction'
