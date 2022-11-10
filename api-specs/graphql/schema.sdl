@@ -440,6 +440,10 @@ input AddStateRoles {
   roles: [StateRole!]!
 }
 
+input AddStoreCountry {
+  country: StoreCountryInput!
+}
+
 input AddStoreDistributionChannel {
   distributionChannel: ResourceIdentifierInput!
 }
@@ -2343,6 +2347,9 @@ input CreateStore {
   key: String!
   name: [LocalizedStringItemInputType!]
   languages: [Locale!]
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  countries: [StoreCountryInput!]
   distributionChannels: [ResourceIdentifierInput!]
   supplyChannels: [ResourceIdentifierInput!]
 
@@ -8168,6 +8175,10 @@ input RemoveStateRoles {
   roles: [StateRole!]!
 }
 
+input RemoveStoreCountry {
+  country: StoreCountryInput!
+}
+
 input RemoveStoreDistributionChannel {
   distributionChannel: ResourceIdentifierInput!
 }
@@ -10665,6 +10676,10 @@ input SetStateTransitions {
   transitions: [ResourceIdentifierInput!]
 }
 
+input SetStoreCountries {
+  countries: [StoreCountryInput!]
+}
+
 input SetStoreCustomField {
   name: String!
   value: String
@@ -11501,6 +11516,9 @@ type Store implements Versioned & ReferenceExpandable {
   languages: [Locale!]
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  countries: [StoreCountry!]
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   productSelections: [ProductSelectionSetting!]!
   distributionChannelsRef: [Reference!]!
   distributionChannels: [Channel!]!
@@ -11511,6 +11529,21 @@ type Store implements Versioned & ReferenceExpandable {
   custom: CustomFieldsType
   createdBy: Initiator
   lastModifiedBy: Initiator
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type StoreCountriesChanged implements MessagePayload {
+  addedCountries: [StoreCountry!]
+  removedCountries: [StoreCountry!]
+  type: String!
+}
+
+type StoreCountry {
+  code: Country!
+}
+
+input StoreCountryInput {
+  code: Country!
 }
 
 type StoreCreated implements MessagePayload {
@@ -11527,6 +11560,9 @@ type StoreCreated implements MessagePayload {
   productSelections: [ProductSelectionSetting!]!
   distributionChannels: [Channel!]!
   supplyChannels: [Channel!]!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  countries: [StoreCountry!]
   distributionChannelsRef: [Reference!]!
   supplyChannelsRef: [Reference!]!
   productSelectionsRef: [Reference!]!
@@ -11603,13 +11639,22 @@ type StoreSupplyChannelsChanged implements MessagePayload {
 
 input StoreUpdateAction {
   addProductSelection: AddStoreProductSelection
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  addCountry: AddStoreCountry
   addDistributionChannel: AddStoreDistributionChannel
   addSupplyChannel: AddStoreSupplyChannel
   changeProductSelectionActive: ChangeStoreProductSelectionActive
   removeProductSelection: RemoveStoreProductSelection
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  removeCountry: RemoveStoreCountry
   removeDistributionChannel: RemoveStoreDistributionChannel
   removeSupplyChannel: RemoveStoreSupplyChannel
   setProductSelections: SetStoreProductSelections
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setCountries: SetStoreCountries
   setCustomField: SetStoreCustomField
   setCustomType: SetStoreCustomType
   setDistributionChannels: SetStoreDistributionChannels
