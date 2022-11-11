@@ -9334,7 +9334,7 @@ paths:
       operationId: ByProjectKeyCustomObjectsPost
       description: |-
         If an object with the given container/key exists, the object will be replaced with the new value and the version is incremented.
-        If the request contains a version and an object with the given container/key, then the version must match the version of the existing object. Concurrent updates for the same Custom Object can result in a [409 Conflict](/../api/errors#409-conflict) even if the version is not provided.
+        If the request contains a version and an object with the given container/key, then the version must match the version of the existing object. Concurrent updates to the same Custom Object returns a [ConcurrentModification](ctp:api:type:ConcurrentModificationError) error even if the version is not provided.
 
         Fields with `null` values will **not be saved**.
       parameters:
@@ -16698,8 +16698,7 @@ paths:
       description: |-
         Creates a [Cart](ctp:api:type:Cart) in the Store specified by `storeKey`.
         When using this endpoint the Cart's `store` field is always set to the store specified in the path parameter.
-        Creating a Cart can fail with an [InvalidOperationError](ctp:api:type:InvalidOperationError) if the referenced [ShippingMethod](ctp:api:type:ShippingMethod)
-        in the [CartDraft](ctp:api:type:CartDraft) has a predicate which does not match the Cart.
+        If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
       parameters:
         - name: expand
           in: query
@@ -17905,8 +17904,7 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsByIDPost
       description: |-
         Updates a [Cart](ctp:api:type:Cart) in the Store specified by `storeKey`.
-        If the Cart exists in the Project but does not have the store field,
-        or the `store` field references a different Store, this method returns a [ResourceNotFoundError](ctp:api:type:ResourceNotFoundError).
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
       parameters:
         - name: expand
           in: query
@@ -46651,6 +46649,8 @@ paths:
       description: |-
         This endpoint can be used to simulate which Product Discounts would be applied if a specified Product Variant had a specified Price.
         Given Product and Product Variant IDs and a Price, this endpoint will return the [ProductDiscount](ctp:api:type:ProductDiscount) that would have been applied to that Price.
+
+        If a Product Discount could not be found that could be applied to the Price of a Product Variant, a [NoMatchingProductDiscountFound](ctp:api:type:NoMatchingProductDiscountFoundError) error is returned.
       requestBody:
         content:
           application/json:
@@ -53158,6 +53158,8 @@ paths:
         - oauth_2_0:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductsKeyByKeyPost
+      description: |-
+        A failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.
       parameters:
         - name: priceCurrency
           in: query
@@ -54110,6 +54112,8 @@ paths:
       operationId: ByProjectKeyProductsByIDPost
       description: |-
         If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
+
+        A failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.
       parameters:
         - name: priceCurrency
           in: query
@@ -60301,8 +60305,9 @@ paths:
             - "view_shipping_methods:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingOrdereditGet
       description: |-
-        Retrieves all the ShippingMethods that can ship to the given [Location](/projects/zones#location) for an [OrderEdit](/projects/order-edits).
-        In case the OrderEdit preview cannot be created an [EditPreviewFailed](ctp:api:type:EditPreviewFailedError) error is raised.
+        Retrieves all the ShippingMethods that can ship to the given [Location](/../api/projects/zones#location) for an [OrderEdit](/../api/projects/order-edits).
+
+        If the OrderEdit preview cannot be generated, an [EditPreviewFailed](ctp:api:type:EditPreviewFailedError) error is returned.
       parameters:
         - name: orderEditId
           in: query
@@ -79575,17 +79580,6 @@ components:
             validUntil:
               type: "string"
               format: "datetime"
-    AccessDeniedError:
-      allOf:
-        - $ref: '#/components/schemas/ErrorObject'
-        - type: "object"
-          properties:
-            code:
-              type: "string"
-            message:
-              type: "string"
-          additionalProperties:
-            type: "string"
     AnonymousIdAlreadyInUseError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -79644,6 +79638,24 @@ components:
               type: "string"
           additionalProperties:
             type: "string"
+    AuthErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: "object"
+          properties:
+            statusCode:
+              type: "integer"
+              format: "int32"
+            message:
+              type: "string"
+            errors:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ErrorObject'
+            error:
+              type: "string"
+            error_description:
+              type: "string"
     BadGatewayError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -79669,6 +79681,23 @@ components:
               format: "int64"
           additionalProperties:
             type: "string"
+    CountryNotConfiguredInStore:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            storeCountries:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CountryCode'
+            country:
+              $ref: '#/components/schemas/CountryCode'
+          additionalProperties:
+            type: "string"
     DiscountCodeNonApplicableError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -79682,7 +79711,7 @@ components:
               type: "string"
             reason:
               type: "string"
-            dicountCodeId:
+            discountCodeId:
               type: "string"
             validFrom:
               type: "string"
@@ -79751,8 +79780,6 @@ components:
               type: "string"
             duplicateValue:
               {}
-            conflictingResource:
-              $ref: '#/components/schemas/Reference'
           additionalProperties:
             type: "string"
     DuplicateFieldWithConflictingResourceError:
@@ -79801,9 +79828,9 @@ components:
             sku:
               type: "string"
             currency:
-              type: "string"
+              $ref: '#/components/schemas/CurrencyCode'
             country:
-              type: "string"
+              $ref: '#/components/schemas/CountryCode'
             customerGroup:
               $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
             channel:
@@ -79906,13 +79933,13 @@ components:
       discriminator:
         propertyName: code
         mapping:
-          access_denied: '#/components/schemas/AccessDeniedError'
           AnonymousIdAlreadyInUse: '#/components/schemas/AnonymousIdAlreadyInUseError'
           AttributeDefinitionAlreadyExists: '#/components/schemas/AttributeDefinitionAlreadyExistsError'
           AttributeDefinitionTypeConflict: '#/components/schemas/AttributeDefinitionTypeConflictError'
           AttributeNameDoesNotExist: '#/components/schemas/AttributeNameDoesNotExistError'
           BadGateway: '#/components/schemas/BadGatewayError'
           ConcurrentModification: '#/components/schemas/ConcurrentModificationError'
+          CountryNotConfiguredInStore: '#/components/schemas/CountryNotConfiguredInStore'
           DiscountCodeNonApplicable: '#/components/schemas/DiscountCodeNonApplicableError'
           DuplicateAttributeValue: '#/components/schemas/DuplicateAttributeValueError'
           DuplicateAttributeValues: '#/components/schemas/DuplicateAttributeValuesError'
@@ -79929,6 +79956,7 @@ components:
           EnumValuesMustMatch: '#/components/schemas/EnumValuesMustMatchError'
           ExtensionBadResponse: '#/components/schemas/ExtensionBadResponseError'
           ExtensionNoResponse: '#/components/schemas/ExtensionNoResponseError'
+          ExtensionPredicateEvaluationFailed: '#/components/schemas/ExtensionPredicateEvaluationFailedError'
           ExtensionUpdateActionsFailed: '#/components/schemas/ExtensionUpdateActionsFailedError'
           ExternalOAuthFailed: '#/components/schemas/ExternalOAuthFailedError'
           FeatureRemoved: '#/components/schemas/FeatureRemovedError'
@@ -79957,6 +79985,8 @@ components:
           OverlappingStandalonePriceValidity: '#/components/schemas/OverlappingStandalonePriceValidityError'
           PendingOperation: '#/components/schemas/PendingOperationError'
           PriceChanged: '#/components/schemas/PriceChangedError'
+          ProductAssignmentMissing: '#/components/schemas/ProductAssignmentMissingError'
+          ProductPresentWithDifferentVariantSelection: '#/components/schemas/ProductPresentWithDifferentVariantSelectionError'
           ProjectNotConfiguredForLanguages: '#/components/schemas/ProjectNotConfiguredForLanguagesError'
           QueryComplexityLimitExceeded: '#/components/schemas/QueryComplexityLimitExceededError'
           QueryTimedOut: '#/components/schemas/QueryTimedOutError'
@@ -79972,7 +80002,6 @@ components:
           SemanticError: '#/components/schemas/SemanticErrorError'
           ShippingMethodDoesNotMatchCart: '#/components/schemas/ShippingMethodDoesNotMatchCartError'
           SyntaxError: '#/components/schemas/SyntaxErrorError'
-          WeakPassword: '#/components/schemas/WeakPasswordError'
       properties:
         code:
           type: "string"
@@ -79987,10 +80016,6 @@ components:
           type: "integer"
           format: "int32"
         message:
-          type: "string"
-        error:
-          type: "string"
-        error_description:
           type: "string"
         errors:
           type: "array"
@@ -80009,10 +80034,34 @@ components:
               $ref: '#/components/schemas/LocalizedString'
             extensionExtraInfo:
               type: "object"
-            errorByExtension:
-              $ref: '#/components/schemas/ErrorByExtension'
+            extensionErrors:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ExtensionError'
+            extensionBody:
+              type: "string"
+            extensionStatusCode:
+              type: "integer"
+              format: "int32"
+            extensionId:
+              type: "string"
+            extensionKey:
+              type: "string"
           additionalProperties:
             type: "string"
+    ExtensionError:
+      type: "object"
+      properties:
+        code:
+          type: "string"
+        message:
+          type: "string"
+        extensionId:
+          type: "string"
+        extensionKey:
+          type: "string"
+      additionalProperties:
+        type: "string"
     ExtensionNoResponseError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -80028,6 +80077,19 @@ components:
               type: "string"
           additionalProperties:
             type: "string"
+    ExtensionPredicateEvaluationFailedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            errorByExtension:
+              $ref: '#/components/schemas/ErrorByExtension'
+          additionalProperties:
+            type: "string"
     ExtensionUpdateActionsFailedError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -80041,8 +80103,10 @@ components:
               $ref: '#/components/schemas/LocalizedString'
             extensionExtraInfo:
               type: "object"
-            errorByExtension:
-              $ref: '#/components/schemas/ErrorByExtension'
+            extensionErrors:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ExtensionError'
           additionalProperties:
             type: "string"
     ExternalOAuthFailedError:
@@ -80176,6 +80240,8 @@ components:
               type: "string"
             message:
               type: "string"
+            detailedErrorMessage:
+              type: "string"
           additionalProperties:
             type: "string"
     InvalidOperationError:
@@ -80237,9 +80303,9 @@ components:
               type: "integer"
               format: "int32"
             currency:
-              type: "string"
+              $ref: '#/components/schemas/CurrencyCode'
             country:
-              type: "string"
+              $ref: '#/components/schemas/CountryCode'
             customerGroup:
               $ref: '#/components/schemas/CustomerGroupReference'
             channel:
@@ -80286,7 +80352,7 @@ components:
             taxCategoryId:
               type: "string"
             country:
-              type: "string"
+              $ref: '#/components/schemas/CountryCode'
             state:
               type: "string"
           additionalProperties:
@@ -80368,9 +80434,9 @@ components:
             sku:
               type: "string"
             currency:
-              type: "string"
+              $ref: '#/components/schemas/CurrencyCode'
             country:
-              type: "string"
+              $ref: '#/components/schemas/CountryCode'
             customerGroup:
               $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
             channel:
@@ -80417,6 +80483,34 @@ components:
               type: "boolean"
           additionalProperties:
             type: "string"
+    ProductAssignmentMissingError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+          additionalProperties:
+            type: "string"
+    ProductPresentWithDifferentVariantSelectionError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            existingVariantSelection:
+              $ref: '#/components/schemas/ProductVariantSelection'
+          additionalProperties:
+            type: "string"
     ProjectNotConfiguredForLanguagesError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -80429,7 +80523,7 @@ components:
             languages:
               type: "array"
               items:
-                type: "string"
+                $ref: '#/components/schemas/Locale'
           additionalProperties:
             type: "string"
     QueryComplexityLimitExceededError:
@@ -80609,17 +80703,6 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/Attribute'
-    WeakPasswordError:
-      allOf:
-        - $ref: '#/components/schemas/ErrorObject'
-        - type: "object"
-          properties:
-            code:
-              type: "string"
-            message:
-              type: "string"
-          additionalProperties:
-            type: "string"
     AWSLambdaDestination:
       allOf:
         - $ref: '#/components/schemas/ExtensionDestination'
