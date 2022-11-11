@@ -3,10 +3,29 @@
 type: ErrorObject
 displayName: MissingTaxRateForCountryError
 discriminatorValue: MissingTaxRateForCountry
+description: |
+  Returned when the Tax Category of at least one of the `lineItems`, `customLineItems`, or `shippingInfo` in the [Cart](ctp:api:type:Cart) is missing the [TaxRate](ctp:api:type:TaxRate) matching `country` and `state` given in the `shippingAddress` of that Cart.
+
+  The error is returned as a failed response to:
+
+  - [Set Default Shipping Address](ctp:api:type:CustomerSetDefaultShippingAddressAction), [Add LineItem](ctp:api:type:CartAddLineItemAction), [Add CustomLineItem](ctp:api:type:CartAddCustomLineItemAction), [Set Shipping Address](ctp:api:type:CartSetShippingAddressAction), [Set Customer ID](ctp:api:type:CartSetCustomerIdAction), [Add LineItem](ctp:api:type:StagedOrderAddLineItemAction), and [Add CustomLineItem](ctp:api:type:StagedOrderAddCustomLineItemAction) update actions
+  - [Create Order from Cart](/../api/projects/orders#create-order-from-cart) and [Create Order from Cart in a Store](/../api/projects/orders#create-order-from-cart-in-a-store) requests.
 properties:
+  code:
+    type: string
+  message:
+    type: string
+    description: |
+      `"Tax category $taxCategoryId is missing a tax rate for country $countriesAndStates."`
   taxCategoryId:
     type: string
+    description: |
+      Unique identifier of the [TaxCategory](ctp:api:type:TaxCategory).
   country?:
-    type: string
+    type: CountryCode
+    description: |
+      Country code of the geographic location.
   state?:
     type: string
+    description: |
+      State within the country, such as Texas in the United States.

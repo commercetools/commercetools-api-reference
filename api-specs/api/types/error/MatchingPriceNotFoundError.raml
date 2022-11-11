@@ -3,16 +3,43 @@
 type: ErrorObject
 displayName: MatchingPriceNotFoundError
 discriminatorValue: MatchingPriceNotFound
+description: |
+  Returned when the Product Variant does not have a Price according to the [Product](ctp:api:type:Product) `priceMode` value for a selected currency, country, Customer Group, or Channel.
+
+  The error is returned as a failed response to:
+
+  - [Add LineItem](ctp:api:type:CartAddLineItemAction), [Add CustomLineItem](ctp:api:type:CartAddCustomLineItemAction), and [Add DiscountCode](ctp:api:type:CartAddDiscountCodeAction) update actions on Carts.
+  - [Add LineItem](ctp:api:type:StagedOrderAddLineItemAction), [Add CustomLineItem](ctp:api:type:StagedOrderAddCustomLineItemAction), and [Add DiscountCode](ctp:api:type:StagedOrderAddDiscountCodeAction) update actions on Order Edits.
+  - [Create Order from Cart](/../api/projects/orders#create-order-from-cart) and [Create Order from Cart in a Store](/../api/projects/orders#create-order-from-cart-in-a-store) requests on Orders.
+  - [Create Order from a Cart](/../api/projects/me-orders#create-order-from-a-cart) and [Create Order in a Store from a Cart](/../api/projects/me-orders#create-order-in-a-store-from-a-cart) requests on My Orders.
 properties:
+  code:
+    type: string
+  message:
+    type: string
+    description: |
+      `"The variant $variantId of product $productId does not contain a price for currency $currencyCode, $country, $customerGroup, $channel."`
   productId:
     type: string
+    description: |
+      Unique identifier of a [Product](ctp:api:type:Product).
   variantId:
     type: integer
+    description: |
+      Unique identifier of a [ProductVariant](ctp:api:type:ProductVariant) in the Product.
   currency?:
-    type: string
+    type: CurrencyCode
+    description: |
+      Currency code of the country.
   country?:
-    type: string
+    type: CountryCode
+    description: |
+      Country code of the geographic location.
   customerGroup?:
     type: CustomerGroupReference
+    description: |
+      Customer Group associated with the Price.
   channel?:
     type: ChannelReference
+    description: |
+      Channel associated with the Price.
