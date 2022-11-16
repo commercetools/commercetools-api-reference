@@ -23481,8 +23481,8 @@ paths:
     get:
       security:
         - oauth_2_0:
-            - "view_shopping_lists:{projectKey}"
-            - "view_shopping_lists:{projectKey}:{storeKey}"
+            - "manage_my_shopping_lists:{projectKey}"
+            - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsGet
       parameters:
         - name: expand
@@ -23682,9 +23682,11 @@ paths:
     post:
       security:
         - oauth_2_0:
-            - "manage_shopping_lists:{projectKey}"
-            - "manage_shopping_lists:{projectKey}:{storeKey}"
+            - "manage_my_shopping_lists:{projectKey}"
+            - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsPost
+      description: |-
+        When using this endpoint, the `store` field of a ShoppingList is always set to the Store specified in the path parameter.
       parameters:
         - name: expand
           in: query
@@ -23855,11 +23857,11 @@ paths:
     get:
       security:
         - oauth_2_0:
-            - "view_shopping_lists:{projectKey}"
-            - "view_shopping_lists:{projectKey}:{storeKey}"
+            - "manage_my_shopping_lists:{projectKey}"
+            - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsKeyByKeyGet
       description: |-
-        Gets a shopping list by Key.
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store, the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
           in: query
@@ -24007,11 +24009,12 @@ paths:
     post:
       security:
         - oauth_2_0:
-            - "manage_shopping_lists:{projectKey}"
-            - "manage_shopping_lists:{projectKey}:{storeKey}"
+            - "manage_my_shopping_lists:{projectKey}"
+            - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsKeyByKeyPost
       description: |-
-        Update a shopping list found by its Key.
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
           in: query
@@ -24187,10 +24190,22 @@ paths:
     delete:
       security:
         - oauth_2_0:
-            - "manage_shopping_lists:{projectKey}"
-            - "manage_shopping_lists:{projectKey}:{storeKey}"
+            - "manage_my_shopping_lists:{projectKey}"
+            - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsKeyByKeyDelete
+      description: |-
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
         - name: dataErasure
           in: query
           required: false
@@ -24205,15 +24220,6 @@ paths:
           schema:
             type: "number"
             format: "double"
-          explode: true
-        - name: expand
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              $ref: '#/components/schemas/Expansion'
           explode: true
       responses:
         "200":
@@ -24391,11 +24397,12 @@ paths:
     get:
       security:
         - oauth_2_0:
-            - "view_shopping_lists:{projectKey}"
-            - "view_shopping_lists:{projectKey}:{storeKey}"
+            - "manage_my_shopping_lists:{projectKey}:{storeKey}"
+            - "manage_my_shopping_lists:{projectKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsByIDGet
       description: |-
-        Gets a shopping list by ID.
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
           in: query
@@ -24543,9 +24550,12 @@ paths:
     post:
       security:
         - oauth_2_0:
-            - "manage_shopping_lists:{projectKey}"
-            - "manage_shopping_lists:{projectKey}:{storeKey}"
+            - "manage_my_shopping_lists:{projectKey}"
+            - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsByIDPost
+      description: |-
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
           in: query
@@ -24721,10 +24731,22 @@ paths:
     delete:
       security:
         - oauth_2_0:
-            - "manage_shopping_lists:{projectKey}"
-            - "manage_shopping_lists:{projectKey}:{storeKey}"
+            - "manage_my_shopping_lists:{projectKey}"
+            - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsByIDDelete
+      description: |-
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
         - name: dataErasure
           in: query
           required: false
@@ -24739,15 +24761,6 @@ paths:
           schema:
             type: "number"
             format: "double"
-          explode: true
-        - name: expand
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              $ref: '#/components/schemas/Expansion'
           explode: true
       responses:
         "200":
@@ -27534,6 +27547,8 @@ paths:
             - "manage_shopping_lists:{projectKey}"
             - "manage_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsPost
+      description: |-
+        When using this endpoint, the `store` field of a ShoppingList is always set to the Store specified in the path parameter.
       parameters:
         - name: expand
           in: query
@@ -27708,7 +27723,8 @@ paths:
             - "view_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsKeyByKeyGet
       description: |-
-        Gets a shopping list by Key.
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
           in: query
@@ -27860,7 +27876,8 @@ paths:
             - "manage_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsKeyByKeyPost
       description: |-
-        Update a shopping list found by its Key.
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
           in: query
@@ -28039,7 +28056,19 @@ paths:
             - "manage_shopping_lists:{projectKey}"
             - "manage_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsKeyByKeyDelete
+      description: |-
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
         - name: dataErasure
           in: query
           required: false
@@ -28054,15 +28083,6 @@ paths:
           schema:
             type: "number"
             format: "double"
-          explode: true
-        - name: expand
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              $ref: '#/components/schemas/Expansion'
           explode: true
       responses:
         "200":
@@ -28244,7 +28264,8 @@ paths:
             - "view_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsByIDGet
       description: |-
-        Gets a shopping list by ID.
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
           in: query
@@ -28395,6 +28416,9 @@ paths:
             - "manage_shopping_lists:{projectKey}"
             - "manage_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsByIDPost
+      description: |-
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
           in: query
@@ -28573,7 +28597,19 @@ paths:
             - "manage_shopping_lists:{projectKey}"
             - "manage_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsByIDDelete
+      description: |-
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
         - name: dataErasure
           in: query
           required: false
@@ -28588,15 +28624,6 @@ paths:
           schema:
             type: "number"
             format: "double"
-          explode: true
-        - name: expand
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              $ref: '#/components/schemas/Expansion'
           explode: true
       responses:
         "200":
@@ -38825,7 +38852,7 @@ paths:
 
   /{projectKey}/me/shopping-lists:
     description: |-
-      The My Shopping Lists endpoint creates and provides access to shopping lists scoped to a specific user.
+      The My Shopping Lists endpoint creates and provides access to Shopping Lists scoped to a specific user.
     parameters:
       - name: projectKey
         in: path
@@ -39531,14 +39558,6 @@ paths:
             - "manage_my_shopping_lists:{projectKey}"
       operationId: ByProjectKeyMeShoppingListsKeyByKeyDelete
       parameters:
-        - name: version
-          in: query
-          required: true
-          style: form
-          schema:
-            type: "number"
-            format: "double"
-          explode: true
         - name: expand
           in: query
           required: false
@@ -39547,6 +39566,14 @@ paths:
             type: "array"
             items:
               $ref: '#/components/schemas/Expansion'
+          explode: true
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
           explode: true
       responses:
         "200":
@@ -40048,14 +40075,6 @@ paths:
             - "manage_my_shopping_lists:{projectKey}"
       operationId: ByProjectKeyMeShoppingListsByIDDelete
       parameters:
-        - name: version
-          in: query
-          required: true
-          style: form
-          schema:
-            type: "number"
-            format: "double"
-          explode: true
         - name: expand
           in: query
           required: false
@@ -40064,6 +40083,14 @@ paths:
             type: "array"
             items:
               $ref: '#/components/schemas/Expansion'
+          explode: true
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
           explode: true
       responses:
         "200":
@@ -61366,8 +61393,6 @@ paths:
         - oauth_2_0:
             - "view_shopping_lists:{projectKey}"
       operationId: ByProjectKeyShoppingListsKeyByKeyGet
-      description: |-
-        Gets a shopping list by Key.
       parameters:
         - name: expand
           in: query
@@ -61517,8 +61542,6 @@ paths:
         - oauth_2_0:
             - "manage_shopping_lists:{projectKey}"
       operationId: ByProjectKeyShoppingListsKeyByKeyPost
-      description: |-
-        Update a shopping list found by its Key.
       parameters:
         - name: expand
           in: query
@@ -61697,6 +61720,15 @@ paths:
             - "manage_shopping_lists:{projectKey}"
       operationId: ByProjectKeyShoppingListsKeyByKeyDelete
       parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
         - name: dataErasure
           in: query
           required: false
@@ -61711,15 +61743,6 @@ paths:
           schema:
             type: "number"
             format: "double"
-          explode: true
-        - name: expand
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              $ref: '#/components/schemas/Expansion'
           explode: true
       responses:
         "200":
@@ -61894,8 +61917,6 @@ paths:
         - oauth_2_0:
             - "view_shopping_lists:{projectKey}"
       operationId: ByProjectKeyShoppingListsByIDGet
-      description: |-
-        Gets a shopping list by ID.
       parameters:
         - name: expand
           in: query
@@ -62223,6 +62244,15 @@ paths:
             - "manage_shopping_lists:{projectKey}"
       operationId: ByProjectKeyShoppingListsByIDDelete
       parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
         - name: dataErasure
           in: query
           required: false
@@ -62237,15 +62267,6 @@ paths:
           schema:
             type: "number"
             format: "double"
-          explode: true
-        - name: expand
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              $ref: '#/components/schemas/Expansion'
           explode: true
       responses:
         "200":
@@ -97329,67 +97350,67 @@ components:
             lastModifiedAt:
               type: "string"
               format: "datetime"
-            lastModifiedBy:
-              $ref: '#/components/schemas/LastModifiedBy'
-            createdBy:
-              $ref: '#/components/schemas/CreatedBy'
-            custom:
-              $ref: '#/components/schemas/CustomFields'
-            customer:
-              $ref: '#/components/schemas/CustomerReference'
-            deleteDaysAfterLastModification:
-              type: "integer"
-              format: "int64"
-            description:
+            name:
               $ref: '#/components/schemas/LocalizedString'
             key:
               type: "string"
+            customer:
+              $ref: '#/components/schemas/CustomerReference'
+            slug:
+              $ref: '#/components/schemas/LocalizedString'
+            description:
+              $ref: '#/components/schemas/LocalizedString'
             lineItems:
               type: "array"
               items:
                 $ref: '#/components/schemas/ShoppingListLineItem'
-            name:
-              $ref: '#/components/schemas/LocalizedString'
-            slug:
-              $ref: '#/components/schemas/LocalizedString'
             textLineItems:
               type: "array"
               items:
                 $ref: '#/components/schemas/TextLineItem'
+            deleteDaysAfterLastModification:
+              type: "integer"
+              format: "int64"
             anonymousId:
               type: "string"
             store:
               $ref: '#/components/schemas/StoreKeyReference'
+            custom:
+              $ref: '#/components/schemas/CustomFields'
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
     ShoppingListDraft:
       type: "object"
       properties:
-        custom:
-          $ref: '#/components/schemas/CustomFieldsDraft'
-        customer:
-          $ref: '#/components/schemas/CustomerResourceIdentifier'
-        deleteDaysAfterLastModification:
-          type: "integer"
-          format: "int64"
-        description:
-          $ref: '#/components/schemas/LocalizedString'
-        key:
-          type: "string"
-        lineItems:
-          type: "array"
-          items:
-            $ref: '#/components/schemas/ShoppingListLineItemDraft'
         name:
           $ref: '#/components/schemas/LocalizedString'
         slug:
           $ref: '#/components/schemas/LocalizedString'
+        customer:
+          $ref: '#/components/schemas/CustomerResourceIdentifier'
+        key:
+          type: "string"
+        description:
+          $ref: '#/components/schemas/LocalizedString'
+        anonymousId:
+          type: "string"
+        deleteDaysAfterLastModification:
+          type: "integer"
+          format: "int64"
+        lineItems:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ShoppingListLineItemDraft'
         textLineItems:
           type: "array"
           items:
             $ref: '#/components/schemas/TextLineItemDraft'
-        anonymousId:
-          type: "string"
         store:
           $ref: '#/components/schemas/StoreResourceIdentifier'
+        custom:
+          $ref: '#/components/schemas/CustomFieldsDraft'
     ShoppingListLineItem:
       type: "object"
       properties:
@@ -97407,34 +97428,34 @@ components:
           $ref: '#/components/schemas/LocalizedString'
         productId:
           type: "string"
-        productSlug:
-          $ref: '#/components/schemas/LocalizedString'
         productType:
           $ref: '#/components/schemas/ProductTypeReference'
         quantity:
           type: "integer"
-          format: "int32"
-        variant:
-          $ref: '#/components/schemas/ProductVariant'
+          format: "int64"
         variantId:
           type: "integer"
           format: "int64"
+        variant:
+          $ref: '#/components/schemas/ProductVariant'
+        productSlug:
+          $ref: '#/components/schemas/LocalizedString'
     ShoppingListLineItemDraft:
       type: "object"
       properties:
+        productId:
+          type: "string"
+        variantId:
+          type: "integer"
+          format: "int64"
+        sku:
+          type: "string"
         addedAt:
           type: "string"
           format: "datetime"
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
-        sku:
-          type: "string"
-        productId:
-          type: "string"
         quantity:
-          type: "integer"
-          format: "int32"
-        variantId:
           type: "integer"
           format: "int64"
     ShoppingListPagedQueryResponse:
@@ -97536,7 +97557,7 @@ components:
           $ref: '#/components/schemas/LocalizedString'
         quantity:
           type: "integer"
-          format: "int32"
+          format: "int64"
     TextLineItemDraft:
       type: "object"
       properties:
@@ -97551,7 +97572,7 @@ components:
           $ref: '#/components/schemas/LocalizedString'
         quantity:
           type: "integer"
-          format: "int32"
+          format: "int64"
     ShoppingListAddLineItemAction:
       allOf:
         - $ref: '#/components/schemas/ShoppingListUpdateAction'
