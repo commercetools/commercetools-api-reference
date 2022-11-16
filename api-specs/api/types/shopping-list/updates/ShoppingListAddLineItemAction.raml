@@ -1,23 +1,41 @@
 #%RAML 1.0 DataType
 (package): ShoppingList
-(docs-uri): https://docs.commercetools.com/http-api-projects-shoppingLists.html#add-lineitem
+(docs-uri): https://docs.commercetools.com/api/projects/shoppingLists#add-shoppinglistlineitem
 type: ShoppingListUpdateAction
 displayName: ShoppingListAddLineItemAction
 discriminatorValue: addLineItem
+description: |
+  The [ProductVariant](ctp:api:type:ProductVariant) to be included in the ShoppingListLineItem must be specified using the `productID` and `variantID`, or by the `sku`.
+  If the ShoppingList already contains a ShoppingListLineItem for the same Product Variant with the same Custom Fields, then only the quantity of the existing ShoppingListLineItem is increased.
+  A ShoppingListLineItem with an empty `variantId` is not considered the same as a ShoppingListLineItem with a `variantId` currently referring to the Master Variant.
 example: !include ../../../examples/ShoppingList/ShoppingListAddLineItemAction.json
 (java-extends): 'com.commercetools.api.models.CustomizableDraft<ShoppingListAddLineItemAction>'
 properties:
   sku?:
     type: string
+    description: |
+      `sku` of the [ProductVariant](ctp:api:type:ProductVariant).
   productId?:
     type: string
+    description: |
+      Unique identifier of a [Product](ctp:api:type:Product).
   variantId?:
     type: number
     format: int64
+    description: |
+      `id` of the [ProductVariant](ctp:api:type:ProductVariant). If not set, the ShoppingListLineItem refers to the Master Variant.
   quantity?:
     type: number
     format: int64
+    default: 1
+    minimum: 1
+    description: |
+      Number of Products in the ShoppingListLineItem.
   addedAt?:
     type: datetime
+    description: |
+      Date and time the TextLineItem is added to the [ShoppingList](ctp:api:type:ShoppingList). If not set, the current date and time (UTC) is used.
   custom?:
     type: CustomFieldsDraft
+    description: |
+      Custom Fields defined for the ShoppingListLineItem.

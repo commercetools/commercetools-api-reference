@@ -1,24 +1,24 @@
 #%RAML 1.0 DataType
 (package): ShoppingList
-(docs-uri): https://docs.commercetools.com/http-api-projects-shoppingLists.html#shoppingListDraft
+(docs-uri): https://docs.commercetools.com/api/projects/shoppingLists#shoppinglistdraft
 type: object
 displayName: ShoppingListDraft
+example: !include ../../examples/shopping-list-create.example.json
 properties:
-  custom?:
-    type: CustomFieldsDraft
-    description: The custom fields.
+  name:
+    type: LocalizedString
+    description: |
+      Name of the ShoppingList.
+  slug?:
+    type: LocalizedString
+    description: |-
+      Human-readable identifiers usually used as deep-link URL to the related ShoppingList.
+      Each slug is unique across a Project, but a ShoppingList can have the same slug for different languages.
+      The slug must match the pattern `[a-zA-Z0-9_-]{2,256}`.
   customer?:
     type: CustomerResourceIdentifier
-    description: ''
-  deleteDaysAfterLastModification?:
-    type: number
-    format: int64
-    description:
-      The shopping list will be deleted automatically if it hasn't been modified
-      for the specified amount of days.
-  description?:
-    type: LocalizedString
-    description: ''
+    description: |
+      The [Customer](ctp:api:type:Customer) the ShoppingList should be associated to.
   key?:
     type: string
     description: |
@@ -26,26 +26,31 @@ properties:
     pattern: ^[A-Za-z0-9_-]+$
     minLength: 2
     maxLength: 256
-  lineItems?:
-    type: ShoppingListLineItemDraft[]
-    description: ''
-  name:
+  description?:
     type: LocalizedString
-    description: ''
-  slug?:
-    type: LocalizedString
-    description: |-
-      Human-readable identifiers usually used as deep-link URL to the related shopping list.
-      Each slug is unique across a project, but a shopping list can have the same slug for different languages.
-      The slug must match the pattern [a-zA-Z0-9_-]{2,256}.
-  textLineItems?:
-    type: TextLineItemDraft[]
-    description: ''
+    description: |
+      Description of the ShoppingList.
   anonymousId?:
     type: string
-    description:
-      Identifies shopping lists belonging to an anonymous session (the customer
-      has not signed up/in yet).
+    description: Identifies ShoppingLists belonging to an [anonymous session](/../api/authorization#tokens-for-anonymous-sessions).
+  deleteDaysAfterLastModification?:
+    type: number
+    format: int64
+    description: |
+      Number of days after which the ShoppingList will be automatically deleted if it has not been modified. If not set, the [default value](ctp:api:type:ShoppingListsConfiguration) configured in the [Project](ctp:api:type:Project) is used.
+    minimum: 1
+  lineItems?:
+    type: ShoppingListLineItemDraft[]
+    description: |
+      Line Items (containing Products) to add to the ShoppingList.
+  textLineItems?:
+    type: TextLineItemDraft[]
+    description: |
+      Line Items (containing text values) to add to the ShoppingList.
   store?:
     type: StoreResourceIdentifier
-    description: ''
+    description: |
+      Assigns the new ShoppingList to the [Store](ctp:api:type:Store).
+  custom?:
+    type: CustomFieldsDraft
+    description: Custom Fields defined for the ShoppingList.

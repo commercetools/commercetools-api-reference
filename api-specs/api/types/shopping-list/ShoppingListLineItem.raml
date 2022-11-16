@@ -3,29 +3,64 @@
 type: object
 displayName: ShoppingListLineItem
 (java-extends): 'com.commercetools.api.models.Customizable<ShoppingListLineItem>'
+example: !include ../../examples/ShoppingList/ShoppingListLineItem.json
+description: |
+  ShoppingListLineItems are Line Items that contain references to [ProductVariants](ctp:api:type:ProductVariant) in a [Product](ctp:api:type:Product).
+
+  In addition to standard [Reference Expansion](/general-concepts#reference-expansion), a ShoppingListLineItem offers expansion on `productSlug` and `variant`, defined with the query parameter `expand`.
 properties:
   addedAt:
     type: datetime
+    description: |
+      Date and time (UTC) the ShoppingListLineItem was added to the ShoppingList.
   custom?:
     type: CustomFields
+    description: |
+      Custom Fields of the ShoppingListLineItem.
   deactivatedAt?:
     type: datetime
+    description: |
+      If the Product or Product Variant is deleted, `deactivatedAt` is the date and time (UTC) of deletion.
+
+      This data is updated in an [eventual consistent manner](/general-concepts#eventual-consistency) when the Product Variant cannot be ordered anymore.
   id:
     type: string
     description: Unique identifier of the ShoppingListLineItem.
   name:
     type: LocalizedString
+    description: |
+      Name of the Product.
+
+      This data is updated in an [eventual consistent manner](/general-concepts#eventual-consistency) when the Product's name changes.
   productId:
     type: string
-  productSlug?:
-    type: LocalizedString
+    description: |
+      Unique identifier of a [Product](ctp:api:type:Product).
   productType:
     type: ProductTypeReference
+    description: |
+      The Product Type defining the Attributes of the [Product](ctp:api:type:Product).
   quantity:
     type: number
-    format: int32
-  variant?:
-    type: ProductVariant
+    format: int64
+    description: |
+      Number of Products in the ShoppingListLineItem.
   variantId?:
     type: number
     format: int64
+    description: |
+      `id` of the [ProductVariant](ctp:api:type:ProductVariant) the ShoppingListLineItem refers to. If not set, the ShoppingListLineItem refers to the Master Variant.
+  variant?:
+    type: ProductVariant
+    description: |
+      Data of the [ProductVariant](ctp:api:type:ProductVariant).
+      Returned when expanded using `expand=lineItems[*].variant`.
+
+      *Limitation: `expand=lineItems[0].variant` is not supported.*
+  productSlug?:
+    type: LocalizedString
+    description: |
+      Slug of the current [ProductData](ctp:api:type:ProductData).
+      Only returned when expanded using `expand=lineItems[*].productSlug`.
+
+      *Limitation: `expand=lineItems[0].productSlug` is not supported.*
