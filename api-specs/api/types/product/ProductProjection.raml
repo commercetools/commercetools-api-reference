@@ -1,6 +1,6 @@
 #%RAML 1.0 DataType
 (package): Product
-(docs-uri): https://docs.commercetools.com/http-api-projects-productProjections.html#productprojection
+(docs-uri): https://docs.commercetools.com/projects/productProjections#productprojection
 displayName: ProductProjection
 type: BaseResource
 (java-extends): 'ProductDataLike, com.commercetools.api.models.DomainResource<ProductProjection>'
@@ -8,62 +8,100 @@ properties:
   id:
     (identifier): true
     type: string
-    description: The unique ID of the Product.
+    description: |
+      Unique identifier of the [Product](ctp:api:type:Product).
   version:
     type: number
     format: int64
-    description: The current version of the Product.
+    description: |
+      Current version of the [Product](ctp:api:type:Product).
   key?:
     type: string
-    description: User-specific unique identifier of the Product.
+    description: |
+      User-defined unique identifier of the [Product](ctp:api:type:Product).
+    pattern: ^[A-Za-z0-9_-]+$
+    minLength: 2
+    maxLength: 256
+  createdAt:
+    type: datetime
+    description: |
+      Date and time (UTC) the ProductProjection was initially created.
+  lastModifiedAt:
+    type: datetime
+    description: |
+      Date and time (UTC) the ProductProjection was last updated.
   productType:
-    description: ''
     type: ProductTypeReference
+    description: |
+      The [ProductType](ctp:api:type:ProductType) defining the Attributes of the [Product](ctp:api:type:Product).
   name:
     type: LocalizedString
-    description: ''
+    description: |
+      Name of the [Product](ctp:api:type:Product).
   description?:
     type: LocalizedString
-    description: ''
+    description: |
+      Description of the [Product](ctp:api:type:Product).
   slug:
     type: LocalizedString
-    description: ''
+    description: |
+      User-defined identifier used in a deep-link URL for the [Product](ctp:api:type:Product).
+      Must be unique across a Project, but can be the same for Products in different locales.
+      Matches the pattern `[a-zA-Z0-9_\-]{2,256}`.
+      For [good performance](/../api/predicates/query#performance-considerations), indexes are provided for the first 15 `languages` set in the [Project](ctp:api:type:Project).
   categories:
-    description: References to categories the product is in.
     type: CategoryReference[]
+    description: |
+      [Categories](ctp:api:type:Category) assigned to the [Product](ctp:api:type:Product).
   categoryOrderHints?:
     type: CategoryOrderHints
-    description: ''
+    description: |
+      Order of [Product](ctp:api:type:Product) in [Categories](ctp:api:type:Category).
   metaTitle?:
     type: LocalizedString
-    description: ''
+    description: |
+      Title of the [Product](ctp:api:type:Product) displayed in search results.
   metaDescription?:
     type: LocalizedString
-    description: ''
+    description: |
+      Description of the [Product](ctp:api:type:Product) displayed in search results below the meta title.
   metaKeywords?:
     type: LocalizedString
-    description: ''
+    description: |
+      Keywords that give additional information about the [Product](ctp:api:type:Product) to search engines.
   searchKeywords?:
     type: SearchKeywords
-    description: ''
+    description: |
+      Used by [Product Suggestions](/../api/projects/products-suggestions), but is also considered for a [full text search](ctp:api:type:FullTextSearch).
   hasStagedChanges?:
     type: boolean
-    description: ''
+    description: |
+      `true` if the staged data is different from the current data.
   published?:
     type: boolean
-    description: ''
+    description: |
+      `true` if the [Product](ctp:api:type:Product) is [published](ctp:api:type:CurrentStaged).
   masterVariant:
     type: ProductVariant
-    description: ''
+    description: |
+      The Master Variant of the [Product](ctp:api:type:Product).
   variants:
     type: ProductVariant[]
-    description: ''
+    description: |
+      Additional Product Variants.
   taxCategory?:
-    description: ''
     type: TaxCategoryReference
+    description: |
+      The [TaxCategory](ctp:api:type:TaxCategory) of the [Product](ctp:api:type:Product).
   state?:
-    description: ''
     type: StateReference
+    description: |
+      [State](ctp:api:type:State) of the [Product](ctp:api:type:Product).
   reviewRatingStatistics?:
+    description: |
+      Review statistics of the [Product](ctp:api:type:Product).
     type: ReviewRatingStatistics
-    description: Statistics about the review ratings taken into account for this product.
+  priceMode?:
+    type: ProductPriceModeEnum
+    description: |
+      Indicates whether the Prices of the Product Projection are [embedded](ctp:api:type:Price) or [standalone](ctp:api:type:StandalonePrice). [Projecting Prices](#prices) only works with `Embedded`, there is currently no support for `Standalone`.
