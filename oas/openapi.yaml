@@ -35409,6 +35409,8 @@ paths:
         - oauth_2_0:
             - "manage_my_payments:{projectKey}"
       operationId: ByProjectKeyMePaymentsPost
+      description: |-
+        Creating a Payment produces the [PaymentCreated](ctp:api:type:PaymentCreatedMessage) Message.
       parameters:
         - name: expand
           in: query
@@ -35725,6 +35727,8 @@ paths:
         - oauth_2_0:
             - "manage_my_payments:{projectKey}"
       operationId: ByProjectKeyMePaymentsKeyByKeyPost
+      description: |-
+        This endpoint can only update a Payment when it has no [Transactions](ctp:api:type:Transaction).
       parameters:
         - name: expand
           in: query
@@ -35902,6 +35906,8 @@ paths:
         - oauth_2_0:
             - "manage_my_payments:{projectKey}"
       operationId: ByProjectKeyMePaymentsKeyByKeyDelete
+      description: |-
+        This endpoint can only delete a Payment when it has no [Transactions](ctp:api:type:Transaction).
       parameters:
         - name: version
           in: query
@@ -36242,6 +36248,8 @@ paths:
         - oauth_2_0:
             - "manage_my_payments:{projectKey}"
       operationId: ByProjectKeyMePaymentsByIDPost
+      description: |-
+        This endpoint can only update a Payment when it has no [Transactions](ctp:api:type:Transaction).
       parameters:
         - name: expand
           in: query
@@ -36419,6 +36427,8 @@ paths:
         - oauth_2_0:
             - "manage_my_payments:{projectKey}"
       operationId: ByProjectKeyMePaymentsByIDDelete
+      description: |-
+        This endpoint can only delete a Payment when it has no [Transactions](ctp:api:type:Transaction).
       parameters:
         - name: version
           in: query
@@ -44607,7 +44617,7 @@ paths:
             - "manage_payments:{projectKey}"
       operationId: ByProjectKeyPaymentsPost
       description: |-
-        To create a payment object a payment draft object has to be given with the request.
+        Creating a Payment produces the [PaymentCreated](ctp:api:type:PaymentCreatedMessage) Message.
       parameters:
         - name: expand
           in: query
@@ -81689,7 +81699,7 @@ components:
         anonymousId:
           type: "string"
         amountPlanned:
-          $ref: '#/components/schemas/TypedMoney'
+          $ref: '#/components/schemas/CentPrecisionMoney'
         paymentMethodInfo:
           $ref: '#/components/schemas/PaymentMethodInfo'
         transactions:
@@ -92985,7 +92995,7 @@ components:
             interfaceId:
               type: "string"
             amountPlanned:
-              $ref: '#/components/schemas/TypedMoney'
+              $ref: '#/components/schemas/CentPrecisionMoney'
             amountAuthorized:
               $ref: '#/components/schemas/TypedMoney'
             authorizedUntil:
@@ -93199,7 +93209,13 @@ components:
         - Success
         - Failure
       x-annotation-package: "Payment"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-payments.html#transactionstate"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/payments#transactionstate"
+      x-annotation-enumDescriptions:
+        Initial: "Initial State. The payment service has not accepted the Transaction yet.n"
+        Pending: "The payment service has accepted the Transaction, but it is not completed
+         yet.n"
+        Success: "The payment service has confirmed the successful completion of the Transation.n"
+        Failure: "Transaction has unrecoverably failed.n"
     TransactionType:
       type: "string"
       enum:
@@ -93209,7 +93225,15 @@ components:
         - Refund
         - Chargeback
       x-annotation-package: "Payment"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-payments.html#transactiontype"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/payments#transactiontype"
+      x-annotation-enumDescriptions:
+        Authorization: "Financially reliable reservation of an amount. Typically does not
+         indicate an actual transfer of money.n"
+        CancelAuthorization: "Explicit cancellation of an authorized amount before its expiry.n"
+        Charge: "Collection of money from the customer. Can use an authorized amount or be
+         directly executed.n"
+        Refund: "Explicit transfer of money back to the customer.n"
+        Chargeback: "Customer-initiated transfer of money back to the customer.n"
     PaymentAddInterfaceInteractionAction:
       allOf:
         - $ref: '#/components/schemas/PaymentUpdateAction'
