@@ -1,6 +1,6 @@
 #%RAML 1.0 DataType
 (package): Me
-(docs-uri): https://docs.commercetools.com/http-api-projects-me-payments#mypayment
+(docs-uri): https://docs.commercetools.com/api/projects/me-payments#mypayment
 type: object
 displayName: MyPayment
 (updateType): MyPaymentUpdate
@@ -10,32 +10,35 @@ properties:
   id:
     (identifier): true
     type: string
-    description: Unique identifier of the MyPayment.
+    description: |
+      Unique identifier of the Payment.
   version:
     type: number
     format: int64
-    description: ''
+    description: |
+      Current version of the Payment.
   customer?:
     type: CustomerReference
-    description: A reference to the customer this payment belongs to.
+    description: |
+      Reference to a [Customer](ctp:api:type:Customer) associated with the Payment. Set automatically with a [password flow token](/../api/authorization#password-flow). Either `customer` or `anonymousId` is present.
   anonymousId?:
     type: string
-    description:
-      Identifies payments belonging to an anonymous session (the customer has
-      not signed up/in yet).
+    description: |
+      [Anonymous session](/../api/authorization#tokens-for-anonymous-sessions) associated with the Payment. Set automatically with a [token for an anonymous session](/../api/authorization#tokens-for-anonymous-sessions). Either `customer` or `anonymousId` is present.
   amountPlanned:
-    type: TypedMoney
-    description: |-
-      How much money this payment intends to receive from the customer.
-      The value usually matches the cart or order gross total.
+    type: CentPrecisionMoney
+    description: |
+      Money value the Payment intends to receive from the customer.
+      The value typically matches the [Cart](ctp:api:type:Cart) or [Order](ctp:api:type:Order) gross total.
   paymentMethodInfo:
     type: PaymentMethodInfo
-    description: ''
+    description: |
+      Information regarding the payment interface (for example, a PSP), and the specific payment method used.
   transactions:
     type: Transaction[]
-    description: |-
-      A list of financial transactions of different TransactionTypes
-      with different TransactionStates.
+    description: |
+      Financial transactions of the Payment. Each Transaction has a [TransactionType](ctp:api:type:TransactionType) and a [TransactionState](ctp:api:type:TransactionState).
   custom?:
     type: CustomFields
-    description: ''
+    description: |
+      Custom Fields defined for the Payment.

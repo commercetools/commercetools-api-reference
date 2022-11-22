@@ -1,6 +1,6 @@
 #%RAML 1.0 DataType
 (package): Payment
-(docs-uri): https://docs.commercetools.com/http-api-projects-payments.html#payment
+(docs-uri): https://docs.commercetools.com/api/projects/payments#payment
 type: BaseResource
 displayName: Payment
 (updateType): PaymentUpdate
@@ -13,78 +13,85 @@ properties:
   version:
     type: number
     format: int64
-    description: ''
+    description: Current version of the Payment.
   createdAt:
     type: datetime
-    description: ''
+    description: Date and time (UTC) the Payment was initially created.
   lastModifiedAt:
     type: datetime
-    description: ''
+    description: Date and time (UTC) the Payment was last updated.
   lastModifiedBy?:
     type: LastModifiedBy
     (beta): true
     description: |
-      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).
   createdBy?:
     type: CreatedBy
     (beta): true
     description: |
-      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).
   customer?:
     type: CustomerReference
-    description: A reference to the customer this payment belongs to.
+    description: |
+      Reference to a [Customer](ctp:api:type:Customer) associated with the Payment.
   anonymousId?:
     type: string
-    description:
-      Identifies payments belonging to an anonymous session (the customer has
-      not signed up/in yet).
+    description: |
+      [Anonymous session](/../api/authorization#tokens-for-anonymous-sessions) associated with the Payment.
   externalId?:
     (deprecated): true
     type: string
+    description: Additional identifier for external systems like Customer Relationship Management (CRM) or Enterprise Resource Planning (ERP).
   interfaceId?:
     type: string
     description: |-
-      The identifier that is used by the interface that manages the payment (usually the PSP).
-      Cannot be changed once it has been set.
-      The combination of this ID and the PaymentMethodInfo `paymentInterface` must be unique.
+      Identifier used by the payment service that processes the Payment (for example, a PSP).
+      The combination of `interfaceId` and the `paymentInterface` field on [PaymentMethodInfo](ctp:api:type:PaymentMethodInfo) must be unique.
   amountPlanned:
-    type: TypedMoney
+    type: CentPrecisionMoney
     description: |-
-      How much money this payment intends to receive from the customer.
-      The value usually matches the cart or order gross total.
+      Money value the Payment intends to receive from the customer.
+      The value typically matches the [Cart](ctp:api:type:Cart) or [Order](ctp:api:type:Order) gross total.
   amountAuthorized?:
     (deprecated): true
     type: TypedMoney
+    description: |
+      Deprecated because its value can be calculated from the total amounts saved in the [Transactions](ctp:api:type:Transaction).
   authorizedUntil?:
     (deprecated): true
     type: string
+    description: |
+      Deprecated because this field is of little practical value, as it is either not reliably known, or the authorization time is fixed for a PSP.
   amountPaid?:
     (deprecated): true
     type: TypedMoney
+    description: |
+      Deprecated because its value can be calculated from the total amounts saved in the [Transactions](ctp:api:type:Transaction).
   amountRefunded?:
     (deprecated): true
     type: TypedMoney
+    description: |
+      Deprecated because its value can be calculated from the total amounts saved in the [Transactions](ctp:api:type:Transaction).
   paymentMethodInfo:
     type: PaymentMethodInfo
-    description: ''
+    description: |
+      Information regarding the payment interface (for example, a PSP), and the specific payment method used.
   paymentStatus:
     type: PaymentStatus
-    description: ''
+    description: |
+      Current status of the Payment.
   transactions:
     type: Transaction[]
-    description:
-      A list of financial transactions of different TransactionTypes with
-      different TransactionStates.
+    description: |
+      Financial transactions of the Payment. Each Transaction has a [TransactionType](ctp:api:type:TransactionType) and a [TransactionState](ctp:api:type:TransactionState).
   interfaceInteractions:
     type: CustomFields[]
     description: |-
-      Interface interactions can be requests sent to the PSP, responses received from the PSP or notifications received from the PSP.
-      Some interactions may result in a transaction.
-      If so, the `interactionId` in the Transaction should be set to match the ID of the PSP for the interaction.
-      Interactions are managed by the PSP integration and are usually neither written nor read by the user facing frontends or other services.
+      Represents information exchange with the payment service, for example, a PSP. An interaction may be a request sent, or a response or notification received from the payment service.
   custom?:
     type: CustomFields
-    description: ''
+    description: |
+      Custom Fields for the Payment.
   key?:
     type: string
     description: |-
