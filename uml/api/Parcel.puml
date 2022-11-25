@@ -1,0 +1,80 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface Parcel [[Parcel.svg]]  {
+    id: String
+    createdAt: DateTime
+    measurements: [[ParcelMeasurements.svg ParcelMeasurements]]
+    trackingData: [[TrackingData.svg TrackingData]]
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+
+
+
+interface Delivery [[Delivery.svg]]  {
+    id: String
+    createdAt: DateTime
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    parcels: [[Parcel.svg List<Parcel>]]
+    address: [[Address.svg Address]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface ParcelAddedToDeliveryMessage [[ParcelAddedToDeliveryMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    delivery: [[Delivery.svg Delivery]]
+    parcel: [[Parcel.svg Parcel]]
+    shippingKey: String
+}
+interface ParcelRemovedFromDeliveryMessage [[ParcelRemovedFromDeliveryMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    deliveryId: String
+    parcel: [[Parcel.svg Parcel]]
+    shippingKey: String
+}
+interface ParcelAddedToDeliveryMessagePayload [[ParcelAddedToDeliveryMessagePayload.svg]]  {
+    type: String
+    delivery: [[Delivery.svg Delivery]]
+    parcel: [[Parcel.svg Parcel]]
+    shippingKey: String
+}
+interface ParcelRemovedFromDeliveryMessagePayload [[ParcelRemovedFromDeliveryMessagePayload.svg]]  {
+    type: String
+    deliveryId: String
+    parcel: [[Parcel.svg Parcel]]
+    shippingKey: String
+}
+
+Parcel --> Delivery #green;text:green : "parcels"
+Parcel --> ParcelAddedToDeliveryMessage #green;text:green : "parcel"
+Parcel --> ParcelRemovedFromDeliveryMessage #green;text:green : "parcel"
+Parcel --> ParcelAddedToDeliveryMessagePayload #green;text:green : "parcel"
+Parcel --> ParcelRemovedFromDeliveryMessagePayload #green;text:green : "parcel"
+@enduml

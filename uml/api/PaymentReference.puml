@@ -1,0 +1,47 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface PaymentReference [[PaymentReference.svg]] extends Reference {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[Payment.svg Payment]]
+}
+interface Reference [[Reference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+}
+
+
+interface PaymentInfo [[PaymentInfo.svg]]  {
+    payments: [[PaymentReference.svg List<PaymentReference>]]
+}
+interface OrderPaymentAddedMessage [[OrderPaymentAddedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    payment: [[PaymentReference.svg PaymentReference]]
+}
+interface OrderPaymentAddedMessagePayload [[OrderPaymentAddedMessagePayload.svg]]  {
+    type: String
+    payment: [[PaymentReference.svg PaymentReference]]
+}
+
+PaymentReference --> PaymentInfo #green;text:green : "payments"
+PaymentReference --> OrderPaymentAddedMessage #green;text:green : "payment"
+PaymentReference --> OrderPaymentAddedMessagePayload #green;text:green : "payment"
+@enduml

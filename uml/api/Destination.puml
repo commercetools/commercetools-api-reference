@@ -1,0 +1,89 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface Destination [[Destination.svg]]  {
+    type: String
+}
+
+
+interface AzureEventGridDestination [[AzureEventGridDestination.svg]]  {
+    type: String
+    uri: String
+    accessKey: String
+}
+interface AzureServiceBusDestination [[AzureServiceBusDestination.svg]]  {
+    type: String
+    connectionString: String
+}
+interface EventBridgeDestination [[EventBridgeDestination.svg]]  {
+    type: String
+    region: String
+    accountId: String
+}
+interface GoogleCloudPubSubDestination [[GoogleCloudPubSubDestination.svg]]  {
+    type: String
+    projectId: String
+    topic: String
+}
+interface IronMqDestination [[IronMqDestination.svg]]  {
+    type: String
+    uri: String
+}
+interface SnsDestination [[SnsDestination.svg]]  {
+    type: String
+    accessKey: String
+    accessSecret: String
+    topicArn: String
+    authenticationMode: [[AwsAuthenticationMode.svg AwsAuthenticationMode]]
+}
+interface SqsDestination [[SqsDestination.svg]]  {
+    type: String
+    accessKey: String
+    accessSecret: String
+    queueUrl: String
+    region: String
+    authenticationMode: [[AwsAuthenticationMode.svg AwsAuthenticationMode]]
+}
+interface Subscription [[Subscription.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    changes: [[ChangeSubscription.svg List<ChangeSubscription>]]
+    destination: [[Destination.svg Destination]]
+    key: String
+    messages: [[MessageSubscription.svg List<MessageSubscription>]]
+    format: [[DeliveryFormat.svg DeliveryFormat]]
+    status: [[SubscriptionHealthStatus.svg SubscriptionHealthStatus]]
+}
+interface SubscriptionDraft [[SubscriptionDraft.svg]]  {
+    changes: [[ChangeSubscription.svg List<ChangeSubscription>]]
+    destination: [[Destination.svg Destination]]
+    key: String
+    messages: [[MessageSubscription.svg List<MessageSubscription>]]
+    format: [[DeliveryFormat.svg DeliveryFormat]]
+}
+interface SubscriptionChangeDestinationAction [[SubscriptionChangeDestinationAction.svg]]  {
+    action: String
+    destination: [[Destination.svg Destination]]
+}
+Destination --> AzureEventGridDestination #blue;text:blue : "type : EventGrid"
+Destination --> AzureServiceBusDestination #blue;text:blue : "type : AzureServiceBus"
+Destination --> EventBridgeDestination #blue;text:blue : "type : EventBridge"
+Destination --> GoogleCloudPubSubDestination #blue;text:blue : "type : GoogleCloudPubSub"
+Destination --> IronMqDestination #blue;text:blue : "type : IronMQ"
+Destination --> SnsDestination #blue;text:blue : "type : SNS"
+Destination --> SqsDestination #blue;text:blue : "type : SQS"
+Destination --> Subscription #green;text:green : "destination"
+Destination --> SubscriptionDraft #green;text:green : "destination"
+Destination --> SubscriptionChangeDestinationAction #green;text:green : "destination"
+@enduml

@@ -1,0 +1,38 @@
+@startuml
+
+hide methods
+enum StagedQuoteState {
+    IN_PROGRESS
+    SENT
+    CLOSED
+}
+interface StagedQuoteStateChangedMessage [[StagedQuoteStateChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    stagedQuoteState: [[StagedQuoteState.svg StagedQuoteState]]
+    oldStagedQuoteState: [[StagedQuoteState.svg StagedQuoteState]]
+}
+interface StagedQuoteStateChangedMessagePayload [[StagedQuoteStateChangedMessagePayload.svg]]  {
+    type: String
+    stagedQuoteState: [[StagedQuoteState.svg StagedQuoteState]]
+    oldStagedQuoteState: [[StagedQuoteState.svg StagedQuoteState]]
+}
+interface StagedQuoteChangeStagedQuoteStateAction [[StagedQuoteChangeStagedQuoteStateAction.svg]]  {
+    action: String
+    stagedQuoteState: [[StagedQuoteState.svg StagedQuoteState]]
+}
+StagedQuoteState --> StagedQuoteStateChangedMessage #green;text:green : "stagedQuoteState"
+StagedQuoteState --> StagedQuoteStateChangedMessage #green;text:green : "oldStagedQuoteState"
+StagedQuoteState --> StagedQuoteStateChangedMessagePayload #green;text:green : "stagedQuoteState"
+StagedQuoteState --> StagedQuoteStateChangedMessagePayload #green;text:green : "oldStagedQuoteState"
+StagedQuoteState --> StagedQuoteChangeStagedQuoteStateAction #green;text:green : "stagedQuoteState"
+@enduml

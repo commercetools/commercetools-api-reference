@@ -1,0 +1,54 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface ExtensionDestination [[ExtensionDestination.svg]]  {
+    type: String
+}
+
+
+interface AWSLambdaDestination [[AWSLambdaDestination.svg]]  {
+    type: String
+    arn: String
+    accessKey: String
+    accessSecret: String
+}
+interface HttpDestination [[HttpDestination.svg]]  {
+    type: String
+    url: String
+    authentication: [[HttpDestinationAuthentication.svg HttpDestinationAuthentication]]
+}
+interface Extension [[Extension.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    destination: [[ExtensionDestination.svg ExtensionDestination]]
+    triggers: [[ExtensionTrigger.svg List<ExtensionTrigger>]]
+    timeoutInMs: Integer
+}
+interface ExtensionDraft [[ExtensionDraft.svg]]  {
+    key: String
+    destination: [[ExtensionDestination.svg ExtensionDestination]]
+    triggers: [[ExtensionTrigger.svg List<ExtensionTrigger>]]
+    timeoutInMs: Integer
+}
+interface ExtensionChangeDestinationAction [[ExtensionChangeDestinationAction.svg]]  {
+    action: String
+    destination: [[ExtensionDestination.svg ExtensionDestination]]
+}
+ExtensionDestination --> AWSLambdaDestination #blue;text:blue : "type : AWSLambda"
+ExtensionDestination --> HttpDestination #blue;text:blue : "type : HTTP"
+ExtensionDestination --> Extension #green;text:green : "destination"
+ExtensionDestination --> ExtensionDraft #green;text:green : "destination"
+ExtensionDestination --> ExtensionChangeDestinationAction #green;text:green : "destination"
+@enduml

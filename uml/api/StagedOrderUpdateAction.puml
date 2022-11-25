@@ -1,0 +1,588 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface StagedOrderUpdateAction [[StagedOrderUpdateAction.svg]]  {
+    action: String
+}
+
+
+interface StagedOrderAddCustomLineItemAction [[StagedOrderAddCustomLineItemAction.svg]]  {
+    action: String
+    money: [[Money.svg Money]]
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    slug: String
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface StagedOrderAddDeliveryAction [[StagedOrderAddDeliveryAction.svg]]  {
+    action: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    address: [[BaseAddress.svg BaseAddress]]
+    parcels: [[ParcelDraft.svg List<ParcelDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface StagedOrderAddDiscountCodeAction [[StagedOrderAddDiscountCodeAction.svg]]  {
+    action: String
+    code: String
+}
+interface StagedOrderAddItemShippingAddressAction [[StagedOrderAddItemShippingAddressAction.svg]]  {
+    action: String
+    address: [[BaseAddress.svg BaseAddress]]
+}
+interface StagedOrderAddLineItemAction [[StagedOrderAddLineItemAction.svg]]  {
+    action: String
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    productId: String
+    variantId: Long
+    sku: String
+    quantity: Long
+    addedAt: DateTime
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface StagedOrderAddParcelToDeliveryAction [[StagedOrderAddParcelToDeliveryAction.svg]]  {
+    action: String
+    deliveryId: String
+    measurements: [[ParcelMeasurements.svg ParcelMeasurements]]
+    trackingData: [[TrackingData.svg TrackingData]]
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+}
+interface StagedOrderAddPaymentAction [[StagedOrderAddPaymentAction.svg]]  {
+    action: String
+    payment: [[PaymentResourceIdentifier.svg PaymentResourceIdentifier]]
+}
+interface StagedOrderAddReturnInfoAction [[StagedOrderAddReturnInfoAction.svg]]  {
+    action: String
+    returnTrackingId: String
+    items: [[ReturnItemDraft.svg List<ReturnItemDraft>]]
+    returnDate: DateTime
+}
+interface StagedOrderAddShoppingListAction [[StagedOrderAddShoppingListAction.svg]]  {
+    action: String
+    shoppingList: [[ShoppingListResourceIdentifier.svg ShoppingListResourceIdentifier]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+}
+interface StagedOrderChangeCustomLineItemMoneyAction [[StagedOrderChangeCustomLineItemMoneyAction.svg]]  {
+    action: String
+    customLineItemId: String
+    money: [[Money.svg Money]]
+}
+interface StagedOrderChangeCustomLineItemQuantityAction [[StagedOrderChangeCustomLineItemQuantityAction.svg]]  {
+    action: String
+    customLineItemId: String
+    quantity: Long
+}
+interface StagedOrderChangeLineItemQuantityAction [[StagedOrderChangeLineItemQuantityAction.svg]]  {
+    action: String
+    lineItemId: String
+    quantity: Long
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+}
+interface StagedOrderChangeOrderStateAction [[StagedOrderChangeOrderStateAction.svg]]  {
+    action: String
+    orderState: [[OrderState.svg OrderState]]
+}
+interface StagedOrderChangePaymentStateAction [[StagedOrderChangePaymentStateAction.svg]]  {
+    action: String
+    paymentState: [[PaymentState.svg PaymentState]]
+}
+interface StagedOrderChangeShipmentStateAction [[StagedOrderChangeShipmentStateAction.svg]]  {
+    action: String
+    shipmentState: [[ShipmentState.svg ShipmentState]]
+}
+interface StagedOrderChangeTaxCalculationModeAction [[StagedOrderChangeTaxCalculationModeAction.svg]]  {
+    action: String
+    taxCalculationMode: [[TaxCalculationMode.svg TaxCalculationMode]]
+}
+interface StagedOrderChangeTaxModeAction [[StagedOrderChangeTaxModeAction.svg]]  {
+    action: String
+    taxMode: [[TaxMode.svg TaxMode]]
+}
+interface StagedOrderChangeTaxRoundingModeAction [[StagedOrderChangeTaxRoundingModeAction.svg]]  {
+    action: String
+    taxRoundingMode: [[RoundingMode.svg RoundingMode]]
+}
+interface StagedOrderImportCustomLineItemStateAction [[StagedOrderImportCustomLineItemStateAction.svg]]  {
+    action: String
+    customLineItemId: String
+    state: [[ItemState.svg List<ItemState>]]
+}
+interface StagedOrderImportLineItemStateAction [[StagedOrderImportLineItemStateAction.svg]]  {
+    action: String
+    lineItemId: String
+    state: [[ItemState.svg List<ItemState>]]
+}
+interface StagedOrderRemoveCustomLineItemAction [[StagedOrderRemoveCustomLineItemAction.svg]]  {
+    action: String
+    customLineItemId: String
+}
+interface StagedOrderRemoveDeliveryAction [[StagedOrderRemoveDeliveryAction.svg]]  {
+    action: String
+    deliveryId: String
+}
+interface StagedOrderRemoveDiscountCodeAction [[StagedOrderRemoveDiscountCodeAction.svg]]  {
+    action: String
+    discountCode: [[DiscountCodeReference.svg DiscountCodeReference]]
+}
+interface StagedOrderRemoveItemShippingAddressAction [[StagedOrderRemoveItemShippingAddressAction.svg]]  {
+    action: String
+    addressKey: String
+}
+interface StagedOrderRemoveLineItemAction [[StagedOrderRemoveLineItemAction.svg]]  {
+    action: String
+    lineItemId: String
+    quantity: Long
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    shippingDetailsToRemove: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface StagedOrderRemoveParcelFromDeliveryAction [[StagedOrderRemoveParcelFromDeliveryAction.svg]]  {
+    action: String
+    parcelId: String
+}
+interface StagedOrderRemovePaymentAction [[StagedOrderRemovePaymentAction.svg]]  {
+    action: String
+    payment: [[PaymentResourceIdentifier.svg PaymentResourceIdentifier]]
+}
+interface StagedOrderSetBillingAddressAction [[StagedOrderSetBillingAddressAction.svg]]  {
+    action: String
+    address: [[BaseAddress.svg BaseAddress]]
+}
+interface StagedOrderSetBillingAddressCustomFieldAction [[StagedOrderSetBillingAddressCustomFieldAction.svg]]  {
+    action: String
+    name: String
+    value: [[Object.svg Object]]
+}
+interface StagedOrderSetBillingAddressCustomTypeAction [[StagedOrderSetBillingAddressCustomTypeAction.svg]]  {
+    action: String
+    type: [[TypeResourceIdentifier.svg TypeResourceIdentifier]]
+    fields: [[FieldContainer.svg FieldContainer]]
+}
+interface StagedOrderSetCountryAction [[StagedOrderSetCountryAction.svg]]  {
+    action: String
+    country: String
+}
+interface StagedOrderSetCustomFieldAction [[StagedOrderSetCustomFieldAction.svg]]  {
+    action: String
+    name: String
+    value: [[Object.svg Object]]
+}
+interface StagedOrderSetCustomLineItemCustomFieldAction [[StagedOrderSetCustomLineItemCustomFieldAction.svg]]  {
+    action: String
+    customLineItemId: String
+    name: String
+    value: [[Object.svg Object]]
+}
+interface StagedOrderSetCustomLineItemCustomTypeAction [[StagedOrderSetCustomLineItemCustomTypeAction.svg]]  {
+    action: String
+    customLineItemId: String
+    type: [[TypeResourceIdentifier.svg TypeResourceIdentifier]]
+    fields: [[FieldContainer.svg FieldContainer]]
+}
+interface StagedOrderSetCustomLineItemShippingDetailsAction [[StagedOrderSetCustomLineItemShippingDetailsAction.svg]]  {
+    action: String
+    customLineItemId: String
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface StagedOrderSetCustomLineItemTaxAmountAction [[StagedOrderSetCustomLineItemTaxAmountAction.svg]]  {
+    action: String
+    customLineItemId: String
+    externalTaxAmount: [[ExternalTaxAmountDraft.svg ExternalTaxAmountDraft]]
+}
+interface StagedOrderSetCustomLineItemTaxRateAction [[StagedOrderSetCustomLineItemTaxRateAction.svg]]  {
+    action: String
+    customLineItemId: String
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+}
+interface StagedOrderSetCustomShippingMethodAction [[StagedOrderSetCustomShippingMethodAction.svg]]  {
+    action: String
+    shippingMethodName: String
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+}
+interface StagedOrderSetCustomTypeAction [[StagedOrderSetCustomTypeAction.svg]]  {
+    action: String
+    type: [[TypeResourceIdentifier.svg TypeResourceIdentifier]]
+    fields: [[FieldContainer.svg FieldContainer]]
+}
+interface StagedOrderSetCustomerEmailAction [[StagedOrderSetCustomerEmailAction.svg]]  {
+    action: String
+    email: String
+}
+interface StagedOrderSetCustomerGroupAction [[StagedOrderSetCustomerGroupAction.svg]]  {
+    action: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+}
+interface StagedOrderSetCustomerIdAction [[StagedOrderSetCustomerIdAction.svg]]  {
+    action: String
+    customerId: String
+}
+interface StagedOrderSetDeliveryAddressAction [[StagedOrderSetDeliveryAddressAction.svg]]  {
+    action: String
+    deliveryId: String
+    address: [[BaseAddress.svg BaseAddress]]
+}
+interface StagedOrderSetDeliveryAddressCustomFieldAction [[StagedOrderSetDeliveryAddressCustomFieldAction.svg]]  {
+    action: String
+    deliveryId: String
+    name: String
+    value: [[Object.svg Object]]
+}
+interface StagedOrderSetDeliveryAddressCustomTypeAction [[StagedOrderSetDeliveryAddressCustomTypeAction.svg]]  {
+    action: String
+    deliveryId: String
+    type: [[TypeResourceIdentifier.svg TypeResourceIdentifier]]
+    fields: [[FieldContainer.svg FieldContainer]]
+}
+interface StagedOrderSetDeliveryCustomFieldAction [[StagedOrderSetDeliveryCustomFieldAction.svg]]  {
+    action: String
+    deliveryId: String
+    name: String
+    value: [[Object.svg Object]]
+}
+interface StagedOrderSetDeliveryCustomTypeAction [[StagedOrderSetDeliveryCustomTypeAction.svg]]  {
+    action: String
+    deliveryId: String
+    type: [[TypeResourceIdentifier.svg TypeResourceIdentifier]]
+    fields: [[FieldContainer.svg FieldContainer]]
+}
+interface StagedOrderSetDeliveryItemsAction [[StagedOrderSetDeliveryItemsAction.svg]]  {
+    action: String
+    deliveryId: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+}
+interface StagedOrderSetItemShippingAddressCustomFieldAction [[StagedOrderSetItemShippingAddressCustomFieldAction.svg]]  {
+    action: String
+    addressKey: String
+    name: String
+    value: [[Object.svg Object]]
+}
+interface StagedOrderSetItemShippingAddressCustomTypeAction [[StagedOrderSetItemShippingAddressCustomTypeAction.svg]]  {
+    action: String
+    addressKey: String
+    type: [[TypeResourceIdentifier.svg TypeResourceIdentifier]]
+    fields: [[FieldContainer.svg FieldContainer]]
+}
+interface StagedOrderSetLineItemCustomFieldAction [[StagedOrderSetLineItemCustomFieldAction.svg]]  {
+    action: String
+    lineItemId: String
+    name: String
+    value: [[Object.svg Object]]
+}
+interface StagedOrderSetLineItemCustomTypeAction [[StagedOrderSetLineItemCustomTypeAction.svg]]  {
+    action: String
+    lineItemId: String
+    type: [[TypeResourceIdentifier.svg TypeResourceIdentifier]]
+    fields: [[FieldContainer.svg FieldContainer]]
+}
+interface StagedOrderSetLineItemDistributionChannelAction [[StagedOrderSetLineItemDistributionChannelAction.svg]]  {
+    action: String
+    lineItemId: String
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+}
+interface StagedOrderSetLineItemPriceAction [[StagedOrderSetLineItemPriceAction.svg]]  {
+    action: String
+    lineItemId: String
+    externalPrice: [[Money.svg Money]]
+}
+interface StagedOrderSetLineItemShippingDetailsAction [[StagedOrderSetLineItemShippingDetailsAction.svg]]  {
+    action: String
+    lineItemId: String
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface StagedOrderSetLineItemTaxAmountAction [[StagedOrderSetLineItemTaxAmountAction.svg]]  {
+    action: String
+    lineItemId: String
+    externalTaxAmount: [[ExternalTaxAmountDraft.svg ExternalTaxAmountDraft]]
+    shippingKey: String
+}
+interface StagedOrderSetLineItemTaxRateAction [[StagedOrderSetLineItemTaxRateAction.svg]]  {
+    action: String
+    lineItemId: String
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingKey: String
+}
+interface StagedOrderSetLineItemTotalPriceAction [[StagedOrderSetLineItemTotalPriceAction.svg]]  {
+    action: String
+    lineItemId: String
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+}
+interface StagedOrderSetLocaleAction [[StagedOrderSetLocaleAction.svg]]  {
+    action: String
+    locale: String
+}
+interface StagedOrderSetOrderNumberAction [[StagedOrderSetOrderNumberAction.svg]]  {
+    action: String
+    orderNumber: String
+}
+interface StagedOrderSetOrderTotalTaxAction [[StagedOrderSetOrderTotalTaxAction.svg]]  {
+    action: String
+    externalTotalGross: [[Money.svg Money]]
+    externalTaxPortions: [[TaxPortionDraft.svg List<TaxPortionDraft>]]
+}
+interface StagedOrderSetParcelCustomFieldAction [[StagedOrderSetParcelCustomFieldAction.svg]]  {
+    action: String
+    parcelId: String
+    name: String
+    value: [[Object.svg Object]]
+}
+interface StagedOrderSetParcelCustomTypeAction [[StagedOrderSetParcelCustomTypeAction.svg]]  {
+    action: String
+    parcelId: String
+    type: [[TypeResourceIdentifier.svg TypeResourceIdentifier]]
+    fields: [[FieldContainer.svg FieldContainer]]
+}
+interface StagedOrderSetParcelItemsAction [[StagedOrderSetParcelItemsAction.svg]]  {
+    action: String
+    parcelId: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+}
+interface StagedOrderSetParcelMeasurementsAction [[StagedOrderSetParcelMeasurementsAction.svg]]  {
+    action: String
+    parcelId: String
+    measurements: [[ParcelMeasurements.svg ParcelMeasurements]]
+}
+interface StagedOrderSetParcelTrackingDataAction [[StagedOrderSetParcelTrackingDataAction.svg]]  {
+    action: String
+    parcelId: String
+    trackingData: [[TrackingData.svg TrackingData]]
+}
+interface StagedOrderSetReturnInfoAction [[StagedOrderSetReturnInfoAction.svg]]  {
+    action: String
+    items: [[ReturnInfoDraft.svg List<ReturnInfoDraft>]]
+}
+interface StagedOrderSetReturnItemCustomFieldAction [[StagedOrderSetReturnItemCustomFieldAction.svg]]  {
+    action: String
+    returnItemId: String
+    name: String
+    value: [[Object.svg Object]]
+}
+interface StagedOrderSetReturnItemCustomTypeAction [[StagedOrderSetReturnItemCustomTypeAction.svg]]  {
+    action: String
+    returnItemId: String
+    type: [[TypeResourceIdentifier.svg TypeResourceIdentifier]]
+    fields: [[FieldContainer.svg FieldContainer]]
+}
+interface StagedOrderSetReturnPaymentStateAction [[StagedOrderSetReturnPaymentStateAction.svg]]  {
+    action: String
+    returnItemId: String
+    paymentState: [[ReturnPaymentState.svg ReturnPaymentState]]
+}
+interface StagedOrderSetReturnShipmentStateAction [[StagedOrderSetReturnShipmentStateAction.svg]]  {
+    action: String
+    returnItemId: String
+    shipmentState: [[ReturnShipmentState.svg ReturnShipmentState]]
+}
+interface StagedOrderSetShippingAddressAction [[StagedOrderSetShippingAddressAction.svg]]  {
+    action: String
+    address: [[BaseAddress.svg BaseAddress]]
+}
+interface StagedOrderSetShippingAddressAndCustomShippingMethodAction [[StagedOrderSetShippingAddressAndCustomShippingMethodAction.svg]]  {
+    action: String
+    address: [[BaseAddress.svg BaseAddress]]
+    shippingMethodName: String
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+}
+interface StagedOrderSetShippingAddressAndShippingMethodAction [[StagedOrderSetShippingAddressAndShippingMethodAction.svg]]  {
+    action: String
+    address: [[BaseAddress.svg BaseAddress]]
+    shippingMethod: [[ShippingMethodResourceIdentifier.svg ShippingMethodResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+}
+interface StagedOrderSetShippingAddressCustomFieldAction [[StagedOrderSetShippingAddressCustomFieldAction.svg]]  {
+    action: String
+    name: String
+    value: [[Object.svg Object]]
+}
+interface StagedOrderSetShippingAddressCustomTypeAction [[StagedOrderSetShippingAddressCustomTypeAction.svg]]  {
+    action: String
+    type: [[TypeResourceIdentifier.svg TypeResourceIdentifier]]
+    fields: [[FieldContainer.svg FieldContainer]]
+}
+interface StagedOrderSetShippingMethodAction [[StagedOrderSetShippingMethodAction.svg]]  {
+    action: String
+    shippingMethod: [[ShippingMethodResourceIdentifier.svg ShippingMethodResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+}
+interface StagedOrderSetShippingMethodTaxAmountAction [[StagedOrderSetShippingMethodTaxAmountAction.svg]]  {
+    action: String
+    externalTaxAmount: [[ExternalTaxAmountDraft.svg ExternalTaxAmountDraft]]
+}
+interface StagedOrderSetShippingMethodTaxRateAction [[StagedOrderSetShippingMethodTaxRateAction.svg]]  {
+    action: String
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+}
+interface StagedOrderSetShippingRateInputAction [[StagedOrderSetShippingRateInputAction.svg]]  {
+    action: String
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+}
+interface StagedOrderTransitionCustomLineItemStateAction [[StagedOrderTransitionCustomLineItemStateAction.svg]]  {
+    action: String
+    customLineItemId: String
+    quantity: Long
+    fromState: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    toState: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    actualTransitionDate: DateTime
+}
+interface StagedOrderTransitionLineItemStateAction [[StagedOrderTransitionLineItemStateAction.svg]]  {
+    action: String
+    lineItemId: String
+    quantity: Long
+    fromState: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    toState: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    actualTransitionDate: DateTime
+}
+interface StagedOrderTransitionStateAction [[StagedOrderTransitionStateAction.svg]]  {
+    action: String
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    force: Boolean
+}
+interface StagedOrderUpdateItemShippingAddressAction [[StagedOrderUpdateItemShippingAddressAction.svg]]  {
+    action: String
+    address: [[BaseAddress.svg BaseAddress]]
+}
+interface StagedOrderUpdateSyncInfoAction [[StagedOrderUpdateSyncInfoAction.svg]]  {
+    action: String
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    externalId: String
+    syncedAt: DateTime
+}
+interface OrderEdit [[OrderEdit.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    resource: [[OrderReference.svg OrderReference]]
+    stagedActions: [[StagedOrderUpdateAction.svg List<StagedOrderUpdateAction>]]
+    custom: [[CustomFields.svg CustomFields]]
+    result: [[OrderEditResult.svg OrderEditResult]]
+    comment: String
+}
+interface OrderEditDraft [[OrderEditDraft.svg]]  {
+    key: String
+    resource: [[OrderReference.svg OrderReference]]
+    stagedActions: [[StagedOrderUpdateAction.svg List<StagedOrderUpdateAction>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    comment: String
+    dryRun: Boolean
+}
+interface OrderEditSetStagedActionsAction [[OrderEditSetStagedActionsAction.svg]]  {
+    action: String
+    stagedActions: [[StagedOrderUpdateAction.svg List<StagedOrderUpdateAction>]]
+}
+interface OrderEditAddStagedActionAction [[OrderEditAddStagedActionAction.svg]]  {
+    action: String
+    stagedAction: [[StagedOrderUpdateAction.svg StagedOrderUpdateAction]]
+}
+StagedOrderUpdateAction --> StagedOrderAddCustomLineItemAction #blue;text:blue : "action : addCustomLineItem"
+StagedOrderUpdateAction --> StagedOrderAddDeliveryAction #blue;text:blue : "action : addDelivery"
+StagedOrderUpdateAction --> StagedOrderAddDiscountCodeAction #blue;text:blue : "action : addDiscountCode"
+StagedOrderUpdateAction --> StagedOrderAddItemShippingAddressAction #blue;text:blue : "action : addItemShippingAddress"
+StagedOrderUpdateAction --> StagedOrderAddLineItemAction #blue;text:blue : "action : addLineItem"
+StagedOrderUpdateAction --> StagedOrderAddParcelToDeliveryAction #blue;text:blue : "action : addParcelToDelivery"
+StagedOrderUpdateAction --> StagedOrderAddPaymentAction #blue;text:blue : "action : addPayment"
+StagedOrderUpdateAction --> StagedOrderAddReturnInfoAction #blue;text:blue : "action : addReturnInfo"
+StagedOrderUpdateAction --> StagedOrderAddShoppingListAction #blue;text:blue : "action : addShoppingList"
+StagedOrderUpdateAction --> StagedOrderChangeCustomLineItemMoneyAction #blue;text:blue : "action : changeCustomLineItemMoney"
+StagedOrderUpdateAction --> StagedOrderChangeCustomLineItemQuantityAction #blue;text:blue : "action : changeCustomLineItemQuantity"
+StagedOrderUpdateAction --> StagedOrderChangeLineItemQuantityAction #blue;text:blue : "action : changeLineItemQuantity"
+StagedOrderUpdateAction --> StagedOrderChangeOrderStateAction #blue;text:blue : "action : changeOrderState"
+StagedOrderUpdateAction --> StagedOrderChangePaymentStateAction #blue;text:blue : "action : changePaymentState"
+StagedOrderUpdateAction --> StagedOrderChangeShipmentStateAction #blue;text:blue : "action : changeShipmentState"
+StagedOrderUpdateAction --> StagedOrderChangeTaxCalculationModeAction #blue;text:blue : "action : changeTaxCalculationMode"
+StagedOrderUpdateAction --> StagedOrderChangeTaxModeAction #blue;text:blue : "action : changeTaxMode"
+StagedOrderUpdateAction --> StagedOrderChangeTaxRoundingModeAction #blue;text:blue : "action : changeTaxRoundingMode"
+StagedOrderUpdateAction --> StagedOrderImportCustomLineItemStateAction #blue;text:blue : "action : importCustomLineItemState"
+StagedOrderUpdateAction --> StagedOrderImportLineItemStateAction #blue;text:blue : "action : importLineItemState"
+StagedOrderUpdateAction --> StagedOrderRemoveCustomLineItemAction #blue;text:blue : "action : removeCustomLineItem"
+StagedOrderUpdateAction --> StagedOrderRemoveDeliveryAction #blue;text:blue : "action : removeDelivery"
+StagedOrderUpdateAction --> StagedOrderRemoveDiscountCodeAction #blue;text:blue : "action : removeDiscountCode"
+StagedOrderUpdateAction --> StagedOrderRemoveItemShippingAddressAction #blue;text:blue : "action : removeItemShippingAddress"
+StagedOrderUpdateAction --> StagedOrderRemoveLineItemAction #blue;text:blue : "action : removeLineItem"
+StagedOrderUpdateAction --> StagedOrderRemoveParcelFromDeliveryAction #blue;text:blue : "action : removeParcelFromDelivery"
+StagedOrderUpdateAction --> StagedOrderRemovePaymentAction #blue;text:blue : "action : removePayment"
+StagedOrderUpdateAction --> StagedOrderSetBillingAddressAction #blue;text:blue : "action : setBillingAddress"
+StagedOrderUpdateAction --> StagedOrderSetBillingAddressCustomFieldAction #blue;text:blue : "action : setBillingAddressCustomField"
+StagedOrderUpdateAction --> StagedOrderSetBillingAddressCustomTypeAction #blue;text:blue : "action : setBillingAddressCustomType"
+StagedOrderUpdateAction --> StagedOrderSetCountryAction #blue;text:blue : "action : setCountry"
+StagedOrderUpdateAction --> StagedOrderSetCustomFieldAction #blue;text:blue : "action : setCustomField"
+StagedOrderUpdateAction --> StagedOrderSetCustomLineItemCustomFieldAction #blue;text:blue : "action : setCustomLineItemCustomField"
+StagedOrderUpdateAction --> StagedOrderSetCustomLineItemCustomTypeAction #blue;text:blue : "action : setCustomLineItemCustomType"
+StagedOrderUpdateAction --> StagedOrderSetCustomLineItemShippingDetailsAction #blue;text:blue : "action : setCustomLineItemShippingDetails"
+StagedOrderUpdateAction --> StagedOrderSetCustomLineItemTaxAmountAction #blue;text:blue : "action : setCustomLineItemTaxAmount"
+StagedOrderUpdateAction --> StagedOrderSetCustomLineItemTaxRateAction #blue;text:blue : "action : setCustomLineItemTaxRate"
+StagedOrderUpdateAction --> StagedOrderSetCustomShippingMethodAction #blue;text:blue : "action : setCustomShippingMethod"
+StagedOrderUpdateAction --> StagedOrderSetCustomTypeAction #blue;text:blue : "action : setCustomType"
+StagedOrderUpdateAction --> StagedOrderSetCustomerEmailAction #blue;text:blue : "action : setCustomerEmail"
+StagedOrderUpdateAction --> StagedOrderSetCustomerGroupAction #blue;text:blue : "action : setCustomerGroup"
+StagedOrderUpdateAction --> StagedOrderSetCustomerIdAction #blue;text:blue : "action : setCustomerId"
+StagedOrderUpdateAction --> StagedOrderSetDeliveryAddressAction #blue;text:blue : "action : setDeliveryAddress"
+StagedOrderUpdateAction --> StagedOrderSetDeliveryAddressCustomFieldAction #blue;text:blue : "action : setDeliveryAddressCustomField"
+StagedOrderUpdateAction --> StagedOrderSetDeliveryAddressCustomTypeAction #blue;text:blue : "action : setDeliveryAddressCustomType"
+StagedOrderUpdateAction --> StagedOrderSetDeliveryCustomFieldAction #blue;text:blue : "action : setDeliveryCustomField"
+StagedOrderUpdateAction --> StagedOrderSetDeliveryCustomTypeAction #blue;text:blue : "action : setDeliveryCustomType"
+StagedOrderUpdateAction --> StagedOrderSetDeliveryItemsAction #blue;text:blue : "action : setDeliveryItems"
+StagedOrderUpdateAction --> StagedOrderSetItemShippingAddressCustomFieldAction #blue;text:blue : "action : setItemShippingAddressCustomField"
+StagedOrderUpdateAction --> StagedOrderSetItemShippingAddressCustomTypeAction #blue;text:blue : "action : setItemShippingAddressCustomType"
+StagedOrderUpdateAction --> StagedOrderSetLineItemCustomFieldAction #blue;text:blue : "action : setLineItemCustomField"
+StagedOrderUpdateAction --> StagedOrderSetLineItemCustomTypeAction #blue;text:blue : "action : setLineItemCustomType"
+StagedOrderUpdateAction --> StagedOrderSetLineItemDistributionChannelAction #blue;text:blue : "action : setLineItemDistributionChannel"
+StagedOrderUpdateAction --> StagedOrderSetLineItemPriceAction #blue;text:blue : "action : setLineItemPrice"
+StagedOrderUpdateAction --> StagedOrderSetLineItemShippingDetailsAction #blue;text:blue : "action : setLineItemShippingDetails"
+StagedOrderUpdateAction --> StagedOrderSetLineItemTaxAmountAction #blue;text:blue : "action : setLineItemTaxAmount"
+StagedOrderUpdateAction --> StagedOrderSetLineItemTaxRateAction #blue;text:blue : "action : setLineItemTaxRate"
+StagedOrderUpdateAction --> StagedOrderSetLineItemTotalPriceAction #blue;text:blue : "action : setLineItemTotalPrice"
+StagedOrderUpdateAction --> StagedOrderSetLocaleAction #blue;text:blue : "action : setLocale"
+StagedOrderUpdateAction --> StagedOrderSetOrderNumberAction #blue;text:blue : "action : setOrderNumber"
+StagedOrderUpdateAction --> StagedOrderSetOrderTotalTaxAction #blue;text:blue : "action : setOrderTotalTax"
+StagedOrderUpdateAction --> StagedOrderSetParcelCustomFieldAction #blue;text:blue : "action : setParcelCustomField"
+StagedOrderUpdateAction --> StagedOrderSetParcelCustomTypeAction #blue;text:blue : "action : setParcelCustomType"
+StagedOrderUpdateAction --> StagedOrderSetParcelItemsAction #blue;text:blue : "action : setParcelItems"
+StagedOrderUpdateAction --> StagedOrderSetParcelMeasurementsAction #blue;text:blue : "action : setParcelMeasurements"
+StagedOrderUpdateAction --> StagedOrderSetParcelTrackingDataAction #blue;text:blue : "action : setParcelTrackingData"
+StagedOrderUpdateAction --> StagedOrderSetReturnInfoAction #blue;text:blue : "action : setReturnInfo"
+StagedOrderUpdateAction --> StagedOrderSetReturnItemCustomFieldAction #blue;text:blue : "action : setReturnItemCustomField"
+StagedOrderUpdateAction --> StagedOrderSetReturnItemCustomTypeAction #blue;text:blue : "action : setReturnItemCustomType"
+StagedOrderUpdateAction --> StagedOrderSetReturnPaymentStateAction #blue;text:blue : "action : setReturnPaymentState"
+StagedOrderUpdateAction --> StagedOrderSetReturnShipmentStateAction #blue;text:blue : "action : setReturnShipmentState"
+StagedOrderUpdateAction --> StagedOrderSetShippingAddressAction #blue;text:blue : "action : setShippingAddress"
+StagedOrderUpdateAction --> StagedOrderSetShippingAddressAndCustomShippingMethodAction #blue;text:blue : "action : setShippingAddressAndCustomShippingMethod"
+StagedOrderUpdateAction --> StagedOrderSetShippingAddressAndShippingMethodAction #blue;text:blue : "action : setShippingAddressAndShippingMethod"
+StagedOrderUpdateAction --> StagedOrderSetShippingAddressCustomFieldAction #blue;text:blue : "action : setShippingAddressCustomField"
+StagedOrderUpdateAction --> StagedOrderSetShippingAddressCustomTypeAction #blue;text:blue : "action : setShippingAddressCustomType"
+StagedOrderUpdateAction --> StagedOrderSetShippingMethodAction #blue;text:blue : "action : setShippingMethod"
+StagedOrderUpdateAction --> StagedOrderSetShippingMethodTaxAmountAction #blue;text:blue : "action : setShippingMethodTaxAmount"
+StagedOrderUpdateAction --> StagedOrderSetShippingMethodTaxRateAction #blue;text:blue : "action : setShippingMethodTaxRate"
+StagedOrderUpdateAction --> StagedOrderSetShippingRateInputAction #blue;text:blue : "action : setShippingRateInput"
+StagedOrderUpdateAction --> StagedOrderTransitionCustomLineItemStateAction #blue;text:blue : "action : transitionCustomLineItemState"
+StagedOrderUpdateAction --> StagedOrderTransitionLineItemStateAction #blue;text:blue : "action : transitionLineItemState"
+StagedOrderUpdateAction --> StagedOrderTransitionStateAction #blue;text:blue : "action : transitionState"
+StagedOrderUpdateAction --> StagedOrderUpdateItemShippingAddressAction #blue;text:blue : "action : updateItemShippingAddress"
+StagedOrderUpdateAction --> StagedOrderUpdateSyncInfoAction #blue;text:blue : "action : updateSyncInfo"
+StagedOrderUpdateAction --> OrderEdit #green;text:green : "stagedActions"
+StagedOrderUpdateAction --> OrderEditDraft #green;text:green : "stagedActions"
+StagedOrderUpdateAction --> OrderEditSetStagedActionsAction #green;text:green : "stagedActions"
+StagedOrderUpdateAction --> OrderEditAddStagedActionAction #green;text:green : "stagedAction"
+@enduml

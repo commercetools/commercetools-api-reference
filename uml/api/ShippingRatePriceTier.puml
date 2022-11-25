@@ -1,0 +1,51 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface ShippingRatePriceTier [[ShippingRatePriceTier.svg]]  {
+    type: [[ShippingRateTierType.svg ShippingRateTierType]]
+}
+
+
+interface CartClassificationTier [[CartClassificationTier.svg]]  {
+    type: [[ShippingRateTierType.svg ShippingRateTierType]]
+    value: String
+    price: [[Money.svg Money]]
+    isMatching: Boolean
+}
+interface CartScoreTier [[CartScoreTier.svg]]  {
+    type: [[ShippingRateTierType.svg ShippingRateTierType]]
+    score: Integer
+    price: [[Money.svg Money]]
+    priceFunction: [[PriceFunction.svg PriceFunction]]
+    isMatching: Boolean
+}
+interface CartValueTier [[CartValueTier.svg]]  {
+    type: [[ShippingRateTierType.svg ShippingRateTierType]]
+    minimumCentAmount: Long
+    price: [[Money.svg Money]]
+    isMatching: Boolean
+}
+interface ShippingRate [[ShippingRate.svg]]  {
+    price: [[TypedMoney.svg TypedMoney]]
+    freeAbove: [[TypedMoney.svg TypedMoney]]
+    isMatching: Boolean
+    tiers: [[ShippingRatePriceTier.svg List<ShippingRatePriceTier>]]
+}
+interface ShippingRateDraft [[ShippingRateDraft.svg]]  {
+    price: [[Money.svg Money]]
+    freeAbove: [[Money.svg Money]]
+    tiers: [[ShippingRatePriceTier.svg List<ShippingRatePriceTier>]]
+}
+ShippingRatePriceTier --> CartClassificationTier #blue;text:blue : "type : CartClassification"
+ShippingRatePriceTier --> CartScoreTier #blue;text:blue : "type : CartScore"
+ShippingRatePriceTier --> CartValueTier #blue;text:blue : "type : CartValue"
+ShippingRatePriceTier --> ShippingRate #green;text:green : "tiers"
+ShippingRatePriceTier --> ShippingRateDraft #green;text:green : "tiers"
+@enduml

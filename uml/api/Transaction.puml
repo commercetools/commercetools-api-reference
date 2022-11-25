@@ -1,0 +1,79 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface Transaction [[Transaction.svg]]  {
+    id: String
+    timestamp: DateTime
+    type: [[TransactionType.svg TransactionType]]
+    amount: [[TypedMoney.svg TypedMoney]]
+    interactionId: String
+    state: [[TransactionState.svg TransactionState]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+
+
+
+interface MyPayment [[MyPayment.svg]]  {
+    id: String
+    version: Long
+    customer: [[CustomerReference.svg CustomerReference]]
+    anonymousId: String
+    amountPlanned: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    paymentMethodInfo: [[PaymentMethodInfo.svg PaymentMethodInfo]]
+    transactions: [[Transaction.svg List<Transaction>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface Payment [[Payment.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    anonymousId: String
+    externalId: String
+    interfaceId: String
+    amountPlanned: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    amountAuthorized: [[TypedMoney.svg TypedMoney]]
+    authorizedUntil: String
+    amountPaid: [[TypedMoney.svg TypedMoney]]
+    amountRefunded: [[TypedMoney.svg TypedMoney]]
+    paymentMethodInfo: [[PaymentMethodInfo.svg PaymentMethodInfo]]
+    paymentStatus: [[PaymentStatus.svg PaymentStatus]]
+    transactions: [[Transaction.svg List<Transaction>]]
+    interfaceInteractions: [[CustomFields.svg List<CustomFields>]]
+    custom: [[CustomFields.svg CustomFields]]
+    key: String
+}
+interface PaymentTransactionAddedMessage [[PaymentTransactionAddedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    transaction: [[Transaction.svg Transaction]]
+}
+interface PaymentTransactionAddedMessagePayload [[PaymentTransactionAddedMessagePayload.svg]]  {
+    type: String
+    transaction: [[Transaction.svg Transaction]]
+}
+
+Transaction --> MyPayment #green;text:green : "transactions"
+Transaction --> Payment #green;text:green : "transactions"
+Transaction --> PaymentTransactionAddedMessage #green;text:green : "transaction"
+Transaction --> PaymentTransactionAddedMessagePayload #green;text:green : "transaction"
+@enduml

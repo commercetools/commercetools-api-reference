@@ -1,0 +1,90 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface Quote [[Quote.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    quoteRequest: [[QuoteRequestReference.svg QuoteRequestReference]]
+    stagedQuote: [[StagedQuoteReference.svg StagedQuoteReference]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
+    validTo: DateTime
+    sellerComment: String
+    buyerComment: String
+    store: [[StoreKeyReference.svg StoreKeyReference]]
+    lineItems: [[LineItem.svg List<LineItem>]]
+    customLineItems: [[CustomLineItem.svg List<CustomLineItem>]]
+    totalPrice: [[TypedMoney.svg TypedMoney]]
+    taxedPrice: [[TaxedPrice.svg TaxedPrice]]
+    shippingAddress: [[Address.svg Address]]
+    billingAddress: [[Address.svg Address]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    taxMode: [[TaxMode.svg TaxMode]]
+    taxRoundingMode: [[RoundingMode.svg RoundingMode]]
+    taxCalculationMode: [[TaxCalculationMode.svg TaxCalculationMode]]
+    country: String
+    shippingInfo: [[ShippingInfo.svg ShippingInfo]]
+    paymentInfo: [[PaymentInfo.svg PaymentInfo]]
+    shippingRateInput: [[ShippingRateInput.svg ShippingRateInput]]
+    itemShippingAddresses: [[Address.svg List<Address>]]
+    directDiscounts: [[DirectDiscount.svg List<DirectDiscount>]]
+    custom: [[CustomFields.svg CustomFields]]
+    state: [[StateReference.svg StateReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+}
+interface BaseResource [[BaseResource.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+}
+
+
+interface QuotePagedQueryResponse [[QuotePagedQueryResponse.svg]]  {
+    limit: Long
+    offset: Long
+    count: Long
+    total: Long
+    results: [[Quote.svg List<Quote>]]
+}
+interface QuoteCreatedMessage [[QuoteCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    quote: [[Quote.svg Quote]]
+}
+interface QuoteCreatedMessagePayload [[QuoteCreatedMessagePayload.svg]]  {
+    type: String
+    quote: [[Quote.svg Quote]]
+}
+interface QuoteReference [[QuoteReference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[Quote.svg Quote]]
+}
+
+Quote --> QuotePagedQueryResponse #green;text:green : "results"
+Quote --> QuoteCreatedMessage #green;text:green : "quote"
+Quote --> QuoteCreatedMessagePayload #green;text:green : "quote"
+Quote --> QuoteReference #green;text:green : "obj"
+@enduml

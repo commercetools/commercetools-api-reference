@@ -1,0 +1,70 @@
+@startuml
+
+hide methods
+enum BusinessUnitStatus {
+    ACTIVE
+    INACTIVE
+}
+interface BusinessUnit [[BusinessUnit.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    status: [[BusinessUnitStatus.svg BusinessUnitStatus]]
+    stores: [[StoreKeyReference.svg List<StoreKeyReference>]]
+    storeMode: [[BusinessUnitStoreMode.svg BusinessUnitStoreMode]]
+    unitType: [[BusinessUnitType.svg BusinessUnitType]]
+    name: String
+    contactEmail: String
+    custom: [[CustomFields.svg CustomFields]]
+    addresses: [[Address.svg List<Address>]]
+    shippingAddressIds: [[String.svg List<String>]]
+    defaultShipingAddressId: String
+    billingAddressIds: [[String.svg List<String>]]
+    defaultBillingAddressId: String
+    associates: [[Associate.svg List<Associate>]]
+    parentUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    topLevelUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+}
+interface BusinessUnitDraft [[BusinessUnitDraft.svg]]  {
+    key: String
+    status: [[BusinessUnitStatus.svg BusinessUnitStatus]]
+    stores: [[StoreKeyReference.svg List<StoreKeyReference>]]
+    storeMode: [[BusinessUnitStoreMode.svg BusinessUnitStoreMode]]
+    unitType: [[BusinessUnitType.svg BusinessUnitType]]
+    name: String
+    contactEmail: String
+    associates: [[AssociateDraft.svg List<AssociateDraft>]]
+    addresses: [[BaseAddress.svg List<BaseAddress>]]
+    shippingAddresses: [[Integer.svg List<Integer>]]
+    defaultShipingAddress: Integer
+    billingAddresses: [[Integer.svg List<Integer>]]
+    defaultBillingAddress: Integer
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface BusinessUnitStatusChangedMessage [[BusinessUnitStatusChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    active: [[BusinessUnitStatus.svg BusinessUnitStatus]]
+}
+interface BusinessUnitStatusChangedMessagePayload [[BusinessUnitStatusChangedMessagePayload.svg]]  {
+    type: String
+    active: [[BusinessUnitStatus.svg BusinessUnitStatus]]
+}
+BusinessUnitStatus --> BusinessUnit #green;text:green : "status"
+BusinessUnitStatus --> BusinessUnitDraft #green;text:green : "status"
+BusinessUnitStatus --> BusinessUnitStatusChangedMessage #green;text:green : "active"
+BusinessUnitStatus --> BusinessUnitStatusChangedMessagePayload #green;text:green : "active"
+@enduml

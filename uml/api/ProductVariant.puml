@@ -1,0 +1,157 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface ProductVariant [[ProductVariant.svg]]  {
+    id: Long
+    sku: String
+    key: String
+    prices: [[Price.svg List<Price>]]
+    attributes: [[Attribute.svg List<Attribute>]]
+    price: [[Price.svg Price]]
+    images: [[Image.svg List<Image>]]
+    assets: [[Asset.svg List<Asset>]]
+    availability: [[ProductVariantAvailability.svg ProductVariantAvailability]]
+    isMatchingVariant: Boolean
+    scopedPrice: [[ScopedPrice.svg ScopedPrice]]
+    scopedPriceDiscounted: Boolean
+}
+
+
+
+interface ProductData [[ProductData.svg]]  {
+    name: [[LocalizedString.svg LocalizedString]]
+    categories: [[CategoryReference.svg List<CategoryReference>]]
+    categoryOrderHints: [[CategoryOrderHints.svg CategoryOrderHints]]
+    description: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    metaTitle: [[LocalizedString.svg LocalizedString]]
+    metaDescription: [[LocalizedString.svg LocalizedString]]
+    metaKeywords: [[LocalizedString.svg LocalizedString]]
+    masterVariant: [[ProductVariant.svg ProductVariant]]
+    variants: [[ProductVariant.svg List<ProductVariant>]]
+    searchKeywords: [[SearchKeywords.svg SearchKeywords]]
+}
+interface ProductProjection [[ProductProjection.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    categories: [[CategoryReference.svg List<CategoryReference>]]
+    categoryOrderHints: [[CategoryOrderHints.svg CategoryOrderHints]]
+    metaTitle: [[LocalizedString.svg LocalizedString]]
+    metaDescription: [[LocalizedString.svg LocalizedString]]
+    metaKeywords: [[LocalizedString.svg LocalizedString]]
+    searchKeywords: [[SearchKeywords.svg SearchKeywords]]
+    hasStagedChanges: Boolean
+    published: Boolean
+    masterVariant: [[ProductVariant.svg ProductVariant]]
+    variants: [[ProductVariant.svg List<ProductVariant>]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    state: [[StateReference.svg StateReference]]
+    reviewRatingStatistics: [[ReviewRatingStatistics.svg ReviewRatingStatistics]]
+    priceMode: [[ProductPriceModeEnum.svg ProductPriceModeEnum]]
+}
+interface LineItem [[LineItem.svg]]  {
+    id: String
+    productId: String
+    productKey: String
+    name: [[LocalizedString.svg LocalizedString]]
+    productSlug: [[LocalizedString.svg LocalizedString]]
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    variant: [[ProductVariant.svg ProductVariant]]
+    price: [[Price.svg Price]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxedPricePortions: [[MethodTaxedPrice.svg List<MethodTaxedPrice>]]
+    totalPrice: [[TypedMoney.svg TypedMoney]]
+    quantity: Long
+    addedAt: DateTime
+    state: [[ItemState.svg List<ItemState>]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    perMethodTaxRate: [[MethodTaxRate.svg List<MethodTaxRate>]]
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+    distributionChannel: [[ChannelReference.svg ChannelReference]]
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    priceMode: [[LineItemPriceMode.svg LineItemPriceMode]]
+    lineItemMode: [[LineItemMode.svg LineItemMode]]
+    custom: [[CustomFields.svg CustomFields]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
+    lastModifiedAt: DateTime
+}
+interface ProductVariantAddedMessage [[ProductVariantAddedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    variant: [[ProductVariant.svg ProductVariant]]
+    staged: Boolean
+}
+interface ProductVariantDeletedMessage [[ProductVariantDeletedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    variant: [[ProductVariant.svg ProductVariant]]
+    removedImageUrls: [[String.svg List<String>]]
+}
+interface ProductVariantAddedMessagePayload [[ProductVariantAddedMessagePayload.svg]]  {
+    type: String
+    variant: [[ProductVariant.svg ProductVariant]]
+    staged: Boolean
+}
+interface ProductVariantDeletedMessagePayload [[ProductVariantDeletedMessagePayload.svg]]  {
+    type: String
+    variant: [[ProductVariant.svg ProductVariant]]
+    removedImageUrls: [[String.svg List<String>]]
+}
+interface ShoppingListLineItem [[ShoppingListLineItem.svg]]  {
+    addedAt: DateTime
+    custom: [[CustomFields.svg CustomFields]]
+    deactivatedAt: DateTime
+    id: String
+    name: [[LocalizedString.svg LocalizedString]]
+    productId: String
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    quantity: Long
+    variantId: Long
+    variant: [[ProductVariant.svg ProductVariant]]
+    productSlug: [[LocalizedString.svg LocalizedString]]
+}
+
+ProductVariant --> ProductData #green;text:green : "variants"
+ProductVariant --> ProductProjection #green;text:green : "variants"
+ProductVariant --> LineItem #green;text:green : "variant"
+ProductVariant --> ProductVariantAddedMessage #green;text:green : "variant"
+ProductVariant --> ProductVariantDeletedMessage #green;text:green : "variant"
+ProductVariant --> ProductVariantAddedMessagePayload #green;text:green : "variant"
+ProductVariant --> ProductVariantDeletedMessagePayload #green;text:green : "variant"
+ProductVariant --> ProductData #green;text:green : "masterVariant"
+ProductVariant --> ProductProjection #green;text:green : "masterVariant"
+ProductVariant --> ShoppingListLineItem #green;text:green : "variant"
+@enduml

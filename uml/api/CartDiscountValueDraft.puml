@@ -1,0 +1,60 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface CartDiscountValueDraft [[CartDiscountValueDraft.svg]]  {
+    type: String
+}
+
+
+interface CartDiscountValueAbsoluteDraft [[CartDiscountValueAbsoluteDraft.svg]]  {
+    type: String
+    money: [[Money.svg List<Money>]]
+}
+interface CartDiscountValueFixedDraft [[CartDiscountValueFixedDraft.svg]]  {
+    type: String
+    money: [[Money.svg List<Money>]]
+}
+interface CartDiscountValueGiftLineItemDraft [[CartDiscountValueGiftLineItemDraft.svg]]  {
+    type: String
+    product: [[ProductResourceIdentifier.svg ProductResourceIdentifier]]
+    variantId: Long
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+}
+interface CartDiscountValueRelativeDraft [[CartDiscountValueRelativeDraft.svg]]  {
+    type: String
+    permyriad: Long
+}
+interface CartDiscountDraft [[CartDiscountDraft.svg]]  {
+    name: [[LocalizedString.svg LocalizedString]]
+    key: String
+    description: [[LocalizedString.svg LocalizedString]]
+    value: [[CartDiscountValueDraft.svg CartDiscountValueDraft]]
+    cartPredicate: String
+    target: [[CartDiscountTarget.svg CartDiscountTarget]]
+    sortOrder: String
+    isActive: Boolean
+    validFrom: DateTime
+    validUntil: DateTime
+    requiresDiscountCode: Boolean
+    stackingMode: [[StackingMode.svg StackingMode]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface CartDiscountChangeValueAction [[CartDiscountChangeValueAction.svg]]  {
+    action: String
+    value: [[CartDiscountValueDraft.svg CartDiscountValueDraft]]
+}
+CartDiscountValueDraft --> CartDiscountValueAbsoluteDraft #blue;text:blue : "type : absolute"
+CartDiscountValueDraft --> CartDiscountValueFixedDraft #blue;text:blue : "type : fixed"
+CartDiscountValueDraft --> CartDiscountValueGiftLineItemDraft #blue;text:blue : "type : giftLineItem"
+CartDiscountValueDraft --> CartDiscountValueRelativeDraft #blue;text:blue : "type : relative"
+CartDiscountValueDraft --> CartDiscountDraft #green;text:green : "value"
+CartDiscountValueDraft --> CartDiscountChangeValueAction #green;text:green : "value"
+@enduml

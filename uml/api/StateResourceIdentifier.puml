@@ -1,0 +1,138 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface StateResourceIdentifier [[StateResourceIdentifier.svg]] extends ResourceIdentifier {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    key: String
+}
+interface ResourceIdentifier [[ResourceIdentifier.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    key: String
+}
+
+
+interface StateDraft [[StateDraft.svg]]  {
+    key: String
+    type: [[StateTypeEnum.svg StateTypeEnum]]
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    initial: Boolean
+    roles: [[StateRoleEnum.svg List<StateRoleEnum>]]
+    transitions: [[StateResourceIdentifier.svg List<StateResourceIdentifier>]]
+}
+interface StateSetTransitionsAction [[StateSetTransitionsAction.svg]]  {
+    action: String
+    transitions: [[StateResourceIdentifier.svg List<StateResourceIdentifier>]]
+}
+interface OrderFromCartDraft [[OrderFromCartDraft.svg]]  {
+    id: String
+    cart: [[CartResourceIdentifier.svg CartResourceIdentifier]]
+    version: Long
+    orderNumber: String
+    paymentState: [[PaymentState.svg PaymentState]]
+    shipmentState: [[ShipmentState.svg ShipmentState]]
+    orderState: [[OrderState.svg OrderState]]
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface OrderFromQuoteDraft [[OrderFromQuoteDraft.svg]]  {
+    quote: [[QuoteResourceIdentifier.svg QuoteResourceIdentifier]]
+    version: Long
+    quoteStateToAccepted: Boolean
+    orderNumber: String
+    paymentState: [[PaymentState.svg PaymentState]]
+    shipmentState: [[ShipmentState.svg ShipmentState]]
+    orderState: [[OrderState.svg OrderState]]
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+}
+interface PaymentStatusDraft [[PaymentStatusDraft.svg]]  {
+    interfaceCode: String
+    interfaceText: String
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+}
+interface PaymentTransitionStateAction [[PaymentTransitionStateAction.svg]]  {
+    action: String
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    force: Boolean
+}
+interface ProductDraft [[ProductDraft.svg]]  {
+    productType: [[ProductTypeResourceIdentifier.svg ProductTypeResourceIdentifier]]
+    name: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    key: String
+    description: [[LocalizedString.svg LocalizedString]]
+    categories: [[CategoryResourceIdentifier.svg List<CategoryResourceIdentifier>]]
+    categoryOrderHints: [[CategoryOrderHints.svg CategoryOrderHints]]
+    metaTitle: [[LocalizedString.svg LocalizedString]]
+    metaDescription: [[LocalizedString.svg LocalizedString]]
+    metaKeywords: [[LocalizedString.svg LocalizedString]]
+    masterVariant: [[ProductVariantDraft.svg ProductVariantDraft]]
+    variants: [[ProductVariantDraft.svg List<ProductVariantDraft>]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    searchKeywords: [[SearchKeywords.svg SearchKeywords]]
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    publish: Boolean
+    priceMode: [[ProductPriceModeEnum.svg ProductPriceModeEnum]]
+}
+interface ProductTransitionStateAction [[ProductTransitionStateAction.svg]]  {
+    action: String
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    force: Boolean
+}
+interface QuoteRequestTransitionStateAction [[QuoteRequestTransitionStateAction.svg]]  {
+    action: String
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    force: Boolean
+}
+interface QuoteTransitionStateAction [[QuoteTransitionStateAction.svg]]  {
+    action: String
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    force: Boolean
+}
+interface ReviewDraft [[ReviewDraft.svg]]  {
+    key: String
+    uniquenessValue: String
+    locale: String
+    authorName: String
+    title: String
+    text: String
+    target: [[Object.svg Object]]
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    rating: Integer
+    customer: [[CustomerResourceIdentifier.svg CustomerResourceIdentifier]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface ReviewTransitionStateAction [[ReviewTransitionStateAction.svg]]  {
+    action: String
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    force: Boolean
+}
+interface StagedQuoteTransitionStateAction [[StagedQuoteTransitionStateAction.svg]]  {
+    action: String
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    force: Boolean
+}
+
+StateResourceIdentifier --> StateDraft #green;text:green : "transitions"
+StateResourceIdentifier --> StateSetTransitionsAction #green;text:green : "transitions"
+StateResourceIdentifier --> OrderFromCartDraft #green;text:green : "state"
+StateResourceIdentifier --> OrderFromQuoteDraft #green;text:green : "state"
+StateResourceIdentifier --> PaymentStatusDraft #green;text:green : "state"
+StateResourceIdentifier --> PaymentTransitionStateAction #green;text:green : "state"
+StateResourceIdentifier --> ProductDraft #green;text:green : "state"
+StateResourceIdentifier --> ProductTransitionStateAction #green;text:green : "state"
+StateResourceIdentifier --> QuoteRequestTransitionStateAction #green;text:green : "state"
+StateResourceIdentifier --> QuoteTransitionStateAction #green;text:green : "state"
+StateResourceIdentifier --> ReviewDraft #green;text:green : "state"
+StateResourceIdentifier --> ReviewTransitionStateAction #green;text:green : "state"
+StateResourceIdentifier --> StagedQuoteTransitionStateAction #green;text:green : "state"
+@enduml

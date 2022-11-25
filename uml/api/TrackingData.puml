@@ -1,0 +1,64 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface TrackingData [[TrackingData.svg]]  {
+    trackingId: String
+    carrier: String
+    provider: String
+    providerTransaction: String
+    isReturn: Boolean
+}
+
+
+
+interface ParcelTrackingDataUpdatedMessage [[ParcelTrackingDataUpdatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    deliveryId: String
+    parcelId: String
+    trackingData: [[TrackingData.svg TrackingData]]
+    shippingKey: String
+}
+interface ParcelTrackingDataUpdatedMessagePayload [[ParcelTrackingDataUpdatedMessagePayload.svg]]  {
+    type: String
+    deliveryId: String
+    parcelId: String
+    trackingData: [[TrackingData.svg TrackingData]]
+    shippingKey: String
+}
+interface Parcel [[Parcel.svg]]  {
+    id: String
+    createdAt: DateTime
+    measurements: [[ParcelMeasurements.svg ParcelMeasurements]]
+    trackingData: [[TrackingData.svg TrackingData]]
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface ParcelDraft [[ParcelDraft.svg]]  {
+    measurements: [[ParcelMeasurements.svg ParcelMeasurements]]
+    trackingData: [[TrackingData.svg TrackingData]]
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+
+TrackingData --> ParcelTrackingDataUpdatedMessage #green;text:green : "trackingData"
+TrackingData --> ParcelTrackingDataUpdatedMessagePayload #green;text:green : "trackingData"
+TrackingData --> Parcel #green;text:green : "trackingData"
+TrackingData --> ParcelDraft #green;text:green : "trackingData"
+@enduml

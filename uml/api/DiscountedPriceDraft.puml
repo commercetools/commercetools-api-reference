@@ -1,0 +1,72 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface DiscountedPriceDraft [[DiscountedPriceDraft.svg]]  {
+    value: [[Money.svg Money]]
+    discount: [[ProductDiscountReference.svg ProductDiscountReference]]
+}
+
+
+
+interface PriceDraft [[PriceDraft.svg]]  {
+    key: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    validFrom: DateTime
+    validUntil: DateTime
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface QueryPrice [[QueryPrice.svg]]  {
+    id: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
+    channel: [[ChannelReference.svg ChannelReference]]
+    validFrom: DateTime
+    validUntil: DateTime
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    custom: [[CustomFields.svg CustomFields]]
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+}
+interface ProductSetDiscountedPriceAction [[ProductSetDiscountedPriceAction.svg]]  {
+    action: String
+    priceId: String
+    staged: Boolean
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+}
+interface StandalonePriceDraft [[StandalonePriceDraft.svg]]  {
+    key: String
+    sku: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    validFrom: DateTime
+    validUntil: DateTime
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    active: Boolean
+}
+interface StandalonePriceSetDiscountedPriceAction [[StandalonePriceSetDiscountedPriceAction.svg]]  {
+    action: String
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+}
+
+DiscountedPriceDraft --> PriceDraft #green;text:green : "discounted"
+DiscountedPriceDraft --> QueryPrice #green;text:green : "discounted"
+DiscountedPriceDraft --> ProductSetDiscountedPriceAction #green;text:green : "discounted"
+DiscountedPriceDraft --> StandalonePriceDraft #green;text:green : "discounted"
+DiscountedPriceDraft --> StandalonePriceSetDiscountedPriceAction #green;text:green : "discounted"
+@enduml

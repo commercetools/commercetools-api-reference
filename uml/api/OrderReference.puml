@@ -1,0 +1,56 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface OrderReference [[OrderReference.svg]] extends Reference {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[Order.svg Order]]
+}
+interface Reference [[Reference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+}
+
+
+interface ReplicaCartDraft [[ReplicaCartDraft.svg]]  {
+    reference: [[Object.svg Object]]
+    key: String
+}
+interface ReplicaMyCartDraft [[ReplicaMyCartDraft.svg]]  {
+    reference: [[Object.svg Object]]
+}
+interface OrderEdit [[OrderEdit.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    resource: [[OrderReference.svg OrderReference]]
+    stagedActions: [[StagedOrderUpdateAction.svg List<StagedOrderUpdateAction>]]
+    custom: [[CustomFields.svg CustomFields]]
+    result: [[OrderEditResult.svg OrderEditResult]]
+    comment: String
+}
+interface OrderEditDraft [[OrderEditDraft.svg]]  {
+    key: String
+    resource: [[OrderReference.svg OrderReference]]
+    stagedActions: [[StagedOrderUpdateAction.svg List<StagedOrderUpdateAction>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    comment: String
+    dryRun: Boolean
+}
+
+OrderReference --> ReplicaCartDraft #green;text:green : "reference"
+OrderReference --> ReplicaMyCartDraft #green;text:green : "reference"
+OrderReference --> OrderEdit #green;text:green : "resource"
+OrderReference --> OrderEditDraft #green;text:green : "resource"
+@enduml

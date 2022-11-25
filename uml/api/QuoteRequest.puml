@@ -1,0 +1,87 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface QuoteRequest [[QuoteRequest.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    quoteRequestState: [[QuoteRequestState.svg QuoteRequestState]]
+    comment: String
+    customer: [[CustomerReference.svg CustomerReference]]
+    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
+    store: [[StoreKeyReference.svg StoreKeyReference]]
+    lineItems: [[LineItem.svg List<LineItem>]]
+    customLineItems: [[CustomLineItem.svg List<CustomLineItem>]]
+    totalPrice: [[TypedMoney.svg TypedMoney]]
+    taxedPrice: [[TaxedPrice.svg TaxedPrice]]
+    shippingAddress: [[Address.svg Address]]
+    billingAddress: [[Address.svg Address]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    taxMode: [[TaxMode.svg TaxMode]]
+    taxRoundingMode: [[RoundingMode.svg RoundingMode]]
+    taxCalculationMode: [[TaxCalculationMode.svg TaxCalculationMode]]
+    country: String
+    shippingInfo: [[ShippingInfo.svg ShippingInfo]]
+    paymentInfo: [[PaymentInfo.svg PaymentInfo]]
+    shippingRateInput: [[ShippingRateInput.svg ShippingRateInput]]
+    itemShippingAddresses: [[Address.svg List<Address>]]
+    directDiscounts: [[DirectDiscount.svg List<DirectDiscount>]]
+    custom: [[CustomFields.svg CustomFields]]
+    state: [[StateReference.svg StateReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+}
+interface BaseResource [[BaseResource.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+}
+
+
+interface QuoteRequestPagedQueryResponse [[QuoteRequestPagedQueryResponse.svg]]  {
+    limit: Long
+    offset: Long
+    count: Long
+    total: Long
+    results: [[QuoteRequest.svg List<QuoteRequest>]]
+}
+interface QuoteRequestCreatedMessage [[QuoteRequestCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    quoteRequest: [[QuoteRequest.svg QuoteRequest]]
+}
+interface QuoteRequestCreatedMessagePayload [[QuoteRequestCreatedMessagePayload.svg]]  {
+    type: String
+    quoteRequest: [[QuoteRequest.svg QuoteRequest]]
+}
+interface QuoteRequestReference [[QuoteRequestReference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[QuoteRequest.svg QuoteRequest]]
+}
+
+QuoteRequest --> QuoteRequestPagedQueryResponse #green;text:green : "results"
+QuoteRequest --> QuoteRequestCreatedMessage #green;text:green : "quoteRequest"
+QuoteRequest --> QuoteRequestCreatedMessagePayload #green;text:green : "quoteRequest"
+QuoteRequest --> QuoteRequestReference #green;text:green : "obj"
+@enduml

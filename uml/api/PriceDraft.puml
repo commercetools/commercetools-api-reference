@@ -1,0 +1,99 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface PriceDraft [[PriceDraft.svg]]  {
+    key: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    validFrom: DateTime
+    validUntil: DateTime
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+
+
+
+interface VariantValues [[VariantValues.svg]]  {
+    sku: String
+    prices: [[PriceDraft.svg List<PriceDraft>]]
+    attributes: [[Attribute.svg List<Attribute>]]
+}
+interface ProductVariantImportDraft [[ProductVariantImportDraft.svg]]  {
+    id: Long
+    sku: String
+    prices: [[PriceDraft.svg List<PriceDraft>]]
+    attributes: [[Attribute.svg List<Attribute>]]
+    images: [[Image.svg List<Image>]]
+}
+interface ProductVariantDraft [[ProductVariantDraft.svg]]  {
+    sku: String
+    key: String
+    prices: [[PriceDraft.svg List<PriceDraft>]]
+    attributes: [[Attribute.svg List<Attribute>]]
+    images: [[Image.svg List<Image>]]
+    assets: [[AssetDraft.svg List<AssetDraft>]]
+}
+interface ProductAddVariantAction [[ProductAddVariantAction.svg]]  {
+    action: String
+    sku: String
+    key: String
+    prices: [[PriceDraft.svg List<PriceDraft>]]
+    images: [[Image.svg List<Image>]]
+    attributes: [[Attribute.svg List<Attribute>]]
+    staged: Boolean
+    assets: [[Asset.svg List<Asset>]]
+}
+interface ProductSetPricesAction [[ProductSetPricesAction.svg]]  {
+    action: String
+    variantId: Long
+    sku: String
+    prices: [[PriceDraft.svg List<PriceDraft>]]
+    staged: Boolean
+}
+interface LineItemImportDraft [[LineItemImportDraft.svg]]  {
+    productId: String
+    name: [[LocalizedString.svg LocalizedString]]
+    variant: [[ProductVariantImportDraft.svg ProductVariantImportDraft]]
+    price: [[PriceDraft.svg PriceDraft]]
+    quantity: Long
+    state: [[ItemState.svg List<ItemState>]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface ProductAddPriceAction [[ProductAddPriceAction.svg]]  {
+    action: String
+    variantId: Long
+    sku: String
+    price: [[PriceDraft.svg PriceDraft]]
+    staged: Boolean
+}
+interface ProductChangePriceAction [[ProductChangePriceAction.svg]]  {
+    action: String
+    priceId: String
+    price: [[PriceDraft.svg PriceDraft]]
+    staged: Boolean
+}
+
+PriceDraft --> VariantValues #green;text:green : "prices"
+PriceDraft --> ProductVariantImportDraft #green;text:green : "prices"
+PriceDraft --> ProductVariantDraft #green;text:green : "prices"
+PriceDraft --> ProductAddVariantAction #green;text:green : "prices"
+PriceDraft --> ProductSetPricesAction #green;text:green : "prices"
+PriceDraft --> LineItemImportDraft #green;text:green : "price"
+PriceDraft --> ProductAddPriceAction #green;text:green : "price"
+PriceDraft --> ProductChangePriceAction #green;text:green : "price"
+@enduml

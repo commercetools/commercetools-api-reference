@@ -1,0 +1,62 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface AssetDraft [[AssetDraft.svg]]  {
+    sources: [[AssetSource.svg List<AssetSource>]]
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    tags: [[String.svg List<String>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    key: String
+}
+
+
+
+interface CategoryDraft [[CategoryDraft.svg]]  {
+    name: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    parent: [[CategoryResourceIdentifier.svg CategoryResourceIdentifier]]
+    orderHint: String
+    externalId: String
+    metaTitle: [[LocalizedString.svg LocalizedString]]
+    metaDescription: [[LocalizedString.svg LocalizedString]]
+    metaKeywords: [[LocalizedString.svg LocalizedString]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    assets: [[AssetDraft.svg List<AssetDraft>]]
+    key: String
+}
+interface ProductVariantDraft [[ProductVariantDraft.svg]]  {
+    sku: String
+    key: String
+    prices: [[PriceDraft.svg List<PriceDraft>]]
+    attributes: [[Attribute.svg List<Attribute>]]
+    images: [[Image.svg List<Image>]]
+    assets: [[AssetDraft.svg List<AssetDraft>]]
+}
+interface CategoryAddAssetAction [[CategoryAddAssetAction.svg]]  {
+    action: String
+    asset: [[AssetDraft.svg AssetDraft]]
+    position: Integer
+}
+interface ProductAddAssetAction [[ProductAddAssetAction.svg]]  {
+    action: String
+    variantId: Long
+    sku: String
+    staged: Boolean
+    asset: [[AssetDraft.svg AssetDraft]]
+    position: Integer
+}
+
+AssetDraft --> CategoryDraft #green;text:green : "assets"
+AssetDraft --> ProductVariantDraft #green;text:green : "assets"
+AssetDraft --> CategoryAddAssetAction #green;text:green : "asset"
+AssetDraft --> ProductAddAssetAction #green;text:green : "asset"
+@enduml

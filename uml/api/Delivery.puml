@@ -1,0 +1,150 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface Delivery [[Delivery.svg]]  {
+    id: String
+    createdAt: DateTime
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    parcels: [[Parcel.svg List<Parcel>]]
+    address: [[Address.svg Address]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+
+
+
+interface CustomShippingDraft [[CustomShippingDraft.svg]]  {
+    key: String
+    shippingMethodName: String
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: String
+    deliveries: [[Delivery.svg List<Delivery>]]
+    custom: String
+}
+interface ShippingDraft [[ShippingDraft.svg]]  {
+    key: String
+    shippingMethod: [[ShippingMethodReference.svg ShippingMethodReference]]
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    externalTaxRate: String
+    deliveries: [[Delivery.svg List<Delivery>]]
+    custom: String
+}
+interface ShippingInfo [[ShippingInfo.svg]]  {
+    shippingMethodName: String
+    price: [[TypedMoney.svg TypedMoney]]
+    shippingRate: [[ShippingRate.svg ShippingRate]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    shippingMethod: [[ShippingMethodReference.svg ShippingMethodReference]]
+    deliveries: [[Delivery.svg List<Delivery>]]
+    discountedPrice: [[DiscountedLineItemPrice.svg DiscountedLineItemPrice]]
+    shippingMethodState: [[ShippingMethodState.svg ShippingMethodState]]
+}
+interface CartAddCustomShippingMethodAction [[CartAddCustomShippingMethodAction.svg]]  {
+    action: String
+    shippingKey: String
+    shippingMethodName: String
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: String
+    deliveries: [[Delivery.svg List<Delivery>]]
+    custom: String
+}
+interface CartAddShippingMethodAction [[CartAddShippingMethodAction.svg]]  {
+    action: String
+    shippingKey: String
+    shippingMethod: [[ShippingMethodReference.svg ShippingMethodReference]]
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    externalTaxRate: String
+    deliveries: [[Delivery.svg List<Delivery>]]
+    custom: String
+}
+interface DeliveryAddedMessage [[DeliveryAddedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    delivery: [[Delivery.svg Delivery]]
+    shippingKey: String
+}
+interface DeliveryRemovedMessage [[DeliveryRemovedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    delivery: [[Delivery.svg Delivery]]
+    shippingKey: String
+}
+interface ParcelAddedToDeliveryMessage [[ParcelAddedToDeliveryMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    delivery: [[Delivery.svg Delivery]]
+    parcel: [[Parcel.svg Parcel]]
+    shippingKey: String
+}
+interface DeliveryAddedMessagePayload [[DeliveryAddedMessagePayload.svg]]  {
+    type: String
+    delivery: [[Delivery.svg Delivery]]
+    shippingKey: String
+}
+interface DeliveryRemovedMessagePayload [[DeliveryRemovedMessagePayload.svg]]  {
+    type: String
+    delivery: [[Delivery.svg Delivery]]
+    shippingKey: String
+}
+interface ParcelAddedToDeliveryMessagePayload [[ParcelAddedToDeliveryMessagePayload.svg]]  {
+    type: String
+    delivery: [[Delivery.svg Delivery]]
+    parcel: [[Parcel.svg Parcel]]
+    shippingKey: String
+}
+
+Delivery --> CustomShippingDraft #green;text:green : "deliveries"
+Delivery --> ShippingDraft #green;text:green : "deliveries"
+Delivery --> ShippingInfo #green;text:green : "deliveries"
+Delivery --> CartAddCustomShippingMethodAction #green;text:green : "deliveries"
+Delivery --> CartAddShippingMethodAction #green;text:green : "deliveries"
+Delivery --> DeliveryAddedMessage #green;text:green : "delivery"
+Delivery --> DeliveryRemovedMessage #green;text:green : "delivery"
+Delivery --> ParcelAddedToDeliveryMessage #green;text:green : "delivery"
+Delivery --> DeliveryAddedMessagePayload #green;text:green : "delivery"
+Delivery --> DeliveryRemovedMessagePayload #green;text:green : "delivery"
+Delivery --> ParcelAddedToDeliveryMessagePayload #green;text:green : "delivery"
+@enduml

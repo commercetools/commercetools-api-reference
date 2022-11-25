@@ -1,0 +1,351 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface Money [[Money.svg]]  {
+    centAmount: Long
+    currencyCode: String
+}
+
+
+interface CentPrecisionMoney [[CentPrecisionMoney.svg]]  {
+    centAmount: Long
+    currencyCode: String
+    type: [[MoneyType.svg MoneyType]]
+    fractionDigits: Integer
+}
+interface CentPrecisionMoneyDraft [[CentPrecisionMoneyDraft.svg]]  {
+    centAmount: Long
+    currencyCode: String
+    type: [[MoneyType.svg MoneyType]]
+    fractionDigits: Integer
+}
+interface HighPrecisionMoney [[HighPrecisionMoney.svg]]  {
+    centAmount: Long
+    currencyCode: String
+    type: [[MoneyType.svg MoneyType]]
+    fractionDigits: Integer
+    preciseAmount: Long
+}
+interface HighPrecisionMoneyDraft [[HighPrecisionMoneyDraft.svg]]  {
+    centAmount: Long
+    currencyCode: String
+    type: [[MoneyType.svg MoneyType]]
+    fractionDigits: Integer
+    preciseAmount: Long
+}
+interface CartDiscountValueAbsoluteDraft [[CartDiscountValueAbsoluteDraft.svg]]  {
+    type: String
+    money: [[Money.svg List<Money>]]
+}
+interface CartDiscountValueFixedDraft [[CartDiscountValueFixedDraft.svg]]  {
+    type: String
+    money: [[Money.svg List<Money>]]
+}
+interface ProductDiscountValueAbsoluteDraft [[ProductDiscountValueAbsoluteDraft.svg]]  {
+    type: String
+    money: [[Money.svg List<Money>]]
+}
+interface CustomLineItemDraft [[CustomLineItemDraft.svg]]  {
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    money: [[Money.svg Money]]
+    slug: String
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface ExternalLineItemTotalPrice [[ExternalLineItemTotalPrice.svg]]  {
+    price: [[Money.svg Money]]
+    totalPrice: [[Money.svg Money]]
+}
+interface ExternalTaxAmountDraft [[ExternalTaxAmountDraft.svg]]  {
+    totalGross: [[Money.svg Money]]
+    taxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+}
+interface LineItemDraft [[LineItemDraft.svg]]  {
+    productId: String
+    variantId: Long
+    sku: String
+    quantity: Long
+    addedAt: DateTime
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface CartSetCartTotalTaxAction [[CartSetCartTotalTaxAction.svg]]  {
+    action: String
+    externalTotalGross: [[Money.svg Money]]
+    externalTaxPortions: [[TaxPortionDraft.svg List<TaxPortionDraft>]]
+}
+interface DiscountedPriceDraft [[DiscountedPriceDraft.svg]]  {
+    value: [[Money.svg Money]]
+    discount: [[ProductDiscountReference.svg ProductDiscountReference]]
+}
+interface PriceDraft [[PriceDraft.svg]]  {
+    key: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    validFrom: DateTime
+    validUntil: DateTime
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface PriceTierDraft [[PriceTierDraft.svg]]  {
+    minimumQuantity: Long
+    value: [[Money.svg Money]]
+}
+interface QueryPrice [[QueryPrice.svg]]  {
+    id: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
+    channel: [[ChannelReference.svg ChannelReference]]
+    validFrom: DateTime
+    validUntil: DateTime
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    custom: [[CustomFields.svg CustomFields]]
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+}
+interface MyPaymentDraft [[MyPaymentDraft.svg]]  {
+    amountPlanned: [[Money.svg Money]]
+    paymentMethodInfo: [[PaymentMethodInfo.svg PaymentMethodInfo]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    transaction: [[MyTransactionDraft.svg MyTransactionDraft]]
+}
+interface MyTransactionDraft [[MyTransactionDraft.svg]]  {
+    timestamp: DateTime
+    type: [[TransactionType.svg TransactionType]]
+    amount: [[Money.svg Money]]
+    interactionId: String
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface MyPaymentChangeAmountPlannedAction [[MyPaymentChangeAmountPlannedAction.svg]]  {
+    action: String
+    amount: [[Money.svg Money]]
+}
+interface OrderLineItemDiscountSetMessage [[OrderLineItemDiscountSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    lineItemId: String
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    totalPrice: [[Money.svg Money]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxedPricePortions: [[MethodTaxedPrice.svg List<MethodTaxedPrice>]]
+}
+interface StandalonePriceValueChangedMessage [[StandalonePriceValueChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    value: [[Money.svg Money]]
+    staged: Boolean
+}
+interface OrderLineItemDiscountSetMessagePayload [[OrderLineItemDiscountSetMessagePayload.svg]]  {
+    type: String
+    lineItemId: String
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    totalPrice: [[Money.svg Money]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxedPricePortions: [[MethodTaxedPrice.svg List<MethodTaxedPrice>]]
+}
+interface StandalonePriceValueChangedMessagePayload [[StandalonePriceValueChangedMessagePayload.svg]]  {
+    type: String
+    value: [[Money.svg Money]]
+    staged: Boolean
+}
+interface CustomLineItemImportDraft [[CustomLineItemImportDraft.svg]]  {
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    money: [[Money.svg Money]]
+    slug: String
+    state: [[ItemState.svg List<ItemState>]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface OrderImportDraft [[OrderImportDraft.svg]]  {
+    orderNumber: String
+    customerId: String
+    customerEmail: String
+    lineItems: [[LineItemImportDraft.svg List<LineItemImportDraft>]]
+    customLineItems: [[CustomLineItemImportDraft.svg List<CustomLineItemImportDraft>]]
+    totalPrice: [[Money.svg Money]]
+    taxedPrice: [[TaxedPriceDraft.svg TaxedPriceDraft]]
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    billingAddress: [[BaseAddress.svg BaseAddress]]
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    country: String
+    orderState: [[OrderState.svg OrderState]]
+    state: [[StateReference.svg StateReference]]
+    shipmentState: [[ShipmentState.svg ShipmentState]]
+    paymentState: [[PaymentState.svg PaymentState]]
+    shippingInfo: [[ShippingInfoImportDraft.svg ShippingInfoImportDraft]]
+    paymentInfo: [[PaymentInfo.svg PaymentInfo]]
+    completedAt: DateTime
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    taxRoundingMode: [[RoundingMode.svg RoundingMode]]
+    itemShippingAddresses: [[BaseAddress.svg List<BaseAddress>]]
+    businessUnit: [[BusinessUnitResourceIdentifier.svg BusinessUnitResourceIdentifier]]
+    store: [[StoreResourceIdentifier.svg StoreResourceIdentifier]]
+    origin: [[CartOrigin.svg CartOrigin]]
+}
+interface ShippingInfoImportDraft [[ShippingInfoImportDraft.svg]]  {
+    shippingMethodName: String
+    price: [[Money.svg Money]]
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    shippingMethod: [[ShippingMethodResourceIdentifier.svg ShippingMethodResourceIdentifier]]
+    deliveries: [[DeliveryDraft.svg List<DeliveryDraft>]]
+    discountedPrice: [[DiscountedLineItemPriceDraft.svg DiscountedLineItemPriceDraft]]
+    shippingMethodState: [[ShippingMethodState.svg ShippingMethodState]]
+}
+interface PaymentDraft [[PaymentDraft.svg]]  {
+    customer: [[CustomerResourceIdentifier.svg CustomerResourceIdentifier]]
+    anonymousId: String
+    externalId: String
+    interfaceId: String
+    amountPlanned: [[Money.svg Money]]
+    amountAuthorized: [[Money.svg Money]]
+    authorizedUntil: String
+    amountPaid: [[Money.svg Money]]
+    amountRefunded: [[Money.svg Money]]
+    paymentMethodInfo: [[PaymentMethodInfo.svg PaymentMethodInfo]]
+    paymentStatus: [[PaymentStatusDraft.svg PaymentStatusDraft]]
+    transactions: [[TransactionDraft.svg List<TransactionDraft>]]
+    interfaceInteractions: [[CustomFieldsDraft.svg List<CustomFieldsDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    key: String
+}
+interface TransactionDraft [[TransactionDraft.svg]]  {
+    timestamp: DateTime
+    type: [[TransactionType.svg TransactionType]]
+    amount: [[Money.svg Money]]
+    interactionId: String
+    state: [[TransactionState.svg TransactionState]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface PaymentChangeAmountPlannedAction [[PaymentChangeAmountPlannedAction.svg]]  {
+    action: String
+    amount: [[Money.svg Money]]
+}
+interface CartClassificationTier [[CartClassificationTier.svg]]  {
+    type: [[ShippingRateTierType.svg ShippingRateTierType]]
+    value: String
+    price: [[Money.svg Money]]
+    isMatching: Boolean
+}
+interface CartScoreTier [[CartScoreTier.svg]]  {
+    type: [[ShippingRateTierType.svg ShippingRateTierType]]
+    score: Integer
+    price: [[Money.svg Money]]
+    priceFunction: [[PriceFunction.svg PriceFunction]]
+    isMatching: Boolean
+}
+interface CartValueTier [[CartValueTier.svg]]  {
+    type: [[ShippingRateTierType.svg ShippingRateTierType]]
+    minimumCentAmount: Long
+    price: [[Money.svg Money]]
+    isMatching: Boolean
+}
+interface ShippingRateDraft [[ShippingRateDraft.svg]]  {
+    price: [[Money.svg Money]]
+    freeAbove: [[Money.svg Money]]
+    tiers: [[ShippingRatePriceTier.svg List<ShippingRatePriceTier>]]
+}
+interface StandalonePriceDraft [[StandalonePriceDraft.svg]]  {
+    key: String
+    sku: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    validFrom: DateTime
+    validUntil: DateTime
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    active: Boolean
+}
+interface StandalonePriceChangeValueAction [[StandalonePriceChangeValueAction.svg]]  {
+    action: String
+    value: [[Money.svg Money]]
+    staged: Boolean
+}
+Money --> CentPrecisionMoney #blue;text:blue : "type : centPrecision"
+Money --> CentPrecisionMoneyDraft #blue;text:blue : "type : centPrecision"
+Money --> HighPrecisionMoney #blue;text:blue : "type : highPrecision"
+Money --> HighPrecisionMoneyDraft #blue;text:blue : "type : highPrecision"
+Money --> CartDiscountValueAbsoluteDraft #green;text:green : "money"
+Money --> CartDiscountValueFixedDraft #green;text:green : "money"
+Money --> ProductDiscountValueAbsoluteDraft #green;text:green : "money"
+Money --> CustomLineItemDraft #green;text:green : "money"
+Money --> ExternalLineItemTotalPrice #green;text:green : "price"
+Money --> ExternalLineItemTotalPrice #green;text:green : "totalPrice"
+Money --> ExternalTaxAmountDraft #green;text:green : "totalGross"
+Money --> LineItemDraft #green;text:green : "externalPrice"
+Money --> CartSetCartTotalTaxAction #green;text:green : "externalTotalGross"
+Money --> DiscountedPriceDraft #green;text:green : "value"
+Money --> PriceDraft #green;text:green : "value"
+Money --> PriceTierDraft #green;text:green : "value"
+Money --> QueryPrice #green;text:green : "value"
+Money --> MyPaymentDraft #green;text:green : "amountPlanned"
+Money --> MyTransactionDraft #green;text:green : "amount"
+Money --> MyPaymentChangeAmountPlannedAction #green;text:green : "amount"
+Money --> OrderLineItemDiscountSetMessage #green;text:green : "totalPrice"
+Money --> StandalonePriceValueChangedMessage #green;text:green : "value"
+Money --> OrderLineItemDiscountSetMessagePayload #green;text:green : "totalPrice"
+Money --> StandalonePriceValueChangedMessagePayload #green;text:green : "value"
+Money --> CustomLineItemImportDraft #green;text:green : "money"
+Money --> OrderImportDraft #green;text:green : "totalPrice"
+Money --> ShippingInfoImportDraft #green;text:green : "price"
+Money --> PaymentDraft #green;text:green : "amountPlanned"
+Money --> PaymentDraft #green;text:green : "amountAuthorized"
+Money --> PaymentDraft #green;text:green : "amountPaid"
+Money --> PaymentDraft #green;text:green : "amountRefunded"
+Money --> TransactionDraft #green;text:green : "amount"
+Money --> PaymentChangeAmountPlannedAction #green;text:green : "amount"
+Money --> CartClassificationTier #green;text:green : "price"
+Money --> CartScoreTier #green;text:green : "price"
+Money --> CartValueTier #green;text:green : "price"
+Money --> ShippingRateDraft #green;text:green : "price"
+Money --> ShippingRateDraft #green;text:green : "freeAbove"
+Money --> StandalonePriceDraft #green;text:green : "value"
+Money --> StandalonePriceChangeValueAction #green;text:green : "value"
+@enduml

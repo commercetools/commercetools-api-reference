@@ -1,0 +1,174 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface DeliveryItem [[DeliveryItem.svg]]  {
+    id: String
+    quantity: Long
+}
+
+
+
+interface DeliveryItemsUpdatedMessage [[DeliveryItemsUpdatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    deliveryId: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    oldItems: [[DeliveryItem.svg List<DeliveryItem>]]
+    shippingKey: String
+}
+interface ParcelItemsUpdatedMessage [[ParcelItemsUpdatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    parcelId: String
+    deliveryId: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    oldItems: [[DeliveryItem.svg List<DeliveryItem>]]
+    shippingKey: String
+}
+interface DeliveryItemsUpdatedMessagePayload [[DeliveryItemsUpdatedMessagePayload.svg]]  {
+    type: String
+    deliveryId: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    oldItems: [[DeliveryItem.svg List<DeliveryItem>]]
+    shippingKey: String
+}
+interface ParcelItemsUpdatedMessagePayload [[ParcelItemsUpdatedMessagePayload.svg]]  {
+    type: String
+    parcelId: String
+    deliveryId: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    oldItems: [[DeliveryItem.svg List<DeliveryItem>]]
+    shippingKey: String
+}
+interface StagedOrderAddDeliveryAction [[StagedOrderAddDeliveryAction.svg]]  {
+    action: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    address: [[BaseAddress.svg BaseAddress]]
+    parcels: [[ParcelDraft.svg List<ParcelDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface StagedOrderAddParcelToDeliveryAction [[StagedOrderAddParcelToDeliveryAction.svg]]  {
+    action: String
+    deliveryId: String
+    measurements: [[ParcelMeasurements.svg ParcelMeasurements]]
+    trackingData: [[TrackingData.svg TrackingData]]
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+}
+interface StagedOrderSetDeliveryItemsAction [[StagedOrderSetDeliveryItemsAction.svg]]  {
+    action: String
+    deliveryId: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+}
+interface StagedOrderSetParcelItemsAction [[StagedOrderSetParcelItemsAction.svg]]  {
+    action: String
+    parcelId: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+}
+interface Delivery [[Delivery.svg]]  {
+    id: String
+    createdAt: DateTime
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    parcels: [[Parcel.svg List<Parcel>]]
+    address: [[Address.svg Address]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface DeliveryDraft [[DeliveryDraft.svg]]  {
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    parcels: [[ParcelDraft.svg List<ParcelDraft>]]
+    address: [[AddressDraft.svg AddressDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface Parcel [[Parcel.svg]]  {
+    id: String
+    createdAt: DateTime
+    measurements: [[ParcelMeasurements.svg ParcelMeasurements]]
+    trackingData: [[TrackingData.svg TrackingData]]
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface ParcelDraft [[ParcelDraft.svg]]  {
+    measurements: [[ParcelMeasurements.svg ParcelMeasurements]]
+    trackingData: [[TrackingData.svg TrackingData]]
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface OrderAddDeliveryAction [[OrderAddDeliveryAction.svg]]  {
+    action: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+    shippingKey: String
+    address: [[BaseAddress.svg BaseAddress]]
+    parcels: [[ParcelDraft.svg List<ParcelDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface OrderAddParcelToDeliveryAction [[OrderAddParcelToDeliveryAction.svg]]  {
+    action: String
+    deliveryId: String
+    measurements: [[ParcelMeasurements.svg ParcelMeasurements]]
+    trackingData: [[TrackingData.svg TrackingData]]
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+}
+interface OrderSetDeliveryItemsAction [[OrderSetDeliveryItemsAction.svg]]  {
+    action: String
+    deliveryId: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+}
+interface OrderSetParcelItemsAction [[OrderSetParcelItemsAction.svg]]  {
+    action: String
+    parcelId: String
+    items: [[DeliveryItem.svg List<DeliveryItem>]]
+}
+
+DeliveryItem --> DeliveryItemsUpdatedMessage #green;text:green : "items"
+DeliveryItem --> DeliveryItemsUpdatedMessage #green;text:green : "oldItems"
+DeliveryItem --> ParcelItemsUpdatedMessage #green;text:green : "items"
+DeliveryItem --> ParcelItemsUpdatedMessage #green;text:green : "oldItems"
+DeliveryItem --> DeliveryItemsUpdatedMessagePayload #green;text:green : "items"
+DeliveryItem --> DeliveryItemsUpdatedMessagePayload #green;text:green : "oldItems"
+DeliveryItem --> ParcelItemsUpdatedMessagePayload #green;text:green : "items"
+DeliveryItem --> ParcelItemsUpdatedMessagePayload #green;text:green : "oldItems"
+DeliveryItem --> StagedOrderAddDeliveryAction #green;text:green : "items"
+DeliveryItem --> StagedOrderAddDeliveryAction #green;text:green : "items"
+DeliveryItem --> StagedOrderAddParcelToDeliveryAction #green;text:green : "items"
+DeliveryItem --> StagedOrderAddParcelToDeliveryAction #green;text:green : "items"
+DeliveryItem --> StagedOrderSetDeliveryItemsAction #green;text:green : "items"
+DeliveryItem --> StagedOrderSetDeliveryItemsAction #green;text:green : "items"
+DeliveryItem --> StagedOrderSetParcelItemsAction #green;text:green : "items"
+DeliveryItem --> StagedOrderSetParcelItemsAction #green;text:green : "items"
+DeliveryItem --> Delivery #green;text:green : "items"
+DeliveryItem --> DeliveryDraft #green;text:green : "items"
+DeliveryItem --> Parcel #green;text:green : "items"
+DeliveryItem --> ParcelDraft #green;text:green : "items"
+DeliveryItem --> OrderAddDeliveryAction #green;text:green : "items"
+DeliveryItem --> OrderAddDeliveryAction #green;text:green : "items"
+DeliveryItem --> OrderAddParcelToDeliveryAction #green;text:green : "items"
+DeliveryItem --> OrderAddParcelToDeliveryAction #green;text:green : "items"
+DeliveryItem --> OrderSetDeliveryItemsAction #green;text:green : "items"
+DeliveryItem --> OrderSetDeliveryItemsAction #green;text:green : "items"
+DeliveryItem --> OrderSetParcelItemsAction #green;text:green : "items"
+DeliveryItem --> OrderSetParcelItemsAction #green;text:green : "items"
+@enduml

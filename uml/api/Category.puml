@@ -1,0 +1,75 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface Category [[Category.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    name: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    ancestors: [[CategoryReference.svg List<CategoryReference>]]
+    parent: [[CategoryReference.svg CategoryReference]]
+    orderHint: String
+    externalId: String
+    metaTitle: [[LocalizedString.svg LocalizedString]]
+    metaDescription: [[LocalizedString.svg LocalizedString]]
+    metaKeywords: [[LocalizedString.svg LocalizedString]]
+    custom: [[CustomFields.svg CustomFields]]
+    assets: [[Asset.svg List<Asset>]]
+    key: String
+}
+interface BaseResource [[BaseResource.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+}
+
+
+interface CategoryPagedQueryResponse [[CategoryPagedQueryResponse.svg]]  {
+    limit: Long
+    offset: Long
+    count: Long
+    total: Long
+    results: [[Category.svg List<Category>]]
+}
+interface CategoryReference [[CategoryReference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[Category.svg Category]]
+}
+interface CategoryCreatedMessage [[CategoryCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    category: [[Category.svg Category]]
+}
+interface CategoryCreatedMessagePayload [[CategoryCreatedMessagePayload.svg]]  {
+    type: String
+    category: [[Category.svg Category]]
+}
+
+Category --> CategoryPagedQueryResponse #green;text:green : "results"
+Category --> CategoryReference #green;text:green : "obj"
+Category --> CategoryCreatedMessage #green;text:green : "category"
+Category --> CategoryCreatedMessagePayload #green;text:green : "category"
+@enduml

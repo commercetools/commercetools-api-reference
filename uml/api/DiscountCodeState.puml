@@ -1,0 +1,43 @@
+@startuml
+
+hide methods
+enum DiscountCodeState {
+    NOT_ACTIVE
+    DOES_NOT_MATCH_CART
+    MATCHES_CART
+    MAX_APPLICATION_REACHED
+    APPLICATION_STOPPED_BY_PREVIOUS_DISCOUNT
+    NOT_VALID
+}
+interface DiscountCodeInfo [[DiscountCodeInfo.svg]]  {
+    discountCode: [[DiscountCodeReference.svg DiscountCodeReference]]
+    state: [[DiscountCodeState.svg DiscountCodeState]]
+}
+interface OrderDiscountCodeStateSetMessage [[OrderDiscountCodeStateSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    discountCode: [[DiscountCodeReference.svg DiscountCodeReference]]
+    state: [[DiscountCodeState.svg DiscountCodeState]]
+    oldState: [[DiscountCodeState.svg DiscountCodeState]]
+}
+interface OrderDiscountCodeStateSetMessagePayload [[OrderDiscountCodeStateSetMessagePayload.svg]]  {
+    type: String
+    discountCode: [[DiscountCodeReference.svg DiscountCodeReference]]
+    state: [[DiscountCodeState.svg DiscountCodeState]]
+    oldState: [[DiscountCodeState.svg DiscountCodeState]]
+}
+DiscountCodeState --> DiscountCodeInfo #green;text:green : "state"
+DiscountCodeState --> OrderDiscountCodeStateSetMessage #green;text:green : "state"
+DiscountCodeState --> OrderDiscountCodeStateSetMessage #green;text:green : "oldState"
+DiscountCodeState --> OrderDiscountCodeStateSetMessagePayload #green;text:green : "state"
+DiscountCodeState --> OrderDiscountCodeStateSetMessagePayload #green;text:green : "oldState"
+@enduml

@@ -1,0 +1,51 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface TransactionDraft [[TransactionDraft.svg]]  {
+    timestamp: DateTime
+    type: [[TransactionType.svg TransactionType]]
+    amount: [[Money.svg Money]]
+    interactionId: String
+    state: [[TransactionState.svg TransactionState]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+
+
+
+interface PaymentDraft [[PaymentDraft.svg]]  {
+    customer: [[CustomerResourceIdentifier.svg CustomerResourceIdentifier]]
+    anonymousId: String
+    externalId: String
+    interfaceId: String
+    amountPlanned: [[Money.svg Money]]
+    amountAuthorized: [[Money.svg Money]]
+    authorizedUntil: String
+    amountPaid: [[Money.svg Money]]
+    amountRefunded: [[Money.svg Money]]
+    paymentMethodInfo: [[PaymentMethodInfo.svg PaymentMethodInfo]]
+    paymentStatus: [[PaymentStatusDraft.svg PaymentStatusDraft]]
+    transactions: [[TransactionDraft.svg List<TransactionDraft>]]
+    interfaceInteractions: [[CustomFieldsDraft.svg List<CustomFieldsDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    key: String
+}
+interface MyPaymentAddTransactionAction [[MyPaymentAddTransactionAction.svg]]  {
+    action: String
+    transaction: [[TransactionDraft.svg TransactionDraft]]
+}
+interface PaymentAddTransactionAction [[PaymentAddTransactionAction.svg]]  {
+    action: String
+    transaction: [[TransactionDraft.svg TransactionDraft]]
+}
+
+TransactionDraft --> PaymentDraft #green;text:green : "transactions"
+TransactionDraft --> MyPaymentAddTransactionAction #green;text:green : "transaction"
+TransactionDraft --> PaymentAddTransactionAction #green;text:green : "transaction"
+@enduml

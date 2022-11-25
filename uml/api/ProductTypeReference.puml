@@ -1,0 +1,112 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface ProductTypeReference [[ProductTypeReference.svg]] extends Reference {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[ProductType.svg ProductType]]
+}
+interface Reference [[Reference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+}
+
+
+interface LineItem [[LineItem.svg]]  {
+    id: String
+    productId: String
+    productKey: String
+    name: [[LocalizedString.svg LocalizedString]]
+    productSlug: [[LocalizedString.svg LocalizedString]]
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    variant: [[ProductVariant.svg ProductVariant]]
+    price: [[Price.svg Price]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxedPricePortions: [[MethodTaxedPrice.svg List<MethodTaxedPrice>]]
+    totalPrice: [[TypedMoney.svg TypedMoney]]
+    quantity: Long
+    addedAt: DateTime
+    state: [[ItemState.svg List<ItemState>]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    perMethodTaxRate: [[MethodTaxRate.svg List<MethodTaxRate>]]
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+    distributionChannel: [[ChannelReference.svg ChannelReference]]
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    priceMode: [[LineItemPriceMode.svg LineItemPriceMode]]
+    lineItemMode: [[LineItemMode.svg LineItemMode]]
+    custom: [[CustomFields.svg CustomFields]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
+    lastModifiedAt: DateTime
+}
+interface AttributeNestedType [[AttributeNestedType.svg]]  {
+    name: String
+    typeReference: [[ProductTypeReference.svg ProductTypeReference]]
+}
+interface Product [[Product.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    masterData: [[ProductCatalogData.svg ProductCatalogData]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    state: [[StateReference.svg StateReference]]
+    reviewRatingStatistics: [[ReviewRatingStatistics.svg ReviewRatingStatistics]]
+    priceMode: [[ProductPriceModeEnum.svg ProductPriceModeEnum]]
+}
+interface ProductProjection [[ProductProjection.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    categories: [[CategoryReference.svg List<CategoryReference>]]
+    categoryOrderHints: [[CategoryOrderHints.svg CategoryOrderHints]]
+    metaTitle: [[LocalizedString.svg LocalizedString]]
+    metaDescription: [[LocalizedString.svg LocalizedString]]
+    metaKeywords: [[LocalizedString.svg LocalizedString]]
+    searchKeywords: [[SearchKeywords.svg SearchKeywords]]
+    hasStagedChanges: Boolean
+    published: Boolean
+    masterVariant: [[ProductVariant.svg ProductVariant]]
+    variants: [[ProductVariant.svg List<ProductVariant>]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    state: [[StateReference.svg StateReference]]
+    reviewRatingStatistics: [[ReviewRatingStatistics.svg ReviewRatingStatistics]]
+    priceMode: [[ProductPriceModeEnum.svg ProductPriceModeEnum]]
+}
+interface ShoppingListLineItem [[ShoppingListLineItem.svg]]  {
+    addedAt: DateTime
+    custom: [[CustomFields.svg CustomFields]]
+    deactivatedAt: DateTime
+    id: String
+    name: [[LocalizedString.svg LocalizedString]]
+    productId: String
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    quantity: Long
+    variantId: Long
+    variant: [[ProductVariant.svg ProductVariant]]
+    productSlug: [[LocalizedString.svg LocalizedString]]
+}
+
+ProductTypeReference --> LineItem #green;text:green : "productType"
+ProductTypeReference --> AttributeNestedType #green;text:green : "typeReference"
+ProductTypeReference --> Product #green;text:green : "productType"
+ProductTypeReference --> ProductProjection #green;text:green : "productType"
+ProductTypeReference --> ShoppingListLineItem #green;text:green : "productType"
+@enduml

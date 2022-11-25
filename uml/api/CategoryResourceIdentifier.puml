@@ -1,0 +1,77 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface CategoryResourceIdentifier [[CategoryResourceIdentifier.svg]] extends ResourceIdentifier {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    key: String
+}
+interface ResourceIdentifier [[ResourceIdentifier.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    key: String
+}
+
+
+interface ProductDraft [[ProductDraft.svg]]  {
+    productType: [[ProductTypeResourceIdentifier.svg ProductTypeResourceIdentifier]]
+    name: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    key: String
+    description: [[LocalizedString.svg LocalizedString]]
+    categories: [[CategoryResourceIdentifier.svg List<CategoryResourceIdentifier>]]
+    categoryOrderHints: [[CategoryOrderHints.svg CategoryOrderHints]]
+    metaTitle: [[LocalizedString.svg LocalizedString]]
+    metaDescription: [[LocalizedString.svg LocalizedString]]
+    metaKeywords: [[LocalizedString.svg LocalizedString]]
+    masterVariant: [[ProductVariantDraft.svg ProductVariantDraft]]
+    variants: [[ProductVariantDraft.svg List<ProductVariantDraft>]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    searchKeywords: [[SearchKeywords.svg SearchKeywords]]
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    publish: Boolean
+    priceMode: [[ProductPriceModeEnum.svg ProductPriceModeEnum]]
+}
+interface CategoryDraft [[CategoryDraft.svg]]  {
+    name: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    parent: [[CategoryResourceIdentifier.svg CategoryResourceIdentifier]]
+    orderHint: String
+    externalId: String
+    metaTitle: [[LocalizedString.svg LocalizedString]]
+    metaDescription: [[LocalizedString.svg LocalizedString]]
+    metaKeywords: [[LocalizedString.svg LocalizedString]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    assets: [[AssetDraft.svg List<AssetDraft>]]
+    key: String
+}
+interface CategoryChangeParentAction [[CategoryChangeParentAction.svg]]  {
+    action: String
+    parent: [[CategoryResourceIdentifier.svg CategoryResourceIdentifier]]
+}
+interface ProductAddToCategoryAction [[ProductAddToCategoryAction.svg]]  {
+    action: String
+    category: [[CategoryResourceIdentifier.svg CategoryResourceIdentifier]]
+    orderHint: String
+    staged: Boolean
+}
+interface ProductRemoveFromCategoryAction [[ProductRemoveFromCategoryAction.svg]]  {
+    action: String
+    category: [[CategoryResourceIdentifier.svg CategoryResourceIdentifier]]
+    staged: Boolean
+}
+
+CategoryResourceIdentifier --> ProductDraft #green;text:green : "categories"
+CategoryResourceIdentifier --> CategoryDraft #green;text:green : "parent"
+CategoryResourceIdentifier --> CategoryChangeParentAction #green;text:green : "parent"
+CategoryResourceIdentifier --> ProductAddToCategoryAction #green;text:green : "category"
+CategoryResourceIdentifier --> ProductRemoveFromCategoryAction #green;text:green : "category"
+@enduml

@@ -1,0 +1,140 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface TaxRate [[TaxRate.svg]]  {
+    id: String
+    name: String
+    amount: Double
+    includedInPrice: Boolean
+    country: String
+    state: String
+    subRates: [[SubRate.svg List<SubRate>]]
+}
+
+
+
+interface TaxCategory [[TaxCategory.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    name: String
+    description: String
+    rates: [[TaxRate.svg List<TaxRate>]]
+    key: String
+}
+interface CustomLineItem [[CustomLineItem.svg]]  {
+    id: String
+    name: [[LocalizedString.svg LocalizedString]]
+    money: [[TypedMoney.svg TypedMoney]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    totalPrice: [[TypedMoney.svg TypedMoney]]
+    slug: String
+    quantity: Long
+    state: [[ItemState.svg List<ItemState>]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    custom: [[CustomFields.svg CustomFields]]
+    shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface LineItem [[LineItem.svg]]  {
+    id: String
+    productId: String
+    productKey: String
+    name: [[LocalizedString.svg LocalizedString]]
+    productSlug: [[LocalizedString.svg LocalizedString]]
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    variant: [[ProductVariant.svg ProductVariant]]
+    price: [[Price.svg Price]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxedPricePortions: [[MethodTaxedPrice.svg List<MethodTaxedPrice>]]
+    totalPrice: [[TypedMoney.svg TypedMoney]]
+    quantity: Long
+    addedAt: DateTime
+    state: [[ItemState.svg List<ItemState>]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    perMethodTaxRate: [[MethodTaxRate.svg List<MethodTaxRate>]]
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+    distributionChannel: [[ChannelReference.svg ChannelReference]]
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    priceMode: [[LineItemPriceMode.svg LineItemPriceMode]]
+    lineItemMode: [[LineItemMode.svg LineItemMode]]
+    custom: [[CustomFields.svg CustomFields]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
+    lastModifiedAt: DateTime
+}
+interface MethodTaxRate [[MethodTaxRate.svg]]  {
+    shippingMethodKey: String
+    taxRate: [[TaxRate.svg TaxRate]]
+}
+interface ShippingInfo [[ShippingInfo.svg]]  {
+    shippingMethodName: String
+    price: [[TypedMoney.svg TypedMoney]]
+    shippingRate: [[ShippingRate.svg ShippingRate]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    shippingMethod: [[ShippingMethodReference.svg ShippingMethodReference]]
+    deliveries: [[Delivery.svg List<Delivery>]]
+    discountedPrice: [[DiscountedLineItemPrice.svg DiscountedLineItemPrice]]
+    shippingMethodState: [[ShippingMethodState.svg ShippingMethodState]]
+}
+interface CustomLineItemImportDraft [[CustomLineItemImportDraft.svg]]  {
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    money: [[Money.svg Money]]
+    slug: String
+    state: [[ItemState.svg List<ItemState>]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface LineItemImportDraft [[LineItemImportDraft.svg]]  {
+    productId: String
+    name: [[LocalizedString.svg LocalizedString]]
+    variant: [[ProductVariantImportDraft.svg ProductVariantImportDraft]]
+    price: [[PriceDraft.svg PriceDraft]]
+    quantity: Long
+    state: [[ItemState.svg List<ItemState>]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface ShippingInfoImportDraft [[ShippingInfoImportDraft.svg]]  {
+    shippingMethodName: String
+    price: [[Money.svg Money]]
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    shippingMethod: [[ShippingMethodResourceIdentifier.svg ShippingMethodResourceIdentifier]]
+    deliveries: [[DeliveryDraft.svg List<DeliveryDraft>]]
+    discountedPrice: [[DiscountedLineItemPriceDraft.svg DiscountedLineItemPriceDraft]]
+    shippingMethodState: [[ShippingMethodState.svg ShippingMethodState]]
+}
+
+TaxRate --> TaxCategory #green;text:green : "rates"
+TaxRate --> CustomLineItem #green;text:green : "taxRate"
+TaxRate --> LineItem #green;text:green : "taxRate"
+TaxRate --> MethodTaxRate #green;text:green : "taxRate"
+TaxRate --> ShippingInfo #green;text:green : "taxRate"
+TaxRate --> CustomLineItemImportDraft #green;text:green : "taxRate"
+TaxRate --> LineItemImportDraft #green;text:green : "taxRate"
+TaxRate --> ShippingInfoImportDraft #green;text:green : "taxRate"
+@enduml

@@ -1,0 +1,60 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface PriceTierDraft [[PriceTierDraft.svg]]  {
+    minimumQuantity: Long
+    value: [[Money.svg Money]]
+}
+
+
+
+interface PriceDraft [[PriceDraft.svg]]  {
+    key: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    validFrom: DateTime
+    validUntil: DateTime
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface QueryPrice [[QueryPrice.svg]]  {
+    id: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
+    channel: [[ChannelReference.svg ChannelReference]]
+    validFrom: DateTime
+    validUntil: DateTime
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    custom: [[CustomFields.svg CustomFields]]
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+}
+interface StandalonePriceDraft [[StandalonePriceDraft.svg]]  {
+    key: String
+    sku: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    validFrom: DateTime
+    validUntil: DateTime
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    active: Boolean
+}
+
+PriceTierDraft --> PriceDraft #green;text:green : "tiers"
+PriceTierDraft --> QueryPrice #green;text:green : "tiers"
+PriceTierDraft --> StandalonePriceDraft #green;text:green : "tiers"
+@enduml

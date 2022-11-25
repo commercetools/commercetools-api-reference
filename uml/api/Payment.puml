@@ -1,0 +1,77 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface Payment [[Payment.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    anonymousId: String
+    externalId: String
+    interfaceId: String
+    amountPlanned: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    amountAuthorized: [[TypedMoney.svg TypedMoney]]
+    authorizedUntil: String
+    amountPaid: [[TypedMoney.svg TypedMoney]]
+    amountRefunded: [[TypedMoney.svg TypedMoney]]
+    paymentMethodInfo: [[PaymentMethodInfo.svg PaymentMethodInfo]]
+    paymentStatus: [[PaymentStatus.svg PaymentStatus]]
+    transactions: [[Transaction.svg List<Transaction>]]
+    interfaceInteractions: [[CustomFields.svg List<CustomFields>]]
+    custom: [[CustomFields.svg CustomFields]]
+    key: String
+}
+interface BaseResource [[BaseResource.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+}
+
+
+interface PaymentPagedQueryResponse [[PaymentPagedQueryResponse.svg]]  {
+    limit: Long
+    count: Long
+    total: Long
+    offset: Long
+    results: [[Payment.svg List<Payment>]]
+}
+interface PaymentCreatedMessage [[PaymentCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    payment: [[Payment.svg Payment]]
+}
+interface PaymentCreatedMessagePayload [[PaymentCreatedMessagePayload.svg]]  {
+    type: String
+    payment: [[Payment.svg Payment]]
+}
+interface PaymentReference [[PaymentReference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[Payment.svg Payment]]
+}
+
+Payment --> PaymentPagedQueryResponse #green;text:green : "results"
+Payment --> PaymentCreatedMessage #green;text:green : "payment"
+Payment --> PaymentCreatedMessagePayload #green;text:green : "payment"
+Payment --> PaymentReference #green;text:green : "obj"
+@enduml

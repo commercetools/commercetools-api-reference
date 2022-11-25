@@ -1,0 +1,74 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface ShippingRateDraft [[ShippingRateDraft.svg]]  {
+    price: [[Money.svg Money]]
+    freeAbove: [[Money.svg Money]]
+    tiers: [[ShippingRatePriceTier.svg List<ShippingRatePriceTier>]]
+}
+
+
+
+interface ZoneRateDraft [[ZoneRateDraft.svg]]  {
+    zone: [[ZoneResourceIdentifier.svg ZoneResourceIdentifier]]
+    shippingRates: [[ShippingRateDraft.svg List<ShippingRateDraft>]]
+}
+interface CustomShippingDraft [[CustomShippingDraft.svg]]  {
+    key: String
+    shippingMethodName: String
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: String
+    deliveries: [[Delivery.svg List<Delivery>]]
+    custom: String
+}
+interface CartAddCustomShippingMethodAction [[CartAddCustomShippingMethodAction.svg]]  {
+    action: String
+    shippingKey: String
+    shippingMethodName: String
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: String
+    deliveries: [[Delivery.svg List<Delivery>]]
+    custom: String
+}
+interface ShippingInfoImportDraft [[ShippingInfoImportDraft.svg]]  {
+    shippingMethodName: String
+    price: [[Money.svg Money]]
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    shippingMethod: [[ShippingMethodResourceIdentifier.svg ShippingMethodResourceIdentifier]]
+    deliveries: [[DeliveryDraft.svg List<DeliveryDraft>]]
+    discountedPrice: [[DiscountedLineItemPriceDraft.svg DiscountedLineItemPriceDraft]]
+    shippingMethodState: [[ShippingMethodState.svg ShippingMethodState]]
+}
+interface ShippingMethodAddShippingRateAction [[ShippingMethodAddShippingRateAction.svg]]  {
+    action: String
+    zone: [[ZoneResourceIdentifier.svg ZoneResourceIdentifier]]
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+}
+interface ShippingMethodRemoveShippingRateAction [[ShippingMethodRemoveShippingRateAction.svg]]  {
+    action: String
+    zone: [[ZoneResourceIdentifier.svg ZoneResourceIdentifier]]
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+}
+
+ShippingRateDraft --> ZoneRateDraft #green;text:green : "shippingRates"
+ShippingRateDraft --> CustomShippingDraft #green;text:green : "shippingRate"
+ShippingRateDraft --> CartAddCustomShippingMethodAction #green;text:green : "shippingRate"
+ShippingRateDraft --> ShippingInfoImportDraft #green;text:green : "shippingRate"
+ShippingRateDraft --> ShippingMethodAddShippingRateAction #green;text:green : "shippingRate"
+ShippingRateDraft --> ShippingMethodRemoveShippingRateAction #green;text:green : "shippingRate"
+@enduml

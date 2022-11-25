@@ -1,0 +1,61 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface StagedStandalonePrice [[StagedStandalonePrice.svg]]  {
+    value: [[TypedMoney.svg TypedMoney]]
+    discounted: [[DiscountedPrice.svg DiscountedPrice]]
+}
+
+
+
+interface StandalonePriceStagedChangesAppliedMessage [[StandalonePriceStagedChangesAppliedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    stagedChanges: [[StagedStandalonePrice.svg StagedStandalonePrice]]
+}
+interface StandalonePriceStagedChangesAppliedMessagePayload [[StandalonePriceStagedChangesAppliedMessagePayload.svg]]  {
+    type: String
+    stagedChanges: [[StagedStandalonePrice.svg StagedStandalonePrice]]
+}
+interface StandalonePrice [[StandalonePrice.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    sku: String
+    value: [[TypedMoney.svg TypedMoney]]
+    country: String
+    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
+    channel: [[ChannelReference.svg ChannelReference]]
+    validFrom: DateTime
+    validUntil: DateTime
+    tiers: [[PriceTier.svg List<PriceTier>]]
+    discounted: [[DiscountedPrice.svg DiscountedPrice]]
+    custom: [[CustomFields.svg CustomFields]]
+    staged: [[StagedStandalonePrice.svg StagedStandalonePrice]]
+    active: Boolean
+}
+
+StagedStandalonePrice --> StandalonePriceStagedChangesAppliedMessage #green;text:green : "stagedChanges"
+StagedStandalonePrice --> StandalonePriceStagedChangesAppliedMessagePayload #green;text:green : "stagedChanges"
+StagedStandalonePrice --> StandalonePrice #green;text:green : "staged"
+@enduml

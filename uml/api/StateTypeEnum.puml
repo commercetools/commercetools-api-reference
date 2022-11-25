@@ -1,0 +1,46 @@
+@startuml
+
+hide methods
+enum StateTypeEnum {
+    ORDER_STATE
+    LINE_ITEM_STATE
+    PRODUCT_STATE
+    REVIEW_STATE
+    PAYMENT_STATE
+    QUOTE_REQUEST_STATE
+    STAGED_QUOTE_STATE
+    QUOTE_STATE
+}
+interface State [[State.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    type: [[StateTypeEnum.svg StateTypeEnum]]
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    initial: Boolean
+    builtIn: Boolean
+    roles: [[StateRoleEnum.svg List<StateRoleEnum>]]
+    transitions: [[StateReference.svg List<StateReference>]]
+}
+interface StateDraft [[StateDraft.svg]]  {
+    key: String
+    type: [[StateTypeEnum.svg StateTypeEnum]]
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    initial: Boolean
+    roles: [[StateRoleEnum.svg List<StateRoleEnum>]]
+    transitions: [[StateResourceIdentifier.svg List<StateResourceIdentifier>]]
+}
+interface StateChangeTypeAction [[StateChangeTypeAction.svg]]  {
+    action: String
+    type: [[StateTypeEnum.svg StateTypeEnum]]
+}
+StateTypeEnum --> State #green;text:green : "type"
+StateTypeEnum --> StateDraft #green;text:green : "type"
+StateTypeEnum --> StateChangeTypeAction #green;text:green : "type"
+@enduml

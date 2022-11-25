@@ -1,0 +1,350 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface ChannelReference [[ChannelReference.svg]] extends Reference {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[Channel.svg Channel]]
+}
+interface Reference [[Reference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+}
+
+
+interface Review [[Review.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    uniquenessValue: String
+    locale: String
+    authorName: String
+    title: String
+    text: String
+    target: [[Object.svg Object]]
+    includedInStatistics: Boolean
+    rating: Integer
+    state: [[StateReference.svg StateReference]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface Store [[Store.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    name: [[LocalizedString.svg LocalizedString]]
+    languages: [[String.svg List<String>]]
+    countries: [[StoreCountry.svg List<StoreCountry>]]
+    distributionChannels: [[ChannelReference.svg List<ChannelReference>]]
+    supplyChannels: [[ChannelReference.svg List<ChannelReference>]]
+    productSelections: [[ProductSelectionSetting.svg List<ProductSelectionSetting>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface CartDiscountValueGiftLineItem [[CartDiscountValueGiftLineItem.svg]]  {
+    type: String
+    product: [[ProductReference.svg ProductReference]]
+    variantId: Long
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+    distributionChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface LineItem [[LineItem.svg]]  {
+    id: String
+    productId: String
+    productKey: String
+    name: [[LocalizedString.svg LocalizedString]]
+    productSlug: [[LocalizedString.svg LocalizedString]]
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    variant: [[ProductVariant.svg ProductVariant]]
+    price: [[Price.svg Price]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxedPricePortions: [[MethodTaxedPrice.svg List<MethodTaxedPrice>]]
+    totalPrice: [[TypedMoney.svg TypedMoney]]
+    quantity: Long
+    addedAt: DateTime
+    state: [[ItemState.svg List<ItemState>]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    perMethodTaxRate: [[MethodTaxRate.svg List<MethodTaxRate>]]
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+    distributionChannel: [[ChannelReference.svg ChannelReference]]
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    priceMode: [[LineItemPriceMode.svg LineItemPriceMode]]
+    lineItemMode: [[LineItemMode.svg LineItemMode]]
+    custom: [[CustomFields.svg CustomFields]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
+    lastModifiedAt: DateTime
+}
+interface Price [[Price.svg]]  {
+    id: String
+    key: String
+    value: [[TypedMoney.svg TypedMoney]]
+    country: String
+    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
+    channel: [[ChannelReference.svg ChannelReference]]
+    validFrom: DateTime
+    validUntil: DateTime
+    discounted: [[DiscountedPrice.svg DiscountedPrice]]
+    tiers: [[PriceTier.svg List<PriceTier>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface QueryPrice [[QueryPrice.svg]]  {
+    id: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
+    channel: [[ChannelReference.svg ChannelReference]]
+    validFrom: DateTime
+    validUntil: DateTime
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    custom: [[CustomFields.svg CustomFields]]
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+}
+interface ScopedPrice [[ScopedPrice.svg]]  {
+    id: String
+    value: [[TypedMoney.svg TypedMoney]]
+    currentValue: [[TypedMoney.svg TypedMoney]]
+    country: String
+    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
+    channel: [[ChannelReference.svg ChannelReference]]
+    validFrom: DateTime
+    validUntil: DateTime
+    discounted: [[DiscountedPrice.svg DiscountedPrice]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface MatchingPriceNotFoundError [[MatchingPriceNotFoundError.svg]]  {
+    code: String
+    message: String
+    productId: String
+    variantId: Integer
+    currency: String
+    country: String
+    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
+    channel: [[ChannelReference.svg ChannelReference]]
+}
+interface InventoryEntry [[InventoryEntry.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    sku: String
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+    quantityOnStock: Long
+    availableQuantity: Long
+    restockableInDays: Long
+    expectedDelivery: DateTime
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface InventoryEntryDeletedMessage [[InventoryEntryDeletedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    sku: String
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface InventoryEntryQuantitySetMessage [[InventoryEntryQuantitySetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    oldQuantityOnStock: Long
+    newQuantityOnStock: Long
+    oldAvailableQuantity: Long
+    newAvailableQuantity: Long
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface OrderLineItemDistributionChannelSetMessage [[OrderLineItemDistributionChannelSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    lineItemId: String
+    distributionChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface InventoryEntryDeletedMessagePayload [[InventoryEntryDeletedMessagePayload.svg]]  {
+    type: String
+    sku: String
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface InventoryEntryQuantitySetMessagePayload [[InventoryEntryQuantitySetMessagePayload.svg]]  {
+    type: String
+    oldQuantityOnStock: Long
+    newQuantityOnStock: Long
+    oldAvailableQuantity: Long
+    newAvailableQuantity: Long
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface OrderLineItemDistributionChannelSetMessagePayload [[OrderLineItemDistributionChannelSetMessagePayload.svg]]  {
+    type: String
+    lineItemId: String
+    distributionChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface SyncInfo [[SyncInfo.svg]]  {
+    channel: [[ChannelReference.svg ChannelReference]]
+    externalId: String
+    syncedAt: DateTime
+}
+interface StandalonePrice [[StandalonePrice.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    sku: String
+    value: [[TypedMoney.svg TypedMoney]]
+    country: String
+    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
+    channel: [[ChannelReference.svg ChannelReference]]
+    validFrom: DateTime
+    validUntil: DateTime
+    tiers: [[PriceTier.svg List<PriceTier>]]
+    discounted: [[DiscountedPrice.svg DiscountedPrice]]
+    custom: [[CustomFields.svg CustomFields]]
+    staged: [[StagedStandalonePrice.svg StagedStandalonePrice]]
+    active: Boolean
+}
+interface StoreCreatedMessage [[StoreCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    name: [[LocalizedString.svg LocalizedString]]
+    languages: [[String.svg List<String>]]
+    countries: [[StoreCountry.svg List<StoreCountry>]]
+    distributionChannels: [[ChannelReference.svg List<ChannelReference>]]
+    supplyChannels: [[ChannelReference.svg List<ChannelReference>]]
+    productSelections: [[ProductSelectionSetting.svg List<ProductSelectionSetting>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface StoreDistributionChannelsChangedMessage [[StoreDistributionChannelsChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    addedDistributionChannels: [[ChannelReference.svg List<ChannelReference>]]
+    removedDistributionChannels: [[ChannelReference.svg List<ChannelReference>]]
+}
+interface StoreSupplyChannelsChangedMessage [[StoreSupplyChannelsChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    addedSupplyChannels: [[ChannelReference.svg List<ChannelReference>]]
+    removedSupplyChannels: [[ChannelReference.svg List<ChannelReference>]]
+}
+interface StoreCreatedMessagePayload [[StoreCreatedMessagePayload.svg]]  {
+    type: String
+    name: [[LocalizedString.svg LocalizedString]]
+    languages: [[String.svg List<String>]]
+    countries: [[StoreCountry.svg List<StoreCountry>]]
+    distributionChannels: [[ChannelReference.svg List<ChannelReference>]]
+    supplyChannels: [[ChannelReference.svg List<ChannelReference>]]
+    productSelections: [[ProductSelectionSetting.svg List<ProductSelectionSetting>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface StoreDistributionChannelsChangedMessagePayload [[StoreDistributionChannelsChangedMessagePayload.svg]]  {
+    type: String
+    addedDistributionChannels: [[ChannelReference.svg List<ChannelReference>]]
+    removedDistributionChannels: [[ChannelReference.svg List<ChannelReference>]]
+}
+interface StoreSupplyChannelsChangedMessagePayload [[StoreSupplyChannelsChangedMessagePayload.svg]]  {
+    type: String
+    addedSupplyChannels: [[ChannelReference.svg List<ChannelReference>]]
+    removedSupplyChannels: [[ChannelReference.svg List<ChannelReference>]]
+}
+
+ChannelReference --> Review #green;text:green : "target"
+ChannelReference --> Store #green;text:green : "distributionChannels"
+ChannelReference --> Store #green;text:green : "supplyChannels"
+ChannelReference --> CartDiscountValueGiftLineItem #green;text:green : "supplyChannel"
+ChannelReference --> CartDiscountValueGiftLineItem #green;text:green : "distributionChannel"
+ChannelReference --> LineItem #green;text:green : "supplyChannel"
+ChannelReference --> LineItem #green;text:green : "distributionChannel"
+ChannelReference --> Price #green;text:green : "channel"
+ChannelReference --> QueryPrice #green;text:green : "channel"
+ChannelReference --> ScopedPrice #green;text:green : "channel"
+ChannelReference --> MatchingPriceNotFoundError #green;text:green : "channel"
+ChannelReference --> InventoryEntry #green;text:green : "supplyChannel"
+ChannelReference --> InventoryEntryDeletedMessage #green;text:green : "supplyChannel"
+ChannelReference --> InventoryEntryQuantitySetMessage #green;text:green : "supplyChannel"
+ChannelReference --> OrderLineItemDistributionChannelSetMessage #green;text:green : "distributionChannel"
+ChannelReference --> InventoryEntryDeletedMessagePayload #green;text:green : "supplyChannel"
+ChannelReference --> InventoryEntryQuantitySetMessagePayload #green;text:green : "supplyChannel"
+ChannelReference --> OrderLineItemDistributionChannelSetMessagePayload #green;text:green : "distributionChannel"
+ChannelReference --> SyncInfo #green;text:green : "channel"
+ChannelReference --> StandalonePrice #green;text:green : "channel"
+ChannelReference --> StoreCreatedMessage #green;text:green : "distributionChannels"
+ChannelReference --> StoreCreatedMessage #green;text:green : "supplyChannels"
+ChannelReference --> StoreDistributionChannelsChangedMessage #green;text:green : "addedDistributionChannels"
+ChannelReference --> StoreDistributionChannelsChangedMessage #green;text:green : "removedDistributionChannels"
+ChannelReference --> StoreSupplyChannelsChangedMessage #green;text:green : "addedSupplyChannels"
+ChannelReference --> StoreSupplyChannelsChangedMessage #green;text:green : "removedSupplyChannels"
+ChannelReference --> StoreCreatedMessagePayload #green;text:green : "distributionChannels"
+ChannelReference --> StoreCreatedMessagePayload #green;text:green : "supplyChannels"
+ChannelReference --> StoreDistributionChannelsChangedMessagePayload #green;text:green : "addedDistributionChannels"
+ChannelReference --> StoreDistributionChannelsChangedMessagePayload #green;text:green : "removedDistributionChannels"
+ChannelReference --> StoreSupplyChannelsChangedMessagePayload #green;text:green : "addedSupplyChannels"
+ChannelReference --> StoreSupplyChannelsChangedMessagePayload #green;text:green : "removedSupplyChannels"
+@enduml

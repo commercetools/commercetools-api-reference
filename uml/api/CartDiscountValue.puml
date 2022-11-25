@@ -1,0 +1,73 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface CartDiscountValue [[CartDiscountValue.svg]]  {
+    type: String
+}
+
+
+interface CartDiscountValueAbsolute [[CartDiscountValueAbsolute.svg]]  {
+    type: String
+    money: [[CentPrecisionMoney.svg List<CentPrecisionMoney>]]
+}
+interface CartDiscountValueFixed [[CartDiscountValueFixed.svg]]  {
+    type: String
+    money: [[CentPrecisionMoney.svg List<CentPrecisionMoney>]]
+}
+interface CartDiscountValueGiftLineItem [[CartDiscountValueGiftLineItem.svg]]  {
+    type: String
+    product: [[ProductReference.svg ProductReference]]
+    variantId: Long
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+    distributionChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface CartDiscountValueRelative [[CartDiscountValueRelative.svg]]  {
+    type: String
+    permyriad: Long
+}
+interface CartDiscount [[CartDiscount.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    name: [[LocalizedString.svg LocalizedString]]
+    key: String
+    description: [[LocalizedString.svg LocalizedString]]
+    value: [[CartDiscountValue.svg CartDiscountValue]]
+    cartPredicate: String
+    target: [[CartDiscountTarget.svg CartDiscountTarget]]
+    sortOrder: String
+    isActive: Boolean
+    validFrom: DateTime
+    validUntil: DateTime
+    requiresDiscountCode: Boolean
+    references: [[Reference.svg List<Reference>]]
+    stackingMode: [[StackingMode.svg StackingMode]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface DirectDiscount [[DirectDiscount.svg]]  {
+    id: String
+    value: [[CartDiscountValue.svg CartDiscountValue]]
+    target: [[CartDiscountTarget.svg CartDiscountTarget]]
+}
+interface DirectDiscountDraft [[DirectDiscountDraft.svg]]  {
+    value: [[CartDiscountValue.svg CartDiscountValue]]
+    target: [[CartDiscountTarget.svg CartDiscountTarget]]
+}
+CartDiscountValue --> CartDiscountValueAbsolute #blue;text:blue : "type : absolute"
+CartDiscountValue --> CartDiscountValueFixed #blue;text:blue : "type : fixed"
+CartDiscountValue --> CartDiscountValueGiftLineItem #blue;text:blue : "type : giftLineItem"
+CartDiscountValue --> CartDiscountValueRelative #blue;text:blue : "type : relative"
+CartDiscountValue --> CartDiscount #green;text:green : "value"
+CartDiscountValue --> DirectDiscount #green;text:green : "value"
+CartDiscountValue --> DirectDiscountDraft #green;text:green : "value"
+@enduml

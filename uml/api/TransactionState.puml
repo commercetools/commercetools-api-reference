@@ -1,0 +1,57 @@
+@startuml
+
+hide methods
+enum TransactionState {
+    INITIAL
+    PENDING
+    SUCCESS
+    FAILURE
+}
+interface PaymentTransactionStateChangedMessage [[PaymentTransactionStateChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    transactionId: String
+    state: [[TransactionState.svg TransactionState]]
+}
+interface PaymentTransactionStateChangedMessagePayload [[PaymentTransactionStateChangedMessagePayload.svg]]  {
+    type: String
+    transactionId: String
+    state: [[TransactionState.svg TransactionState]]
+}
+interface Transaction [[Transaction.svg]]  {
+    id: String
+    timestamp: DateTime
+    type: [[TransactionType.svg TransactionType]]
+    amount: [[TypedMoney.svg TypedMoney]]
+    interactionId: String
+    state: [[TransactionState.svg TransactionState]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface TransactionDraft [[TransactionDraft.svg]]  {
+    timestamp: DateTime
+    type: [[TransactionType.svg TransactionType]]
+    amount: [[Money.svg Money]]
+    interactionId: String
+    state: [[TransactionState.svg TransactionState]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface PaymentChangeTransactionStateAction [[PaymentChangeTransactionStateAction.svg]]  {
+    action: String
+    transactionId: String
+    state: [[TransactionState.svg TransactionState]]
+}
+TransactionState --> PaymentTransactionStateChangedMessage #green;text:green : "state"
+TransactionState --> PaymentTransactionStateChangedMessagePayload #green;text:green : "state"
+TransactionState --> Transaction #green;text:green : "state"
+TransactionState --> TransactionDraft #green;text:green : "state"
+TransactionState --> PaymentChangeTransactionStateAction #green;text:green : "state"
+@enduml

@@ -1,0 +1,154 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface ItemState [[ItemState.svg]]  {
+    quantity: Long
+    state: [[StateReference.svg StateReference]]
+}
+
+
+
+interface CustomLineItem [[CustomLineItem.svg]]  {
+    id: String
+    name: [[LocalizedString.svg LocalizedString]]
+    money: [[TypedMoney.svg TypedMoney]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    totalPrice: [[TypedMoney.svg TypedMoney]]
+    slug: String
+    quantity: Long
+    state: [[ItemState.svg List<ItemState>]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    custom: [[CustomFields.svg CustomFields]]
+    shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface LineItem [[LineItem.svg]]  {
+    id: String
+    productId: String
+    productKey: String
+    name: [[LocalizedString.svg LocalizedString]]
+    productSlug: [[LocalizedString.svg LocalizedString]]
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    variant: [[ProductVariant.svg ProductVariant]]
+    price: [[Price.svg Price]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxedPricePortions: [[MethodTaxedPrice.svg List<MethodTaxedPrice>]]
+    totalPrice: [[TypedMoney.svg TypedMoney]]
+    quantity: Long
+    addedAt: DateTime
+    state: [[ItemState.svg List<ItemState>]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    perMethodTaxRate: [[MethodTaxRate.svg List<MethodTaxRate>]]
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+    distributionChannel: [[ChannelReference.svg ChannelReference]]
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    priceMode: [[LineItemPriceMode.svg LineItemPriceMode]]
+    lineItemMode: [[LineItemMode.svg LineItemMode]]
+    custom: [[CustomFields.svg CustomFields]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
+    lastModifiedAt: DateTime
+}
+interface OrderLineItemRemovedMessage [[OrderLineItemRemovedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    lineItemId: String
+    removedQuantity: Long
+    newQuantity: Long
+    newState: [[ItemState.svg List<ItemState>]]
+    newTotalPrice: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    newTaxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    newPrice: [[Price.svg Price]]
+    newShippingDetail: [[ItemShippingDetails.svg ItemShippingDetails]]
+}
+interface OrderLineItemRemovedMessagePayload [[OrderLineItemRemovedMessagePayload.svg]]  {
+    type: String
+    lineItemId: String
+    removedQuantity: Long
+    newQuantity: Long
+    newState: [[ItemState.svg List<ItemState>]]
+    newTotalPrice: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    newTaxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    newPrice: [[Price.svg Price]]
+    newShippingDetail: [[ItemShippingDetails.svg ItemShippingDetails]]
+}
+interface StagedOrderImportCustomLineItemStateAction [[StagedOrderImportCustomLineItemStateAction.svg]]  {
+    action: String
+    customLineItemId: String
+    state: [[ItemState.svg List<ItemState>]]
+}
+interface StagedOrderImportLineItemStateAction [[StagedOrderImportLineItemStateAction.svg]]  {
+    action: String
+    lineItemId: String
+    state: [[ItemState.svg List<ItemState>]]
+}
+interface CustomLineItemImportDraft [[CustomLineItemImportDraft.svg]]  {
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    money: [[Money.svg Money]]
+    slug: String
+    state: [[ItemState.svg List<ItemState>]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface LineItemImportDraft [[LineItemImportDraft.svg]]  {
+    productId: String
+    name: [[LocalizedString.svg LocalizedString]]
+    variant: [[ProductVariantImportDraft.svg ProductVariantImportDraft]]
+    price: [[PriceDraft.svg PriceDraft]]
+    quantity: Long
+    state: [[ItemState.svg List<ItemState>]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface OrderImportCustomLineItemStateAction [[OrderImportCustomLineItemStateAction.svg]]  {
+    action: String
+    customLineItemId: String
+    state: [[ItemState.svg List<ItemState>]]
+}
+interface OrderImportLineItemStateAction [[OrderImportLineItemStateAction.svg]]  {
+    action: String
+    lineItemId: String
+    state: [[ItemState.svg List<ItemState>]]
+}
+
+ItemState --> CustomLineItem #green;text:green : "state"
+ItemState --> LineItem #green;text:green : "state"
+ItemState --> OrderLineItemRemovedMessage #green;text:green : "newState"
+ItemState --> OrderLineItemRemovedMessagePayload #green;text:green : "newState"
+ItemState --> StagedOrderImportCustomLineItemStateAction #green;text:green : "state"
+ItemState --> StagedOrderImportCustomLineItemStateAction #green;text:green : "state"
+ItemState --> StagedOrderImportLineItemStateAction #green;text:green : "state"
+ItemState --> StagedOrderImportLineItemStateAction #green;text:green : "state"
+ItemState --> CustomLineItemImportDraft #green;text:green : "state"
+ItemState --> LineItemImportDraft #green;text:green : "state"
+ItemState --> OrderImportCustomLineItemStateAction #green;text:green : "state"
+ItemState --> OrderImportCustomLineItemStateAction #green;text:green : "state"
+ItemState --> OrderImportLineItemStateAction #green;text:green : "state"
+ItemState --> OrderImportLineItemStateAction #green;text:green : "state"
+@enduml

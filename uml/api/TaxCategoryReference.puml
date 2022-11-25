@@ -1,0 +1,114 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface TaxCategoryReference [[TaxCategoryReference.svg]] extends Reference {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[TaxCategory.svg TaxCategory]]
+}
+interface Reference [[Reference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+}
+
+
+interface CustomLineItem [[CustomLineItem.svg]]  {
+    id: String
+    name: [[LocalizedString.svg LocalizedString]]
+    money: [[TypedMoney.svg TypedMoney]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    totalPrice: [[TypedMoney.svg TypedMoney]]
+    slug: String
+    quantity: Long
+    state: [[ItemState.svg List<ItemState>]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    custom: [[CustomFields.svg CustomFields]]
+    shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface ShippingInfo [[ShippingInfo.svg]]  {
+    shippingMethodName: String
+    price: [[TypedMoney.svg TypedMoney]]
+    shippingRate: [[ShippingRate.svg ShippingRate]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    shippingMethod: [[ShippingMethodReference.svg ShippingMethodReference]]
+    deliveries: [[Delivery.svg List<Delivery>]]
+    discountedPrice: [[DiscountedLineItemPrice.svg DiscountedLineItemPrice]]
+    shippingMethodState: [[ShippingMethodState.svg ShippingMethodState]]
+}
+interface Product [[Product.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    masterData: [[ProductCatalogData.svg ProductCatalogData]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    state: [[StateReference.svg StateReference]]
+    reviewRatingStatistics: [[ReviewRatingStatistics.svg ReviewRatingStatistics]]
+    priceMode: [[ProductPriceModeEnum.svg ProductPriceModeEnum]]
+}
+interface ProductProjection [[ProductProjection.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    categories: [[CategoryReference.svg List<CategoryReference>]]
+    categoryOrderHints: [[CategoryOrderHints.svg CategoryOrderHints]]
+    metaTitle: [[LocalizedString.svg LocalizedString]]
+    metaDescription: [[LocalizedString.svg LocalizedString]]
+    metaKeywords: [[LocalizedString.svg LocalizedString]]
+    searchKeywords: [[SearchKeywords.svg SearchKeywords]]
+    hasStagedChanges: Boolean
+    published: Boolean
+    masterVariant: [[ProductVariant.svg ProductVariant]]
+    variants: [[ProductVariant.svg List<ProductVariant>]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    state: [[StateReference.svg StateReference]]
+    reviewRatingStatistics: [[ReviewRatingStatistics.svg ReviewRatingStatistics]]
+    priceMode: [[ProductPriceModeEnum.svg ProductPriceModeEnum]]
+}
+interface ShippingMethod [[ShippingMethod.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    name: String
+    localizedName: [[LocalizedString.svg LocalizedString]]
+    description: String
+    localizedDescription: [[LocalizedString.svg LocalizedString]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    zoneRates: [[ZoneRate.svg List<ZoneRate>]]
+    isDefault: Boolean
+    predicate: String
+    custom: [[CustomFields.svg CustomFields]]
+}
+
+TaxCategoryReference --> CustomLineItem #green;text:green : "taxCategory"
+TaxCategoryReference --> ShippingInfo #green;text:green : "taxCategory"
+TaxCategoryReference --> Product #green;text:green : "taxCategory"
+TaxCategoryReference --> ProductProjection #green;text:green : "taxCategory"
+TaxCategoryReference --> ShippingMethod #green;text:green : "taxCategory"
+@enduml

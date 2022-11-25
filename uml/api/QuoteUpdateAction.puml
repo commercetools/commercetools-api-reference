@@ -1,0 +1,49 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface QuoteUpdateAction [[QuoteUpdateAction.svg]]  {
+    action: String
+}
+
+
+interface QuoteChangeQuoteStateAction [[QuoteChangeQuoteStateAction.svg]]  {
+    action: String
+    quoteState: [[QuoteState.svg QuoteState]]
+}
+interface QuoteRequestQuoteRenegotiationAction [[QuoteRequestQuoteRenegotiationAction.svg]]  {
+    action: String
+    buyerComment: String
+}
+interface QuoteSetCustomFieldAction [[QuoteSetCustomFieldAction.svg]]  {
+    action: String
+    name: String
+    value: [[Object.svg Object]]
+}
+interface QuoteSetCustomTypeAction [[QuoteSetCustomTypeAction.svg]]  {
+    action: String
+    type: [[TypeResourceIdentifier.svg TypeResourceIdentifier]]
+    fields: [[FieldContainer.svg FieldContainer]]
+}
+interface QuoteTransitionStateAction [[QuoteTransitionStateAction.svg]]  {
+    action: String
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    force: Boolean
+}
+interface QuoteUpdate [[QuoteUpdate.svg]]  {
+    version: Long
+    actions: [[QuoteUpdateAction.svg List<QuoteUpdateAction>]]
+}
+QuoteUpdateAction --> QuoteChangeQuoteStateAction #blue;text:blue : "action : changeQuoteState"
+QuoteUpdateAction --> QuoteRequestQuoteRenegotiationAction #blue;text:blue : "action : requestQuoteRenegotiation"
+QuoteUpdateAction --> QuoteSetCustomFieldAction #blue;text:blue : "action : setCustomField"
+QuoteUpdateAction --> QuoteSetCustomTypeAction #blue;text:blue : "action : setCustomType"
+QuoteUpdateAction --> QuoteTransitionStateAction #blue;text:blue : "action : transitionState"
+QuoteUpdateAction --> QuoteUpdate #green;text:green : "actions"
+@enduml

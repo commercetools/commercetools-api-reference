@@ -1,0 +1,115 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface CentPrecisionMoney [[CentPrecisionMoney.svg]] extends TypedMoney {
+    centAmount: Long
+    currencyCode: String
+    type: [[MoneyType.svg MoneyType]]
+    fractionDigits: Integer
+}
+interface TypedMoney [[TypedMoney.svg]]  {
+    centAmount: Long
+    currencyCode: String
+    type: [[MoneyType.svg MoneyType]]
+    fractionDigits: Integer
+}
+
+interface CentPrecisionMoney [[CentPrecisionMoney.svg]]  {
+    centAmount: Long
+    currencyCode: String
+    type: [[MoneyType.svg MoneyType]]
+    fractionDigits: Integer
+}
+interface CartDiscountValueAbsolute [[CartDiscountValueAbsolute.svg]]  {
+    type: String
+    money: [[CentPrecisionMoney.svg List<CentPrecisionMoney>]]
+}
+interface CartDiscountValueFixed [[CartDiscountValueFixed.svg]]  {
+    type: String
+    money: [[CentPrecisionMoney.svg List<CentPrecisionMoney>]]
+}
+interface ProductDiscountValueAbsolute [[ProductDiscountValueAbsolute.svg]]  {
+    type: String
+    money: [[CentPrecisionMoney.svg List<CentPrecisionMoney>]]
+}
+interface MyPayment [[MyPayment.svg]]  {
+    id: String
+    version: Long
+    customer: [[CustomerReference.svg CustomerReference]]
+    anonymousId: String
+    amountPlanned: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    paymentMethodInfo: [[PaymentMethodInfo.svg PaymentMethodInfo]]
+    transactions: [[Transaction.svg List<Transaction>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface OrderLineItemRemovedMessage [[OrderLineItemRemovedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    lineItemId: String
+    removedQuantity: Long
+    newQuantity: Long
+    newState: [[ItemState.svg List<ItemState>]]
+    newTotalPrice: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    newTaxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    newPrice: [[Price.svg Price]]
+    newShippingDetail: [[ItemShippingDetails.svg ItemShippingDetails]]
+}
+interface OrderLineItemRemovedMessagePayload [[OrderLineItemRemovedMessagePayload.svg]]  {
+    type: String
+    lineItemId: String
+    removedQuantity: Long
+    newQuantity: Long
+    newState: [[ItemState.svg List<ItemState>]]
+    newTotalPrice: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    newTaxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    newPrice: [[Price.svg Price]]
+    newShippingDetail: [[ItemShippingDetails.svg ItemShippingDetails]]
+}
+interface Payment [[Payment.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    anonymousId: String
+    externalId: String
+    interfaceId: String
+    amountPlanned: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    amountAuthorized: [[TypedMoney.svg TypedMoney]]
+    authorizedUntil: String
+    amountPaid: [[TypedMoney.svg TypedMoney]]
+    amountRefunded: [[TypedMoney.svg TypedMoney]]
+    paymentMethodInfo: [[PaymentMethodInfo.svg PaymentMethodInfo]]
+    paymentStatus: [[PaymentStatus.svg PaymentStatus]]
+    transactions: [[Transaction.svg List<Transaction>]]
+    interfaceInteractions: [[CustomFields.svg List<CustomFields>]]
+    custom: [[CustomFields.svg CustomFields]]
+    key: String
+}
+CentPrecisionMoney --> CentPrecisionMoney #blue;text:blue : "type : centPrecision"
+CentPrecisionMoney --> CartDiscountValueAbsolute #green;text:green : "money"
+CentPrecisionMoney --> CartDiscountValueFixed #green;text:green : "money"
+CentPrecisionMoney --> ProductDiscountValueAbsolute #green;text:green : "money"
+CentPrecisionMoney --> MyPayment #green;text:green : "amountPlanned"
+CentPrecisionMoney --> OrderLineItemRemovedMessage #green;text:green : "newTotalPrice"
+CentPrecisionMoney --> OrderLineItemRemovedMessagePayload #green;text:green : "newTotalPrice"
+CentPrecisionMoney --> Payment #green;text:green : "amountPlanned"
+@enduml

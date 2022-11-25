@@ -1,0 +1,53 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface OrderEditResult [[OrderEditResult.svg]]  {
+    type: String
+}
+
+
+interface OrderEditApplied [[OrderEditApplied.svg]]  {
+    type: String
+    appliedAt: DateTime
+    excerptBeforeEdit: [[OrderExcerpt.svg OrderExcerpt]]
+    excerptAfterEdit: [[OrderExcerpt.svg OrderExcerpt]]
+}
+interface OrderEditNotProcessed [[OrderEditNotProcessed.svg]]  {
+    type: String
+}
+interface OrderEditPreviewFailure [[OrderEditPreviewFailure.svg]]  {
+    type: String
+    errors: [[ErrorObject.svg List<ErrorObject>]]
+}
+interface OrderEditPreviewSuccess [[OrderEditPreviewSuccess.svg]]  {
+    type: String
+    preview: [[StagedOrder.svg StagedOrder]]
+    messagePayloads: [[MessagePayload.svg List<MessagePayload>]]
+}
+interface OrderEdit [[OrderEdit.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    resource: [[OrderReference.svg OrderReference]]
+    stagedActions: [[StagedOrderUpdateAction.svg List<StagedOrderUpdateAction>]]
+    custom: [[CustomFields.svg CustomFields]]
+    result: [[OrderEditResult.svg OrderEditResult]]
+    comment: String
+}
+OrderEditResult --> OrderEditApplied #blue;text:blue : "type : Applied"
+OrderEditResult --> OrderEditNotProcessed #blue;text:blue : "type : NotProcessed"
+OrderEditResult --> OrderEditPreviewFailure #blue;text:blue : "type : PreviewFailure"
+OrderEditResult --> OrderEditPreviewSuccess #blue;text:blue : "type : PreviewSuccess"
+OrderEditResult --> OrderEdit #green;text:green : "result"
+@enduml

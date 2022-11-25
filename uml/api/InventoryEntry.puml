@@ -1,0 +1,70 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface InventoryEntry [[InventoryEntry.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    sku: String
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+    quantityOnStock: Long
+    availableQuantity: Long
+    restockableInDays: Long
+    expectedDelivery: DateTime
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface BaseResource [[BaseResource.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+}
+
+
+interface InventoryPagedQueryResponse [[InventoryPagedQueryResponse.svg]]  {
+    limit: Long
+    offset: Long
+    count: Long
+    total: Long
+    results: [[InventoryEntry.svg List<InventoryEntry>]]
+}
+interface InventoryEntryReference [[InventoryEntryReference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[InventoryEntry.svg InventoryEntry]]
+}
+interface InventoryEntryCreatedMessage [[InventoryEntryCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    inventoryEntry: [[InventoryEntry.svg InventoryEntry]]
+}
+interface InventoryEntryCreatedMessagePayload [[InventoryEntryCreatedMessagePayload.svg]]  {
+    type: String
+    inventoryEntry: [[InventoryEntry.svg InventoryEntry]]
+}
+
+InventoryEntry --> InventoryPagedQueryResponse #green;text:green : "results"
+InventoryEntry --> InventoryEntryReference #green;text:green : "obj"
+InventoryEntry --> InventoryEntryCreatedMessage #green;text:green : "inventoryEntry"
+InventoryEntry --> InventoryEntryCreatedMessagePayload #green;text:green : "inventoryEntry"
+@enduml

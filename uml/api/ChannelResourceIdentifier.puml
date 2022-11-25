@@ -1,0 +1,218 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface ChannelResourceIdentifier [[ChannelResourceIdentifier.svg]] extends ResourceIdentifier {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    key: String
+}
+interface ResourceIdentifier [[ResourceIdentifier.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    key: String
+}
+
+
+interface ReviewDraft [[ReviewDraft.svg]]  {
+    key: String
+    uniquenessValue: String
+    locale: String
+    authorName: String
+    title: String
+    text: String
+    target: [[Object.svg Object]]
+    state: [[StateResourceIdentifier.svg StateResourceIdentifier]]
+    rating: Integer
+    customer: [[CustomerResourceIdentifier.svg CustomerResourceIdentifier]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface ReviewSetTargetAction [[ReviewSetTargetAction.svg]]  {
+    action: String
+    target: [[Object.svg Object]]
+}
+interface StoreDraft [[StoreDraft.svg]]  {
+    key: String
+    name: [[LocalizedString.svg LocalizedString]]
+    languages: [[String.svg List<String>]]
+    countries: [[StoreCountry.svg List<StoreCountry>]]
+    distributionChannels: [[ChannelResourceIdentifier.svg List<ChannelResourceIdentifier>]]
+    supplyChannels: [[ChannelResourceIdentifier.svg List<ChannelResourceIdentifier>]]
+    productSelections: [[ProductSelectionSettingDraft.svg List<ProductSelectionSettingDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface StoreSetDistributionChannelsAction [[StoreSetDistributionChannelsAction.svg]]  {
+    action: String
+    distributionChannels: [[ChannelResourceIdentifier.svg List<ChannelResourceIdentifier>]]
+}
+interface StoreSetSupplyChannelsAction [[StoreSetSupplyChannelsAction.svg]]  {
+    action: String
+    supplyChannels: [[ChannelResourceIdentifier.svg List<ChannelResourceIdentifier>]]
+}
+interface CartDiscountValueGiftLineItemDraft [[CartDiscountValueGiftLineItemDraft.svg]]  {
+    type: String
+    product: [[ProductResourceIdentifier.svg ProductResourceIdentifier]]
+    variantId: Long
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+}
+interface LineItemDraft [[LineItemDraft.svg]]  {
+    productId: String
+    variantId: Long
+    sku: String
+    quantity: Long
+    addedAt: DateTime
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface PriceDraft [[PriceDraft.svg]]  {
+    key: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    validFrom: DateTime
+    validUntil: DateTime
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface DuplicateStandalonePriceScopeError [[DuplicateStandalonePriceScopeError.svg]]  {
+    code: String
+    message: String
+    conflictingStandalonePrice: [[StandalonePriceReference.svg StandalonePriceReference]]
+    sku: String
+    currency: String
+    country: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    validFrom: DateTime
+    validUntil: DateTime
+}
+interface MissingRoleOnChannelError [[MissingRoleOnChannelError.svg]]  {
+    code: String
+    message: String
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    missingRole: [[ChannelRoleEnum.svg ChannelRoleEnum]]
+}
+interface OverlappingStandalonePriceValidityError [[OverlappingStandalonePriceValidityError.svg]]  {
+    code: String
+    message: String
+    conflictingStandalonePrice: [[StandalonePriceReference.svg StandalonePriceReference]]
+    sku: String
+    currency: String
+    country: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    validFrom: DateTime
+    validUntil: DateTime
+    conflictingValidFrom: DateTime
+    conflictingValidUntil: DateTime
+}
+interface InventoryEntryDraft [[InventoryEntryDraft.svg]]  {
+    sku: String
+    key: String
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    quantityOnStock: Long
+    restockableInDays: Long
+    expectedDelivery: DateTime
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface InventoryEntrySetSupplyChannelAction [[InventoryEntrySetSupplyChannelAction.svg]]  {
+    action: String
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+}
+interface MyLineItemDraft [[MyLineItemDraft.svg]]  {
+    productId: String
+    variantId: Long
+    quantity: Long
+    addedAt: DateTime
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    sku: String
+}
+interface LineItemImportDraft [[LineItemImportDraft.svg]]  {
+    productId: String
+    name: [[LocalizedString.svg LocalizedString]]
+    variant: [[ProductVariantImportDraft.svg ProductVariantImportDraft]]
+    price: [[PriceDraft.svg PriceDraft]]
+    quantity: Long
+    state: [[ItemState.svg List<ItemState>]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface StandalonePriceDraft [[StandalonePriceDraft.svg]]  {
+    key: String
+    sku: String
+    value: [[Money.svg Money]]
+    country: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    validFrom: DateTime
+    validUntil: DateTime
+    tiers: [[PriceTierDraft.svg List<PriceTierDraft>]]
+    discounted: [[DiscountedPriceDraft.svg DiscountedPriceDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    active: Boolean
+}
+interface StoreAddDistributionChannelAction [[StoreAddDistributionChannelAction.svg]]  {
+    action: String
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+}
+interface StoreAddSupplyChannelAction [[StoreAddSupplyChannelAction.svg]]  {
+    action: String
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+}
+interface StoreRemoveDistributionChannelAction [[StoreRemoveDistributionChannelAction.svg]]  {
+    action: String
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+}
+interface StoreRemoveSupplyChannelAction [[StoreRemoveSupplyChannelAction.svg]]  {
+    action: String
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+}
+
+ChannelResourceIdentifier --> ReviewDraft #green;text:green : "target"
+ChannelResourceIdentifier --> ReviewSetTargetAction #green;text:green : "target"
+ChannelResourceIdentifier --> StoreDraft #green;text:green : "distributionChannels"
+ChannelResourceIdentifier --> StoreDraft #green;text:green : "supplyChannels"
+ChannelResourceIdentifier --> StoreSetDistributionChannelsAction #green;text:green : "distributionChannels"
+ChannelResourceIdentifier --> StoreSetSupplyChannelsAction #green;text:green : "supplyChannels"
+ChannelResourceIdentifier --> CartDiscountValueGiftLineItemDraft #green;text:green : "supplyChannel"
+ChannelResourceIdentifier --> CartDiscountValueGiftLineItemDraft #green;text:green : "distributionChannel"
+ChannelResourceIdentifier --> LineItemDraft #green;text:green : "supplyChannel"
+ChannelResourceIdentifier --> LineItemDraft #green;text:green : "distributionChannel"
+ChannelResourceIdentifier --> PriceDraft #green;text:green : "channel"
+ChannelResourceIdentifier --> DuplicateStandalonePriceScopeError #green;text:green : "channel"
+ChannelResourceIdentifier --> MissingRoleOnChannelError #green;text:green : "channel"
+ChannelResourceIdentifier --> OverlappingStandalonePriceValidityError #green;text:green : "channel"
+ChannelResourceIdentifier --> InventoryEntryDraft #green;text:green : "supplyChannel"
+ChannelResourceIdentifier --> InventoryEntrySetSupplyChannelAction #green;text:green : "supplyChannel"
+ChannelResourceIdentifier --> MyLineItemDraft #green;text:green : "supplyChannel"
+ChannelResourceIdentifier --> MyLineItemDraft #green;text:green : "distributionChannel"
+ChannelResourceIdentifier --> LineItemImportDraft #green;text:green : "supplyChannel"
+ChannelResourceIdentifier --> LineItemImportDraft #green;text:green : "distributionChannel"
+ChannelResourceIdentifier --> StandalonePriceDraft #green;text:green : "channel"
+ChannelResourceIdentifier --> StoreAddDistributionChannelAction #green;text:green : "distributionChannel"
+ChannelResourceIdentifier --> StoreAddSupplyChannelAction #green;text:green : "supplyChannel"
+ChannelResourceIdentifier --> StoreRemoveDistributionChannelAction #green;text:green : "distributionChannel"
+ChannelResourceIdentifier --> StoreRemoveSupplyChannelAction #green;text:green : "supplyChannel"
+@enduml

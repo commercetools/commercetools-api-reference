@@ -1,0 +1,130 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface BusinessUnitResourceIdentifier [[BusinessUnitResourceIdentifier.svg]] extends ResourceIdentifier {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    key: String
+}
+interface ResourceIdentifier [[ResourceIdentifier.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    key: String
+}
+
+interface BusinessUnitResourceIdentifier [[BusinessUnitResourceIdentifier.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    key: String
+}
+interface DivisionDraft [[DivisionDraft.svg]]  {
+    key: String
+    status: [[BusinessUnitStatus.svg BusinessUnitStatus]]
+    stores: [[StoreKeyReference.svg List<StoreKeyReference>]]
+    storeMode: [[BusinessUnitStoreMode.svg BusinessUnitStoreMode]]
+    unitType: [[BusinessUnitType.svg BusinessUnitType]]
+    name: String
+    contactEmail: String
+    associates: [[AssociateDraft.svg List<AssociateDraft>]]
+    addresses: [[BaseAddress.svg List<BaseAddress>]]
+    shippingAddresses: [[Integer.svg List<Integer>]]
+    defaultShipingAddress: Integer
+    billingAddresses: [[Integer.svg List<Integer>]]
+    defaultBillingAddress: Integer
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    parentUnit: [[BusinessUnitResourceIdentifier.svg BusinessUnitResourceIdentifier]]
+}
+interface BusinessUnitChangeParentUnitAction [[BusinessUnitChangeParentUnitAction.svg]]  {
+    action: String
+    parentUnit: [[BusinessUnitResourceIdentifier.svg BusinessUnitResourceIdentifier]]
+}
+interface CartDraft [[CartDraft.svg]]  {
+    currency: String
+    key: String
+    customerId: String
+    customerEmail: String
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    anonymousId: String
+    businessUnit: [[BusinessUnitResourceIdentifier.svg BusinessUnitResourceIdentifier]]
+    store: [[StoreResourceIdentifier.svg StoreResourceIdentifier]]
+    country: String
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    taxMode: [[TaxMode.svg TaxMode]]
+    taxRoundingMode: [[RoundingMode.svg RoundingMode]]
+    taxCalculationMode: [[TaxCalculationMode.svg TaxCalculationMode]]
+    lineItems: [[LineItemDraft.svg List<LineItemDraft>]]
+    customLineItems: [[CustomLineItemDraft.svg List<CustomLineItemDraft>]]
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    billingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingMethod: [[ShippingMethodResourceIdentifier.svg ShippingMethodResourceIdentifier]]
+    externalTaxRateForShippingMethod: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    locale: String
+    deleteDaysAfterLastModification: Long
+    origin: [[CartOrigin.svg CartOrigin]]
+    shippingMode: [[ShippingMode.svg ShippingMode]]
+    customShipping: [[CustomShippingDraft.svg List<CustomShippingDraft>]]
+    shipping: [[ShippingDraft.svg List<ShippingDraft>]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    itemShippingAddresses: [[BaseAddress.svg List<BaseAddress>]]
+    discountCodes: [[String.svg List<String>]]
+}
+interface MyDivisionDraft [[MyDivisionDraft.svg]]  {
+    key: String
+    unitType: [[BusinessUnitType.svg BusinessUnitType]]
+    name: String
+    contactEmail: String
+    custom: [[CustomFields.svg CustomFields]]
+    addresses: [[BaseAddress.svg List<BaseAddress>]]
+    shippingAddresses: [[Integer.svg List<Integer>]]
+    defaultShipingAddress: Integer
+    billingAddresses: [[Integer.svg List<Integer>]]
+    defaultBillingAddress: Integer
+    parentUnit: [[BusinessUnitResourceIdentifier.svg BusinessUnitResourceIdentifier]]
+}
+interface MyBusinessUnitChangeParentUnitAction [[MyBusinessUnitChangeParentUnitAction.svg]]  {
+    action: String
+    parentUnit: [[BusinessUnitResourceIdentifier.svg BusinessUnitResourceIdentifier]]
+}
+interface OrderImportDraft [[OrderImportDraft.svg]]  {
+    orderNumber: String
+    customerId: String
+    customerEmail: String
+    lineItems: [[LineItemImportDraft.svg List<LineItemImportDraft>]]
+    customLineItems: [[CustomLineItemImportDraft.svg List<CustomLineItemImportDraft>]]
+    totalPrice: [[Money.svg Money]]
+    taxedPrice: [[TaxedPriceDraft.svg TaxedPriceDraft]]
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    billingAddress: [[BaseAddress.svg BaseAddress]]
+    customerGroup: [[CustomerGroupResourceIdentifier.svg CustomerGroupResourceIdentifier]]
+    country: String
+    orderState: [[OrderState.svg OrderState]]
+    state: [[StateReference.svg StateReference]]
+    shipmentState: [[ShipmentState.svg ShipmentState]]
+    paymentState: [[PaymentState.svg PaymentState]]
+    shippingInfo: [[ShippingInfoImportDraft.svg ShippingInfoImportDraft]]
+    paymentInfo: [[PaymentInfo.svg PaymentInfo]]
+    completedAt: DateTime
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    taxRoundingMode: [[RoundingMode.svg RoundingMode]]
+    itemShippingAddresses: [[BaseAddress.svg List<BaseAddress>]]
+    businessUnit: [[BusinessUnitResourceIdentifier.svg BusinessUnitResourceIdentifier]]
+    store: [[StoreResourceIdentifier.svg StoreResourceIdentifier]]
+    origin: [[CartOrigin.svg CartOrigin]]
+}
+BusinessUnitResourceIdentifier --> BusinessUnitResourceIdentifier #blue;text:blue : "typeId : business-unit"
+BusinessUnitResourceIdentifier --> DivisionDraft #green;text:green : "parentUnit"
+BusinessUnitResourceIdentifier --> BusinessUnitChangeParentUnitAction #green;text:green : "parentUnit"
+BusinessUnitResourceIdentifier --> CartDraft #green;text:green : "businessUnit"
+BusinessUnitResourceIdentifier --> MyDivisionDraft #green;text:green : "parentUnit"
+BusinessUnitResourceIdentifier --> MyBusinessUnitChangeParentUnitAction #green;text:green : "parentUnit"
+BusinessUnitResourceIdentifier --> OrderImportDraft #green;text:green : "businessUnit"
+@enduml

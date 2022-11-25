@@ -1,0 +1,60 @@
+@startuml
+
+hide methods
+enum ChannelRoleEnum {
+    INVENTORY_SUPPLY
+    PRODUCT_DISTRIBUTION
+    ORDER_EXPORT
+    ORDER_IMPORT
+    PRIMARY
+}
+interface Channel [[Channel.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    roles: [[ChannelRoleEnum.svg List<ChannelRoleEnum>]]
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    address: [[Address.svg Address]]
+    reviewRatingStatistics: [[ReviewRatingStatistics.svg ReviewRatingStatistics]]
+    custom: [[CustomFields.svg CustomFields]]
+    geoLocation: [[GeoJson.svg GeoJson]]
+}
+interface ChannelDraft [[ChannelDraft.svg]]  {
+    key: String
+    roles: [[ChannelRoleEnum.svg List<ChannelRoleEnum>]]
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    address: [[BaseAddress.svg BaseAddress]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    geoLocation: [[GeoJson.svg GeoJson]]
+}
+interface ChannelAddRolesAction [[ChannelAddRolesAction.svg]]  {
+    action: String
+    roles: [[ChannelRoleEnum.svg List<ChannelRoleEnum>]]
+}
+interface ChannelRemoveRolesAction [[ChannelRemoveRolesAction.svg]]  {
+    action: String
+    roles: [[ChannelRoleEnum.svg List<ChannelRoleEnum>]]
+}
+interface ChannelSetRolesAction [[ChannelSetRolesAction.svg]]  {
+    action: String
+    roles: [[ChannelRoleEnum.svg List<ChannelRoleEnum>]]
+}
+interface MissingRoleOnChannelError [[MissingRoleOnChannelError.svg]]  {
+    code: String
+    message: String
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    missingRole: [[ChannelRoleEnum.svg ChannelRoleEnum]]
+}
+ChannelRoleEnum --> Channel #green;text:green : "roles"
+ChannelRoleEnum --> ChannelDraft #green;text:green : "roles"
+ChannelRoleEnum --> ChannelAddRolesAction #green;text:green : "roles"
+ChannelRoleEnum --> ChannelRemoveRolesAction #green;text:green : "roles"
+ChannelRoleEnum --> ChannelSetRolesAction #green;text:green : "roles"
+ChannelRoleEnum --> MissingRoleOnChannelError #green;text:green : "missingRole"
+@enduml

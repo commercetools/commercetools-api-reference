@@ -1,0 +1,48 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface DeliveryFormat [[DeliveryFormat.svg]]  {
+    type: String
+}
+
+
+interface CloudEventsFormat [[CloudEventsFormat.svg]]  {
+    type: String
+    cloudEventsVersion: String
+}
+interface PlatformFormat [[PlatformFormat.svg]]  {
+    type: String
+}
+interface Subscription [[Subscription.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    changes: [[ChangeSubscription.svg List<ChangeSubscription>]]
+    destination: [[Destination.svg Destination]]
+    key: String
+    messages: [[MessageSubscription.svg List<MessageSubscription>]]
+    format: [[DeliveryFormat.svg DeliveryFormat]]
+    status: [[SubscriptionHealthStatus.svg SubscriptionHealthStatus]]
+}
+interface SubscriptionDraft [[SubscriptionDraft.svg]]  {
+    changes: [[ChangeSubscription.svg List<ChangeSubscription>]]
+    destination: [[Destination.svg Destination]]
+    key: String
+    messages: [[MessageSubscription.svg List<MessageSubscription>]]
+    format: [[DeliveryFormat.svg DeliveryFormat]]
+}
+DeliveryFormat --> CloudEventsFormat #blue;text:blue : "type : CloudEvents"
+DeliveryFormat --> PlatformFormat #blue;text:blue : "type : Platform"
+DeliveryFormat --> Subscription #green;text:green : "format"
+DeliveryFormat --> SubscriptionDraft #green;text:green : "format"
+@enduml

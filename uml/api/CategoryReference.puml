@@ -1,0 +1,130 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface CategoryReference [[CategoryReference.svg]] extends Reference {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[Category.svg Category]]
+}
+interface Reference [[Reference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+}
+
+
+interface Category [[Category.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    name: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    ancestors: [[CategoryReference.svg List<CategoryReference>]]
+    parent: [[CategoryReference.svg CategoryReference]]
+    orderHint: String
+    externalId: String
+    metaTitle: [[LocalizedString.svg LocalizedString]]
+    metaDescription: [[LocalizedString.svg LocalizedString]]
+    metaKeywords: [[LocalizedString.svg LocalizedString]]
+    custom: [[CustomFields.svg CustomFields]]
+    assets: [[Asset.svg List<Asset>]]
+    key: String
+}
+interface ProductData [[ProductData.svg]]  {
+    name: [[LocalizedString.svg LocalizedString]]
+    categories: [[CategoryReference.svg List<CategoryReference>]]
+    categoryOrderHints: [[CategoryOrderHints.svg CategoryOrderHints]]
+    description: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    metaTitle: [[LocalizedString.svg LocalizedString]]
+    metaDescription: [[LocalizedString.svg LocalizedString]]
+    metaKeywords: [[LocalizedString.svg LocalizedString]]
+    masterVariant: [[ProductVariant.svg ProductVariant]]
+    variants: [[ProductVariant.svg List<ProductVariant>]]
+    searchKeywords: [[SearchKeywords.svg SearchKeywords]]
+}
+interface ProductProjection [[ProductProjection.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    categories: [[CategoryReference.svg List<CategoryReference>]]
+    categoryOrderHints: [[CategoryOrderHints.svg CategoryOrderHints]]
+    metaTitle: [[LocalizedString.svg LocalizedString]]
+    metaDescription: [[LocalizedString.svg LocalizedString]]
+    metaKeywords: [[LocalizedString.svg LocalizedString]]
+    searchKeywords: [[SearchKeywords.svg SearchKeywords]]
+    hasStagedChanges: Boolean
+    published: Boolean
+    masterVariant: [[ProductVariant.svg ProductVariant]]
+    variants: [[ProductVariant.svg List<ProductVariant>]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    state: [[StateReference.svg StateReference]]
+    reviewRatingStatistics: [[ReviewRatingStatistics.svg ReviewRatingStatistics]]
+    priceMode: [[ProductPriceModeEnum.svg ProductPriceModeEnum]]
+}
+interface ProductAddedToCategoryMessage [[ProductAddedToCategoryMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    category: [[CategoryReference.svg CategoryReference]]
+    staged: Boolean
+}
+interface ProductRemovedFromCategoryMessage [[ProductRemovedFromCategoryMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    category: [[CategoryReference.svg CategoryReference]]
+    staged: Boolean
+}
+interface ProductAddedToCategoryMessagePayload [[ProductAddedToCategoryMessagePayload.svg]]  {
+    type: String
+    category: [[CategoryReference.svg CategoryReference]]
+    staged: Boolean
+}
+interface ProductRemovedFromCategoryMessagePayload [[ProductRemovedFromCategoryMessagePayload.svg]]  {
+    type: String
+    category: [[CategoryReference.svg CategoryReference]]
+    staged: Boolean
+}
+
+CategoryReference --> Category #green;text:green : "ancestors"
+CategoryReference --> ProductData #green;text:green : "categories"
+CategoryReference --> ProductProjection #green;text:green : "categories"
+CategoryReference --> Category #green;text:green : "parent"
+CategoryReference --> ProductAddedToCategoryMessage #green;text:green : "category"
+CategoryReference --> ProductRemovedFromCategoryMessage #green;text:green : "category"
+CategoryReference --> ProductAddedToCategoryMessagePayload #green;text:green : "category"
+CategoryReference --> ProductRemovedFromCategoryMessagePayload #green;text:green : "category"
+@enduml

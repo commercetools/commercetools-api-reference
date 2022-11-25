@@ -1,0 +1,57 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface ShippingMethodReference [[ShippingMethodReference.svg]] extends Reference {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[ShippingMethod.svg ShippingMethod]]
+}
+interface Reference [[Reference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+}
+
+
+interface ShippingDraft [[ShippingDraft.svg]]  {
+    key: String
+    shippingMethod: [[ShippingMethodReference.svg ShippingMethodReference]]
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    externalTaxRate: String
+    deliveries: [[Delivery.svg List<Delivery>]]
+    custom: String
+}
+interface ShippingInfo [[ShippingInfo.svg]]  {
+    shippingMethodName: String
+    price: [[TypedMoney.svg TypedMoney]]
+    shippingRate: [[ShippingRate.svg ShippingRate]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    shippingMethod: [[ShippingMethodReference.svg ShippingMethodReference]]
+    deliveries: [[Delivery.svg List<Delivery>]]
+    discountedPrice: [[DiscountedLineItemPrice.svg DiscountedLineItemPrice]]
+    shippingMethodState: [[ShippingMethodState.svg ShippingMethodState]]
+}
+interface CartAddShippingMethodAction [[CartAddShippingMethodAction.svg]]  {
+    action: String
+    shippingKey: String
+    shippingMethod: [[ShippingMethodReference.svg ShippingMethodReference]]
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    externalTaxRate: String
+    deliveries: [[Delivery.svg List<Delivery>]]
+    custom: String
+}
+
+ShippingMethodReference --> ShippingDraft #green;text:green : "shippingMethod"
+ShippingMethodReference --> ShippingInfo #green;text:green : "shippingMethod"
+ShippingMethodReference --> CartAddShippingMethodAction #green;text:green : "shippingMethod"
+@enduml

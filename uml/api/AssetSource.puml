@@ -1,0 +1,57 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface AssetSource [[AssetSource.svg]]  {
+    uri: String
+    key: String
+    dimensions: [[AssetDimensions.svg AssetDimensions]]
+    contentType: String
+}
+
+
+
+interface CategorySetAssetSourcesAction [[CategorySetAssetSourcesAction.svg]]  {
+    action: String
+    assetId: String
+    assetKey: String
+    sources: [[AssetSource.svg List<AssetSource>]]
+}
+interface Asset [[Asset.svg]]  {
+    id: String
+    sources: [[AssetSource.svg List<AssetSource>]]
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    tags: [[String.svg List<String>]]
+    custom: [[CustomFields.svg CustomFields]]
+    key: String
+}
+interface AssetDraft [[AssetDraft.svg]]  {
+    sources: [[AssetSource.svg List<AssetSource>]]
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    tags: [[String.svg List<String>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    key: String
+}
+interface ProductSetAssetSourcesAction [[ProductSetAssetSourcesAction.svg]]  {
+    action: String
+    variantId: Long
+    sku: String
+    staged: Boolean
+    assetId: String
+    assetKey: String
+    sources: [[AssetSource.svg List<AssetSource>]]
+}
+
+AssetSource --> CategorySetAssetSourcesAction #green;text:green : "sources"
+AssetSource --> Asset #green;text:green : "sources"
+AssetSource --> AssetDraft #green;text:green : "sources"
+AssetSource --> ProductSetAssetSourcesAction #green;text:green : "sources"
+@enduml

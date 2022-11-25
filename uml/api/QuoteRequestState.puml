@@ -1,0 +1,74 @@
+@startuml
+
+hide methods
+enum QuoteRequestState {
+    SUBMITTED
+    ACCEPTED
+    CLOSED
+    REJECTED
+    CANCELLED
+}
+interface QuoteRequestStateChangedMessage [[QuoteRequestStateChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    quoteRequestState: [[QuoteRequestState.svg QuoteRequestState]]
+    oldQuoteRequestState: [[QuoteRequestState.svg QuoteRequestState]]
+}
+interface QuoteRequestStateChangedMessagePayload [[QuoteRequestStateChangedMessagePayload.svg]]  {
+    type: String
+    quoteRequestState: [[QuoteRequestState.svg QuoteRequestState]]
+    oldQuoteRequestState: [[QuoteRequestState.svg QuoteRequestState]]
+}
+interface QuoteRequest [[QuoteRequest.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    quoteRequestState: [[QuoteRequestState.svg QuoteRequestState]]
+    comment: String
+    customer: [[CustomerReference.svg CustomerReference]]
+    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
+    store: [[StoreKeyReference.svg StoreKeyReference]]
+    lineItems: [[LineItem.svg List<LineItem>]]
+    customLineItems: [[CustomLineItem.svg List<CustomLineItem>]]
+    totalPrice: [[TypedMoney.svg TypedMoney]]
+    taxedPrice: [[TaxedPrice.svg TaxedPrice]]
+    shippingAddress: [[Address.svg Address]]
+    billingAddress: [[Address.svg Address]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    taxMode: [[TaxMode.svg TaxMode]]
+    taxRoundingMode: [[RoundingMode.svg RoundingMode]]
+    taxCalculationMode: [[TaxCalculationMode.svg TaxCalculationMode]]
+    country: String
+    shippingInfo: [[ShippingInfo.svg ShippingInfo]]
+    paymentInfo: [[PaymentInfo.svg PaymentInfo]]
+    shippingRateInput: [[ShippingRateInput.svg ShippingRateInput]]
+    itemShippingAddresses: [[Address.svg List<Address>]]
+    directDiscounts: [[DirectDiscount.svg List<DirectDiscount>]]
+    custom: [[CustomFields.svg CustomFields]]
+    state: [[StateReference.svg StateReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+}
+interface QuoteRequestChangeQuoteRequestStateAction [[QuoteRequestChangeQuoteRequestStateAction.svg]]  {
+    action: String
+    quoteRequestState: [[QuoteRequestState.svg QuoteRequestState]]
+}
+QuoteRequestState --> QuoteRequestStateChangedMessage #green;text:green : "quoteRequestState"
+QuoteRequestState --> QuoteRequestStateChangedMessage #green;text:green : "oldQuoteRequestState"
+QuoteRequestState --> QuoteRequestStateChangedMessagePayload #green;text:green : "quoteRequestState"
+QuoteRequestState --> QuoteRequestStateChangedMessagePayload #green;text:green : "oldQuoteRequestState"
+QuoteRequestState --> QuoteRequest #green;text:green : "quoteRequestState"
+QuoteRequestState --> QuoteRequestChangeQuoteRequestStateAction #green;text:green : "quoteRequestState"
+@enduml

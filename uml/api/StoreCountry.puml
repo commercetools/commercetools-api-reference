@@ -1,0 +1,117 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface StoreCountry [[StoreCountry.svg]]  {
+    code: String
+}
+
+
+
+interface Store [[Store.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    name: [[LocalizedString.svg LocalizedString]]
+    languages: [[String.svg List<String>]]
+    countries: [[StoreCountry.svg List<StoreCountry>]]
+    distributionChannels: [[ChannelReference.svg List<ChannelReference>]]
+    supplyChannels: [[ChannelReference.svg List<ChannelReference>]]
+    productSelections: [[ProductSelectionSetting.svg List<ProductSelectionSetting>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface StoreDraft [[StoreDraft.svg]]  {
+    key: String
+    name: [[LocalizedString.svg LocalizedString]]
+    languages: [[String.svg List<String>]]
+    countries: [[StoreCountry.svg List<StoreCountry>]]
+    distributionChannels: [[ChannelResourceIdentifier.svg List<ChannelResourceIdentifier>]]
+    supplyChannels: [[ChannelResourceIdentifier.svg List<ChannelResourceIdentifier>]]
+    productSelections: [[ProductSelectionSettingDraft.svg List<ProductSelectionSettingDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface StoreSetCountriesAction [[StoreSetCountriesAction.svg]]  {
+    action: String
+    countries: [[StoreCountry.svg List<StoreCountry>]]
+}
+interface StoreAddCountryAction [[StoreAddCountryAction.svg]]  {
+    action: String
+    country: [[StoreCountry.svg StoreCountry]]
+}
+interface StoreRemoveCountryAction [[StoreRemoveCountryAction.svg]]  {
+    action: String
+    country: [[StoreCountry.svg StoreCountry]]
+}
+interface StoreCountriesChangedMessage [[StoreCountriesChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    addedCountries: [[StoreCountry.svg List<StoreCountry>]]
+    removedCountries: [[StoreCountry.svg List<StoreCountry>]]
+}
+interface StoreCreatedMessage [[StoreCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    name: [[LocalizedString.svg LocalizedString]]
+    languages: [[String.svg List<String>]]
+    countries: [[StoreCountry.svg List<StoreCountry>]]
+    distributionChannels: [[ChannelReference.svg List<ChannelReference>]]
+    supplyChannels: [[ChannelReference.svg List<ChannelReference>]]
+    productSelections: [[ProductSelectionSetting.svg List<ProductSelectionSetting>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface StoreCountriesChangedMessagePayload [[StoreCountriesChangedMessagePayload.svg]]  {
+    type: String
+    addedCountries: [[StoreCountry.svg List<StoreCountry>]]
+    removedCountries: [[StoreCountry.svg List<StoreCountry>]]
+}
+interface StoreCreatedMessagePayload [[StoreCreatedMessagePayload.svg]]  {
+    type: String
+    name: [[LocalizedString.svg LocalizedString]]
+    languages: [[String.svg List<String>]]
+    countries: [[StoreCountry.svg List<StoreCountry>]]
+    distributionChannels: [[ChannelReference.svg List<ChannelReference>]]
+    supplyChannels: [[ChannelReference.svg List<ChannelReference>]]
+    productSelections: [[ProductSelectionSetting.svg List<ProductSelectionSetting>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+
+StoreCountry --> Store #green;text:green : "countries"
+StoreCountry --> StoreDraft #green;text:green : "countries"
+StoreCountry --> StoreSetCountriesAction #green;text:green : "countries"
+StoreCountry --> StoreAddCountryAction #green;text:green : "country"
+StoreCountry --> StoreRemoveCountryAction #green;text:green : "country"
+StoreCountry --> StoreCountriesChangedMessage #green;text:green : "addedCountries"
+StoreCountry --> StoreCountriesChangedMessage #green;text:green : "removedCountries"
+StoreCountry --> StoreCreatedMessage #green;text:green : "countries"
+StoreCountry --> StoreCountriesChangedMessagePayload #green;text:green : "addedCountries"
+StoreCountry --> StoreCountriesChangedMessagePayload #green;text:green : "removedCountries"
+StoreCountry --> StoreCreatedMessagePayload #green;text:green : "countries"
+@enduml

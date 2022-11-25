@@ -1,0 +1,80 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface PaymentMethodInfo [[PaymentMethodInfo.svg]]  {
+    paymentInterface: String
+    method: String
+    name: [[LocalizedString.svg LocalizedString]]
+}
+
+
+
+interface MyPayment [[MyPayment.svg]]  {
+    id: String
+    version: Long
+    customer: [[CustomerReference.svg CustomerReference]]
+    anonymousId: String
+    amountPlanned: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    paymentMethodInfo: [[PaymentMethodInfo.svg PaymentMethodInfo]]
+    transactions: [[Transaction.svg List<Transaction>]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface MyPaymentDraft [[MyPaymentDraft.svg]]  {
+    amountPlanned: [[Money.svg Money]]
+    paymentMethodInfo: [[PaymentMethodInfo.svg PaymentMethodInfo]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    transaction: [[MyTransactionDraft.svg MyTransactionDraft]]
+}
+interface Payment [[Payment.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    anonymousId: String
+    externalId: String
+    interfaceId: String
+    amountPlanned: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    amountAuthorized: [[TypedMoney.svg TypedMoney]]
+    authorizedUntil: String
+    amountPaid: [[TypedMoney.svg TypedMoney]]
+    amountRefunded: [[TypedMoney.svg TypedMoney]]
+    paymentMethodInfo: [[PaymentMethodInfo.svg PaymentMethodInfo]]
+    paymentStatus: [[PaymentStatus.svg PaymentStatus]]
+    transactions: [[Transaction.svg List<Transaction>]]
+    interfaceInteractions: [[CustomFields.svg List<CustomFields>]]
+    custom: [[CustomFields.svg CustomFields]]
+    key: String
+}
+interface PaymentDraft [[PaymentDraft.svg]]  {
+    customer: [[CustomerResourceIdentifier.svg CustomerResourceIdentifier]]
+    anonymousId: String
+    externalId: String
+    interfaceId: String
+    amountPlanned: [[Money.svg Money]]
+    amountAuthorized: [[Money.svg Money]]
+    authorizedUntil: String
+    amountPaid: [[Money.svg Money]]
+    amountRefunded: [[Money.svg Money]]
+    paymentMethodInfo: [[PaymentMethodInfo.svg PaymentMethodInfo]]
+    paymentStatus: [[PaymentStatusDraft.svg PaymentStatusDraft]]
+    transactions: [[TransactionDraft.svg List<TransactionDraft>]]
+    interfaceInteractions: [[CustomFieldsDraft.svg List<CustomFieldsDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    key: String
+}
+
+PaymentMethodInfo --> MyPayment #green;text:green : "paymentMethodInfo"
+PaymentMethodInfo --> MyPaymentDraft #green;text:green : "paymentMethodInfo"
+PaymentMethodInfo --> Payment #green;text:green : "paymentMethodInfo"
+PaymentMethodInfo --> PaymentDraft #green;text:green : "paymentMethodInfo"
+@enduml

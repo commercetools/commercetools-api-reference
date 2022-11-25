@@ -1,0 +1,74 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface Review [[Review.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    uniquenessValue: String
+    locale: String
+    authorName: String
+    title: String
+    text: String
+    target: [[Object.svg Object]]
+    includedInStatistics: Boolean
+    rating: Integer
+    state: [[StateReference.svg StateReference]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    custom: [[CustomFields.svg CustomFields]]
+}
+interface BaseResource [[BaseResource.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+}
+
+
+interface ReviewPagedQueryResponse [[ReviewPagedQueryResponse.svg]]  {
+    limit: Long
+    count: Long
+    total: Long
+    offset: Long
+    results: [[Review.svg List<Review>]]
+}
+interface ReviewCreatedMessage [[ReviewCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    review: [[Review.svg Review]]
+}
+interface ReviewCreatedMessagePayload [[ReviewCreatedMessagePayload.svg]]  {
+    type: String
+    review: [[Review.svg Review]]
+}
+interface ReviewReference [[ReviewReference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[Review.svg Review]]
+}
+
+Review --> ReviewPagedQueryResponse #green;text:green : "results"
+Review --> ReviewCreatedMessage #green;text:green : "review"
+Review --> ReviewCreatedMessagePayload #green;text:green : "review"
+Review --> ReviewReference #green;text:green : "obj"
+@enduml

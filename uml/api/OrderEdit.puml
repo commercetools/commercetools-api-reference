@@ -1,0 +1,71 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface OrderEdit [[OrderEdit.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    resource: [[OrderReference.svg OrderReference]]
+    stagedActions: [[StagedOrderUpdateAction.svg List<StagedOrderUpdateAction>]]
+    custom: [[CustomFields.svg CustomFields]]
+    result: [[OrderEditResult.svg OrderEditResult]]
+    comment: String
+}
+interface BaseResource [[BaseResource.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+}
+
+
+interface OrderEditPagedQueryResponse [[OrderEditPagedQueryResponse.svg]]  {
+    limit: Long
+    count: Long
+    total: Long
+    offset: Long
+    results: [[OrderEdit.svg List<OrderEdit>]]
+}
+interface OrderEditAppliedMessage [[OrderEditAppliedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    edit: [[OrderEdit.svg OrderEdit]]
+    result: [[OrderEditApplied.svg OrderEditApplied]]
+}
+interface OrderEditAppliedMessagePayload [[OrderEditAppliedMessagePayload.svg]]  {
+    type: String
+    edit: [[OrderEdit.svg OrderEdit]]
+    result: [[OrderEditApplied.svg OrderEditApplied]]
+}
+interface OrderEditReference [[OrderEditReference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[OrderEdit.svg OrderEdit]]
+}
+
+OrderEdit --> OrderEditPagedQueryResponse #green;text:green : "results"
+OrderEdit --> OrderEditPagedQueryResponse #green;text:green : "results"
+OrderEdit --> OrderEditAppliedMessage #green;text:green : "edit"
+OrderEdit --> OrderEditAppliedMessagePayload #green;text:green : "edit"
+OrderEdit --> OrderEditReference #green;text:green : "obj"
+@enduml

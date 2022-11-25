@@ -1,0 +1,75 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface DeliveryPayload [[DeliveryPayload.svg]]  {
+    projectKey: String
+    notificationType: String
+    resource: [[Reference.svg Reference]]
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+}
+
+
+interface MessageDeliveryPayload [[MessageDeliveryPayload.svg]]  {
+    projectKey: String
+    notificationType: String
+    resource: [[Reference.svg Reference]]
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    sequenceNumber: Long
+    resourceVersion: Long
+    payloadNotIncluded: [[PayloadNotIncluded.svg PayloadNotIncluded]]
+}
+interface ResourceCreatedDeliveryPayload [[ResourceCreatedDeliveryPayload.svg]]  {
+    projectKey: String
+    notificationType: String
+    resource: [[Reference.svg Reference]]
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    version: Long
+    modifiedAt: DateTime
+}
+interface ResourceDeletedDeliveryPayload [[ResourceDeletedDeliveryPayload.svg]]  {
+    projectKey: String
+    notificationType: String
+    resource: [[Reference.svg Reference]]
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    version: Long
+    modifiedAt: DateTime
+    dataErasure: Boolean
+}
+interface ResourceUpdatedDeliveryPayload [[ResourceUpdatedDeliveryPayload.svg]]  {
+    projectKey: String
+    notificationType: String
+    resource: [[Reference.svg Reference]]
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    version: Long
+    oldVersion: Long
+    modifiedAt: DateTime
+}
+interface CloudEventsPayload [[CloudEventsPayload.svg]]  {
+    specversion: String
+    id: String
+    type: String
+    source: String
+    subject: String
+    time: DateTime
+    sequence: String
+    sequencetype: String
+    dataref: String
+    data: [[DeliveryPayload.svg DeliveryPayload]]
+}
+DeliveryPayload --> MessageDeliveryPayload #blue;text:blue : "notificationType : Message"
+DeliveryPayload --> ResourceCreatedDeliveryPayload #blue;text:blue : "notificationType : ResourceCreated"
+DeliveryPayload --> ResourceDeletedDeliveryPayload #blue;text:blue : "notificationType : ResourceDeleted"
+DeliveryPayload --> ResourceUpdatedDeliveryPayload #blue;text:blue : "notificationType : ResourceUpdated"
+DeliveryPayload --> CloudEventsPayload #green;text:green : "data"
+@enduml

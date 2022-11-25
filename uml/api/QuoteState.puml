@@ -1,0 +1,41 @@
+@startuml
+
+hide methods
+enum QuoteState {
+    PENDING
+    DECLINED
+    DECLINED_FOR_RENEGOTIATION
+    ACCEPTED
+    FAILED
+    WITHDRAWN
+}
+interface QuoteStateChangedMessage [[QuoteStateChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    quoteState: [[QuoteState.svg QuoteState]]
+    oldQuoteState: [[QuoteState.svg QuoteState]]
+}
+interface QuoteStateChangedMessagePayload [[QuoteStateChangedMessagePayload.svg]]  {
+    type: String
+    quoteState: [[QuoteState.svg QuoteState]]
+    oldQuoteState: [[QuoteState.svg QuoteState]]
+}
+interface QuoteChangeQuoteStateAction [[QuoteChangeQuoteStateAction.svg]]  {
+    action: String
+    quoteState: [[QuoteState.svg QuoteState]]
+}
+QuoteState --> QuoteStateChangedMessage #green;text:green : "quoteState"
+QuoteState --> QuoteStateChangedMessage #green;text:green : "oldQuoteState"
+QuoteState --> QuoteStateChangedMessagePayload #green;text:green : "quoteState"
+QuoteState --> QuoteStateChangedMessagePayload #green;text:green : "oldQuoteState"
+QuoteState --> QuoteChangeQuoteStateAction #green;text:green : "quoteState"
+@enduml

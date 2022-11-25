@@ -1,0 +1,80 @@
+@startuml
+
+hide methods
+enum CustomLineItemPriceMode {
+    STANDARD
+    EXTERNAL
+}
+interface CustomLineItem [[CustomLineItem.svg]]  {
+    id: String
+    name: [[LocalizedString.svg LocalizedString]]
+    money: [[TypedMoney.svg TypedMoney]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    totalPrice: [[TypedMoney.svg TypedMoney]]
+    slug: String
+    quantity: Long
+    state: [[ItemState.svg List<ItemState>]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    custom: [[CustomFields.svg CustomFields]]
+    shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface CustomLineItemDraft [[CustomLineItemDraft.svg]]  {
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    money: [[Money.svg Money]]
+    slug: String
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface CartAddCustomLineItemAction [[CartAddCustomLineItemAction.svg]]  {
+    action: String
+    money: [[Money.svg Money]]
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    slug: String
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface CartChangeCustomLineItemPriceModeAction [[CartChangeCustomLineItemPriceModeAction.svg]]  {
+    action: String
+    customLineItemId: String
+    mode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface StagedOrderAddCustomLineItemAction [[StagedOrderAddCustomLineItemAction.svg]]  {
+    action: String
+    money: [[Money.svg Money]]
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    slug: String
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface CustomLineItemImportDraft [[CustomLineItemImportDraft.svg]]  {
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    money: [[Money.svg Money]]
+    slug: String
+    state: [[ItemState.svg List<ItemState>]]
+    taxRate: [[TaxRate.svg TaxRate]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+CustomLineItemPriceMode --> CustomLineItem #green;text:green : "priceMode"
+CustomLineItemPriceMode --> CustomLineItemDraft #green;text:green : "priceMode"
+CustomLineItemPriceMode --> CartAddCustomLineItemAction #green;text:green : "priceMode"
+CustomLineItemPriceMode --> CartChangeCustomLineItemPriceModeAction #green;text:green : "mode"
+CustomLineItemPriceMode --> StagedOrderAddCustomLineItemAction #green;text:green : "priceMode"
+CustomLineItemPriceMode --> CustomLineItemImportDraft #green;text:green : "priceMode"
+@enduml
