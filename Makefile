@@ -7,7 +7,7 @@ install_deps: codegen_install composer_install yarn_install
 
 lint: check_markdown validate_raml
 
-generate: generate_oas
+generate: generate_oas generate_plantuml
 
 oas_convert: oas_convert3
 
@@ -31,6 +31,9 @@ validate_raml: codegen_install
 
 generate_oas: codegen_install
 	rmf-codegen generate -o oas -t OAS api-specs/api/api.raml
+
+generate_plantuml: codegen_install
+	rmf-codegen generate -o uml/api -t PLANTUML api-specs/api/api.raml
 
 raml_doc_convert: codegen_install
 	rmf-codegen generate -o tmpdoc -t RAML_DOC api-specs/api/api.raml
