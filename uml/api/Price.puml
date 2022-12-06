@@ -29,6 +29,28 @@ interface DuplicatePriceScopeError [[DuplicatePriceScopeError.svg]]  {
     message: String
     conflictingPrices: [[Price.svg List<Price>]]
 }
+interface ProductPriceSetMessage [[ProductPriceSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    variantId: Long
+    prices: [[Price.svg List<Price>]]
+    staged: Boolean
+}
+interface ProductPriceSetMessagePayload [[ProductPriceSetMessagePayload.svg]]  {
+    type: String
+    variantId: Long
+    prices: [[Price.svg List<Price>]]
+    staged: Boolean
+}
 interface ProductVariant [[ProductVariant.svg]]  {
     id: Long
     sku: String
@@ -91,6 +113,56 @@ interface OrderLineItemRemovedMessage [[OrderLineItemRemovedMessage.svg]]  {
     newPrice: [[Price.svg Price]]
     newShippingDetail: [[ItemShippingDetails.svg ItemShippingDetails]]
 }
+interface ProductPriceAddedMessage [[ProductPriceAddedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    variantId: Long
+    price: [[Price.svg Price]]
+    staged: Boolean
+}
+interface ProductPriceChangedMessage [[ProductPriceChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    variantId: Long
+    oldPrice: [[Price.svg Price]]
+    newPrice: [[Price.svg Price]]
+    staged: Boolean
+    oldStagedPrice: [[Price.svg Price]]
+}
+interface ProductPriceRemovedMessage [[ProductPriceRemovedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    variantId: Long
+    price: [[Price.svg Price]]
+    staged: Boolean
+}
 interface OrderLineItemRemovedMessagePayload [[OrderLineItemRemovedMessagePayload.svg]]  {
     type: String
     lineItemId: String
@@ -102,11 +174,43 @@ interface OrderLineItemRemovedMessagePayload [[OrderLineItemRemovedMessagePayloa
     newPrice: [[Price.svg Price]]
     newShippingDetail: [[ItemShippingDetails.svg ItemShippingDetails]]
 }
+interface ProductPriceAddedMessagePayload [[ProductPriceAddedMessagePayload.svg]]  {
+    type: String
+    variantId: Long
+    price: [[Price.svg Price]]
+    staged: Boolean
+}
+interface ProductPriceChangedMessagePayload [[ProductPriceChangedMessagePayload.svg]]  {
+    type: String
+    variantId: Long
+    oldPrice: [[Price.svg Price]]
+    newPrice: [[Price.svg Price]]
+    staged: Boolean
+    oldStagedPrice: [[Price.svg Price]]
+}
+interface ProductPriceRemovedMessagePayload [[ProductPriceRemovedMessagePayload.svg]]  {
+    type: String
+    variantId: Long
+    price: [[Price.svg Price]]
+    staged: Boolean
+}
 
 Price --> DuplicatePriceScopeError #green;text:green : "conflictingPrices"
+Price --> ProductPriceSetMessage #green;text:green : "prices"
+Price --> ProductPriceSetMessagePayload #green;text:green : "prices"
 Price --> ProductVariant #green;text:green : "prices"
 Price --> LineItem #green;text:green : "price"
 Price --> OrderLineItemRemovedMessage #green;text:green : "newPrice"
+Price --> ProductPriceAddedMessage #green;text:green : "price"
+Price --> ProductPriceChangedMessage #green;text:green : "oldPrice"
+Price --> ProductPriceChangedMessage #green;text:green : "newPrice"
+Price --> ProductPriceChangedMessage #green;text:green : "oldStagedPrice"
+Price --> ProductPriceRemovedMessage #green;text:green : "price"
 Price --> OrderLineItemRemovedMessagePayload #green;text:green : "newPrice"
+Price --> ProductPriceAddedMessagePayload #green;text:green : "price"
+Price --> ProductPriceChangedMessagePayload #green;text:green : "oldPrice"
+Price --> ProductPriceChangedMessagePayload #green;text:green : "newPrice"
+Price --> ProductPriceChangedMessagePayload #green;text:green : "oldStagedPrice"
+Price --> ProductPriceRemovedMessagePayload #green;text:green : "price"
 Price --> ProductVariant #green;text:green : "price"
 @enduml
