@@ -659,21 +659,15 @@ input AssetSourceInput {
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 type Associate {
-  roles: [AssociateRole!]!
+  roles: [SimpleAssociateRole!]!
   customerRef: Reference
   customer: Customer
 }
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 input AssociateDraft {
-  roles: [AssociateRole!]!
+  roles: [SimpleAssociateRole!]!
   customer: ResourceIdentifierInput!
-}
-
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-enum AssociateRole {
-  Admin
-  Buyer
 }
 
 interface Attribute {
@@ -1120,7 +1114,8 @@ type Cart implements Versioned & ReferenceExpandable {
   storeRef: KeyReference
   store: Store
   itemShippingAddresses: [Address!]!
-  businessUnit: KeyReference
+  businessUnit: BusinessUnit
+  businessUnitRef: KeyReference
   cartState: CartState!
   key: String
   custom: CustomFieldsType
@@ -1277,6 +1272,7 @@ input CartDraft {
   itemShippingAddresses: [AddressInput!] = []
   discountCodes: [String!] = []
   store: ResourceIdentifierInput
+  businessUnit: ResourceIdentifierInput
   key: String
   lineItems: [LineItemDraft!] = []
   customLineItems: [CustomLineItemDraft!] = []
@@ -4705,7 +4701,7 @@ type Mutation {
 
     Note, that it is not possible to merge carts that differ in their currency (set during creation of the cart).
 
-  If a cart is is returned as part of the `CustomerSignInResult`, it has been recalculated with up-to-date prices, taxes, discounts, and invalid line items removed.
+  If a cart is is returned as part of the `CustomerSignInResult`, it has been recalculated (it will have up-to-date prices, taxes and discounts, and invalid line items have been removed).
   """
   customerSignIn(draft: CustomerSignInDraft!,
 
@@ -4786,7 +4782,7 @@ type Mutation {
   * If the customer does not have a cart yet, the anonymous cart that was modified most recently becomes the customer's cart.
   * If the customer already has a cart, the most recently modified anonymous cart will be handled according to the `AnonymousCartSignInMode`.
 
-  If a cart is is returned as part of the `CustomerSignInResult`, it has been recalculated with up-to-date prices, taxes, discounts, and invalid line items removed.
+  If a cart is is returned as part of the `CustomerSignInResult`, it has been recalculated (it will have up-to-date prices, taxes and discounts, and invalid line items have been removed).
   """
   customerSignMeIn(draft: CustomerSignMeInDraft!,
 
@@ -5254,6 +5250,7 @@ input MyCartDraft {
   itemShippingAddresses: [AddressInput!] = []
   discountCodes: [String!] = []
   store: ResourceIdentifierInput
+  businessUnit: ResourceIdentifierInput
   lineItems: [MyLineItemDraft!] = []
 }
 
@@ -5514,7 +5511,8 @@ type Order implements Versioned & ReferenceExpandable {
   storeRef: KeyReference
   store: Store
   itemShippingAddresses: [Address!]!
-  businessUnit: KeyReference
+  businessUnit: BusinessUnit
+  businessUnitRef: KeyReference
   completedAt: DateTime
   orderNumber: String
   orderState: OrderState!
@@ -6554,6 +6552,22 @@ type ProductPrice {
   custom: CustomFieldsType
 }
 
+type ProductPriceAdded implements MessagePayload {
+  variantId: Int!
+  price: ProductPrice!
+  staged: Boolean!
+  type: String!
+}
+
+type ProductPriceChanged implements MessagePayload {
+  variantId: Int!
+  oldPrice: ProductPrice!
+  newPrice: ProductPrice!
+  staged: Boolean!
+  oldStagedPrice: ProductPrice
+  type: String!
+}
+
 input ProductPriceDataInput {
   value: BaseMoneyInput!
   key: String
@@ -6590,6 +6604,18 @@ type ProductPriceExternalDiscountSet implements MessagePayload {
   type: String!
 }
 
+type ProductPriceModeSet implements MessagePayload {
+  to: PriceMode
+  type: String!
+}
+
+type ProductPriceRemoved implements MessagePayload {
+  variantId: Int!
+  price: ProductPrice!
+  staged: Boolean!
+  type: String!
+}
+
 type ProductPriceSearch {
   id: String
   value: BaseMoney!
@@ -6614,6 +6640,13 @@ type ProductPriceTier {
 input ProductPriceTierInput {
   minimumQuantity: Int!
   value: BaseMoneyInput!
+}
+
+type ProductPricesSet implements MessagePayload {
+  variantId: Int!
+  prices: [ProductPrice!]!
+  staged: Boolean!
+  type: String!
 }
 
 type ProductProjection {
@@ -11146,6 +11179,12 @@ input ShoppingListsConfigurationInput {
   deleteDaysAfterLastModification: Int
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum SimpleAssociateRole {
+  Admin
+  Buyer
+}
+
 input SimpleAttributeTypeDraft {
   dummy: String
 }
@@ -11337,7 +11376,9 @@ type StandalonePrice implements Versioned {
   value: BaseMoney!
   country: Country
   customerGroupRef: Reference
+  customerGroup: CustomerGroup
   channelRef: Reference
+  channel: Channel
   validFrom: DateTime
   validUntil: DateTime
   tiers: [ProductPriceTier!]
