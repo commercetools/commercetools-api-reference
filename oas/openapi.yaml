@@ -79931,6 +79931,19 @@ components:
               $ref: '#/components/schemas/Reference'
           additionalProperties:
             type: "string"
+    DuplicatePriceKeyError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            conflictingPrice:
+              $ref: '#/components/schemas/Price'
+          additionalProperties:
+            type: "string"
     DuplicatePriceScopeError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -79940,10 +79953,8 @@ components:
               type: "string"
             message:
               type: "string"
-            conflictingPrices:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/Price'
+            conflictingPrice:
+              $ref: '#/components/schemas/Price'
           additionalProperties:
             type: "string"
     DuplicateStandalonePriceScopeError:
@@ -80078,6 +80089,7 @@ components:
           DuplicateEnumValues: '#/components/schemas/DuplicateEnumValuesError'
           DuplicateField: '#/components/schemas/DuplicateFieldError'
           DuplicateFieldWithConflictingResource: '#/components/schemas/DuplicateFieldWithConflictingResourceError'
+          DuplicatePriceKey: '#/components/schemas/DuplicatePriceKeyError'
           DuplicatePriceScope: '#/components/schemas/DuplicatePriceScopeError'
           DuplicateStandalonePriceScope: '#/components/schemas/DuplicateStandalonePriceScopeError'
           DuplicateVariantValues: '#/components/schemas/DuplicateVariantValuesError'
@@ -84704,6 +84716,7 @@ components:
               ProductPriceChanged: '#/components/schemas/ProductPriceChangedMessage'
               ProductPriceDiscountsSet: '#/components/schemas/ProductPriceDiscountsSetMessage'
               ProductPriceExternalDiscountSet: '#/components/schemas/ProductPriceExternalDiscountSetMessage'
+              ProductPriceKeySet: '#/components/schemas/ProductPriceKeySetMessage'
               ProductPriceModeSet: '#/components/schemas/ProductPriceModeSetMessage'
               ProductPriceRemoved: '#/components/schemas/ProductPriceRemovedMessage'
               ProductPriceSet: '#/components/schemas/ProductPriceSetMessage'
@@ -84742,6 +84755,7 @@ components:
               StandalonePriceDeleted: '#/components/schemas/StandalonePriceDeletedMessage'
               StandalonePriceDiscountSet: '#/components/schemas/StandalonePriceDiscountSetMessage'
               StandalonePriceExternalDiscountSet: '#/components/schemas/StandalonePriceExternalDiscountSetMessage'
+              StandalonePriceKeySet: '#/components/schemas/StandalonePriceKeySetMessage'
               StandalonePriceStagedChangesApplied: '#/components/schemas/StandalonePriceStagedChangesAppliedMessage'
               StandalonePriceValueChanged: '#/components/schemas/StandalonePriceValueChangedMessage'
               StoreCountriesChanged: '#/components/schemas/StoreCountriesChangedMessage'
@@ -86656,6 +86670,49 @@ components:
               $ref: '#/components/schemas/DiscountedPrice'
             staged:
               type: "boolean"
+    ProductPriceKeySetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            variantId:
+              type: "integer"
+              format: "int64"
+            priceId:
+              type: "string"
+            oldKey:
+              type: "string"
+            key:
+              type: "string"
+            staged:
+              type: "boolean"
     ProductPriceModeSetMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -88083,6 +88140,42 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             discounted:
               $ref: '#/components/schemas/DiscountedPrice'
+    StandalonePriceKeySetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            key:
+              type: "string"
+            oldKey:
+              type: "string"
     StandalonePriceStagedChangesAppliedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -89061,6 +89154,7 @@ components:
           ProductPriceChanged: '#/components/schemas/ProductPriceChangedMessagePayload'
           ProductPriceDiscountsSet: '#/components/schemas/ProductPriceDiscountsSetMessagePayload'
           ProductPriceExternalDiscountSet: '#/components/schemas/ProductPriceExternalDiscountSetMessagePayload'
+          ProductPriceKeySet: '#/components/schemas/ProductPriceKeySetMessagePayload'
           ProductPriceModeSet: '#/components/schemas/ProductPriceModeSetMessagePayload'
           ProductPriceRemoved: '#/components/schemas/ProductPriceRemovedMessagePayload'
           ProductPriceSet: '#/components/schemas/ProductPriceSetMessagePayload'
@@ -89100,6 +89194,7 @@ components:
           StandalonePriceDeleted: '#/components/schemas/StandalonePriceDeletedMessagePayload'
           StandalonePriceDiscountSet: '#/components/schemas/StandalonePriceDiscountSetMessagePayload'
           StandalonePriceExternalDiscountSet: '#/components/schemas/StandalonePriceExternalDiscountSetMessagePayload'
+          StandalonePriceKeySet: '#/components/schemas/StandalonePriceKeySetMessagePayload'
           StandalonePriceStagedChangesApplied: '#/components/schemas/StandalonePriceStagedChangesAppliedMessagePayload'
           StandalonePriceValueChanged: '#/components/schemas/StandalonePriceValueChangedMessagePayload'
           StoreCountriesChanged: '#/components/schemas/StoreCountriesChangedMessagePayload'
@@ -89713,6 +89808,24 @@ components:
               $ref: '#/components/schemas/DiscountedPrice'
             staged:
               type: "boolean"
+    ProductPriceKeySetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            priceId:
+              type: "string"
+            oldKey:
+              type: "string"
+            key:
+              type: "string"
+            staged:
+              type: "boolean"
     ProductPriceModeSetMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -90149,6 +90262,17 @@ components:
               type: "string"
             discounted:
               $ref: '#/components/schemas/DiscountedPrice'
+    StandalonePriceKeySetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            key:
+              type: "string"
+            oldKey:
+              type: "string"
     StandalonePriceStagedChangesAppliedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -95425,6 +95549,7 @@ components:
           setMetaDescription: '#/components/schemas/ProductSetMetaDescriptionAction'
           setMetaKeywords: '#/components/schemas/ProductSetMetaKeywordsAction'
           setMetaTitle: '#/components/schemas/ProductSetMetaTitleAction'
+          setPriceKey: '#/components/schemas/ProductSetPriceKeyAction'
           setPriceMode: '#/components/schemas/ProductSetPriceModeAction'
           setPrices: '#/components/schemas/ProductSetPricesAction'
           setProductPriceCustomField: '#/components/schemas/ProductSetProductPriceCustomFieldAction'
@@ -96171,6 +96296,19 @@ components:
               $ref: '#/components/schemas/LocalizedString'
             staged:
               type: "boolean"
+    ProductSetPriceKeyAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            priceId:
+              type: "string"
+            staged:
+              type: "boolean"
+            key:
+              type: "string"
     ProductSetPriceModeAction:
       allOf:
         - $ref: '#/components/schemas/ProductUpdateAction'
@@ -98603,6 +98741,7 @@ components:
           setCustomField: '#/components/schemas/StandalonePriceSetCustomFieldAction'
           setCustomType: '#/components/schemas/StandalonePriceSetCustomTypeAction'
           setDiscountedPrice: '#/components/schemas/StandalonePriceSetDiscountedPriceAction'
+          setKey: '#/components/schemas/StandalonePriceSetKeyAction'
       properties:
         action:
           type: "string"
@@ -98664,6 +98803,15 @@ components:
               type: "string"
             discounted:
               $ref: '#/components/schemas/DiscountedPriceDraft'
+    StandalonePriceSetKeyAction:
+      allOf:
+        - $ref: '#/components/schemas/StandalonePriceUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            key:
+              type: "string"
     State:
       allOf:
         - $ref: '#/components/schemas/BaseResource'
