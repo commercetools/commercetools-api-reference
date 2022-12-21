@@ -149,6 +149,49 @@ post:
           application/json:
             type: ShippingMethodPagedQueryResponse
             example: !include ../examples/shipping-methods.example.json
+/matching-cart-location:
+  type: base
+  description: Get ShippingMethods for a cart and location
+  get:
+    displayName: Get ShippingMethods for a cart and location
+    description: |
+      Retrieves all the ShippingMethods that can ship to the given [Location](/projects/zones#location)
+      with a `predicate` that matches the given Cart.
+      Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
+      This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
+    is:
+      - expandable
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_shipping_methods:{projectKey}',
+                'manage_my_orders:{projectKey}',
+              ],
+          },
+      ]
+    queryParameters:
+      country:
+        type: string
+        description: |
+          A two-digit country code as per [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
+      state?:
+        type: string
+        description: |
+          Name of the state, for example, Colorado.
+      cartId:
+        type: string
+        description: |
+          ID of the Cart.
+    responses:
+      200:
+        body:
+          application/json:
+            type: ShippingMethodPagedQueryResponse
+            example: !include ../examples/shipping-methods.example.json
 /matching-orderedit:
   type: base
   description: Get ShippingMethods for an order edit
@@ -194,6 +237,7 @@ post:
     displayName: Get ShippingMethods for a location
     description: |
       Retrieves all the ShippingMethods that can ship to the given [Location](/projects/zones#location).
+      ShippingMethods that have a `predicate` defined are automatically disqualified.
       If the `currency` parameter is given, then the ShippingMethods must also have a rate defined in the specified currency.
       Each ShippingMethod contains at least one ShippingRate with the flag `isMatching` set to `true`.
       If the `currency` parameter is given, exactly one ShippingRate will contain it.
