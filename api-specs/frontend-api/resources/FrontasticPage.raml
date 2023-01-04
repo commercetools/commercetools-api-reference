@@ -1,7 +1,8 @@
 #%RAML 1.0 ResourceType
-
-is: [right-header, frontastic-locale]
 get:
+  is:
+    - right-header
+    - frontastic-locale
   headers:
     Frontastic-Path:
       displayName: Frontastic Path
@@ -9,16 +10,31 @@ get:
       description: Path
       required: true
       pattern: ^/.*$
-  description: Returns the structure and data of the published page displayed from commercetools Frontend.
+  description: |
+    Returns the structure and data of the published page displayed from commercetools Frontend. \
+
+    Headers&#58;
+
+    - `Frontastic-Path` - `^/.*$` - Required
+    - `Accept` - `application/json` - Required
+    - `Frontastic-Locale` - [Locale](ctp:frontend-api:type:Locale) - Required
+
   responses:
     200:
       description: Page folder information, page structure, and data source data.
       body:
         application/json:
-          type: PageResource
+          type: PageDataResponse
+          example: !include ../examples/pagefolder-success.json
+    301:
+      description: Redirect information.
+      body:
+        application/json:
+          type: RedirectResponse
+          example: !include ../examples/redirect-success.json
     404:
       description: Page folder not found.
       body:
         application/json:
           type: Error
-          example: !include ../examples/PageFolderError.raml
+          example: !include ../examples/pagefolder-error.json

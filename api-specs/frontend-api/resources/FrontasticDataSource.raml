@@ -1,0 +1,32 @@
+#%RAML 1.0 ResourceType
+
+/{identifier}:
+  uriParameters:
+    identifier:
+      displayName: DataSource Identifier
+      type: string
+      description: The data source identifier.
+  get:
+    headers:
+      Content-Type:
+        displayName: Content-Type Header
+        type: string
+        description: Content-Type Header must be set to application/json
+        required: true
+        pattern: ^application/json$
+        default: application/json
+    description: Returns data and preview from the data source.
+    body:
+      application/json:
+        type: object
+        example: !include ../examples/data-source-payload.json
+    responses:
+      200:
+        description: Data and preview from the data source.
+        body:
+          application/json:
+            type: DataSourceResponse
+            example: !include ../examples/data-source-success.json
+      415:
+        description: The header format is invalid.
+        body: Only JSON is supported (set Content-Type to 'application/json')
