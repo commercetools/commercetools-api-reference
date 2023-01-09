@@ -1,0 +1,3864 @@
+openapi: "3.0.0"
+info:
+  title: commercetools Composable Commerce Import API
+  version: "v1"
+
+servers:
+  - url: https://import.europe-west1.gcp.commercetools.com
+
+paths:
+  /{projectKey}/categories/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyCategoriesImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a request for creating new Categories or updating existing ones.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/customers/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_customers:{projectKey}"
+      operationId: ByProjectKeyCustomersImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a request for creating new Customers or updating existing ones.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/import-containers:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_import_containers:{projectKey}"
+      operationId: ByProjectKeyImportContainersPost
+      description: |-
+        Creates a new import container.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportContainerDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportContainer'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      security:
+        - oauth_2_0:
+            - "manage_import_containers:{projectKey}"
+            - "view_import_containers:{projectKey}"
+      operationId: ByProjectKeyImportContainersGet
+      description: |-
+        Retrieves all import containers of a given project key.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: offset
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: sort
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportContainerPagedResponse'
+
+  /{projectKey}/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      security:
+        - oauth_2_0:
+            - "manage_import_containers:{projectKey}"
+      operationId: ByProjectKeyImportContainersByImportContainerKeyPut
+      description: |-
+        Updates the import container given by the key.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportContainerUpdateDraft'
+
+      responses:
+        "200":
+          description: |-
+            The import container was successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportContainer'
+
+        "409":
+          description: |-
+            A concurrent modification was detected. The client should retry and resolve the conflict.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      security:
+        - oauth_2_0:
+            - "manage_import_containers:{projectKey}"
+            - "view_import_containers:{projectKey}"
+      operationId: ByProjectKeyImportContainersByImportContainerKeyGet
+      description: |-
+        Retrieves the import container given by the key.
+      responses:
+        "200":
+          description: |-
+            The requested import container was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportContainer'
+
+        "404":
+          description: |-
+            The requested import container wasn't found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_import_containers:{projectKey}"
+      operationId: ByProjectKeyImportContainersByImportContainerKeyDelete
+      description: |-
+        Deletes the import container given by the key.
+      responses:
+        "200":
+          description: |-
+            The deleted import container.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportContainer'
+
+        "404":
+          description: |-
+            The import container to delete wasn't found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/import-containers/{importContainerKey}/import-operations:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      security:
+        - oauth_2_0:
+            - "manage_import_containers:{projectKey}"
+            - "view_import_containers:{projectKey}"
+      operationId: ByProjectKeyImportContainersByImportContainerKeyImportOperationsGet
+      description: |-
+        Retrieves all [ImportOperations](ctp:import:type:ImportOperation) of a given ImportContainer key.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: offset
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: sort
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
+        - name: resourceKey
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
+        - name: state
+          in: query
+          required: false
+          style: form
+          schema:
+            $ref: '#/components/schemas/ProcessingState'
+          explode: true
+        - name: debug
+          x-annotation-default: false
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportOperationPagedResponse'
+
+  /{projectKey}/import-containers/{importContainerKey}/import-summaries:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      security:
+        - oauth_2_0:
+            - "manage_import_containers:{projectKey}"
+            - "view_import_containers:{projectKey}"
+      operationId: ByProjectKeyImportContainersByImportContainerKeyImportSummariesGet
+      description: |-
+        Retrieves an [ImportSummary](ctp:import:type:ImportSummary) for the given import container. An [ImportSummary](ctp:import:type:ImportSummary) is calculated on demand.
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportSummary'
+
+  /{projectKey}/import-operations/{id}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      security:
+        - oauth_2_0:
+            - "manage_import_containers:{projectKey}"
+            - "view_import_containers:{projectKey}"
+      operationId: ByProjectKeyImportOperationsByIdGet
+      description: |-
+        Retrieves the [ImportOperation](ctp:import:type:ImportOperation) of a given ID.
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportOperation'
+
+        "404":
+          description: |-
+            404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+        "503":
+          description: |-
+            503
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/inventories/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyInventoriesImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a request for creating new Inventories or updating existing ones.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/order-patches/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_orders:{projectKey}"
+      operationId: ByProjectKeyOrderPatchesImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a new import request for order patches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderPatchImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/orders/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_orders:{projectKey}"
+      operationId: ByProjectKeyOrdersImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a request for creating new Orders or updating existing ones.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/prices/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyPricesImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a request for creating new Prices or updating existing ones.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PriceImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/product-drafts/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyProductDraftsImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a request for creating new ProductDrafts or updating existing ones.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductDraftImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/product-types/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyProductTypesImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a request for creating new ProductTypes or updating existing ones.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductTypeImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/product-variant-patches/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyProductVariantPatchesImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a new import request for product variant patches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductVariantPatchRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/product-variants/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyProductVariantsImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a request for creating new ProductVariants or updating existing ones.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductVariantImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/products/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyProductsImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a request for creating new Products or updating existing ones.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/standalone-prices/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_standalone_prices:{projectKey}"
+            - "view_standalone_prices:{projectKey}"
+      operationId: ByProjectKeyStandalonePricesImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a request for creating new Standalone Prices or updating existing ones.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StandalonePriceImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+
+components:
+
+  securitySchemes:
+    oauth_2_0:
+      type: oauth2
+      description: |
+        HTTP API authorization uses [OAuth2](http://tools.ietf.org/html/rfc6750){:target="_blank"}.
+
+        Clients must obtain an access token from the auth service using one of
+        the authorization flows described below, before they are able to make authorized requests
+        to other Composable Commerce APIs. On successful completion of an authorization flow,
+        a client will be given an `access_token`, which they need to include in requests
+        to authorized service endpoints via the HTTP `Authorization` header like this:
+
+      flows:
+          clientCredentials:
+            tokenUrl: https://auth.europe-west1.gcp.commercetools.com/oauth/token
+            scopes:
+              "manage_project:{projectKey}": ""
+              "view_products:{projectKey}": ""
+              "manage_products:{projectKey}": ""
+              "view_orders:{projectKey}": ""
+              "manage_orders:{projectKey}": ""
+
+
+  schemas:
+    ErrorResponse:
+      type: "object"
+      properties:
+        statusCode:
+          type: "integer"
+          format: "int32"
+        message:
+          type: "string"
+        error:
+          type: "string"
+        error_description:
+          type: "string"
+        errors:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+    ErrorObject:
+      type: "object"
+      discriminator:
+        propertyName: code
+        mapping:
+          access_denied: '#/components/schemas/AccessDeniedError'
+          ConcurrentModification: '#/components/schemas/ConcurrentModificationError'
+          Contention: '#/components/schemas/ContentionError'
+          DuplicateAttributeValue: '#/components/schemas/DuplicateAttributeValueError'
+          DuplicateAttributeValues: '#/components/schemas/DuplicateAttributeValuesError'
+          DuplicateField: '#/components/schemas/DuplicateFieldError'
+          DuplicateVariantValues: '#/components/schemas/DuplicateVariantValuesError'
+          Generic: '#/components/schemas/GenericError'
+          insufficient_scope: '#/components/schemas/InsufficientScopeError'
+          InvalidCredentials: '#/components/schemas/InvalidCredentialsError'
+          InvalidField: '#/components/schemas/InvalidFieldError'
+          InvalidInput: '#/components/schemas/InvalidInput'
+          InvalidJsonInput: '#/components/schemas/InvalidJsonInput'
+          InvalidOperation: '#/components/schemas/InvalidOperation'
+          invalid_scope: '#/components/schemas/InvalidScopeError'
+          InvalidTransition: '#/components/schemas/InvalidStateTransitionError'
+          invalid_token: '#/components/schemas/InvalidTokenError'
+          RequiredField: '#/components/schemas/RequiredFieldError'
+          ResourceCreation: '#/components/schemas/ResourceCreationError'
+          ResourceDeletion: '#/components/schemas/ResourceDeletionError'
+          ResourceNotFound: '#/components/schemas/ResourceNotFoundError'
+          ResourceUpdate: '#/components/schemas/ResourceUpdateError'
+      properties:
+        code:
+          type: "string"
+        message:
+          type: "string"
+    AccessDeniedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    InvalidScopeError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    InvalidOperation:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    DuplicateAttributeValueError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            attribute:
+              $ref: '#/components/schemas/Attribute'
+    DuplicateAttributeValuesError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            attributes:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Attribute'
+    DuplicateFieldError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            field:
+              type: "string"
+            duplicateValue:
+              {}
+    DuplicateVariantValuesError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            variantValues:
+              $ref: '#/components/schemas/VariantValues'
+    VariantValues:
+      type: "object"
+      properties:
+        sku:
+          type: "string"
+        prices:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PriceImport'
+        attributes:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Attribute'
+    InsufficientScopeError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    InvalidCredentialsError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    InvalidTokenError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    InvalidFieldError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            field:
+              type: "string"
+            invalidValue:
+              {}
+            allowedValues:
+              type: "array"
+              items:
+                {}
+            resourceIndex:
+              type: "integer"
+              format: "int32"
+    InvalidJsonInput:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    InvalidInput:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    ResourceNotFoundError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            resource:
+              {}
+    ResourceCreationError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            resource:
+              {}
+    ResourceUpdateError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            resource:
+              {}
+    ResourceDeletionError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            resource:
+              {}
+    RequiredFieldError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            field:
+              type: "string"
+    InvalidStateTransitionError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            currentState:
+              $ref: '#/components/schemas/ProcessingState'
+            newState:
+              $ref: '#/components/schemas/ProcessingState'
+    ConcurrentModificationError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            specifiedVersion:
+              type: "integer"
+              format: "int32"
+            currentVersion:
+              type: "integer"
+              format: "int32"
+            conflictedResource:
+              {}
+    ContentionError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    GenericError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    ImportOperation:
+      type: "object"
+      properties:
+        version:
+          type: "integer"
+          format: "int32"
+        importContainerKey:
+          type: "string"
+        resourceKey:
+          type: "string"
+        id:
+          type: "string"
+        state:
+          $ref: '#/components/schemas/ProcessingState'
+        resourceVersion:
+          type: "integer"
+          format: "int32"
+        errors:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+        unresolvedReferences:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/UnresolvedReferences'
+        createdAt:
+          type: "string"
+          format: "datetime"
+        lastModifiedAt:
+          type: "string"
+          format: "datetime"
+        expiresAt:
+          type: "string"
+          format: "datetime"
+    ImportOperationPagedResponse:
+      type: "object"
+      properties:
+        limit:
+          type: "integer"
+          format: "int32"
+        offset:
+          type: "integer"
+          format: "int32"
+        count:
+          type: "integer"
+          format: "int32"
+        total:
+          type: "integer"
+          format: "int32"
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ImportOperation'
+    ImportOperationState:
+      type: "string"
+      enum:
+        - processing
+        - validationFailed
+      x-annotation-enumDescriptions:
+        processing: "This is an initial state of import resource and is currently processing."
+        validationFailed: "The validation of the import resource failed."
+    ImportOperationStatus:
+      type: "object"
+      properties:
+        operationId:
+          type: "string"
+        state:
+          $ref: '#/components/schemas/ImportOperationState'
+        errors:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+    ImportContainer:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        resourceType:
+          $ref: '#/components/schemas/ImportResourceType'
+        version:
+          type: "number"
+          format: "double"
+        createdAt:
+          type: "string"
+          format: "datetime"
+        lastModifiedAt:
+          type: "string"
+          format: "datetime"
+    ImportContainerDraft:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        resourceType:
+          $ref: '#/components/schemas/ImportResourceType'
+    ImportContainerUpdateDraft:
+      type: "object"
+      properties:
+        version:
+          type: "number"
+          format: "double"
+        resourceType:
+          $ref: '#/components/schemas/ImportResourceType'
+    ImportContainerPagedResponse:
+      type: "object"
+      properties:
+        limit:
+          type: "integer"
+          format: "int32"
+        offset:
+          type: "integer"
+          format: "int32"
+        count:
+          type: "integer"
+          format: "int32"
+        total:
+          type: "integer"
+          format: "int32"
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ImportContainer'
+    ImportSummary:
+      type: "object"
+      properties:
+        states:
+          $ref: '#/components/schemas/OperationStates'
+        total:
+          type: "integer"
+          format: "int32"
+    OperationStates:
+      type: "object"
+      properties:
+        processing:
+          type: "integer"
+          format: "int32"
+        validationFailed:
+          type: "integer"
+          format: "int32"
+        unresolved:
+          type: "integer"
+          format: "int32"
+        waitForMasterVariant:
+          type: "integer"
+          format: "int32"
+        imported:
+          type: "integer"
+          format: "int32"
+        rejected:
+          type: "integer"
+          format: "int32"
+    ImportRequest:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          category: '#/components/schemas/CategoryImportRequest'
+          customer: '#/components/schemas/CustomerImportRequest'
+          inventory: '#/components/schemas/InventoryImportRequest'
+          order: '#/components/schemas/OrderImportRequest'
+          order-patch: '#/components/schemas/OrderPatchImportRequest'
+          price: '#/components/schemas/PriceImportRequest'
+          product-draft: '#/components/schemas/ProductDraftImportRequest'
+          product: '#/components/schemas/ProductImportRequest'
+          product-type: '#/components/schemas/ProductTypeImportRequest'
+          product-variant: '#/components/schemas/ProductVariantImportRequest'
+          product-variant-patch: '#/components/schemas/ProductVariantPatchRequest'
+          standalone-price: '#/components/schemas/StandalonePriceImportRequest'
+      properties:
+        type:
+          $ref: '#/components/schemas/ImportResourceType'
+    ImportResponse:
+      type: "object"
+      properties:
+        operationStatus:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ImportOperationStatus'
+    CategoryImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CategoryImport'
+    ProductImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductImport'
+    ProductDraftImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductDraftImport'
+    ProductTypeImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductTypeImport'
+    ProductVariantImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductVariantImport'
+    PriceImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/PriceImport'
+    StandalonePriceImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StandalonePriceImport'
+    OrderImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/OrderImport'
+    OrderPatchImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            patches:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/OrderPatchImport'
+    ProductVariantPatchRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            patches:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductVariantPatch'
+    CustomerImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerImport'
+    InventoryImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/InventoryImport'
+    SubRate:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        amount:
+          type: "number"
+          format: "double"
+    TaxRate:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        name:
+          type: "string"
+        amount:
+          type: "number"
+          format: "double"
+        includedInPrice:
+          type: "boolean"
+        country:
+          $ref: '#/components/schemas/CountryCode'
+        state:
+          type: "string"
+        subRates:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/SubRate'
+    PriceImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            value:
+              $ref: '#/components/schemas/TypedMoney'
+            country:
+              $ref: '#/components/schemas/CountryCode'
+            validFrom:
+              type: "string"
+              format: "datetime"
+            validUntil:
+              type: "string"
+              format: "datetime"
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupKeyReference'
+            channel:
+              $ref: '#/components/schemas/ChannelKeyReference'
+            discounted:
+              $ref: '#/components/schemas/DiscountedPrice'
+            publish:
+              type: "boolean"
+            tiers:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/PriceTier'
+            custom:
+              $ref: '#/components/schemas/Custom'
+            productVariant:
+              $ref: '#/components/schemas/ProductVariantKeyReference'
+            product:
+              $ref: '#/components/schemas/ProductKeyReference'
+    StandalonePriceImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            sku:
+              type: "string"
+            value:
+              $ref: '#/components/schemas/TypedMoney'
+            country:
+              $ref: '#/components/schemas/CountryCode'
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupKeyReference'
+            channel:
+              $ref: '#/components/schemas/ChannelKeyReference'
+            validFrom:
+              type: "string"
+              format: "datetime"
+            validUntil:
+              type: "string"
+              format: "datetime"
+            tiers:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/PriceTier'
+            discounted:
+              $ref: '#/components/schemas/DiscountedPrice'
+            custom:
+              $ref: '#/components/schemas/Custom'
+    SearchKeywords:
+      type: "object"
+      additionalProperties:
+        type: "string"
+    SearchKeyword:
+      type: "object"
+      properties:
+        text:
+          type: "string"
+        suggestTokenizer:
+          $ref: '#/components/schemas/SuggestTokenizer'
+    SuggestTokenizer:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          custom: '#/components/schemas/CustomTokenizer'
+          whitespace: '#/components/schemas/WhitespaceTokenizer'
+      properties:
+        type:
+          type: "string"
+    CustomTokenizer:
+      allOf:
+        - $ref: '#/components/schemas/SuggestTokenizer'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            inputs:
+              type: "array"
+              items:
+                type: "string"
+    WhitespaceTokenizer:
+      allOf:
+        - $ref: '#/components/schemas/SuggestTokenizer'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+    ProductImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            productType:
+              $ref: '#/components/schemas/ProductTypeKeyReference'
+            slug:
+              $ref: '#/components/schemas/LocalizedString'
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+            categories:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CategoryKeyReference'
+            metaTitle:
+              $ref: '#/components/schemas/LocalizedString'
+            metaDescription:
+              $ref: '#/components/schemas/LocalizedString'
+            metaKeywords:
+              $ref: '#/components/schemas/LocalizedString'
+            taxCategory:
+              $ref: '#/components/schemas/TaxCategoryKeyReference'
+            searchKeywords:
+              $ref: '#/components/schemas/SearchKeywords'
+            state:
+              $ref: '#/components/schemas/StateKeyReference'
+            publish:
+              type: "boolean"
+            priceMode:
+              $ref: '#/components/schemas/ProductPriceModeEnum'
+    ProductDraftImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            productType:
+              $ref: '#/components/schemas/ProductTypeKeyReference'
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            slug:
+              $ref: '#/components/schemas/LocalizedString'
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+            categories:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CategoryKeyReference'
+            metaTitle:
+              $ref: '#/components/schemas/LocalizedString'
+            metaDescription:
+              $ref: '#/components/schemas/LocalizedString'
+            metaKeywords:
+              $ref: '#/components/schemas/LocalizedString'
+            masterVariant:
+              $ref: '#/components/schemas/ProductVariantDraftImport'
+            variants:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductVariantDraftImport'
+            taxCategory:
+              $ref: '#/components/schemas/TaxCategoryKeyReference'
+            searchKeywords:
+              $ref: '#/components/schemas/SearchKeywords'
+            state:
+              $ref: '#/components/schemas/StateKeyReference'
+            publish:
+              type: "boolean"
+            priceMode:
+              $ref: '#/components/schemas/ProductPriceModeEnum'
+    ProductVariantDraftImport:
+      type: "object"
+      properties:
+        sku:
+          type: "string"
+        key:
+          type: "string"
+        prices:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PriceDraftImport'
+        attributes:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Attribute'
+        images:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Image'
+        assets:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Asset'
+    PriceDraftImport:
+      type: "object"
+      properties:
+        value:
+          $ref: '#/components/schemas/TypedMoney'
+        country:
+          $ref: '#/components/schemas/CountryCode'
+        customerGroup:
+          $ref: '#/components/schemas/CustomerGroupKeyReference'
+        channel:
+          $ref: '#/components/schemas/ChannelKeyReference'
+        validFrom:
+          type: "string"
+          format: "datetime"
+        validUntil:
+          type: "string"
+          format: "datetime"
+        custom:
+          $ref: '#/components/schemas/Custom'
+        discounted:
+          $ref: '#/components/schemas/DiscountedPrice'
+        tiers:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PriceTier'
+        key:
+          type: "string"
+    AttributeDefinition:
+      type: "object"
+      properties:
+        type:
+          $ref: '#/components/schemas/AttributeType'
+        name:
+          type: "string"
+        label:
+          $ref: '#/components/schemas/LocalizedString'
+        isRequired:
+          type: "boolean"
+        attributeConstraint:
+          $ref: '#/components/schemas/AttributeConstraintEnum'
+        inputTip:
+          $ref: '#/components/schemas/LocalizedString'
+        inputHint:
+          $ref: '#/components/schemas/TextInputHint'
+        isSearchable:
+          type: "boolean"
+    AttributeType:
+      type: "object"
+      discriminator:
+        propertyName: name
+        mapping:
+          boolean: '#/components/schemas/AttributeBooleanType'
+          datetime: '#/components/schemas/AttributeDateTimeType'
+          date: '#/components/schemas/AttributeDateType'
+          enum: '#/components/schemas/AttributeEnumType'
+          ltext: '#/components/schemas/AttributeLocalizableTextType'
+          lenum: '#/components/schemas/AttributeLocalizedEnumType'
+          money: '#/components/schemas/AttributeMoneyType'
+          nested: '#/components/schemas/AttributeNestedType'
+          number: '#/components/schemas/AttributeNumberType'
+          reference: '#/components/schemas/AttributeReferenceType'
+          set: '#/components/schemas/AttributeSetType'
+          text: '#/components/schemas/AttributeTextType'
+          time: '#/components/schemas/AttributeTimeType'
+      properties:
+        name:
+          type: "string"
+    AttributeBooleanType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    AttributeDateTimeType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    AttributeDateType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    AttributeEnumType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            values:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AttributePlainEnumValue'
+    AttributePlainEnumValue:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        label:
+          type: "string"
+    AttributeLocalizableTextType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    AttributeLocalizedEnumType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            values:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AttributeLocalizedEnumValue'
+    AttributeLocalizedEnumValue:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        label:
+          $ref: '#/components/schemas/LocalizedString'
+    AttributeMoneyType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    AttributeNestedType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            typeReference:
+              $ref: '#/components/schemas/ProductTypeKeyReference'
+    AttributeNumberType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    AttributeReferenceType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            referenceTypeId:
+              $ref: '#/components/schemas/ReferenceType'
+    AttributeSetType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            elementType:
+              $ref: '#/components/schemas/AttributeType'
+    AttributeTextType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    AttributeTimeType:
+      allOf:
+        - $ref: '#/components/schemas/AttributeType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    AttributeConstraintEnum:
+      type: "string"
+      enum:
+        - None
+        - Unique
+        - CombinationUnique
+        - SameForAll
+    TextInputHint:
+      type: "string"
+      enum:
+        - SingleLine
+        - MultiLine
+    ProductTypeImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            name:
+              type: "string"
+            description:
+              type: "string"
+            attributes:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AttributeDefinition'
+    Attribute:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          boolean: '#/components/schemas/BooleanAttribute'
+          boolean-set: '#/components/schemas/BooleanSetAttribute'
+          date: '#/components/schemas/DateAttribute'
+          date-set: '#/components/schemas/DateSetAttribute'
+          datetime: '#/components/schemas/DateTimeAttribute'
+          datetime-set: '#/components/schemas/DateTimeSetAttribute'
+          enum: '#/components/schemas/EnumAttribute'
+          enum-set: '#/components/schemas/EnumSetAttribute'
+          lenum: '#/components/schemas/LocalizableEnumAttribute'
+          lenum-set: '#/components/schemas/LocalizableEnumSetAttribute'
+          ltext: '#/components/schemas/LocalizableTextAttribute'
+          ltext-set: '#/components/schemas/LocalizableTextSetAttribute'
+          money: '#/components/schemas/MoneyAttribute'
+          money-set: '#/components/schemas/MoneySetAttribute'
+          number: '#/components/schemas/NumberAttribute'
+          number-set: '#/components/schemas/NumberSetAttribute'
+          reference: '#/components/schemas/ReferenceAttribute'
+          reference-set: '#/components/schemas/ReferenceSetAttribute'
+          text: '#/components/schemas/TextAttribute'
+          text-set: '#/components/schemas/TextSetAttribute'
+          time: '#/components/schemas/TimeAttribute'
+          time-set: '#/components/schemas/TimeSetAttribute'
+      properties:
+        name:
+          type: "string"
+        type:
+          type: "string"
+    BooleanAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "boolean"
+    BooleanSetAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "boolean"
+    DateAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "string"
+              format: "date-only"
+    DateSetAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+                format: "date-only"
+    DateTimeAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "string"
+              format: "datetime"
+    DateTimeSetAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+                format: "datetime"
+    EnumAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "string"
+    EnumSetAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+    LocalizableEnumAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "string"
+    LocalizableEnumSetAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+    LocalizableTextAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              $ref: '#/components/schemas/LocalizedString'
+    LocalizableTextSetAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/LocalizedString'
+    MoneyAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              $ref: '#/components/schemas/TypedMoney'
+    MoneySetAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/TypedMoney'
+    NumberAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "number"
+              format: "double"
+    NumberSetAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "number"
+                format: "double"
+    ReferenceAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              $ref: '#/components/schemas/KeyReference'
+    ReferenceSetAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/KeyReference'
+    TextAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "string"
+    TextSetAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+    TimeAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "string"
+              format: "time-only"
+    TimeSetAttribute:
+      allOf:
+        - $ref: '#/components/schemas/Attribute'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+                format: "time-only"
+    ProductVariantImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            sku:
+              type: "string"
+            isMasterVariant:
+              type: "boolean"
+            attributes:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Attribute'
+            images:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Image'
+            assets:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Asset'
+            publish:
+              type: "boolean"
+            product:
+              $ref: '#/components/schemas/ProductKeyReference'
+    ProductVariantPatch:
+      type: "object"
+      properties:
+        productVariant:
+          $ref: '#/components/schemas/ProductVariantKeyReference'
+        attributes:
+          $ref: '#/components/schemas/Attributes'
+        staged:
+          type: "boolean"
+    Attributes:
+      type: "object"
+      additionalProperties:
+        type: "string"
+    CategoryImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            slug:
+              $ref: '#/components/schemas/LocalizedString'
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+            parent:
+              $ref: '#/components/schemas/CategoryKeyReference'
+            orderHint:
+              type: "string"
+            externalId:
+              type: "string"
+            metaTitle:
+              $ref: '#/components/schemas/LocalizedString'
+            metaDescription:
+              $ref: '#/components/schemas/LocalizedString'
+            metaKeywords:
+              $ref: '#/components/schemas/LocalizedString'
+            assets:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Asset'
+            custom:
+              $ref: '#/components/schemas/Custom'
+    CustomerAddress:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        title:
+          type: "string"
+        salutation:
+          type: "string"
+        firstName:
+          type: "string"
+        lastName:
+          type: "string"
+        streetName:
+          type: "string"
+        streetNumber:
+          type: "string"
+        additionalStreetInfo:
+          type: "string"
+        postalCode:
+          type: "string"
+        city:
+          type: "string"
+        region:
+          type: "string"
+        state:
+          type: "string"
+        country:
+          $ref: '#/components/schemas/CountryCode'
+        company:
+          type: "string"
+        department:
+          type: "string"
+        building:
+          type: "string"
+        apartment:
+          type: "string"
+        pOBox:
+          type: "string"
+        phone:
+          type: "string"
+        mobile:
+          type: "string"
+        email:
+          type: "string"
+        fax:
+          type: "string"
+        additionalAddressInfo:
+          type: "string"
+        externalId:
+          type: "string"
+        custom:
+          $ref: '#/components/schemas/Custom'
+    CustomerImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            customerNumber:
+              type: "string"
+            email:
+              type: "string"
+            password:
+              type: "string"
+            stores:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreKeyReference'
+            firstName:
+              type: "string"
+            lastName:
+              type: "string"
+            middleName:
+              type: "string"
+            title:
+              type: "string"
+            salutation:
+              type: "string"
+            externalId:
+              type: "string"
+            dateOfBirth:
+              type: "string"
+              format: "date-only"
+            companyName:
+              type: "string"
+            vatId:
+              type: "string"
+            isEmailVerified:
+              type: "boolean"
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupKeyReference'
+            addresses:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerAddress'
+            defaultBillingAddress:
+              type: "integer"
+              format: "int32"
+            billingAddresses:
+              type: "array"
+              items:
+                type: "integer"
+                format: "int32"
+            defaultShippingAddress:
+              type: "integer"
+              format: "int32"
+            shippingAddresses:
+              type: "array"
+              items:
+                type: "integer"
+                format: "int32"
+            locale:
+              type: "string"
+            custom:
+              $ref: '#/components/schemas/Custom'
+    ItemState:
+      type: "object"
+      properties:
+        quantity:
+          type: "number"
+          format: "double"
+        state:
+          $ref: '#/components/schemas/StateKeyReference'
+    ItemShippingTarget:
+      type: "object"
+      properties:
+        addressKey:
+          type: "string"
+        quantity:
+          type: "number"
+          format: "double"
+    ItemShippingDetailsDraft:
+      type: "object"
+      properties:
+        targets:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ItemShippingTarget'
+    LineItemPrice:
+      type: "object"
+      properties:
+        value:
+          $ref: '#/components/schemas/TypedMoney'
+        country:
+          $ref: '#/components/schemas/CountryCode'
+        validFrom:
+          type: "string"
+          format: "datetime"
+        validUntil:
+          type: "string"
+          format: "datetime"
+        customerGroup:
+          $ref: '#/components/schemas/CustomerGroupKeyReference'
+        channel:
+          $ref: '#/components/schemas/ChannelKeyReference'
+        discounted:
+          $ref: '#/components/schemas/DiscountedPrice'
+        tiers:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PriceTier'
+        custom:
+          $ref: '#/components/schemas/Custom'
+    LineItemProductVariantImportDraft:
+      type: "object"
+      properties:
+        productVariant:
+          $ref: '#/components/schemas/ProductVariantKeyReference'
+        sku:
+          type: "string"
+        prices:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/LineItemPrice'
+        attributes:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Attribute'
+        images:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Image'
+    LineItemImportDraft:
+      type: "object"
+      properties:
+        product:
+          $ref: '#/components/schemas/ProductKeyReference'
+        name:
+          $ref: '#/components/schemas/LocalizedString'
+        variant:
+          $ref: '#/components/schemas/LineItemProductVariantImportDraft'
+        price:
+          $ref: '#/components/schemas/LineItemPrice'
+        quantity:
+          type: "number"
+          format: "double"
+        state:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ItemState'
+        supplyChannel:
+          $ref: '#/components/schemas/ChannelKeyReference'
+        distributionChannel:
+          $ref: '#/components/schemas/ChannelKeyReference'
+        taxRate:
+          $ref: '#/components/schemas/TaxRate'
+        shippingDetails:
+          $ref: '#/components/schemas/ItemShippingDetailsDraft'
+        custom:
+          $ref: '#/components/schemas/Custom'
+    ShippingRateTierType:
+      type: "string"
+      enum:
+        - CartValue
+        - CartClassification
+        - CartScore
+    ShippingRatePriceTier:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          CartClassification: '#/components/schemas/CartClassificationTier'
+      properties:
+        type:
+          $ref: '#/components/schemas/ShippingRateTierType'
+    CartClassificationTier:
+      allOf:
+        - $ref: '#/components/schemas/ShippingRatePriceTier'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ShippingRateTierType'
+            value:
+              type: "string"
+            price:
+              $ref: '#/components/schemas/Money'
+            tiers:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ShippingRatePriceTier'
+            isMatching:
+              type: "boolean"
+    ShippingRateDraft:
+      type: "object"
+      properties:
+        price:
+          $ref: '#/components/schemas/Money'
+        freeAbove:
+          $ref: '#/components/schemas/Money'
+        tiers:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ShippingRatePriceTier'
+    ParcelMeasurements:
+      type: "object"
+      properties:
+        heightInMillimeter:
+          type: "number"
+          format: "double"
+        lengthInMillimeter:
+          type: "number"
+          format: "double"
+        widthInMillimeter:
+          type: "number"
+          format: "double"
+        weightInGram:
+          type: "number"
+          format: "double"
+    TrackingData:
+      type: "object"
+      properties:
+        trackingId:
+          type: "string"
+        carrier:
+          type: "string"
+        provider:
+          type: "string"
+        providerTransaction:
+          type: "string"
+        isReturn:
+          type: "boolean"
+    DeliveryItem:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        quantity:
+          type: "number"
+          format: "double"
+    Parcel:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        createdAt:
+          type: "string"
+          format: "datetime"
+        measurements:
+          $ref: '#/components/schemas/ParcelMeasurements'
+        trackingData:
+          $ref: '#/components/schemas/TrackingData'
+        items:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/DeliveryItem'
+    Delivery:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        createdAt:
+          type: "string"
+          format: "datetime"
+        items:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/DeliveryItem'
+        parcels:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Parcel'
+        address:
+          $ref: '#/components/schemas/Address'
+    DiscountedLineItemPortion:
+      type: "object"
+      properties:
+        discount:
+          $ref: '#/components/schemas/CartDiscountKeyReference'
+        discountedAmount:
+          $ref: '#/components/schemas/Money'
+    DiscountedLineItemPriceDraft:
+      type: "object"
+      properties:
+        value:
+          $ref: '#/components/schemas/Money'
+        includedDiscounts:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/DiscountedLineItemPortion'
+    ShippingMethodState:
+      type: "string"
+      enum:
+        - DoesNotMatchCart
+        - MatchesCart
+    ShippingInfoImportDraft:
+      type: "object"
+      properties:
+        shippingMethodName:
+          type: "string"
+        price:
+          $ref: '#/components/schemas/TypedMoney'
+        shippingRate:
+          $ref: '#/components/schemas/ShippingRateDraft'
+        taxRate:
+          $ref: '#/components/schemas/TaxRate'
+        taxCategory:
+          $ref: '#/components/schemas/TaxCategoryKeyReference'
+        shippingMethod:
+          $ref: '#/components/schemas/ShippingMethodKeyReference'
+        deliveries:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Delivery'
+        discountedPrice:
+          $ref: '#/components/schemas/DiscountedLineItemPriceDraft'
+        shippingMethodState:
+          $ref: '#/components/schemas/ShippingMethodState'
+    ExternalTaxRateDraft:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        amount:
+          type: "number"
+          format: "double"
+        country:
+          type: "string"
+        state:
+          type: "string"
+        subRates:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/SubRate'
+        includedInPrice:
+          type: "boolean"
+    CustomLineItemTaxedPrice:
+      type: "object"
+      properties:
+        totalNet:
+          $ref: '#/components/schemas/TypedMoney'
+        totalGross:
+          $ref: '#/components/schemas/TypedMoney'
+    CustomLineItemDraft:
+      type: "object"
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedString'
+        money:
+          $ref: '#/components/schemas/TypedMoney'
+        taxedPrice:
+          $ref: '#/components/schemas/CustomLineItemTaxedPrice'
+        totalPrice:
+          $ref: '#/components/schemas/TypedMoney'
+        slug:
+          type: "string"
+        quantity:
+          type: "number"
+          format: "double"
+        state:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ItemState'
+        taxCategory:
+          $ref: '#/components/schemas/TaxCategoryKeyReference'
+        taxRate:
+          $ref: '#/components/schemas/TaxRate'
+        externalTaxRate:
+          $ref: '#/components/schemas/ExternalTaxRateDraft'
+        discountedPricePerQuantity:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/DiscountedLineItemPriceDraft'
+        shippingDetails:
+          $ref: '#/components/schemas/ItemShippingDetailsDraft'
+    TaxPortion:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        rate:
+          type: "number"
+          format: "double"
+        amount:
+          $ref: '#/components/schemas/TypedMoney'
+    TaxedPrice:
+      type: "object"
+      properties:
+        totalNet:
+          $ref: '#/components/schemas/Money'
+        totalGross:
+          $ref: '#/components/schemas/Money'
+        taxPortions:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/TaxPortion'
+    TaxMode:
+      type: "string"
+      enum:
+        - Platform
+        - External
+        - ExternalAmount
+        - Disabled
+    OrderState:
+      type: "string"
+      enum:
+        - Open
+        - Confirmed
+        - Complete
+        - Cancelled
+    ShipmentState:
+      type: "string"
+      enum:
+        - Shipped
+        - Ready
+        - Pending
+        - Delayed
+        - Partial
+        - Backorder
+    PaymentState:
+      type: "string"
+      enum:
+        - BalanceDue
+        - Failed
+        - Pending
+        - CreditOwed
+        - Paid
+    InventoryMode:
+      type: "string"
+      enum:
+        - TrackOnly
+        - ReserveOnOrder
+    RoundingMode:
+      type: "string"
+      enum:
+        - HalfEven
+        - HalfUp
+        - HalfDown
+    TaxCalculationMode:
+      type: "string"
+      enum:
+        - LineItemLevel
+        - UnitPriceLevel
+    CartOrigin:
+      type: "string"
+      enum:
+        - Customer
+        - Merchant
+    SyncInfo:
+      type: "object"
+      properties:
+        channel:
+          $ref: '#/components/schemas/ChannelKeyReference'
+        externalId:
+          type: "string"
+        syncedAt:
+          type: "string"
+          format: "datetime"
+    DiscountCodeState:
+      type: "string"
+      enum:
+        - NotActive
+        - NotValid
+        - DoesNotMatchCart
+        - MatchesCart
+        - MaxApplicationReached
+        - ApplicationStoppedByPreviousDiscount
+    DiscountCodeInfo:
+      type: "object"
+      properties:
+        discountCode:
+          $ref: '#/components/schemas/DiscountCodeKeyReference'
+        state:
+          $ref: '#/components/schemas/DiscountCodeState'
+    ShippingRateInputType:
+      type: "string"
+      enum:
+        - Classification
+        - Score
+    ShippingRateInput:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          Classification: '#/components/schemas/ClassificationShippingRateInput'
+          Score: '#/components/schemas/ScoreShippingRateInput'
+      properties:
+        type:
+          $ref: '#/components/schemas/ShippingRateInputType'
+    ClassificationShippingRateInput:
+      allOf:
+        - $ref: '#/components/schemas/ShippingRateInput'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ShippingRateInputType'
+            key:
+              type: "string"
+            label:
+              $ref: '#/components/schemas/LocalizedString'
+    ScoreShippingRateInput:
+      allOf:
+        - $ref: '#/components/schemas/ShippingRateInput'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/ShippingRateInputType'
+            score:
+              type: "number"
+              format: "double"
+    OrderImport:
+      type: "object"
+      properties:
+        orderNumber:
+          type: "string"
+        customer:
+          $ref: '#/components/schemas/CustomerKeyReference'
+        customerEmail:
+          type: "string"
+        lineItems:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/LineItemImportDraft'
+        customLineItems:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/CustomLineItemDraft'
+        totalPrice:
+          $ref: '#/components/schemas/TypedMoney'
+        taxedPrice:
+          $ref: '#/components/schemas/TaxedPrice'
+        shippingAddress:
+          $ref: '#/components/schemas/Address'
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+        customerGroup:
+          $ref: '#/components/schemas/CustomerGroupKeyReference'
+        country:
+          type: "string"
+        orderState:
+          $ref: '#/components/schemas/OrderState'
+        shipmentState:
+          $ref: '#/components/schemas/ShipmentState'
+        paymentState:
+          $ref: '#/components/schemas/PaymentState'
+        shippingInfo:
+          $ref: '#/components/schemas/ShippingInfoImportDraft'
+        completedAt:
+          type: "string"
+          format: "datetime"
+        custom:
+          $ref: '#/components/schemas/Custom'
+        inventoryMode:
+          $ref: '#/components/schemas/InventoryMode'
+        taxRoundingMode:
+          $ref: '#/components/schemas/RoundingMode'
+        taxCalculationMode:
+          $ref: '#/components/schemas/TaxCalculationMode'
+        origin:
+          $ref: '#/components/schemas/CartOrigin'
+        itemShippingAddresses:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Address'
+        store:
+          $ref: '#/components/schemas/StoreKeyReference'
+    ReturnShipmentState:
+      type: "string"
+      enum:
+        - Advised
+        - Returned
+        - BackInStock
+        - Unusable
+    ReturnItemDraft:
+      type: "object"
+      properties:
+        quantity:
+          type: "number"
+          format: "double"
+        lineItemId:
+          type: "string"
+        customLineItemId:
+          type: "string"
+        comment:
+          type: "string"
+        shipmentState:
+          $ref: '#/components/schemas/ReturnShipmentState'
+    ReturnInfo:
+      type: "object"
+      properties:
+        items:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ReturnItemDraft'
+        returnTrackingId:
+          type: "string"
+        returnDate:
+          type: "string"
+          format: "datetime"
+    DeliveryParcel:
+      type: "object"
+      properties:
+        deliveryId:
+          type: "string"
+        measurements:
+          $ref: '#/components/schemas/ParcelMeasurements'
+        trackingData:
+          $ref: '#/components/schemas/TrackingData'
+        items:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/DeliveryItem'
+    DeliveryParcelDraft:
+      type: "object"
+      properties:
+        measurements:
+          $ref: '#/components/schemas/ParcelMeasurements'
+        trackingData:
+          $ref: '#/components/schemas/TrackingData'
+        items:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/DeliveryItem'
+    DeliveryDraft:
+      type: "object"
+      properties:
+        items:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/DeliveryItem'
+        address:
+          $ref: '#/components/schemas/Address'
+        parcels:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/DeliveryParcelDraft'
+    DeliveryAddressDraft:
+      type: "object"
+      properties:
+        deliveryId:
+          type: "string"
+        address:
+          $ref: '#/components/schemas/Address'
+    ParcelMeasurementDraft:
+      type: "object"
+      properties:
+        parcelId:
+          type: "string"
+        measurements:
+          $ref: '#/components/schemas/ParcelMeasurements'
+    ParcelTrackingData:
+      type: "object"
+      properties:
+        parcelId:
+          type: "string"
+        trackingData:
+          $ref: '#/components/schemas/TrackingData'
+    ParcelItems:
+      type: "object"
+      properties:
+        parcelId:
+          type: "string"
+        items:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/DeliveryItem'
+    RemoveDeliveryDraft:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+    RemoveParcelFromDeliveryDraft:
+      type: "object"
+      properties:
+        parcelId:
+          type: "string"
+    OrderField:
+      type: "object"
+      properties:
+        addReturnInfo:
+          $ref: '#/components/schemas/ReturnInfo'
+        addParcelToDelivery:
+          $ref: '#/components/schemas/DeliveryParcel'
+        addDeliveries:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/DeliveryDraft'
+        removeDelivery:
+          $ref: '#/components/schemas/RemoveDeliveryDraft'
+        removeParcelFromDelivery:
+          $ref: '#/components/schemas/RemoveParcelFromDeliveryDraft'
+        setDeliveryAddress:
+          $ref: '#/components/schemas/DeliveryAddressDraft'
+        setParcelMeasurements:
+          $ref: '#/components/schemas/ParcelMeasurementDraft'
+        setParcelTrackingData:
+          $ref: '#/components/schemas/ParcelTrackingData'
+        setParcelItems:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ParcelItems'
+    OrderPatchImport:
+      type: "object"
+      properties:
+        orderNumber:
+          type: "string"
+        fields:
+          $ref: '#/components/schemas/OrderField'
+    InventoryImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            sku:
+              type: "string"
+            quantityOnStock:
+              type: "number"
+              format: "double"
+            restockableInDays:
+              type: "number"
+              format: "double"
+            expectedDelivery:
+              type: "string"
+              format: "datetime"
+            supplyChannel:
+              $ref: '#/components/schemas/ChannelKeyReference'
+            custom:
+              $ref: '#/components/schemas/Custom'
+    Custom:
+      type: "object"
+      properties:
+        type:
+          $ref: '#/components/schemas/TypeKeyReference'
+        fields:
+          $ref: '#/components/schemas/FieldContainer'
+    FieldContainer:
+      type: "object"
+      additionalProperties:
+        type: "string"
+    CustomField:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          Boolean: '#/components/schemas/BooleanField'
+          BooleanSet: '#/components/schemas/BooleanSetField'
+          Date: '#/components/schemas/DateField'
+          DateSet: '#/components/schemas/DateSetField'
+          DateTime: '#/components/schemas/DateTimeField'
+          DateTimeSet: '#/components/schemas/DateTimeSetField'
+          Enum: '#/components/schemas/EnumField'
+          EnumSet: '#/components/schemas/EnumSetField'
+          LocalizedEnum: '#/components/schemas/LocalizedEnumField'
+          LocalizedEnumSet: '#/components/schemas/LocalizedEnumSetField'
+          LocalizedString: '#/components/schemas/LocalizedStringField'
+          LocalizedStringSet: '#/components/schemas/LocalizedStringSetField'
+          Money: '#/components/schemas/MoneyField'
+          MoneySet: '#/components/schemas/MoneySetField'
+          Number: '#/components/schemas/NumberField'
+          NumberSet: '#/components/schemas/NumberSetField'
+          Reference: '#/components/schemas/ReferenceField'
+          ReferenceSet: '#/components/schemas/ReferenceSetField'
+          String: '#/components/schemas/StringField'
+          StringSet: '#/components/schemas/StringSetField'
+          Time: '#/components/schemas/TimeField'
+          TimeSet: '#/components/schemas/TimeSetField'
+      properties:
+        type:
+          type: "string"
+    BooleanField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "boolean"
+    StringField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "string"
+    LocalizedStringField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              $ref: '#/components/schemas/LocalizedString'
+    EnumField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "string"
+    LocalizedEnumField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "string"
+    NumberField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "number"
+              format: "double"
+    MoneyField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              $ref: '#/components/schemas/TypedMoney'
+    DateField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "string"
+              format: "date-only"
+    TimeField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "string"
+              format: "time-only"
+    DateTimeField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "string"
+              format: "datetime"
+    ReferenceField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              $ref: '#/components/schemas/KeyReference'
+    BooleanSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "boolean"
+    StringSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+    LocalizedStringSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/LocalizedString'
+    EnumSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+    LocalizedEnumSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+    NumberSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "number"
+                format: "double"
+    MoneySetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Money'
+    DateSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+                format: "date-only"
+    TimeSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+                format: "time-only"
+    DateTimeSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+                format: "datetime"
+    ReferenceSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/KeyReference'
+    Asset:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        sources:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/AssetSource'
+        name:
+          $ref: '#/components/schemas/LocalizedString'
+        description:
+          $ref: '#/components/schemas/LocalizedString'
+        tags:
+          type: "array"
+          items:
+            type: "string"
+        custom:
+          $ref: '#/components/schemas/Custom'
+    AssetDimensions:
+      type: "object"
+      properties:
+        w:
+          type: "number"
+          format: "double"
+        h:
+          type: "number"
+          format: "double"
+    AssetSource:
+      type: "object"
+      properties:
+        uri:
+          type: "string"
+        key:
+          type: "string"
+        dimensions:
+          $ref: '#/components/schemas/AssetDimensions'
+        contentType:
+          type: "string"
+    CountryCode:
+      type: "string"
+    CurrencyCode:
+      type: "string"
+    Image:
+      type: "object"
+      properties:
+        url:
+          type: "string"
+        dimensions:
+          $ref: '#/components/schemas/AssetDimensions'
+        label:
+          type: "string"
+    EnumValue:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        label:
+          type: "string"
+    LocalizedEnumValue:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        label:
+          $ref: '#/components/schemas/LocalizedString'
+    LocalizedString:
+      type: "object"
+      additionalProperties:
+        type: "string"
+    ImportResource:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+    KeyReference:
+      type: "object"
+      discriminator:
+        propertyName: typeId
+        mapping:
+          cart-discount: '#/components/schemas/CartDiscountKeyReference'
+          cart: '#/components/schemas/CartKeyReference'
+          category: '#/components/schemas/CategoryKeyReference'
+          channel: '#/components/schemas/ChannelKeyReference'
+          key-value-document: '#/components/schemas/CustomObjectKeyReference'
+          customer-group: '#/components/schemas/CustomerGroupKeyReference'
+          customer: '#/components/schemas/CustomerKeyReference'
+          discount-code: '#/components/schemas/DiscountCodeKeyReference'
+          order: '#/components/schemas/OrderKeyReference'
+          payment: '#/components/schemas/PaymentKeyReference'
+          price: '#/components/schemas/PriceKeyReference'
+          product-discount: '#/components/schemas/ProductDiscountKeyReference'
+          product: '#/components/schemas/ProductKeyReference'
+          product-type: '#/components/schemas/ProductTypeKeyReference'
+          product-variant: '#/components/schemas/ProductVariantKeyReference'
+          shipping-method: '#/components/schemas/ShippingMethodKeyReference'
+          state: '#/components/schemas/StateKeyReference'
+          store: '#/components/schemas/StoreKeyReference'
+          tax-category: '#/components/schemas/TaxCategoryKeyReference'
+          type: '#/components/schemas/TypeKeyReference'
+      properties:
+        key:
+          type: "string"
+        typeId:
+          $ref: '#/components/schemas/ReferenceType'
+    CartKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    CartDiscountKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    CategoryKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    ChannelKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    CustomerKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    CustomerGroupKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    DiscountCodeKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    OrderKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    PaymentKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    PriceKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    ProductKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    ProductDiscountKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    ProductTypeKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    ProductVariantKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    ShippingMethodKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    StateKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    StoreKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    TaxCategoryKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    TypeKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+    CustomObjectKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+            container:
+              type: "string"
+    UnresolvedReferences:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        typeId:
+          $ref: '#/components/schemas/ReferenceType'
+    MoneyType:
+      type: "string"
+      enum:
+        - centPrecision
+        - highPrecision
+    TypedMoney:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          highPrecision: '#/components/schemas/HighPrecisionMoney'
+          centPrecision: '#/components/schemas/Money'
+      properties:
+        type:
+          $ref: '#/components/schemas/MoneyType'
+        fractionDigits:
+          type: "number"
+          format: "double"
+        centAmount:
+          type: "number"
+          format: "double"
+        currencyCode:
+          $ref: '#/components/schemas/CurrencyCode'
+    HighPrecisionMoney:
+      allOf:
+        - $ref: '#/components/schemas/TypedMoney'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/MoneyType'
+            fractionDigits:
+              type: "number"
+              format: "double"
+            centAmount:
+              type: "number"
+              format: "double"
+            currencyCode:
+              $ref: '#/components/schemas/CurrencyCode'
+            preciseAmount:
+              type: "number"
+              format: "double"
+    Money:
+      allOf:
+        - $ref: '#/components/schemas/TypedMoney'
+        - type: "object"
+          properties:
+            type:
+              $ref: '#/components/schemas/MoneyType'
+            fractionDigits:
+              type: "number"
+              format: "double"
+            centAmount:
+              type: "number"
+              format: "double"
+            currencyCode:
+              $ref: '#/components/schemas/CurrencyCode'
+    DiscountedPrice:
+      type: "object"
+      properties:
+        value:
+          $ref: '#/components/schemas/TypedMoney'
+        discount:
+          $ref: '#/components/schemas/ProductDiscountKeyReference'
+    PriceTier:
+      type: "object"
+      properties:
+        minimumQuantity:
+          type: "number"
+          format: "double"
+        value:
+          $ref: '#/components/schemas/TypedMoney'
+    ImportResourceType:
+      type: "string"
+      enum:
+        - category
+        - order
+        - order-patch
+        - price
+        - product
+        - product-draft
+        - product-type
+        - product-variant
+        - product-variant-patch
+        - customer
+        - inventory
+        - standalone-price
+      x-annotation-enumDescriptions:
+        category: "The category import resource type."
+        order: "The order import resource type."
+        order-patch: "The order patch import resource type."
+        price: "The price import resource type."
+        product: "The product import resource type."
+        product-type: "The product type import resource type."
+        product-variant: "The product variant import resource type."
+        product-variant-patch: "The product variant patch import resource type."
+        customer: "The customer import resource type."
+        inventory: "The inventory import resource type."
+        standalone-price: "The Standalone Price import resource type."
+    ReferenceType:
+      type: "string"
+      enum:
+        - cart
+        - cart-discount
+        - category
+        - channel
+        - customer
+        - customer-group
+        - discount-code
+        - order
+        - payment
+        - price
+        - product
+        - product-discount
+        - product-type
+        - product-variant
+        - shipping-method
+        - state
+        - store
+        - tax-category
+        - type
+        - key-value-document
+      x-annotation-enumDescriptions:
+        cart: "References a cart."
+        cart-discount: "References a cart discount."
+        category: "References a category."
+        channel: "References a channel."
+        customer: "References a customer."
+        customer-group: "References a customer group."
+        discount-code: "References a discount code."
+        order: "References an order."
+        payment: "References a payment"
+        price: "References a price."
+        product: "References a product."
+        product-discount: "References a product discount."
+        product-type: "References a product type."
+        product-variant: "References a product variant."
+        shipping-method: "References a shipping method."
+        state: "References a state."
+        store: "References a store."
+        tax-category: "References a tax-category."
+        type: "References a type."
+        key-value-document: "References a custom object"
+    ProcessingState:
+      type: "string"
+      enum:
+        - processing
+        - validationFailed
+        - unresolved
+        - waitForMasterVariant
+        - imported
+        - rejected
+      x-annotation-enumDescriptions:
+        processing: "Initial state assigned if the format (JSON structure and fields) meets
+         the Import API's specification. The resource import is in progress."
+        imported: "Resource was successfully imported."
+        unresolved: "Import Request contains key references to resources that are currently
+         not present in commercetools Composable Commerce."
+        validationFailed: "Either the request payload is missing the data as per the Import
+         API's specification or even though the references were resolved, the data does
+         not meet the validation constraints."
+        waitForMasterVariant: "Waiting for a master variant to arrive. The Product Import
+         has required attributes and thus a master variant that provides those is required."
+        rejected: "Resource could not be imported. References were resolved, but the system
+         could not import the data due to an internal server error and the limit of retry
+         has been reached."
+    Address:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        key:
+          type: "string"
+        title:
+          type: "string"
+        salutation:
+          type: "string"
+        firstName:
+          type: "string"
+        lastName:
+          type: "string"
+        streetName:
+          type: "string"
+        streetNumber:
+          type: "string"
+        additionalStreetInfo:
+          type: "string"
+        postalCode:
+          type: "string"
+        city:
+          type: "string"
+        region:
+          type: "string"
+        state:
+          type: "string"
+        country:
+          $ref: '#/components/schemas/CountryCode'
+        company:
+          type: "string"
+        department:
+          type: "string"
+        building:
+          type: "string"
+        apartment:
+          type: "string"
+        pOBox:
+          type: "string"
+        phone:
+          type: "string"
+        mobile:
+          type: "string"
+        email:
+          type: "string"
+        fax:
+          type: "string"
+        additionalAddressInfo:
+          type: "string"
+        externalId:
+          type: "string"
+    ProductPriceModeEnum:
+      type: "string"
+      enum:
+        - Embedded
+        - Standalone
