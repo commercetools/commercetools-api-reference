@@ -863,6 +863,9 @@ components:
   schemas:
     ErrorResponse:
       type: "object"
+      required:
+        - statusCode
+        - message
       properties:
         statusCode:
           type: "integer"
@@ -904,6 +907,9 @@ components:
           ResourceDeletion: '#/components/schemas/ResourceDeletionError'
           ResourceNotFound: '#/components/schemas/ResourceNotFoundError'
           ResourceUpdate: '#/components/schemas/ResourceUpdateError'
+      required:
+        - code
+        - message
       properties:
         code:
           type: "string"
@@ -940,6 +946,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
+          required:
+            - attribute
           properties:
             code:
               type: "string"
@@ -951,6 +959,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
+          required:
+            - attributes
           properties:
             code:
               type: "string"
@@ -977,6 +987,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
+          required:
+            - variantValues
           properties:
             code:
               type: "string"
@@ -986,6 +998,9 @@ components:
               $ref: '#/components/schemas/VariantValues'
     VariantValues:
       type: "object"
+      required:
+        - prices
+        - attributes
       properties:
         sku:
           type: "string"
@@ -1028,6 +1043,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
+          required:
+            - field
+            - invalidValue
           properties:
             code:
               type: "string"
@@ -1110,6 +1128,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
+          required:
+            - field
           properties:
             code:
               type: "string"
@@ -1121,6 +1141,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
+          required:
+            - currentState
+            - newState
           properties:
             code:
               type: "string"
@@ -1134,6 +1157,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
+          required:
+            - currentVersion
           properties:
             code:
               type: "string"
@@ -1167,6 +1192,15 @@ components:
               type: "string"
     ImportOperation:
       type: "object"
+      required:
+        - version
+        - importContainerKey
+        - resourceKey
+        - id
+        - state
+        - createdAt
+        - lastModifiedAt
+        - expiresAt
       properties:
         version:
           type: "integer"
@@ -1201,6 +1235,12 @@ components:
           format: "datetime"
     ImportOperationPagedResponse:
       type: "object"
+      required:
+        - limit
+        - offset
+        - count
+        - total
+        - results
       properties:
         limit:
           type: "integer"
@@ -1228,6 +1268,8 @@ components:
         validationFailed: "The validation of the import resource failed."
     ImportOperationStatus:
       type: "object"
+      required:
+        - state
       properties:
         operationId:
           type: "string"
@@ -1239,6 +1281,11 @@ components:
             $ref: '#/components/schemas/ErrorObject'
     ImportContainer:
       type: "object"
+      required:
+        - key
+        - version
+        - createdAt
+        - lastModifiedAt
       properties:
         key:
           type: "string"
@@ -1255,6 +1302,8 @@ components:
           format: "datetime"
     ImportContainerDraft:
       type: "object"
+      required:
+        - key
       properties:
         key:
           type: "string"
@@ -1262,6 +1311,8 @@ components:
           $ref: '#/components/schemas/ImportResourceType'
     ImportContainerUpdateDraft:
       type: "object"
+      required:
+        - version
       properties:
         version:
           type: "number"
@@ -1270,6 +1321,12 @@ components:
           $ref: '#/components/schemas/ImportResourceType'
     ImportContainerPagedResponse:
       type: "object"
+      required:
+        - limit
+        - offset
+        - count
+        - total
+        - results
       properties:
         limit:
           type: "integer"
@@ -1289,6 +1346,9 @@ components:
             $ref: '#/components/schemas/ImportContainer'
     ImportSummary:
       type: "object"
+      required:
+        - states
+        - total
       properties:
         states:
           $ref: '#/components/schemas/OperationStates'
@@ -1297,6 +1357,13 @@ components:
           format: "int32"
     OperationStates:
       type: "object"
+      required:
+        - processing
+        - validationFailed
+        - unresolved
+        - waitForMasterVariant
+        - imported
+        - rejected
       properties:
         processing:
           type: "integer"
@@ -1333,11 +1400,15 @@ components:
           product-variant: '#/components/schemas/ProductVariantImportRequest'
           product-variant-patch: '#/components/schemas/ProductVariantPatchRequest'
           standalone-price: '#/components/schemas/StandalonePriceImportRequest'
+      required:
+        - type
       properties:
         type:
           $ref: '#/components/schemas/ImportResourceType'
     ImportResponse:
       type: "object"
+      required:
+        - operationStatus
       properties:
         operationStatus:
           type: "array"
@@ -1347,6 +1418,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
         - type: "object"
+          required:
+            - resources
           properties:
             type:
               $ref: '#/components/schemas/ImportResourceType'
@@ -1358,6 +1431,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
         - type: "object"
+          required:
+            - resources
           properties:
             type:
               $ref: '#/components/schemas/ImportResourceType'
@@ -1369,6 +1444,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
         - type: "object"
+          required:
+            - resources
           properties:
             type:
               $ref: '#/components/schemas/ImportResourceType'
@@ -1380,6 +1457,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
         - type: "object"
+          required:
+            - resources
           properties:
             type:
               $ref: '#/components/schemas/ImportResourceType'
@@ -1391,6 +1470,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
         - type: "object"
+          required:
+            - resources
           properties:
             type:
               $ref: '#/components/schemas/ImportResourceType'
@@ -1402,6 +1483,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
         - type: "object"
+          required:
+            - resources
           properties:
             type:
               $ref: '#/components/schemas/ImportResourceType'
@@ -1413,6 +1496,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
         - type: "object"
+          required:
+            - resources
           properties:
             type:
               $ref: '#/components/schemas/ImportResourceType'
@@ -1424,6 +1509,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
         - type: "object"
+          required:
+            - resources
           properties:
             type:
               $ref: '#/components/schemas/ImportResourceType'
@@ -1435,6 +1522,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
         - type: "object"
+          required:
+            - patches
           properties:
             type:
               $ref: '#/components/schemas/ImportResourceType'
@@ -1446,6 +1535,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
         - type: "object"
+          required:
+            - patches
           properties:
             type:
               $ref: '#/components/schemas/ImportResourceType'
@@ -1457,6 +1548,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
         - type: "object"
+          required:
+            - resources
           properties:
             type:
               $ref: '#/components/schemas/ImportResourceType'
@@ -1468,6 +1561,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
         - type: "object"
+          required:
+            - resources
           properties:
             type:
               $ref: '#/components/schemas/ImportResourceType'
@@ -1477,6 +1572,9 @@ components:
                 $ref: '#/components/schemas/InventoryImport'
     SubRate:
       type: "object"
+      required:
+        - name
+        - amount
       properties:
         name:
           type: "string"
@@ -1485,6 +1583,11 @@ components:
           format: "double"
     TaxRate:
       type: "object"
+      required:
+        - name
+        - amount
+        - includedInPrice
+        - country
       properties:
         id:
           type: "string"
@@ -1507,6 +1610,11 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportResource'
         - type: "object"
+          required:
+            - key
+            - value
+            - productVariant
+            - product
           properties:
             key:
               type: "string"
@@ -1542,6 +1650,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportResource'
         - type: "object"
+          required:
+            - key
+            - sku
+            - value
           properties:
             key:
               type: "string"
@@ -1571,10 +1683,14 @@ components:
               $ref: '#/components/schemas/Custom'
     SearchKeywords:
       type: "object"
+      required:
+        - /^[a-z]{2}(-[A-Z]{2})?$/
       additionalProperties:
         type: "string"
     SearchKeyword:
       type: "object"
+      required:
+        - text
       properties:
         text:
           type: "string"
@@ -1587,6 +1703,8 @@ components:
         mapping:
           custom: '#/components/schemas/CustomTokenizer'
           whitespace: '#/components/schemas/WhitespaceTokenizer'
+      required:
+        - type
       properties:
         type:
           type: "string"
@@ -1594,6 +1712,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/SuggestTokenizer'
         - type: "object"
+          required:
+            - inputs
           properties:
             type:
               type: "string"
@@ -1612,6 +1732,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportResource'
         - type: "object"
+          required:
+            - name
+            - productType
+            - slug
           properties:
             key:
               type: "string"
@@ -1647,6 +1771,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportResource'
         - type: "object"
+          required:
+            - productType
+            - name
+            - slug
           properties:
             key:
               type: "string"
@@ -1686,6 +1814,8 @@ components:
               $ref: '#/components/schemas/ProductPriceModeEnum'
     ProductVariantDraftImport:
       type: "object"
+      required:
+        - key
       properties:
         sku:
           type: "string"
@@ -1709,6 +1839,8 @@ components:
             $ref: '#/components/schemas/Asset'
     PriceDraftImport:
       type: "object"
+      required:
+        - value
       properties:
         value:
           $ref: '#/components/schemas/TypedMoney'
@@ -1736,6 +1868,11 @@ components:
           type: "string"
     AttributeDefinition:
       type: "object"
+      required:
+        - type
+        - name
+        - label
+        - isRequired
       properties:
         type:
           $ref: '#/components/schemas/AttributeType'
@@ -1771,6 +1908,8 @@ components:
           set: '#/components/schemas/AttributeSetType'
           text: '#/components/schemas/AttributeTextType'
           time: '#/components/schemas/AttributeTimeType'
+      required:
+        - name
       properties:
         name:
           type: "string"
@@ -1799,6 +1938,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/AttributeType'
         - type: "object"
+          required:
+            - values
           properties:
             name:
               type: "string"
@@ -1808,6 +1949,9 @@ components:
                 $ref: '#/components/schemas/AttributePlainEnumValue'
     AttributePlainEnumValue:
       type: "object"
+      required:
+        - key
+        - label
       properties:
         key:
           type: "string"
@@ -1824,6 +1968,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/AttributeType'
         - type: "object"
+          required:
+            - values
           properties:
             name:
               type: "string"
@@ -1833,6 +1979,9 @@ components:
                 $ref: '#/components/schemas/AttributeLocalizedEnumValue'
     AttributeLocalizedEnumValue:
       type: "object"
+      required:
+        - key
+        - label
       properties:
         key:
           type: "string"
@@ -1849,6 +1998,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/AttributeType'
         - type: "object"
+          required:
+            - typeReference
           properties:
             name:
               type: "string"
@@ -1865,6 +2016,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/AttributeType'
         - type: "object"
+          required:
+            - referenceTypeId
           properties:
             name:
               type: "string"
@@ -1874,6 +2027,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/AttributeType'
         - type: "object"
+          required:
+            - elementType
           properties:
             name:
               type: "string"
@@ -1909,6 +2064,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportResource'
         - type: "object"
+          required:
+            - name
+            - description
           properties:
             key:
               type: "string"
@@ -1947,6 +2105,8 @@ components:
           text-set: '#/components/schemas/TextSetAttribute'
           time: '#/components/schemas/TimeAttribute'
           time-set: '#/components/schemas/TimeSetAttribute'
+      required:
+        - type
       properties:
         name:
           type: "string"
@@ -1956,6 +2116,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -1967,6 +2129,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -1980,6 +2144,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -1992,6 +2158,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2006,6 +2174,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2018,6 +2188,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2032,6 +2204,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2043,6 +2217,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2056,6 +2232,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2067,6 +2245,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2080,6 +2260,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2091,6 +2273,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2104,6 +2288,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2115,6 +2301,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2128,6 +2316,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2140,6 +2330,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2154,6 +2346,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2165,6 +2359,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2178,6 +2374,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2189,6 +2387,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2202,6 +2402,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2214,6 +2416,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Attribute'
         - type: "object"
+          required:
+            - value
           properties:
             name:
               type: "string"
@@ -2228,6 +2432,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportResource'
         - type: "object"
+          required:
+            - isMasterVariant
+            - product
           properties:
             key:
               type: "string"
@@ -2253,6 +2460,8 @@ components:
               $ref: '#/components/schemas/ProductKeyReference'
     ProductVariantPatch:
       type: "object"
+      required:
+        - productVariant
       properties:
         productVariant:
           $ref: '#/components/schemas/ProductVariantKeyReference'
@@ -2262,12 +2471,17 @@ components:
           type: "boolean"
     Attributes:
       type: "object"
+      required:
+        - //
       additionalProperties:
         type: "string"
     CategoryImport:
       allOf:
         - $ref: '#/components/schemas/ImportResource'
         - type: "object"
+          required:
+            - name
+            - slug
           properties:
             key:
               type: "string"
@@ -2297,6 +2511,9 @@ components:
               $ref: '#/components/schemas/Custom'
     CustomerAddress:
       type: "object"
+      required:
+        - key
+        - country
       properties:
         key:
           type: "string"
@@ -2352,6 +2569,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportResource'
         - type: "object"
+          required:
+            - email
+            - password
+            - addresses
           properties:
             key:
               type: "string"
@@ -2414,6 +2635,9 @@ components:
               $ref: '#/components/schemas/Custom'
     ItemState:
       type: "object"
+      required:
+        - quantity
+        - state
       properties:
         quantity:
           type: "number"
@@ -2422,6 +2646,9 @@ components:
           $ref: '#/components/schemas/StateKeyReference'
     ItemShippingTarget:
       type: "object"
+      required:
+        - addressKey
+        - quantity
       properties:
         addressKey:
           type: "string"
@@ -2430,6 +2657,8 @@ components:
           format: "double"
     ItemShippingDetailsDraft:
       type: "object"
+      required:
+        - targets
       properties:
         targets:
           type: "array"
@@ -2437,6 +2666,8 @@ components:
             $ref: '#/components/schemas/ItemShippingTarget'
     LineItemPrice:
       type: "object"
+      required:
+        - value
       properties:
         value:
           $ref: '#/components/schemas/TypedMoney'
@@ -2481,6 +2712,11 @@ components:
             $ref: '#/components/schemas/Image'
     LineItemImportDraft:
       type: "object"
+      required:
+        - name
+        - variant
+        - price
+        - quantity
       properties:
         product:
           $ref: '#/components/schemas/ProductKeyReference'
@@ -2519,6 +2755,8 @@ components:
         propertyName: type
         mapping:
           CartClassification: '#/components/schemas/CartClassificationTier'
+      required:
+        - type
       properties:
         type:
           $ref: '#/components/schemas/ShippingRateTierType'
@@ -2526,6 +2764,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/ShippingRatePriceTier'
         - type: "object"
+          required:
+            - value
+            - price
+            - tiers
           properties:
             type:
               $ref: '#/components/schemas/ShippingRateTierType'
@@ -2541,6 +2783,8 @@ components:
               type: "boolean"
     ShippingRateDraft:
       type: "object"
+      required:
+        - price
       properties:
         price:
           $ref: '#/components/schemas/Money'
@@ -2580,6 +2824,9 @@ components:
           type: "boolean"
     DeliveryItem:
       type: "object"
+      required:
+        - id
+        - quantity
       properties:
         id:
           type: "string"
@@ -2588,6 +2835,9 @@ components:
           format: "double"
     Parcel:
       type: "object"
+      required:
+        - id
+        - createdAt
       properties:
         id:
           type: "string"
@@ -2604,6 +2854,11 @@ components:
             $ref: '#/components/schemas/DeliveryItem'
     Delivery:
       type: "object"
+      required:
+        - id
+        - createdAt
+        - items
+        - parcels
       properties:
         id:
           type: "string"
@@ -2622,6 +2877,9 @@ components:
           $ref: '#/components/schemas/Address'
     DiscountedLineItemPortion:
       type: "object"
+      required:
+        - discount
+        - discountedAmount
       properties:
         discount:
           $ref: '#/components/schemas/CartDiscountKeyReference'
@@ -2629,6 +2887,9 @@ components:
           $ref: '#/components/schemas/Money'
     DiscountedLineItemPriceDraft:
       type: "object"
+      required:
+        - value
+        - includedDiscounts
       properties:
         value:
           $ref: '#/components/schemas/Money'
@@ -2643,6 +2904,10 @@ components:
         - MatchesCart
     ShippingInfoImportDraft:
       type: "object"
+      required:
+        - shippingMethodName
+        - price
+        - shippingRate
       properties:
         shippingMethodName:
           type: "string"
@@ -2666,6 +2931,9 @@ components:
           $ref: '#/components/schemas/ShippingMethodState'
     ExternalTaxRateDraft:
       type: "object"
+      required:
+        - name
+        - country
       properties:
         name:
           type: "string"
@@ -2684,6 +2952,9 @@ components:
           type: "boolean"
     CustomLineItemTaxedPrice:
       type: "object"
+      required:
+        - totalNet
+        - totalGross
       properties:
         totalNet:
           $ref: '#/components/schemas/TypedMoney'
@@ -2691,6 +2962,12 @@ components:
           $ref: '#/components/schemas/TypedMoney'
     CustomLineItemDraft:
       type: "object"
+      required:
+        - name
+        - money
+        - totalPrice
+        - slug
+        - quantity
       properties:
         name:
           $ref: '#/components/schemas/LocalizedString'
@@ -2723,6 +3000,9 @@ components:
           $ref: '#/components/schemas/ItemShippingDetailsDraft'
     TaxPortion:
       type: "object"
+      required:
+        - rate
+        - amount
       properties:
         name:
           type: "string"
@@ -2733,6 +3013,10 @@ components:
           $ref: '#/components/schemas/TypedMoney'
     TaxedPrice:
       type: "object"
+      required:
+        - totalNet
+        - totalGross
+        - taxPortions
       properties:
         totalNet:
           $ref: '#/components/schemas/Money'
@@ -2796,6 +3080,9 @@ components:
         - Merchant
     SyncInfo:
       type: "object"
+      required:
+        - channel
+        - syncedAt
       properties:
         channel:
           $ref: '#/components/schemas/ChannelKeyReference'
@@ -2815,6 +3102,8 @@ components:
         - ApplicationStoppedByPreviousDiscount
     DiscountCodeInfo:
       type: "object"
+      required:
+        - discountCode
       properties:
         discountCode:
           $ref: '#/components/schemas/DiscountCodeKeyReference'
@@ -2832,6 +3121,8 @@ components:
         mapping:
           Classification: '#/components/schemas/ClassificationShippingRateInput'
           Score: '#/components/schemas/ScoreShippingRateInput'
+      required:
+        - type
       properties:
         type:
           $ref: '#/components/schemas/ShippingRateInputType'
@@ -2839,6 +3130,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/ShippingRateInput'
         - type: "object"
+          required:
+            - key
+            - label
           properties:
             type:
               $ref: '#/components/schemas/ShippingRateInputType'
@@ -2850,6 +3144,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ShippingRateInput'
         - type: "object"
+          required:
+            - score
           properties:
             type:
               $ref: '#/components/schemas/ShippingRateInputType'
@@ -2858,6 +3154,9 @@ components:
               format: "double"
     OrderImport:
       type: "object"
+      required:
+        - orderNumber
+        - totalPrice
       properties:
         orderNumber:
           type: "string"
@@ -2921,6 +3220,9 @@ components:
         - Unusable
     ReturnItemDraft:
       type: "object"
+      required:
+        - quantity
+        - shipmentState
       properties:
         quantity:
           type: "number"
@@ -2935,6 +3237,8 @@ components:
           $ref: '#/components/schemas/ReturnShipmentState'
     ReturnInfo:
       type: "object"
+      required:
+        - items
       properties:
         items:
           type: "array"
@@ -2947,6 +3251,8 @@ components:
           format: "datetime"
     DeliveryParcel:
       type: "object"
+      required:
+        - deliveryId
       properties:
         deliveryId:
           type: "string"
@@ -2971,6 +3277,9 @@ components:
             $ref: '#/components/schemas/DeliveryItem'
     DeliveryDraft:
       type: "object"
+      required:
+        - items
+        - parcels
       properties:
         items:
           type: "array"
@@ -2984,6 +3293,8 @@ components:
             $ref: '#/components/schemas/DeliveryParcelDraft'
     DeliveryAddressDraft:
       type: "object"
+      required:
+        - deliveryId
       properties:
         deliveryId:
           type: "string"
@@ -2991,6 +3302,8 @@ components:
           $ref: '#/components/schemas/Address'
     ParcelMeasurementDraft:
       type: "object"
+      required:
+        - parcelId
       properties:
         parcelId:
           type: "string"
@@ -2998,6 +3311,8 @@ components:
           $ref: '#/components/schemas/ParcelMeasurements'
     ParcelTrackingData:
       type: "object"
+      required:
+        - parcelId
       properties:
         parcelId:
           type: "string"
@@ -3005,6 +3320,8 @@ components:
           $ref: '#/components/schemas/TrackingData'
     ParcelItems:
       type: "object"
+      required:
+        - parcelId
       properties:
         parcelId:
           type: "string"
@@ -3014,11 +3331,15 @@ components:
             $ref: '#/components/schemas/DeliveryItem'
     RemoveDeliveryDraft:
       type: "object"
+      required:
+        - id
       properties:
         id:
           type: "string"
     RemoveParcelFromDeliveryDraft:
       type: "object"
+      required:
+        - parcelId
       properties:
         parcelId:
           type: "string"
@@ -3049,6 +3370,9 @@ components:
             $ref: '#/components/schemas/ParcelItems'
     OrderPatchImport:
       type: "object"
+      required:
+        - orderNumber
+        - fields
       properties:
         orderNumber:
           type: "string"
@@ -3058,6 +3382,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/ImportResource'
         - type: "object"
+          required:
+            - sku
+            - quantityOnStock
           properties:
             key:
               type: "string"
@@ -3078,6 +3405,8 @@ components:
               $ref: '#/components/schemas/Custom'
     Custom:
       type: "object"
+      required:
+        - type
       properties:
         type:
           $ref: '#/components/schemas/TypeKeyReference'
@@ -3085,6 +3414,8 @@ components:
           $ref: '#/components/schemas/FieldContainer'
     FieldContainer:
       type: "object"
+      required:
+        - //
       additionalProperties:
         type: "string"
     CustomField:
@@ -3114,6 +3445,8 @@ components:
           StringSet: '#/components/schemas/StringSetField'
           Time: '#/components/schemas/TimeField'
           TimeSet: '#/components/schemas/TimeSetField'
+      required:
+        - type
       properties:
         type:
           type: "string"
@@ -3121,6 +3454,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3130,6 +3465,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3139,6 +3476,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3148,6 +3487,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3157,6 +3498,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3166,6 +3509,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3176,6 +3521,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3185,6 +3532,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3195,6 +3544,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3205,6 +3556,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3215,6 +3568,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3224,6 +3579,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3235,6 +3592,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3246,6 +3605,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3257,6 +3618,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3268,6 +3631,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3279,6 +3644,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3291,6 +3658,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3302,6 +3671,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3314,6 +3685,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3326,6 +3699,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3338,6 +3713,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
+          required:
+            - value
           properties:
             type:
               type: "string"
@@ -3347,6 +3724,10 @@ components:
                 $ref: '#/components/schemas/KeyReference'
     Asset:
       type: "object"
+      required:
+        - key
+        - sources
+        - name
       properties:
         key:
           type: "string"
@@ -3366,6 +3747,9 @@ components:
           $ref: '#/components/schemas/Custom'
     AssetDimensions:
       type: "object"
+      required:
+        - w
+        - h
       properties:
         w:
           type: "number"
@@ -3375,6 +3759,8 @@ components:
           format: "double"
     AssetSource:
       type: "object"
+      required:
+        - uri
       properties:
         uri:
           type: "string"
@@ -3390,6 +3776,9 @@ components:
       type: "string"
     Image:
       type: "object"
+      required:
+        - url
+        - dimensions
       properties:
         url:
           type: "string"
@@ -3399,6 +3788,9 @@ components:
           type: "string"
     EnumValue:
       type: "object"
+      required:
+        - key
+        - label
       properties:
         key:
           type: "string"
@@ -3406,6 +3798,9 @@ components:
           type: "string"
     LocalizedEnumValue:
       type: "object"
+      required:
+        - key
+        - label
       properties:
         key:
           type: "string"
@@ -3413,10 +3808,14 @@ components:
           $ref: '#/components/schemas/LocalizedString'
     LocalizedString:
       type: "object"
+      required:
+        - /^[a-z]{2}(-[A-Z]{2})?$/
       additionalProperties:
         type: "string"
     ImportResource:
       type: "object"
+      required:
+        - key
       properties:
         key:
           type: "string"
@@ -3445,6 +3844,9 @@ components:
           store: '#/components/schemas/StoreKeyReference'
           tax-category: '#/components/schemas/TaxCategoryKeyReference'
           type: '#/components/schemas/TypeKeyReference'
+      required:
+        - key
+        - typeId
       properties:
         key:
           type: "string"
@@ -3625,6 +4027,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - container
           properties:
             key:
               type: "string"
@@ -3634,6 +4038,9 @@ components:
               type: "string"
     UnresolvedReferences:
       type: "object"
+      required:
+        - key
+        - typeId
       properties:
         key:
           type: "string"
@@ -3651,6 +4058,10 @@ components:
         mapping:
           highPrecision: '#/components/schemas/HighPrecisionMoney'
           centPrecision: '#/components/schemas/Money'
+      required:
+        - type
+        - centAmount
+        - currencyCode
       properties:
         type:
           $ref: '#/components/schemas/MoneyType'
@@ -3666,6 +4077,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/TypedMoney'
         - type: "object"
+          required:
+            - preciseAmount
           properties:
             type:
               $ref: '#/components/schemas/MoneyType'
@@ -3697,6 +4110,9 @@ components:
               $ref: '#/components/schemas/CurrencyCode'
     DiscountedPrice:
       type: "object"
+      required:
+        - value
+        - discount
       properties:
         value:
           $ref: '#/components/schemas/TypedMoney'
@@ -3704,6 +4120,9 @@ components:
           $ref: '#/components/schemas/ProductDiscountKeyReference'
     PriceTier:
       type: "object"
+      required:
+        - minimumQuantity
+        - value
       properties:
         minimumQuantity:
           type: "number"
@@ -3806,6 +4225,8 @@ components:
          has been reached."
     Address:
       type: "object"
+      required:
+        - country
       properties:
         id:
           type: "string"
