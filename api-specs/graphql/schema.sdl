@@ -1331,6 +1331,9 @@ type CartScoreType implements ShippingRateInputType {
 }
 
 enum CartState {
+  "The cart is frozen. The cart is ready for checkout and a few update actions are not allowed."
+  Frozen
+
   "The cart was ordered. No further operations on the cart are allowed."
   Ordered
 
@@ -1408,6 +1411,8 @@ input CartUpdateAction {
   setShippingMethodTaxRate: SetCartShippingMethodTaxRate
   setShippingRateInput: SetCartShippingRateInput
   updateItemShippingAddress: UpdateCartItemShippingAddress
+  freezeCart: FreezeCart
+  unfreezeCart: UnfreezeCart
 }
 
 input CartValueInput {
@@ -3532,6 +3537,10 @@ type FixedPriceDiscountValue implements CartDiscountValue {
 
 input FixedPriceDiscountValueInput {
   money: [MoneyInput!]!
+}
+
+input FreezeCart {
+  dummy: String
 }
 
 interface Geometry {
@@ -6600,6 +6609,15 @@ type ProductPriceExternalDiscountSet implements MessagePayload {
   sku: String
   priceId: String!
   discounted: DiscountedProductPriceValue
+  staged: Boolean!
+  type: String!
+}
+
+type ProductPriceKeySet implements MessagePayload {
+  variantId: Int!
+  priceId: String
+  oldKey: String
+  key: String
   staged: Boolean!
   type: String!
 }
@@ -12284,6 +12302,10 @@ input TypeUpdateAction {
   changeName: ChangeTypeName
   removeFieldDefinition: RemoveTypeFieldDefinition
   setDescription: SetTypeDescription
+}
+
+input UnfreezeCart {
+  dummy: String
 }
 
 input UnpublishProduct {

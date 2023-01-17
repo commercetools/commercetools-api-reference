@@ -6,6 +6,7 @@ Our APIs have to follow our
 ## Table of contents
 
 - How to:
+  - [Set a new baseUri](#set-a-new-baseuri)
   - [Create a new resources definition](#create-a-new-resources-definition)
     - [Create a query endpoint](#create-a-query-endpoint)
     - [Create a create endpoint](#create-a-create-endpoint)
@@ -82,6 +83,20 @@ Our APIs have to follow our
 
 ### How to:
 
+#### Set a new baseUri
+
+1. Open the **api.raml** file in the folder of the respective API.
+2. Include the `baseUri` in this way:
+   ```raml
+   baseUri: https://api.{region}.commercetools.com  // This is the general baseUri
+   baseUriParameters:
+     region:
+       type: string
+       enum:             // here below are listed all of the regions available
+         - us-east-2.aws
+         - europe-west1.gcp
+   ```
+
 #### Create a new resources definition
 
 1. Go to the [api.raml](./api/api.raml) file and add at the end preferably, like this:
@@ -94,6 +109,8 @@ Our APIs have to follow our
    [stores.raml](./api/resources/stores.raml).
 
 3. Add the different resource endpoints available to this file.
+
+4. If you specify **queryParameters** to be used on several endpoints, consider modelling those as [/traits](#traits).
 
 ##### Create a query endpoint
 
@@ -279,7 +296,7 @@ To create a new type, these are the files which have to be created:
 7. The **UpdateAction**: the definition of the actions declared in the **Update** file, see [CategoryUpdateAction.raml](./api/types/category/CategoryUpdateAction.raml), which is the "extension" of [UpdateAction.raml](./api/types/UpdateAction.raml).
    To see the definition and the details of all of them, see our documentation.
 
-##### Create a message
+#### Create a message
 
 To create a new Message, follow these steps:
 
@@ -444,6 +461,11 @@ To add a new Custom Field to a resource or object:
        [<Object>](ctp:api:type:Object) on [<Resource>](ctp:api:type:<Resource>)
    ```
 
+IMPORTANT NOTE: For a new endpoint, if you need to add a CustomField/Type, this new endpoint has to be added in the `api-specs/api/types/common/ReferenceTypeId.raml` file:
+
+- In the enum list: the list is in alphabetic order,
+- as well as in the **(enumDescriptions)**
+
 #### Add a scope
 
 If you need to add a new **scope**, follow these steps:
@@ -605,7 +627,45 @@ This annotation indicates that an endpoint, property or class is deprecated and 
 
 ##### (markDeprecated)
 
-This annotation is used to inform customers that an endpoint, property or class is deprecated and that a replacement already exists.
+This annotation is used to inform customers that an endpoint, property, HTTP method or class is deprecated and that a replacement already exists.
+
+Each URI and the related HTTP methods that are deprecated should get the respective annotation, see for [how to use an annotation](#use-an-annotation) section for more details.
+Only in this way the related classes or methods in our SDKs will be annotated as deprecated.
+
+Here below, an example about how to add the annotation, in general, the annotation **(markDeprecated): true** has to be added below the resource, method, query parameter that has to be deprecated.
+
+```raml
+(markDeprecated): true   // this annotation on top is to deprecate the whole endpoint
+/attributes:
+  (markDeprecated): true
+  post:
+    (markDeprecated): true
+    body:
+      application/json:
+        type: missing-data.MissingAttributesSearchRequest
+    responses:
+      202:
+        body:
+          application/json:
+            type: common.TaskToken
+            example: !include ../examples/missing-data-token.json
+  /status:
+    (markDeprecated): true
+    /{taskId}:
+      (markDeprecated): true
+      (methodName): withTaskId
+      uriParameters:
+        taskId:
+        type: string
+      get:
+        (markDeprecated): true
+        responses:
+          200:
+            body:
+              application/json:
+                type: missing-data.MissingDataTaskStatus
+                example: !include ../examples/missing-data-response.json
+```
 
 ##### (actionType)
 

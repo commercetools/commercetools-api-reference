@@ -24,12 +24,7 @@ interface Price [[Price.svg]]  {
 
 
 
-interface DuplicatePriceScopeError [[DuplicatePriceScopeError.svg]]  {
-    code: String
-    message: String
-    conflictingPrices: [[Price.svg List<Price>]]
-}
-interface ProductPriceSetMessage [[ProductPriceSetMessage.svg]]  {
+interface ProductPricesSetMessage [[ProductPricesSetMessage.svg]]  {
     id: String
     version: Long
     createdAt: DateTime
@@ -45,7 +40,7 @@ interface ProductPriceSetMessage [[ProductPriceSetMessage.svg]]  {
     prices: [[Price.svg List<Price>]]
     staged: Boolean
 }
-interface ProductPriceSetMessagePayload [[ProductPriceSetMessagePayload.svg]]  {
+interface ProductPricesSetMessagePayload [[ProductPricesSetMessagePayload.svg]]  {
     type: String
     variantId: Long
     prices: [[Price.svg List<Price>]]
@@ -91,6 +86,16 @@ interface LineItem [[LineItem.svg]]  {
     inventoryMode: [[InventoryMode.svg InventoryMode]]
     shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
     lastModifiedAt: DateTime
+}
+interface DuplicatePriceKeyError [[DuplicatePriceKeyError.svg]]  {
+    code: String
+    message: String
+    conflictingPrice: [[Price.svg Price]]
+}
+interface DuplicatePriceScopeError [[DuplicatePriceScopeError.svg]]  {
+    code: String
+    message: String
+    conflictingPrice: [[Price.svg Price]]
 }
 interface OrderLineItemRemovedMessage [[OrderLineItemRemovedMessage.svg]]  {
     id: String
@@ -195,11 +200,12 @@ interface ProductPriceRemovedMessagePayload [[ProductPriceRemovedMessagePayload.
     staged: Boolean
 }
 
-Price --> DuplicatePriceScopeError #green;text:green : "conflictingPrices"
-Price --> ProductPriceSetMessage #green;text:green : "prices"
-Price --> ProductPriceSetMessagePayload #green;text:green : "prices"
+Price --> ProductPricesSetMessage #green;text:green : "prices"
+Price --> ProductPricesSetMessagePayload #green;text:green : "prices"
 Price --> ProductVariant #green;text:green : "prices"
 Price --> LineItem #green;text:green : "price"
+Price --> DuplicatePriceKeyError #green;text:green : "conflictingPrice"
+Price --> DuplicatePriceScopeError #green;text:green : "conflictingPrice"
 Price --> OrderLineItemRemovedMessage #green;text:green : "newPrice"
 Price --> ProductPriceAddedMessage #green;text:green : "price"
 Price --> ProductPriceChangedMessage #green;text:green : "oldPrice"

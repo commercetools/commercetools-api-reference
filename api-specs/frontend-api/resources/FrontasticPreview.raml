@@ -1,7 +1,7 @@
 #%RAML 1.0 ResourceType
-
-is: [right-header]
 get:
+  is:
+    - right-header
   queryParameters:
     locale:
       displayName: Locale
@@ -14,10 +14,23 @@ get:
       type: string
       description: Preview ID
       required: true
-  description: Returns the page structure and data for a specific Preview given by its `previewId`.
+  description: |
+    Returns the page structure and data for a specific [preview](/../frontend-studio/previewing-page-versions#accessing-page-version-preview) by its `previewId`. \
+
+    Headers&#58;
+
+    - `Accept` - `application/json` - Required
+
   responses:
     200:
       description: Page folder information, page structure, and data source data.
       body:
         application/json:
-          type: PageResource
+          type: PagePreviewDataResponse
+          example: !include ../examples/preview-success.json
+    404:
+      description: The `previewId` was not found.
+      body:
+        application/json:
+          type: Error
+          example: !include ../examples/preview-error.json

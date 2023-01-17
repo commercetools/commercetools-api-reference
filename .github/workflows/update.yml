@@ -27,28 +27,6 @@ jobs:
         with:
           java-version: '13'
 
-      - name: "Install PHP with extensions"
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          coverage: pcov
-          extensions: json, mbstring, intl
-          tools: composer
-          ini-values: assert.exception=1, zend.assertions=1
-
-      - name: Setup Node (uses version in .nvmrc)
-        uses: actions/setup-node@v2
-        with:
-          node-version-file: '.nvmrc'
-
-      - name: "Cache dependencies installed with composer"
-        uses: actions/cache@v1
-        with:
-          path: ~/.composer/cache
-          key: php${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            php${{ matrix.php-version }}-composer-
-
       - run: sudo chmod 777 /usr/local/bin && make -j2 generate lint
         if: github.ref != 'refs/heads/main'
       - run: sudo chmod 777 /usr/local/bin && make -j2 build
