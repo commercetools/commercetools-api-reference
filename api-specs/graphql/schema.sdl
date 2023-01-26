@@ -3662,6 +3662,7 @@ input ImportOrderDraft {
   itemShippingAddresses: [AddressInput!] = []
   state: ReferenceInput
   paymentInfo: ReferenceInput
+  purchaseOrderNumber: String
 }
 
 input ImportOrderLineItemState {
@@ -5531,6 +5532,7 @@ type Order implements Versioned & ReferenceExpandable {
   paymentState: PaymentState
   syncInfo: [SyncInfo!]!
   returnInfo: [ReturnInfo!]!
+  purchaseOrderNumber: String
   lastMessageSequenceNumber: Long! @deprecated(reason: "An internal field that should not be used in customer logic")
   cartRef: Reference
   cart: Cart
@@ -5555,6 +5557,7 @@ input OrderCartCommand {
   id: String
   cart: ResourceIdentifierInput
   version: Long!
+  purchaseOrderNumber: String
   paymentState: PaymentState
   orderState: OrderState
   state: ReferenceInput
@@ -5930,6 +5933,7 @@ input OrderUpdateAction {
   setParcelItems: SetOrderParcelItems
   setParcelMeasurements: SetOrderParcelMeasurements
   setParcelTrackingData: SetOrderParcelTrackingData
+  setPurchaseOrderNumber: SetOrderPurchaseOrderNumber
   setReturnInfo: SetOrderReturnInfo
   setReturnItemCustomField: SetOrderReturnItemCustomField
   setReturnItemCustomType: SetOrderReturnItemCustomType
@@ -7380,6 +7384,12 @@ enum PublishScope {
   Prices
 }
 
+type PurchaseOrderNumberSet implements MessagePayload & OrderMessagePayload {
+  purchaseOrderNumber: String
+  oldPurchaseOrderNumber: String
+  type: String!
+}
+
 type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShoppingListQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface & ProductSelectionQueryInterface {
   """
   This field can only be used with an access token created with the password flow or with an anonymous session.
@@ -7696,6 +7706,7 @@ type Quote implements Versioned {
   custom: CustomFieldsType
   stateRef: Reference
   state: State
+  purchaseOrderNumber: String
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -7755,6 +7766,7 @@ type QuoteRequest implements Versioned {
   custom: CustomFieldsType
   stateRef: Reference
   state: State
+  purchaseOrderNumber: String
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -7770,6 +7782,7 @@ input QuoteRequestDraft {
   cartVersion: Long
   custom: CustomFieldsDraft
   state: ReferenceInput
+  purchaseOrderNumber: String
 }
 
 type QuoteRequestQueryResult {
@@ -9492,6 +9505,10 @@ input SetOrderParcelTrackingData {
   trackingData: TrackingDataDraftType
 }
 
+input SetOrderPurchaseOrderNumber {
+  purchaseOrderNumber: String
+}
+
 input SetOrderReturnInfo {
   items: [ReturnInfoDraftType!] = []
 }
@@ -10497,6 +10514,15 @@ type SetStagedOrderParcelTrackingDataOutput implements StagedOrderUpdateActionOu
   trackingData: TrackingData
 }
 
+input SetStagedOrderPurchaseOrderNumber {
+  purchaseOrderNumber: String
+}
+
+type SetStagedOrderPurchaseOrderNumberOutput implements StagedOrderUpdateActionOutput {
+  type: String!
+  purchaseOrderNumber: String
+}
+
 input SetStagedOrderReturnInfo {
   items: [ReturnInfoDraftType!] = []
 }
@@ -11304,6 +11330,7 @@ input StagedOrderUpdateAction {
   setParcelItems: SetStagedOrderParcelItems
   setParcelMeasurements: SetStagedOrderParcelMeasurements
   setParcelTrackingData: SetStagedOrderParcelTrackingData
+  setPurchaseOrderNumber: SetStagedOrderPurchaseOrderNumber
   setReturnInfo: SetStagedOrderReturnInfo
   setReturnItemCustomField: SetStagedOrderReturnItemCustomField
   setReturnItemCustomType: SetStagedOrderReturnItemCustomType
@@ -11345,8 +11372,9 @@ type StagedQuote implements Versioned {
   custom: CustomFieldsType
   stateRef: Reference
   state: State
-  businessUnit: KeyReference
   sellerComment: String
+  businessUnit: KeyReference
+  purchaseOrderNumber: String
   id: String!
   version: Long!
   createdAt: DateTime!
