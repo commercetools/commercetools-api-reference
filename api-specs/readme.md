@@ -414,7 +414,7 @@ To add a new Custom Field to a resource or object:
    ```json
    {
      "action": "setCustomField",
-     "name": "ExamplaryStringTypeField",
+     "name": "ExampleStringTypeField",
      "value": "TextString"
    }
    ```
@@ -429,7 +429,7 @@ To add a new Custom Field to a resource or object:
        "typeId": "type"
      },
      "fields": {
-       "examplaryStringTypeField": "TextString"
+       "exampleStringTypeField": "TextString"
      }
    }
    ```
