@@ -1,22 +1,31 @@
 #%RAML 1.0 DataType
 (package): Common
-(docs-uri): https://docs.commercetools.com/http-api-types.html#address
+(docs-uri): https://docs.commercetools.com/types#baseaddress
 displayName: BaseAddress
 type: object
+description: |
+  Polymorphic base type that represents a postal address and contact details.
+  Depending on the read or write action, it can be either [Address](ctp:api:type:Address) or [AddressDraft](ctp:api:type:AddressDraft) that
+  only differ in the data type for the optional `custom` field.
 properties:
   id?:
     type: string
     description: |
       Unique identifier of the Address.
+
+      It is not recommended to set it manually since the API overwrites this ID when creating an Address for a [Customer](ctp:api:type:Customer).
+      Use `key` instead and omit this field from the request to let the API generate the ID for the Address.
   key?:
     type: string
     description: |
-      User-defined unique identifier of the Address.
+      User-defined identifier of the Address that must be unique when multiple addresses are referenced in [BusinessUnits](ctp:api:type:BusinessUnit), [Customers](ctp:api:type:Customer), and `itemShippingAddresses` (LineItem-specific addresses) of a [Cart](ctp:api:type:Cart), [Order](ctp:api:type:Order), [QuoteRequest](ctp:api:type:QuoteRequest), or [Quote](ctp:api:type:Quote).
     pattern: ^[A-Za-z0-9_-]+$
     minLength: 2
     maxLength: 256
   country:
     type: CountryCode
+    description: |
+      Name of the country.
   title?:
     type: string
     description: |
