@@ -5,9 +5,12 @@ build: install_deps generate lint cleanup
 
 install_deps: codegen_install
 
-lint: validate_raml
+lint: validate_raml validate_oas
 
 generate: generate_oas generate_plantuml
+
+validate_oas:
+	npx autorest --v3 --azure-validator --input-file=oas/api/openapi.yaml
 
 codegen_install:
 	curl -o- -s https://raw.githubusercontent.com/vrapio/rmf-codegen/master/scripts/install.sh | bash
