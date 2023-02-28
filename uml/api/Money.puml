@@ -80,16 +80,77 @@ interface LineItemDraft [[LineItemDraft.svg]]  {
     supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
-    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
     externalPrice: [[Money.svg Money]]
     externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
     inventoryMode: [[InventoryMode.svg InventoryMode]]
     shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface TaxPortionDraft [[TaxPortionDraft.svg]]  {
+    name: String
+    rate: Double
+    amount: [[Money.svg Money]]
+}
+interface TaxedPriceDraft [[TaxedPriceDraft.svg]]  {
+    totalNet: [[Money.svg Money]]
+    totalGross: [[Money.svg Money]]
+    taxPortions: [[TaxPortionDraft.svg List<TaxPortionDraft>]]
+}
+interface CartAddCustomLineItemAction [[CartAddCustomLineItemAction.svg]]  {
+    action: String
+    money: [[Money.svg Money]]
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    slug: String
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface CartAddLineItemAction [[CartAddLineItemAction.svg]]  {
+    action: String
+    productId: String
+    variantId: Long
+    sku: String
+    quantity: Long
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface CartChangeCustomLineItemMoneyAction [[CartChangeCustomLineItemMoneyAction.svg]]  {
+    action: String
+    customLineItemId: String
+    money: [[Money.svg Money]]
+}
+interface CartChangeLineItemQuantityAction [[CartChangeLineItemQuantityAction.svg]]  {
+    action: String
+    lineItemId: String
+    quantity: Long
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+}
+interface CartRemoveLineItemAction [[CartRemoveLineItemAction.svg]]  {
+    action: String
+    lineItemId: String
+    quantity: Long
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    shippingDetailsToRemove: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
 }
 interface CartSetCartTotalTaxAction [[CartSetCartTotalTaxAction.svg]]  {
     action: String
     externalTotalGross: [[Money.svg Money]]
     externalTaxPortions: [[TaxPortionDraft.svg List<TaxPortionDraft>]]
+}
+interface CartSetLineItemPriceAction [[CartSetLineItemPriceAction.svg]]  {
+    action: String
+    lineItemId: String
+    externalPrice: [[Money.svg Money]]
 }
 interface DiscountedPriceDraft [[DiscountedPriceDraft.svg]]  {
     value: [[Money.svg Money]]
@@ -135,6 +196,36 @@ interface MyTransactionDraft [[MyTransactionDraft.svg]]  {
     amount: [[Money.svg Money]]
     interactionId: String
     custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface MyCartAddLineItemAction [[MyCartAddLineItemAction.svg]]  {
+    action: String
+    productId: String
+    variantId: Long
+    sku: String
+    quantity: Long
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    addedAt: DateTime
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface MyCartChangeLineItemQuantityAction [[MyCartChangeLineItemQuantityAction.svg]]  {
+    action: String
+    lineItemId: String
+    quantity: Long
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+}
+interface MyCartRemoveLineItemAction [[MyCartRemoveLineItemAction.svg]]  {
+    action: String
+    lineItemId: String
+    quantity: Long
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    shippingDetailsToRemove: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
 }
 interface MyPaymentChangeAmountPlannedAction [[MyPaymentChangeAmountPlannedAction.svg]]  {
     action: String
@@ -322,13 +413,25 @@ Money --> ExternalLineItemTotalPrice #green;text:green : "price"
 Money --> ExternalLineItemTotalPrice #green;text:green : "totalPrice"
 Money --> ExternalTaxAmountDraft #green;text:green : "totalGross"
 Money --> LineItemDraft #green;text:green : "externalPrice"
+Money --> TaxPortionDraft #green;text:green : "amount"
+Money --> TaxedPriceDraft #green;text:green : "totalNet"
+Money --> TaxedPriceDraft #green;text:green : "totalGross"
+Money --> CartAddCustomLineItemAction #green;text:green : "money"
+Money --> CartAddLineItemAction #green;text:green : "externalPrice"
+Money --> CartChangeCustomLineItemMoneyAction #green;text:green : "money"
+Money --> CartChangeLineItemQuantityAction #green;text:green : "externalPrice"
+Money --> CartRemoveLineItemAction #green;text:green : "externalPrice"
 Money --> CartSetCartTotalTaxAction #green;text:green : "externalTotalGross"
+Money --> CartSetLineItemPriceAction #green;text:green : "externalPrice"
 Money --> DiscountedPriceDraft #green;text:green : "value"
 Money --> PriceDraft #green;text:green : "value"
 Money --> PriceTierDraft #green;text:green : "value"
 Money --> QueryPrice #green;text:green : "value"
 Money --> MyPaymentDraft #green;text:green : "amountPlanned"
 Money --> MyTransactionDraft #green;text:green : "amount"
+Money --> MyCartAddLineItemAction #green;text:green : "externalPrice"
+Money --> MyCartChangeLineItemQuantityAction #green;text:green : "externalPrice"
+Money --> MyCartRemoveLineItemAction #green;text:green : "externalPrice"
 Money --> MyPaymentChangeAmountPlannedAction #green;text:green : "amount"
 Money --> OrderLineItemDiscountSetMessage #green;text:green : "totalPrice"
 Money --> StandalonePriceValueChangedMessage #green;text:green : "value"

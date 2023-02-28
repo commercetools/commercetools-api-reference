@@ -84,12 +84,17 @@ interface CartDiscountSetDescriptionAction [[CartDiscountSetDescriptionAction.sv
     action: String
     description: [[LocalizedString.svg LocalizedString]]
 }
+interface ClassificationShippingRateInput [[ClassificationShippingRateInput.svg]]  {
+    type: String
+    key: String
+    label: [[LocalizedString.svg LocalizedString]]
+}
 interface CustomLineItem [[CustomLineItem.svg]]  {
     id: String
     name: [[LocalizedString.svg LocalizedString]]
     money: [[TypedMoney.svg TypedMoney]]
     taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
-    totalPrice: [[TypedMoney.svg TypedMoney]]
+    totalPrice: [[CentPrecisionMoney.svg CentPrecisionMoney]]
     slug: String
     quantity: Long
     state: [[ItemState.svg List<ItemState>]]
@@ -120,23 +125,35 @@ interface LineItem [[LineItem.svg]]  {
     productType: [[ProductTypeReference.svg ProductTypeReference]]
     variant: [[ProductVariant.svg ProductVariant]]
     price: [[Price.svg Price]]
+    quantity: Long
+    totalPrice: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
     taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
     taxedPricePortions: [[MethodTaxedPrice.svg List<MethodTaxedPrice>]]
-    totalPrice: [[TypedMoney.svg TypedMoney]]
-    quantity: Long
-    addedAt: DateTime
     state: [[ItemState.svg List<ItemState>]]
     taxRate: [[TaxRate.svg TaxRate]]
     perMethodTaxRate: [[MethodTaxRate.svg List<MethodTaxRate>]]
     supplyChannel: [[ChannelReference.svg ChannelReference]]
     distributionChannel: [[ChannelReference.svg ChannelReference]]
-    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
     priceMode: [[LineItemPriceMode.svg LineItemPriceMode]]
     lineItemMode: [[LineItemMode.svg LineItemMode]]
-    custom: [[CustomFields.svg CustomFields]]
     inventoryMode: [[InventoryMode.svg InventoryMode]]
     shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
+    custom: [[CustomFields.svg CustomFields]]
+    addedAt: DateTime
     lastModifiedAt: DateTime
+}
+interface CartAddCustomLineItemAction [[CartAddCustomLineItemAction.svg]]  {
+    action: String
+    money: [[Money.svg Money]]
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    slug: String
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
 }
 interface Category [[Category.svg]]  {
     id: String
@@ -944,10 +961,12 @@ LocalizedString --> CartDiscountDraft #green;text:green : "name"
 LocalizedString --> CartDiscountDraft #green;text:green : "description"
 LocalizedString --> CartDiscountChangeNameAction #green;text:green : "name"
 LocalizedString --> CartDiscountSetDescriptionAction #green;text:green : "description"
+LocalizedString --> ClassificationShippingRateInput #green;text:green : "label"
 LocalizedString --> CustomLineItem #green;text:green : "name"
 LocalizedString --> CustomLineItemDraft #green;text:green : "name"
 LocalizedString --> LineItem #green;text:green : "name"
 LocalizedString --> LineItem #green;text:green : "productSlug"
+LocalizedString --> CartAddCustomLineItemAction #green;text:green : "name"
 LocalizedString --> Category #green;text:green : "name"
 LocalizedString --> Category #green;text:green : "slug"
 LocalizedString --> Category #green;text:green : "description"

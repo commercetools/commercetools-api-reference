@@ -1690,8 +1690,9 @@ paths:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyCartsPost
       description: |-
-        Creating a cart can fail with an InvalidOperation if the referenced shipping method in the
-        CartDraft has a predicate which does not match the cart.
+        Creating a Cart fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error if the
+        [ShippingMethod](ctp:api:type:ShippingMethod) referenced in the CartDraft
+        has a `predicate` that does not match the Cart.
       parameters:
         - name: expand
           in: query
@@ -1749,11 +1750,9 @@ paths:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyCartsCustomerIdByCustomerIdGet
       description: |-
-        Retrieves the active cart of the customer that has been modified most recently.
-        It does not consider carts with CartOrigin Merchant. If no active cart exists, a 404 Not Found error is returned.
+        Retrieves the recently modified active Cart of a Customer with [CartOrigin](ctp:api:type:CartOrigin) `Customer`. If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
 
-        The cart may not contain up-to-date prices, discounts etc. If you want to ensure they're up-to-date,
-        send an Update request with the Recalculate update action instead.
+        To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       parameters:
         - name: expand
           in: query
@@ -1805,8 +1804,7 @@ paths:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyCartsKeyByKeyGet
       description: |-
-        The cart may not contain up-to-date prices, discounts etc.
-        If you want to ensure they're up-to-date, send an Update request with the Recalculate update action instead.
+        To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       parameters:
         - name: expand
           in: query
@@ -1953,6 +1951,12 @@ paths:
         - oauth_2_0:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyCartsReplicatePost
+      description: |-
+        Creates a new Cart by replicating an existing Cart or Order. Can be useful in cases where a customer wants to cancel a recent order to make some changes or reorder a previous order.
+
+        The replicated Cart preserves Customer information, Line Items and Custom Line Items, Custom Fields, Discount Codes, and other settings of the Cart or Order. If the Line Items become invalid, for example, due to removed Products or Prices, they are removed from the new Cart. If the Customer switches to another Customer Group, the new Cart is updated with the new value. It has up-to-date Tax Rates, Prices, and Line Item product data and is in `Active` [CartState](ctp:api:type:CartState).
+
+        The new Cart does not contain Payments or Deliveries. The [State](ctp:api:type:ItemState) of Line Items and Custom Line Items is reset to `initial`.
       requestBody:
         content:
           application/json:
@@ -2000,8 +2004,7 @@ paths:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyCartsByIDGet
       description: |-
-        The cart may not contain up-to-date prices, discounts etc.
-        If you want to ensure they're up-to-date, send an Update request with the Recalculate update action instead.
+        To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       parameters:
         - name: expand
           in: query
@@ -5298,8 +5301,6 @@ paths:
             - "view_orders:{projectKey}"
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsGet
-      description: |-
-        Queries carts in a specific Store.
       parameters:
         - name: expand
           in: query
@@ -5391,9 +5392,9 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsPost
       description: |-
-        Creates a [Cart](ctp:api:type:Cart) in the Store specified by `storeKey`.
-        When using this endpoint the Cart's `store` field is always set to the store specified in the path parameter.
-        If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
+        The `store` field in the created [Cart](ctp:api:type:Cart) is set to the Store specified by the `storeKey` path parameter.
+
+        Specific Error Codes: [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
       parameters:
         - name: expand
           in: query
@@ -5453,16 +5454,15 @@ paths:
     get:
       security:
         - oauth_2_0:
+            - "view_orders:{projectKey}"
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsCustomerIdByCustomerIdGet
       description: |-
-        Retrieves the active cart of the customer that has been modified most recently in a specific Store.
+        Retrieves the recently modified active Cart of a Customer with [CartOrigin](ctp:api:type:CartOrigin) `Customer`. If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
 
-        If the cart exists in the project but does not have the store field, or the store field
-        references a different store, this method returns a ResourceNotFound error.
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
 
-        The cart may not contain up-to-date prices, discounts etc. If you want to ensure they're up-to-date,
-        send an Update request with the Recalculate update action instead.
+        To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       parameters:
         - name: expand
           in: query
@@ -5520,11 +5520,9 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsKeyByKeyGet
       description: |-
-        Returns a cart by its key from a specific Store.
-        If the cart exists in the project but does not have the store field,
-        or the store field references a different store, this method returns a ResourceNotFound error.
-        The cart may not contain up-to-date prices, discounts etc.
-        If you want to ensure they're up-to-date, send an Update request with the Recalculate update action instead.
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+
+        To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       parameters:
         - name: expand
           in: query
@@ -5565,9 +5563,7 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsKeyByKeyPost
       description: |-
-        Updates a [Cart](ctp:api:type:Cart) in the Store specified by `storeKey`.
-        If the Cart exists in the Project but does not have the store field,
-        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFound) error.
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -5615,6 +5611,8 @@ paths:
             - "manage_orders:{projectKey}"
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsKeyByKeyDelete
+      description: |-
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: dataErasure
           in: query
@@ -5683,6 +5681,12 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsReplicatePost
+      description: |-
+        Creates a new Cart by replicating an existing Cart or Order. Can be useful in cases where a customer wants to cancel a recent order to make some changes or reorder a previous order.
+
+        The replicated Cart preserves Customer information, Line Items and Custom Line Items, Custom Fields, Discount Codes, and other settings of the Cart or Order. If the Line Items become invalid, for example, due to removed Products or Prices, they are removed from the new Cart. If the Customer switches to another Customer Group, the new Cart is updated with the new value. It has up-to-date Tax Rates, Prices, and Line Item product data and is in `Active` [CartState](ctp:api:type:CartState).
+
+        The new Cart does not contain payments or deliveries. The [State](ctp:api:type:ItemState) of Line Items and Custom Line Items is reset to `initial`.
       requestBody:
         content:
           application/json:
@@ -5736,11 +5740,9 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsByIDGet
       description: |-
-        Returns a cart by its ID from a specific Store.
-        If the cart exists in the project but does not have the store field,
-        or the store field references a different store, this method returns a ResourceNotFound error.
-        The cart may not contain up-to-date prices, discounts etc.
-        If you want to ensure they're up-to-date, send an Update request with the Recalculate update action instead.
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+
+        To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       parameters:
         - name: expand
           in: query
@@ -5830,6 +5832,8 @@ paths:
             - "manage_orders:{projectKey}"
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsByIDDelete
+      description: |-
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: dataErasure
           in: query
@@ -6943,6 +6947,22 @@ paths:
             - "manage_my_orders:{projectKey}"
             - "manage_my_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeActiveCartGet
+      description: |-
+        Retrieves the Customer's most recently modified active Cart in the Store specified by the `storeKey` path parameter.
+
+        Carts with `Merchant` or `Quote` [CartOrigin](ctp:api:type:CartOrigin) are ignored.
+
+        If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
       responses:
         "200":
           description: |-
@@ -7076,6 +7096,10 @@ paths:
             - "manage_my_orders:{projectKey}"
             - "manage_my_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeCartsPost
+      description: |-
+        The `store` field in the created [Cart](ctp:api:type:Cart) is set to the Store specified by the `storeKey` path parameter.
+
+        Specific Error Codes: [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
       parameters:
         - name: expand
           in: query
@@ -7177,6 +7201,8 @@ paths:
             - "manage_my_orders:{projectKey}"
             - "manage_my_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeCartsByIDPost
+      description: |-
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -7340,7 +7366,7 @@ paths:
         - If the Customer does not have a Cart, the most recently modified anonymous cart becomes the Customer's Cart.
         - If the Customer already has a Cart, the most recently modified anonymous cart is handled according to [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
 
-        If a Cart is returned as part of [CustomerSignInResult](ctp:api:type:CustomerSignInResult), it has been [recalculated](/../api/projects/carts#recalculate) with up-to-date prices, taxes, discounts, and invalid line items removed.
+        If a Cart is returned as part of [CustomerSignInResult](ctp:api:type:CustomerSignInResult), it has been [recalculated](ctp:api:type:MyCartRecalculateAction) with up-to-date prices, taxes, discounts, and invalid line items removed.
 
         If an account with the given credentials is not found, an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error is returned.
       requestBody:
@@ -8401,7 +8427,7 @@ paths:
         Returns an order by its order number from a specific Store.
 
         If the order exists in the project but does not have the store field,
-        or the store field references a different store, this method returns a ResourceNotFound error.
+        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
         In case the orderNumber does not match the regular expression [a-zA-Z0-9_-]+,
         it should be provided in URL-encoded format.
       parameters:
@@ -8446,7 +8472,7 @@ paths:
       description: |-
         Updates an order in the store specified by {storeKey}.
         If the order exists in the project but does not have the store field,
-        or the store field references a different store, this method returns a ResourceNotFound error.
+        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
         In case the orderNumber does not match the regular expression [a-zA-Z0-9_-]+,
         it should be provided in URL-encoded format.
       parameters:
@@ -8572,7 +8598,7 @@ paths:
       description: |-
         Returns an order by its ID from a specific Store.
         If the order exists in the project but does not have the store field,
-        or the store field references a different store, this method returns a ResourceNotFound error.
+        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -8615,7 +8641,7 @@ paths:
       description: |-
         Updates an order in the store specified by {storeKey}.
         If the order exists in the project but does not have the store field,
-        or the store field references a different store, this method returns a ResourceNotFound error.
+        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -10231,6 +10257,11 @@ paths:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyMeActiveCartGet
+      description: |-
+        Retrieves the Customer's most recently modified active Cart.
+        Carts with `Merchant` or `Quote` [CartOrigin](ctp:api:type:CartOrigin) are ignored.
+
+        If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
       parameters:
         - name: expand
           in: query
@@ -10367,6 +10398,8 @@ paths:
         - oauth_2_0:
             - "manage_my_business_units:{projectKey}"
       operationId: ByProjectKeyMeBusinessUnitsPost
+      description: |-
+        Automatically assigns the authenticated user to the Business Unit in the [Associate Roles](ctp:api:type:AssociateRole) of `Admin` as well as `Buyer`.
       parameters:
         - name: expand
           in: query
@@ -10992,6 +11025,18 @@ paths:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyMeCartsReplicatePost
+      description: |-
+        Creates a new Cart by replicating an existing Cart or Order of the authenticated Customer.
+        This can be useful in cases where a customer wants to cancel a recent order to make some changes or reorder a previous order.
+
+        The replicated Cart preserves Customer information, Line Items and Custom Line Items, Custom Fields, Discount Codes, and other settings of the Cart or Order.
+        If the Line Items become invalid, for example, due to removed Products or Prices, they are removed from the new Cart.
+        If the Customer switches to another Customer Group, the new Cart is updated with the new value.
+        It has up-to-date Tax Rates, Prices, and Line Item product data and is in `Active` [CartState](ctp:api:type:CartState).
+
+        The new Cart does not contain Payments or Deliveries. The [State](ctp:api:type:ItemState) of Line Items and Custom Line Items is reset to `initial`.
+
+        In case the Cart or Order to be replicated does not belong to the authenticaed Customer, the API returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error
       requestBody:
         content:
           application/json:
@@ -11223,12 +11268,12 @@ paths:
       description: |-
         Retrieves the authenticated customer (that matches the given email/password pair).
 
-        If used with [an access token for an anonymous session](/../api/authorization#tokens-for-anonymous-sessions), all Orders and Carts that belong to the `anonymousId` are assigned to the newly logged-in Customer.
+        If used with [an access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly logged-in Customer.
 
         - If the Customer does not have a Cart yet, the most recently modified anonymous cart becomes the Customer's Cart.
         - If the Customer already has a Cart, the most recently modified anonymous cart is handled in accordance with [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
 
-        A Cart returned as part of the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) is [recalculated](ctp:api:type:Recalculate) with up-to-date prices, taxes, discounts, and invalid line items removed.
+        A Cart returned as part of the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) is [recalculated](ctp:api:type:MyCartRecalculateAction) with up-to-date prices, taxes, discounts, and invalid line items removed.
 
         If an account with the given credentials is not found, an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error is returned.
       requestBody:
@@ -11404,6 +11449,33 @@ paths:
           $ref: '#/components/responses/errorable_502'
         "503":
           $ref: '#/components/responses/errorable_503'
+  /{projectKey}/me/orders/quotes:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_my_orders:{projectKey}"
+      operationId: ByProjectKeyMeOrdersQuotesPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MyOrderFromQuoteDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
   /{projectKey}/me/orders/{ID}:
     parameters:
       - name: projectKey
@@ -13143,7 +13215,7 @@ paths:
             - "manage_my_profile:{projectKey}"
       operationId: ByProjectKeyMeSignupPost
       description: |-
-        If used with an [access token for an anonymous session](/../api/authorization#tokens-for-anonymous-sessions), all Orders and Carts that belong to the `anonymousId` are assigned to the newly created Customer.
+        If used with an [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly created Customer.
 
         Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
       requestBody:
@@ -26096,7 +26168,11 @@ components:
             - cartState
             - createdAt
             - customLineItems
+            - directDiscounts
+            - discountCodes
             - id
+            - inventoryMode
+            - itemShippingAddresses
             - lastModifiedAt
             - lineItems
             - origin
@@ -26122,14 +26198,12 @@ components:
               format: "datetime"
             key:
               type: "string"
-            lastModifiedBy:
-              $ref: '#/components/schemas/LastModifiedBy'
-            createdBy:
-              $ref: '#/components/schemas/CreatedBy'
             customerId:
               type: "string"
             customerEmail:
               type: "string"
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupReference'
             anonymousId:
               type: "string"
             businessUnit:
@@ -26144,38 +26218,43 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/CustomLineItem'
+            totalLineItemQuantity:
+              type: "integer"
+              format: "int64"
             totalPrice:
-              $ref: '#/components/schemas/TypedMoney'
+              $ref: '#/components/schemas/CentPrecisionMoney'
             taxedPrice:
               $ref: '#/components/schemas/TaxedPrice'
             taxedShippingPrice:
               $ref: '#/components/schemas/TaxedPrice'
-            cartState:
-              $ref: '#/components/schemas/CartState'
-            shippingAddress:
-              $ref: '#/components/schemas/Address'
-            billingAddress:
-              $ref: '#/components/schemas/Address'
-            shippingMode:
-              $ref: '#/components/schemas/ShippingMode'
-            shipping:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/Shipping'
-            inventoryMode:
-              $ref: '#/components/schemas/InventoryMode'
             taxMode:
               $ref: '#/components/schemas/TaxMode'
             taxRoundingMode:
               $ref: '#/components/schemas/RoundingMode'
             taxCalculationMode:
               $ref: '#/components/schemas/TaxCalculationMode'
-            customerGroup:
-              $ref: '#/components/schemas/CustomerGroupReference'
-            country:
-              $ref: '#/components/schemas/CountryCode'
+            inventoryMode:
+              $ref: '#/components/schemas/InventoryMode'
+            cartState:
+              $ref: '#/components/schemas/CartState'
+            billingAddress:
+              $ref: '#/components/schemas/Address'
+            shippingAddress:
+              $ref: '#/components/schemas/Address'
+            shippingMode:
+              $ref: '#/components/schemas/ShippingMode'
             shippingInfo:
               $ref: '#/components/schemas/ShippingInfo'
+            shipping:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Shipping'
+            shippingRateInput:
+              $ref: '#/components/schemas/ShippingRateInput'
+            itemShippingAddresses:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Address'
             discountCodes:
               type: "array"
               items:
@@ -26184,30 +26263,27 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/DirectDiscount'
-            custom:
-              $ref: '#/components/schemas/CustomFields'
-            paymentInfo:
-              $ref: '#/components/schemas/PaymentInfo'
-            locale:
-              type: "string"
-            deleteDaysAfterLastModification:
-              type: "integer"
-              format: "int32"
             refusedGifts:
               type: "array"
               items:
                 $ref: '#/components/schemas/CartDiscountReference'
+            paymentInfo:
+              $ref: '#/components/schemas/PaymentInfo'
+            country:
+              $ref: '#/components/schemas/CountryCode'
+            locale:
+              $ref: '#/components/schemas/Locale'
             origin:
               $ref: '#/components/schemas/CartOrigin'
-            shippingRateInput:
-              $ref: '#/components/schemas/ShippingRateInput'
-            itemShippingAddresses:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/Address'
-            totalLineItemQuantity:
+            custom:
+              $ref: '#/components/schemas/CustomFields'
+            deleteDaysAfterLastModification:
               type: "integer"
-              format: "int64"
+              format: "int32"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
     CartDraft:
       type: "object"
       required:
@@ -26229,16 +26305,6 @@ components:
           $ref: '#/components/schemas/BusinessUnitResourceIdentifier'
         store:
           $ref: '#/components/schemas/StoreResourceIdentifier'
-        country:
-          type: "string"
-        inventoryMode:
-          $ref: '#/components/schemas/InventoryMode'
-        taxMode:
-          $ref: '#/components/schemas/TaxMode'
-        taxRoundingMode:
-          $ref: '#/components/schemas/RoundingMode'
-        taxCalculationMode:
-          $ref: '#/components/schemas/TaxCalculationMode'
         lineItems:
           type: "array"
           items:
@@ -26247,23 +26313,24 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/CustomLineItemDraft'
-        shippingAddress:
-          $ref: '#/components/schemas/BaseAddress'
+        taxMode:
+          $ref: '#/components/schemas/TaxMode'
+        externalTaxRateForShippingMethod:
+          $ref: '#/components/schemas/ExternalTaxRateDraft'
+        taxRoundingMode:
+          $ref: '#/components/schemas/RoundingMode'
+        taxCalculationMode:
+          $ref: '#/components/schemas/TaxCalculationMode'
+        inventoryMode:
+          $ref: '#/components/schemas/InventoryMode'
         billingAddress:
+          $ref: '#/components/schemas/BaseAddress'
+        shippingAddress:
           $ref: '#/components/schemas/BaseAddress'
         shippingMethod:
           $ref: '#/components/schemas/ShippingMethodResourceIdentifier'
-        externalTaxRateForShippingMethod:
-          $ref: '#/components/schemas/ExternalTaxRateDraft'
-        custom:
-          $ref: '#/components/schemas/CustomFieldsDraft'
-        locale:
-          type: "string"
-        deleteDaysAfterLastModification:
-          type: "integer"
-          format: "int64"
-        origin:
-          $ref: '#/components/schemas/CartOrigin'
+        shippingRateInput:
+          $ref: '#/components/schemas/ShippingRateInputDraft'
         shippingMode:
           $ref: '#/components/schemas/ShippingMode'
         customShipping:
@@ -26274,8 +26341,6 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/ShippingDraft'
-        shippingRateInput:
-          $ref: '#/components/schemas/ShippingRateInputDraft'
         itemShippingAddresses:
           type: "array"
           items:
@@ -26284,6 +26349,17 @@ components:
           type: "array"
           items:
             type: "string"
+        country:
+          $ref: '#/components/schemas/CountryCode'
+        locale:
+          $ref: '#/components/schemas/Locale'
+        origin:
+          $ref: '#/components/schemas/CartOrigin'
+        deleteDaysAfterLastModification:
+          type: "integer"
+          format: "int64"
+        custom:
+          $ref: '#/components/schemas/CustomFieldsDraft'
     CartOrigin:
       type: "string"
       enum:
@@ -26291,7 +26367,11 @@ components:
         - Merchant
         - Quote
       x-annotation-package: "Cart"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-carts.html#cartorigin"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#cartorigin"
+      x-annotation-enumDescriptions:
+        Customer: "Cart was created by a Customer.nnThis is the default value.n"
+        Merchant: "Cart was created by a merchant on behalf of a Customer.n"
+        Quote: "Cart was created as part of a Quote (BETA).n"
     CartPagedQueryResponse:
       type: "object"
       required:
@@ -26303,13 +26383,13 @@ components:
         limit:
           type: "integer"
           format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
         count:
           type: "integer"
           format: "int64"
         total:
-          type: "integer"
-          format: "int64"
-        offset:
           type: "integer"
           format: "int64"
         results:
@@ -26348,7 +26428,24 @@ components:
         - Ordered
         - Frozen
       x-annotation-package: "Cart"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-carts.html#cartstate"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#cartstate"
+      x-annotation-enumDescriptions:
+        Active: "The default state where a Cart can be updated and ordered.n"
+        Merged: "An anonymous Cart was merged into a Customer's Cart on [sign-in](/../api/projects/customers#authenticate-sign-in-customer),
+         and no further operations are allowed on the Cart.n"
+        Ordered: "A Cart was [ordered](/../api/projects/orders#create-order-from-cart), and
+         no further operations are allowed on the Cart.n"
+        Frozen: "A Cart is [frozen](ctp:api:type:FrozenCarts). Update actions that can change
+         the price of (Custom) Line Items are not allowed.nn  - [Add LineItem](ctp:api:type:CartAddLineItemAction)n
+          - [Change LineItem Quantity](ctp:api:type:CartChangeLineItemQuantityAction)n
+          - [Remove LineItem](ctp:api:type:CartRemoveLineItemAction)n  - [Set LineItem
+         DistributionChannel](ctp:api:type:CartSetLineItemDistributionChannelAction)n
+          - [Set LineItem SupplyChannel](ctp:api:type:CartSetLineItemSupplyChannelAction)n
+          - [Add CustomLineItem](ctp:api:type:CartAddCustomLineItemAction)n  - [Change
+         CustomLineItem Quantity](ctp:api:type:CartChangeCustomLineItemQuantityAction)n
+          - [Remove CustomLineItem](ctp:api:type:CartRemoveCustomLineItemAction)n  - [Change
+         TaxMode](ctp:api:type:CartChangeTaxModeAction)n  - [Set LineItem Price](ctp:api:type:CartSetLineItemPriceAction)n
+          - [Set LineItem TotalPrice](ctp:api:type:CartSetLineItemTotalPriceAction)n"
     CartUpdate:
       type: "object"
       required:
@@ -26396,6 +26493,7 @@ components:
           setBillingAddress: '#/components/schemas/CartSetBillingAddressAction'
           setBillingAddressCustomField: '#/components/schemas/CartSetBillingAddressCustomFieldAction'
           setBillingAddressCustomType: '#/components/schemas/CartSetBillingAddressCustomTypeAction'
+          setBusinessUnit: '#/components/schemas/CartSetBusinessUnitAction'
           setCartTotalTax: '#/components/schemas/CartSetCartTotalTaxAction'
           setCountry: '#/components/schemas/CartSetCountryAction'
           setCustomField: '#/components/schemas/CartSetCustomFieldAction'
@@ -26489,7 +26587,7 @@ components:
         taxedPrice:
           $ref: '#/components/schemas/TaxedItemPrice'
         totalPrice:
-          $ref: '#/components/schemas/TypedMoney'
+          $ref: '#/components/schemas/CentPrecisionMoney'
         slug:
           type: "string"
         quantity:
@@ -26519,7 +26617,6 @@ components:
         - money
         - name
         - priceMode
-        - quantity
         - slug
       properties:
         name:
@@ -26548,14 +26645,13 @@ components:
         - External
       x-annotation-package: "Cart"
       x-annotation-enumDescriptions:
-        Standard: "Lets Composable Commerce apply Cart Discounts for the Custom Line Item.
-         This is the default mode for backwards compatibility."
+        Standard: "Allows application of [Cart Discounts](/../api/projects/cartDiscounts)
+         for the Custom Line Item.nnThis is the default mode for backwards compatibility.n"
         External: "Deactivates application of Cart Discounts for the Custom Line Item despite
-         a matching [CartDiscountCustomLineItemsTarget](ctp:api:type:CartDiscountCustomLineItemsTarget)."
+         a matching [CartDiscountCustomLineItemsTarget](ctp:api:type:CartDiscountCustomLineItemsTarget).n"
     CustomShippingDraft:
       type: "object"
       required:
-        - deliveries
         - key
         - shippingMethodName
         - shippingRate
@@ -26573,13 +26669,13 @@ components:
         taxCategory:
           $ref: '#/components/schemas/TaxCategoryResourceIdentifier'
         externalTaxRate:
-          type: "string"
+          $ref: '#/components/schemas/ExternalTaxRateDraft'
         deliveries:
           type: "array"
           items:
-            $ref: '#/components/schemas/Delivery'
+            $ref: '#/components/schemas/DeliveryDraft'
         custom:
-          type: "string"
+          $ref: '#/components/schemas/CustomFieldsDraft'
     DirectDiscount:
       type: "object"
       required:
@@ -26615,13 +26711,31 @@ components:
       type: "string"
       enum:
         - NotActive
+        - NotValid
         - DoesNotMatchCart
         - MatchesCart
         - MaxApplicationReached
         - ApplicationStoppedByPreviousDiscount
-        - NotValid
       x-annotation-package: "Cart"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-carts.html#discountcodestate"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#discountcodestate"
+      x-annotation-enumDescriptions:
+        NotActive: "The Discount Code is not active or does not contain any active Cart Discounts.n"
+        NotValid: "The Discount Code is not valid or does not contain any valid Cart Discounts.n
+        Validity is determined by the [CartDiscount](ctp:api:type:CartDiscount) `validFrom`
+         and `validUntil` dates.n"
+        DoesNotMatchCart: "The Discount Code is active and contains at least one active and
+         valid Cart Discount.nThe [DiscountCode](ctp:api:type:DiscountCode) `cartPredicate`
+         does not match the Cart or the contained active discount's cart predicates do
+         no match the Cart.n"
+        MatchesCart: "The Discount Code is active and contains at least one active and valid
+         Cart Discount.nThe [DiscountCode](ctp:api:type:DiscountCode) `cartPredicate`
+         matches the Cart and at least one of the contained active discount's cart predicates
+         matches the Cart.n"
+        MaxApplicationReached: "The `maxApplications` or `maxApplicationsPerCustomer` for
+         a [DiscountCode](ctp:api:type:DiscountCode) has been reached.n"
+        ApplicationStoppedByPreviousDiscount: "The Discount Code is active and no discounts
+         are applied after a discount with `StopAfterThisDiscount` [StackingMode](ctp:api:type:StackingMode)
+         is defined.n"
     DiscountedLineItemPortion:
       type: "object"
       required:
@@ -26686,24 +26800,39 @@ components:
         amount:
           type: "number"
           format: "double"
+        includedInPrice:
+          type: "boolean"
         country:
-          type: "string"
+          $ref: '#/components/schemas/CountryCode'
         state:
           type: "string"
         subRates:
           type: "array"
           items:
             $ref: '#/components/schemas/SubRate'
-        includedInPrice:
-          type: "boolean"
     InventoryMode:
       type: "string"
       enum:
+        - None
         - TrackOnly
         - ReserveOnOrder
-        - None
       x-annotation-package: "Cart"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-carts.html#inventorymode"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#inventorymode"
+      x-annotation-enumDescriptions:
+        None: "Adding and ordering items from a Cart are independent of the Inventory with
+         no inventory checks or modifications.nnThis is the default mode.n"
+        TrackOnly: "Orders are tracked on the Inventory, and ordering a [LineItem](ctp:api:type:LineItem)
+         deducts the available quantity on the respective [InventoryEntry](ctp:api:type:InventoryEntry).n
+        nAn [Order can be created](/../api/projects/orders#create-order) even if the Line
+         Item quantity is zero or negative, but if no matching Inventory Entry exists for
+         the Line Item, an [OutOfStock](ctp:api:type:OutOfStockError) error is returned.n"
+        ReserveOnOrder: "Line Items in a Cart are only reserved for the duration of the ordering
+         transaction.nIf a Line Item is not available when [creating an Order](/../api/projects/orders#create-order),
+         an [OutOfStock](ctp:api:type:OutOfStockError) error is returned.nThis is because
+         the [InventoryEntry](ctp:api:type:InventoryEntry) `availableQuantity` is insufficient
+         (but is still updated) for the ordered Line Item quantity.nnHowever, an Order
+         can be created if the [InventoryEntry](ctp:api:type:InventoryEntry) `restockableInDays`
+         is set (including `0`).n"
     ItemShippingDetails:
       type: "object"
       required:
@@ -26772,20 +26901,21 @@ components:
           $ref: '#/components/schemas/ProductVariant'
         price:
           $ref: '#/components/schemas/Price'
+        quantity:
+          type: "integer"
+          format: "int64"
+        totalPrice:
+          $ref: '#/components/schemas/CentPrecisionMoney'
+        discountedPricePerQuantity:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/DiscountedLineItemPriceForQuantity'
         taxedPrice:
           $ref: '#/components/schemas/TaxedItemPrice'
         taxedPricePortions:
           type: "array"
           items:
             $ref: '#/components/schemas/MethodTaxedPrice'
-        totalPrice:
-          $ref: '#/components/schemas/TypedMoney'
-        quantity:
-          type: "integer"
-          format: "int64"
-        addedAt:
-          type: "string"
-          format: "datetime"
         state:
           type: "array"
           items:
@@ -26800,20 +26930,19 @@ components:
           $ref: '#/components/schemas/ChannelReference'
         distributionChannel:
           $ref: '#/components/schemas/ChannelReference'
-        discountedPricePerQuantity:
-          type: "array"
-          items:
-            $ref: '#/components/schemas/DiscountedLineItemPriceForQuantity'
         priceMode:
           $ref: '#/components/schemas/LineItemPriceMode'
         lineItemMode:
           $ref: '#/components/schemas/LineItemMode'
-        custom:
-          $ref: '#/components/schemas/CustomFields'
         inventoryMode:
           $ref: '#/components/schemas/InventoryMode'
         shippingDetails:
           $ref: '#/components/schemas/ItemShippingDetails'
+        custom:
+          $ref: '#/components/schemas/CustomFields'
+        addedAt:
+          type: "string"
+          format: "datetime"
         lastModifiedAt:
           type: "string"
           format: "datetime"
@@ -26839,8 +26968,6 @@ components:
           $ref: '#/components/schemas/ChannelResourceIdentifier'
         externalTaxRate:
           $ref: '#/components/schemas/ExternalTaxRateDraft'
-        custom:
-          $ref: '#/components/schemas/CustomFieldsDraft'
         externalPrice:
           $ref: '#/components/schemas/Money'
         externalTotalPrice:
@@ -26849,19 +26976,47 @@ components:
           $ref: '#/components/schemas/InventoryMode'
         shippingDetails:
           $ref: '#/components/schemas/ItemShippingDetailsDraft'
+        custom:
+          $ref: '#/components/schemas/CustomFieldsDraft'
     LineItemMode:
       type: "string"
       enum:
         - Standard
         - GiftLineItem
       x-annotation-package: "Cart"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#lineitemmode"
+      x-annotation-enumDescriptions:
+        Standard: "The Line Item is added during [Cart creation](/../api/projects/carts#create-cart)
+         or using the [Add LineItem](ctp:api:type:CartAddLineItemAction) update action.n
+        The Line Item quantity can be changed without restriction.n"
+        GiftLineItem: "The Line Item is added automatically by a Cart Discount with [CartDiscountValueGiftLineItem](ctp:api:type:CartDiscountValueGiftLineItem).n
+        nThe quantity cannot be [increased](ctp:api:type:CartChangeLineItemQuantityAction),
+         and it won't be merged when the same Line Item is [added](ctp:api:type:CartAddLineItemAction)
+         to the Cart.nIf the gift is [removed](ctp:api:type:CartRemoveLineItemAction),
+         an entry is added to the `refusedGifts` array and the discount won't be applied
+         to the Cart.nThe price cannot be changed [externally](ctp:api:type:CartSetLineItemTotalPriceAction).n
+        nAll other updates, such as the ones related to Custom Fields, can be used.n"
     LineItemPriceMode:
       type: "string"
       enum:
         - Platform
-        - ExternalTotal
         - ExternalPrice
+        - ExternalTotal
       x-annotation-package: "Cart"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#lineitempricemode"
+      x-annotation-enumDescriptions:
+        Platform: "The [price is selected](ctp:api:type:LineItemPriceSelection) from the Product
+         Variant.nThis is the default mode.n"
+        ExternalPrice: "The Line Item price is set externally.nCart Discounts can apply to
+         Line Items with this price mode.nAll update actions that change the quantity
+         of a Line Item with this price mode require the `externalPrice` field to be given.n"
+        ExternalTotal: "The Line Item price with the total is set externally.nCart Discounts
+         are deactivated for Line Items with this price mode.nAlthough a Line Item with
+         this price mode has both `price` and `totalPrice` set externally, only `totalPrice`
+         is used to calculate the total price of a Cart.nAll update actions that change
+         the quantity of a Line Item with this price mode can set the new price with the
+         `externalTotal` field.nIf the `externalTotal` field is not given in the update
+         actions, the external price is unset and the price mode is set to `Platform`.n"
     MethodTaxRate:
       type: "object"
       required:
@@ -26898,6 +27053,12 @@ components:
         - HalfUp
         - HalfDown
       x-annotation-package: "Cart"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#roundingmode"
+      x-annotation-enumDescriptions:
+        HalfEven: "[Round half to even](https://en.wikipedia.org/wiki/Rounding#Round_half_to_even)n
+        nDefault mode for a new Cart.n"
+        HalfUp: "[Round half up](https://en.wikipedia.org/wiki/Rounding#Round_half_up)n"
+        HalfDown: "[Round half down](https://en.wikipedia.org/wiki/Rounding#Round_half_down)n"
     ScoreShippingRateInput:
       allOf:
         - $ref: '#/components/schemas/ShippingRateInput'
@@ -26942,8 +27103,8 @@ components:
     ShippingDraft:
       type: "object"
       required:
-        - deliveries
         - key
+        - shippingAddress
       properties:
         key:
           type: "string"
@@ -26954,13 +27115,13 @@ components:
         shippingRateInput:
           $ref: '#/components/schemas/ShippingRateInputDraft'
         externalTaxRate:
-          type: "string"
+          $ref: '#/components/schemas/ExternalTaxRateDraft'
         deliveries:
           type: "array"
           items:
-            $ref: '#/components/schemas/Delivery'
+            $ref: '#/components/schemas/DeliveryDraft'
         custom:
-          type: "string"
+          $ref: '#/components/schemas/CustomFieldsDraft'
     ShippingInfo:
       type: "object"
       required:
@@ -26972,7 +27133,7 @@ components:
         shippingMethodName:
           type: "string"
         price:
-          $ref: '#/components/schemas/TypedMoney'
+          $ref: '#/components/schemas/CentPrecisionMoney'
         shippingRate:
           $ref: '#/components/schemas/ShippingRate'
         taxedPrice:
@@ -26997,7 +27158,13 @@ components:
         - DoesNotMatchCart
         - MatchesCart
       x-annotation-package: "Cart"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-carts.html#shippingmethodstate"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#shippingmethodstate"
+      x-annotation-enumDescriptions:
+        DoesNotMatchCart: "The [ShippingMethod](ctp:api:type:ShippingMethod) `predicate` does
+         not match the Cart.nnOrdering this Cart returns an [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)
+         error.n"
+        MatchesCart: "Either the [ShippingMethod](ctp:api:type:ShippingMethod) `predicate`
+         matches the Cart or there is no `predicate` defined."
     ShippingMode:
       type: "string"
       enum:
@@ -27039,6 +27206,14 @@ components:
         - LineItemLevel
         - UnitPriceLevel
       x-annotation-package: "Cart"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#taxcalculationmode"
+      x-annotation-enumDescriptions:
+        LineItemLevel: "Taxes are calculated **after** the unit price is multiplied by the
+         quantity. This is the default mode.nnFor example, `($1.08 * 3 = $3.24) * 1.19
+         = $3.8556 -> $3.86 rounded`n"
+        UnitPriceLevel: "Taxes are calculated on the unit price **before** multiplying by
+         the quantity.nnFor example, `($1.08 * 1.19 = $1.2852 -> $1.29 rounded) * 3 =
+         $3.87`n"
     TaxMode:
       type: "string"
       enum:
@@ -27047,6 +27222,26 @@ components:
         - ExternalAmount
         - Disabled
       x-annotation-package: "Cart"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#taxmode"
+      x-annotation-enumDescriptions:
+        Platform: "Tax Rates are selected automatically from the [TaxCategories](ctp:api:type:TaxCategory)
+         based on the [Cart](ctp:api:type:Cart) `shippingAddress`.nThis is the default
+         tax mode for a new Cart.nn`totalNet`, `totalGross`, and `taxPortions` fields
+         are calculated based on the `taxRoundingMode`.n"
+        External: "Tax Rates are set externally per [ExternalTaxRateDraft](ctp:api:type:ExternalTaxRateDraft).n
+        A Cart can be ordered only if all Line Items, Custom Line Items, and the Shipping
+         Method have an external Tax Rate set.nn`totalNet`, `totalGross`, and `taxPortions`
+         fields are calculated based on the `taxRoundingMode`.n"
+        ExternalAmount: "Tax amounts, Tax Rates, and tax portions are set externally per [ExternalTaxRateDraft](ctp:api:type:ExternalTaxRateDraft).n
+        A Cart can be ordered only if the Cart and all Line Items, Custom Line Items, and
+         the Shipping Method have an external tax amount and rate set.nnPrice-specific
+         update actions on Carts require external recalculation of the total gross price.n
+        Hence, the `externalTaxAmount` is removed in these cases and must be reset with
+         [Set LineItem TaxAmount](ctp:api:type:CartSetLineItemTaxAmountAction), [Set CustomLineItem
+         TaxAmount](ctp:api:type:CartSetCustomLineItemTaxAmountAction), or [Set ShippingMethod
+         TaxAmount](ctp:api:type:CartSetShippingMethodTaxAmountAction) update actions.n"
+        Disabled: "No taxes are added to the Cart.nnNote that this tax mode cannot be set
+         on the [My Carts](/../api/projects/me-carts) API.n"
     TaxPortion:
       type: "object"
       required:
@@ -27059,7 +27254,7 @@ components:
           type: "number"
           format: "double"
         amount:
-          $ref: '#/components/schemas/TypedMoney'
+          $ref: '#/components/schemas/CentPrecisionMoney'
     TaxPortionDraft:
       type: "object"
       required:
@@ -27080,11 +27275,11 @@ components:
         - totalNet
       properties:
         totalNet:
-          $ref: '#/components/schemas/TypedMoney'
+          $ref: '#/components/schemas/CentPrecisionMoney'
         totalGross:
-          $ref: '#/components/schemas/TypedMoney'
+          $ref: '#/components/schemas/CentPrecisionMoney'
         totalTax:
-          $ref: '#/components/schemas/TypedMoney'
+          $ref: '#/components/schemas/CentPrecisionMoney'
     TaxedPrice:
       type: "object"
       required:
@@ -27093,15 +27288,15 @@ components:
         - totalNet
       properties:
         totalNet:
-          $ref: '#/components/schemas/TypedMoney'
+          $ref: '#/components/schemas/CentPrecisionMoney'
         totalGross:
-          $ref: '#/components/schemas/TypedMoney'
+          $ref: '#/components/schemas/CentPrecisionMoney'
         taxPortions:
           type: "array"
           items:
             $ref: '#/components/schemas/TaxPortion'
         totalTax:
-          $ref: '#/components/schemas/TypedMoney'
+          $ref: '#/components/schemas/CentPrecisionMoney'
     TaxedPriceDraft:
       type: "object"
       required:
@@ -27124,7 +27319,6 @@ components:
           required:
             - money
             - name
-            - quantity
             - slug
           properties:
             action:
@@ -27140,10 +27334,12 @@ components:
               type: "string"
             taxCategory:
               $ref: '#/components/schemas/TaxCategoryResourceIdentifier'
-            custom:
-              $ref: '#/components/schemas/CustomFieldsDraft'
             externalTaxRate:
               $ref: '#/components/schemas/ExternalTaxRateDraft'
+            shippingDetails:
+              $ref: '#/components/schemas/ItemShippingDetailsDraft'
+            custom:
+              $ref: '#/components/schemas/CustomFieldsDraft'
             priceMode:
               $ref: '#/components/schemas/CustomLineItemPriceMode'
     CartAddCustomShippingMethodAction:
@@ -27151,7 +27347,6 @@ components:
         - $ref: '#/components/schemas/CartUpdateAction'
         - type: "object"
           required:
-            - deliveries
             - shippingAddress
             - shippingKey
             - shippingMethodName
@@ -27172,13 +27367,13 @@ components:
             taxCategory:
               $ref: '#/components/schemas/TaxCategoryResourceIdentifier'
             externalTaxRate:
-              type: "string"
+              $ref: '#/components/schemas/ExternalTaxRateDraft'
             deliveries:
               type: "array"
               items:
-                $ref: '#/components/schemas/Delivery'
+                $ref: '#/components/schemas/DeliveryDraft'
             custom:
-              type: "string"
+              $ref: '#/components/schemas/CustomFieldsDraft'
     CartAddDiscountCodeAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -27208,12 +27403,6 @@ components:
           properties:
             action:
               type: "string"
-            custom:
-              $ref: '#/components/schemas/CustomFieldsDraft'
-            distributionChannel:
-              $ref: '#/components/schemas/ChannelResourceIdentifier'
-            externalTaxRate:
-              $ref: '#/components/schemas/ExternalTaxRateDraft'
             productId:
               type: "string"
             variantId:
@@ -27224,14 +27413,20 @@ components:
             quantity:
               type: "integer"
               format: "int64"
+            distributionChannel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
             supplyChannel:
               $ref: '#/components/schemas/ChannelResourceIdentifier'
             externalPrice:
               $ref: '#/components/schemas/Money'
             externalTotalPrice:
               $ref: '#/components/schemas/ExternalLineItemTotalPrice'
+            externalTaxRate:
+              $ref: '#/components/schemas/ExternalTaxRateDraft'
             shippingDetails:
               $ref: '#/components/schemas/ItemShippingDetailsDraft'
+            custom:
+              $ref: '#/components/schemas/CustomFieldsDraft'
     CartAddPaymentAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -27248,7 +27443,6 @@ components:
         - $ref: '#/components/schemas/CartUpdateAction'
         - type: "object"
           required:
-            - deliveries
             - shippingAddress
             - shippingKey
             - shippingMethod
@@ -27258,19 +27452,19 @@ components:
             shippingKey:
               type: "string"
             shippingMethod:
-              $ref: '#/components/schemas/ShippingMethodReference'
+              $ref: '#/components/schemas/ShippingMethodResourceIdentifier'
             shippingAddress:
               $ref: '#/components/schemas/BaseAddress'
             shippingRateInput:
               $ref: '#/components/schemas/ShippingRateInputDraft'
             externalTaxRate:
-              type: "string"
+              $ref: '#/components/schemas/ExternalTaxRateDraft'
             deliveries:
               type: "array"
               items:
-                $ref: '#/components/schemas/Delivery'
+                $ref: '#/components/schemas/DeliveryDraft'
             custom:
-              type: "string"
+              $ref: '#/components/schemas/CustomFieldsDraft'
     CartAddShoppingListAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -27282,9 +27476,9 @@ components:
               type: "string"
             shoppingList:
               $ref: '#/components/schemas/ShoppingListResourceIdentifier'
-            supplyChannel:
-              $ref: '#/components/schemas/ChannelResourceIdentifier'
             distributionChannel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
+            supplyChannel:
               $ref: '#/components/schemas/ChannelResourceIdentifier'
     CartApplyDeltaToCustomLineItemShippingDetailsTargetsAction:
       allOf:
@@ -27546,6 +27740,17 @@ components:
               $ref: '#/components/schemas/TypeResourceIdentifier'
             fields:
               $ref: '#/components/schemas/FieldContainer'
+    CartSetBusinessUnitAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          required:
+            - businessUnit
+          properties:
+            action:
+              type: "string"
+            businessUnit:
+              $ref: '#/components/schemas/BusinessUnitResourceIdentifier'
     CartSetCartTotalTaxAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -27686,8 +27891,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
         - type: "object"
-          required:
-            - email
           properties:
             action:
               type: "string"
@@ -27939,7 +28142,7 @@ components:
             action:
               type: "string"
             locale:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
     CartSetShippingAddressAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -28634,7 +28837,7 @@ components:
         InventorySupply: "Channel can be used to track inventory entries (for example, Channels
          with this role can be treated as warehouses).n"
         ProductDistribution: "Channel can be used to expose Products to a specific distribution
-         Channel.nThe Channel can be used by a Cart to [select](/../api/projects/carts#lineitem-price-selection)
+         Channel.nThe Channel can be used by a Cart to [select](ctp:api:type:LineItemPriceSelection)
          a Product Price.n"
         OrderExport: "Channel can be used to track order export activities.n"
         OrderImport: "Channel can be used to track order import activities.n"
@@ -31144,7 +31347,7 @@ components:
               format: "int64"
           additionalProperties:
             type: "string"
-    CountryNotConfiguredInStore:
+    CountryNotConfiguredInStoreError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
@@ -31484,7 +31687,7 @@ components:
           AttributeNameDoesNotExist: '#/components/schemas/AttributeNameDoesNotExistError'
           BadGateway: '#/components/schemas/BadGatewayError'
           ConcurrentModification: '#/components/schemas/ConcurrentModificationError'
-          CountryNotConfiguredInStore: '#/components/schemas/CountryNotConfiguredInStore'
+          CountryNotConfiguredInStore: '#/components/schemas/CountryNotConfiguredInStoreError'
           DiscountCodeNonApplicable: '#/components/schemas/DiscountCodeNonApplicableError'
           DuplicateAttributeValue: '#/components/schemas/DuplicateAttributeValueError'
           DuplicateAttributeValues: '#/components/schemas/DuplicateAttributeValuesError'
@@ -33124,41 +33327,41 @@ components:
           $ref: '#/components/schemas/CurrencyCode'
         customerEmail:
           type: "string"
-        country:
-          type: "string"
-        inventoryMode:
-          $ref: '#/components/schemas/InventoryMode'
+        businessUnit:
+          $ref: '#/components/schemas/BusinessUnitResourceIdentifier'
+        store:
+          $ref: '#/components/schemas/StoreResourceIdentifier'
         lineItems:
           type: "array"
           items:
             $ref: '#/components/schemas/MyLineItemDraft'
-        shippingAddress:
-          $ref: '#/components/schemas/BaseAddress'
+        taxMode:
+          $ref: '#/components/schemas/TaxMode'
+        inventoryMode:
+          $ref: '#/components/schemas/InventoryMode'
         billingAddress:
+          $ref: '#/components/schemas/BaseAddress'
+        shippingAddress:
           $ref: '#/components/schemas/BaseAddress'
         shippingMethod:
           $ref: '#/components/schemas/ShippingMethodResourceIdentifier'
-        custom:
-          $ref: '#/components/schemas/CustomFieldsDraft'
-        locale:
-          type: "string"
-        taxMode:
-          $ref: '#/components/schemas/TaxMode'
-        deleteDaysAfterLastModification:
-          type: "integer"
-          format: "int64"
         itemShippingAddresses:
           type: "array"
           items:
             $ref: '#/components/schemas/BaseAddress'
-        businessUnit:
-          $ref: '#/components/schemas/BusinessUnitKeyReference'
-        store:
-          $ref: '#/components/schemas/StoreKeyReference'
         discountCodes:
           type: "array"
           items:
             type: "string"
+        country:
+          $ref: '#/components/schemas/CountryCode'
+        locale:
+          $ref: '#/components/schemas/Locale'
+        deleteDaysAfterLastModification:
+          type: "integer"
+          format: "int64"
+        custom:
+          $ref: '#/components/schemas/CustomFieldsDraft'
     MyCartUpdate:
       type: "object"
       required:
@@ -33190,6 +33393,7 @@ components:
           removeLineItem: '#/components/schemas/MyCartRemoveLineItemAction'
           removePayment: '#/components/schemas/MyCartRemovePaymentAction'
           setBillingAddress: '#/components/schemas/MyCartSetBillingAddressAction'
+          setBusinessUnit: '#/components/schemas/MyCartSetBusinessUnitAction'
           setCountry: '#/components/schemas/MyCartSetCountryAction'
           setCustomField: '#/components/schemas/MyCartSetCustomFieldAction'
           setCustomType: '#/components/schemas/MyCartSetCustomTypeAction'
@@ -33374,14 +33578,14 @@ components:
               $ref: '#/components/schemas/BusinessUnitResourceIdentifier'
     MyLineItemDraft:
       type: "object"
-      required:
-        - quantity
       properties:
         productId:
           type: "string"
         variantId:
           type: "integer"
           format: "int64"
+        sku:
+          type: "string"
         quantity:
           type: "integer"
           format: "int64"
@@ -33392,12 +33596,10 @@ components:
           $ref: '#/components/schemas/ChannelResourceIdentifier'
         distributionChannel:
           $ref: '#/components/schemas/ChannelResourceIdentifier'
-        custom:
-          $ref: '#/components/schemas/CustomFieldsDraft'
         shippingDetails:
           $ref: '#/components/schemas/ItemShippingDetailsDraft'
-        sku:
-          type: "string"
+        custom:
+          $ref: '#/components/schemas/CustomFieldsDraft'
     MyOrderFromCartDraft:
       type: "object"
       required:
@@ -33409,6 +33611,19 @@ components:
         version:
           type: "integer"
           format: "int64"
+    MyOrderFromQuoteDraft:
+      type: "object"
+      required:
+        - id
+        - version
+      properties:
+        id:
+          type: "string"
+        version:
+          type: "integer"
+          format: "int64"
+        quoteStateToAccepted:
+          type: "boolean"
     MyPayment:
       type: "object"
       required:
@@ -33910,12 +34125,6 @@ components:
           properties:
             action:
               type: "string"
-            custom:
-              $ref: '#/components/schemas/CustomFieldsDraft'
-            distributionChannel:
-              $ref: '#/components/schemas/ChannelResourceIdentifier'
-            externalTaxRate:
-              $ref: '#/components/schemas/ExternalTaxRateDraft'
             productId:
               type: "string"
             variantId:
@@ -33926,17 +34135,23 @@ components:
             quantity:
               type: "integer"
               format: "int64"
+            distributionChannel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
             supplyChannel:
               $ref: '#/components/schemas/ChannelResourceIdentifier'
             externalPrice:
               $ref: '#/components/schemas/Money'
             externalTotalPrice:
               $ref: '#/components/schemas/ExternalLineItemTotalPrice'
+            externalTaxRate:
+              $ref: '#/components/schemas/ExternalTaxRateDraft'
             shippingDetails:
               $ref: '#/components/schemas/ItemShippingDetailsDraft'
             addedAt:
               type: "string"
               format: "datetime"
+            custom:
+              $ref: '#/components/schemas/CustomFieldsDraft'
     MyCartAddPaymentAction:
       allOf:
         - $ref: '#/components/schemas/MyCartUpdateAction'
@@ -34065,6 +34280,17 @@ components:
               type: "string"
             address:
               $ref: '#/components/schemas/BaseAddress'
+    MyCartSetBusinessUnitAction:
+      allOf:
+        - $ref: '#/components/schemas/MyCartUpdateAction'
+        - type: "object"
+          required:
+            - businessUnit
+          properties:
+            action:
+              type: "string"
+            businessUnit:
+              $ref: '#/components/schemas/BusinessUnitResourceIdentifier'
     MyCartSetCountryAction:
       allOf:
         - $ref: '#/components/schemas/MyCartUpdateAction'
@@ -34195,7 +34421,7 @@ components:
             action:
               type: "string"
             locale:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
     MyCartSetShippingAddressAction:
       allOf:
         - $ref: '#/components/schemas/MyCartUpdateAction'
@@ -54442,6 +54668,7 @@ components:
         - product-selection
         - quote
         - review
+        - shipping
         - shipping-method
         - shopping-list
         - shopping-list-text-line-item
@@ -54488,6 +54715,7 @@ components:
          are also valid for QuoteRequests and StagedQuotes, and hence all have the same
          identifier: `quote`.n"
         review: "[Review](ctp:api:type:Review)n"
+        shipping: "[Shipping](ctp:api:type:Shipping)n"
         shipping-method: "[ShippingMethod](ctp:api:type:ShippingMethod)n"
         shopping-list: "[ShoppingList](ctp:api:type:ShoppingList)n"
         shopping-list-text-line-item: "[TextLineItem](ctp:api:type:TextLineItem) on [ShoppingList](ctp:api:type:ShoppingList)n"

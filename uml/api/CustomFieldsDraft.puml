@@ -72,27 +72,27 @@ interface CartDraft [[CartDraft.svg]]  {
     anonymousId: String
     businessUnit: [[BusinessUnitResourceIdentifier.svg BusinessUnitResourceIdentifier]]
     store: [[StoreResourceIdentifier.svg StoreResourceIdentifier]]
-    country: String
-    inventoryMode: [[InventoryMode.svg InventoryMode]]
-    taxMode: [[TaxMode.svg TaxMode]]
-    taxRoundingMode: [[RoundingMode.svg RoundingMode]]
-    taxCalculationMode: [[TaxCalculationMode.svg TaxCalculationMode]]
     lineItems: [[LineItemDraft.svg List<LineItemDraft>]]
     customLineItems: [[CustomLineItemDraft.svg List<CustomLineItemDraft>]]
-    shippingAddress: [[BaseAddress.svg BaseAddress]]
-    billingAddress: [[BaseAddress.svg BaseAddress]]
-    shippingMethod: [[ShippingMethodResourceIdentifier.svg ShippingMethodResourceIdentifier]]
+    taxMode: [[TaxMode.svg TaxMode]]
     externalTaxRateForShippingMethod: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
-    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
-    locale: String
-    deleteDaysAfterLastModification: Long
-    origin: [[CartOrigin.svg CartOrigin]]
+    taxRoundingMode: [[RoundingMode.svg RoundingMode]]
+    taxCalculationMode: [[TaxCalculationMode.svg TaxCalculationMode]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    billingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingMethod: [[ShippingMethodResourceIdentifier.svg ShippingMethodResourceIdentifier]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
     shippingMode: [[ShippingMode.svg ShippingMode]]
     customShipping: [[CustomShippingDraft.svg List<CustomShippingDraft>]]
     shipping: [[ShippingDraft.svg List<ShippingDraft>]]
-    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
     itemShippingAddresses: [[BaseAddress.svg List<BaseAddress>]]
     discountCodes: [[String.svg List<String>]]
+    country: String
+    locale: String
+    origin: [[CartOrigin.svg CartOrigin]]
+    deleteDaysAfterLastModification: Long
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
 }
 interface CustomLineItemDraft [[CustomLineItemDraft.svg]]  {
     name: [[LocalizedString.svg LocalizedString]]
@@ -105,6 +105,17 @@ interface CustomLineItemDraft [[CustomLineItemDraft.svg]]  {
     shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
     priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
 }
+interface CustomShippingDraft [[CustomShippingDraft.svg]]  {
+    key: String
+    shippingMethodName: String
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    deliveries: [[DeliveryDraft.svg List<DeliveryDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
 interface LineItemDraft [[LineItemDraft.svg]]  {
     productId: String
     variantId: Long
@@ -114,11 +125,68 @@ interface LineItemDraft [[LineItemDraft.svg]]  {
     supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
-    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
     externalPrice: [[Money.svg Money]]
     externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
     inventoryMode: [[InventoryMode.svg InventoryMode]]
     shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface ShippingDraft [[ShippingDraft.svg]]  {
+    key: String
+    shippingMethod: [[ShippingMethodReference.svg ShippingMethodReference]]
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    deliveries: [[DeliveryDraft.svg List<DeliveryDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface CartAddCustomLineItemAction [[CartAddCustomLineItemAction.svg]]  {
+    action: String
+    money: [[Money.svg Money]]
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    slug: String
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface CartAddCustomShippingMethodAction [[CartAddCustomShippingMethodAction.svg]]  {
+    action: String
+    shippingKey: String
+    shippingMethodName: String
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingRate: [[ShippingRateDraft.svg ShippingRateDraft]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    deliveries: [[DeliveryDraft.svg List<DeliveryDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface CartAddLineItemAction [[CartAddLineItemAction.svg]]  {
+    action: String
+    productId: String
+    variantId: Long
+    sku: String
+    quantity: Long
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface CartAddShippingMethodAction [[CartAddShippingMethodAction.svg]]  {
+    action: String
+    shippingKey: String
+    shippingMethod: [[ShippingMethodResourceIdentifier.svg ShippingMethodResourceIdentifier]]
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    deliveries: [[DeliveryDraft.svg List<DeliveryDraft>]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
 }
 interface CategoryDraft [[CategoryDraft.svg]]  {
     name: [[LocalizedString.svg LocalizedString]]
@@ -251,20 +319,20 @@ interface InventoryEntryDraft [[InventoryEntryDraft.svg]]  {
 interface MyCartDraft [[MyCartDraft.svg]]  {
     currency: String
     customerEmail: String
-    country: String
-    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    businessUnit: [[BusinessUnitResourceIdentifier.svg BusinessUnitResourceIdentifier]]
+    store: [[StoreResourceIdentifier.svg StoreResourceIdentifier]]
     lineItems: [[MyLineItemDraft.svg List<MyLineItemDraft>]]
-    shippingAddress: [[BaseAddress.svg BaseAddress]]
-    billingAddress: [[BaseAddress.svg BaseAddress]]
-    shippingMethod: [[ShippingMethodResourceIdentifier.svg ShippingMethodResourceIdentifier]]
-    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
-    locale: String
     taxMode: [[TaxMode.svg TaxMode]]
-    deleteDaysAfterLastModification: Long
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    billingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingAddress: [[BaseAddress.svg BaseAddress]]
+    shippingMethod: [[ShippingMethodResourceIdentifier.svg ShippingMethodResourceIdentifier]]
     itemShippingAddresses: [[BaseAddress.svg List<BaseAddress>]]
-    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
-    store: [[StoreKeyReference.svg StoreKeyReference]]
     discountCodes: [[String.svg List<String>]]
+    country: String
+    locale: String
+    deleteDaysAfterLastModification: Long
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
 }
 interface MyCustomerDraft [[MyCustomerDraft.svg]]  {
     email: String
@@ -287,13 +355,13 @@ interface MyCustomerDraft [[MyCustomerDraft.svg]]  {
 interface MyLineItemDraft [[MyLineItemDraft.svg]]  {
     productId: String
     variantId: Long
+    sku: String
     quantity: Long
     addedAt: DateTime
     supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
-    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
     shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
-    sku: String
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
 }
 interface MyPaymentDraft [[MyPaymentDraft.svg]]  {
     amountPlanned: [[Money.svg Money]]
@@ -315,6 +383,21 @@ interface MyTransactionDraft [[MyTransactionDraft.svg]]  {
     type: [[TransactionType.svg TransactionType]]
     amount: [[Money.svg Money]]
     interactionId: String
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface MyCartAddLineItemAction [[MyCartAddLineItemAction.svg]]  {
+    action: String
+    productId: String
+    variantId: Long
+    sku: String
+    quantity: Long
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    addedAt: DateTime
     custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
 }
 interface MyShoppingListAddLineItemAction [[MyShoppingListAddLineItemAction.svg]]  {
@@ -580,7 +663,13 @@ CustomFieldsDraft --> BusinessUnitDraft #green;text:green : "custom"
 CustomFieldsDraft --> CartDiscountDraft #green;text:green : "custom"
 CustomFieldsDraft --> CartDraft #green;text:green : "custom"
 CustomFieldsDraft --> CustomLineItemDraft #green;text:green : "custom"
+CustomFieldsDraft --> CustomShippingDraft #green;text:green : "custom"
 CustomFieldsDraft --> LineItemDraft #green;text:green : "custom"
+CustomFieldsDraft --> ShippingDraft #green;text:green : "custom"
+CustomFieldsDraft --> CartAddCustomLineItemAction #green;text:green : "custom"
+CustomFieldsDraft --> CartAddCustomShippingMethodAction #green;text:green : "custom"
+CustomFieldsDraft --> CartAddLineItemAction #green;text:green : "custom"
+CustomFieldsDraft --> CartAddShippingMethodAction #green;text:green : "custom"
 CustomFieldsDraft --> CategoryDraft #green;text:green : "custom"
 CustomFieldsDraft --> ChannelDraft #green;text:green : "custom"
 CustomFieldsDraft --> AddressDraft #green;text:green : "custom"
@@ -596,6 +685,7 @@ CustomFieldsDraft --> MyLineItemDraft #green;text:green : "custom"
 CustomFieldsDraft --> MyPaymentDraft #green;text:green : "custom"
 CustomFieldsDraft --> MyShoppingListDraft #green;text:green : "custom"
 CustomFieldsDraft --> MyTransactionDraft #green;text:green : "custom"
+CustomFieldsDraft --> MyCartAddLineItemAction #green;text:green : "custom"
 CustomFieldsDraft --> MyShoppingListAddLineItemAction #green;text:green : "custom"
 CustomFieldsDraft --> MyShoppingListAddTextLineItemAction #green;text:green : "custom"
 CustomFieldsDraft --> OrderEditDraft #green;text:green : "custom"

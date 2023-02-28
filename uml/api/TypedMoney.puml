@@ -32,54 +32,12 @@ interface HighPrecisionMoney [[HighPrecisionMoney.svg]]  {
     fractionDigits: Integer
     preciseAmount: Long
 }
-interface Cart [[Cart.svg]]  {
-    id: String
-    version: Long
-    createdAt: DateTime
-    lastModifiedAt: DateTime
-    key: String
-    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
-    createdBy: [[CreatedBy.svg CreatedBy]]
-    customerId: String
-    customerEmail: String
-    anonymousId: String
-    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
-    store: [[StoreKeyReference.svg StoreKeyReference]]
-    lineItems: [[LineItem.svg List<LineItem>]]
-    customLineItems: [[CustomLineItem.svg List<CustomLineItem>]]
-    totalPrice: [[TypedMoney.svg TypedMoney]]
-    taxedPrice: [[TaxedPrice.svg TaxedPrice]]
-    taxedShippingPrice: [[TaxedPrice.svg TaxedPrice]]
-    cartState: [[CartState.svg CartState]]
-    shippingAddress: [[Address.svg Address]]
-    billingAddress: [[Address.svg Address]]
-    shippingMode: [[ShippingMode.svg ShippingMode]]
-    shipping: [[Shipping.svg List<Shipping>]]
-    inventoryMode: [[InventoryMode.svg InventoryMode]]
-    taxMode: [[TaxMode.svg TaxMode]]
-    taxRoundingMode: [[RoundingMode.svg RoundingMode]]
-    taxCalculationMode: [[TaxCalculationMode.svg TaxCalculationMode]]
-    customerGroup: [[CustomerGroupReference.svg CustomerGroupReference]]
-    country: String
-    shippingInfo: [[ShippingInfo.svg ShippingInfo]]
-    discountCodes: [[DiscountCodeInfo.svg List<DiscountCodeInfo>]]
-    directDiscounts: [[DirectDiscount.svg List<DirectDiscount>]]
-    custom: [[CustomFields.svg CustomFields]]
-    paymentInfo: [[PaymentInfo.svg PaymentInfo]]
-    locale: String
-    deleteDaysAfterLastModification: Integer
-    refusedGifts: [[CartDiscountReference.svg List<CartDiscountReference>]]
-    origin: [[CartOrigin.svg CartOrigin]]
-    shippingRateInput: [[ShippingRateInput.svg ShippingRateInput]]
-    itemShippingAddresses: [[Address.svg List<Address>]]
-    totalLineItemQuantity: Long
-}
 interface CustomLineItem [[CustomLineItem.svg]]  {
     id: String
     name: [[LocalizedString.svg LocalizedString]]
     money: [[TypedMoney.svg TypedMoney]]
     taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
-    totalPrice: [[TypedMoney.svg TypedMoney]]
+    totalPrice: [[CentPrecisionMoney.svg CentPrecisionMoney]]
     slug: String
     quantity: Long
     state: [[ItemState.svg List<ItemState>]]
@@ -97,61 +55,6 @@ interface DiscountedLineItemPortion [[DiscountedLineItemPortion.svg]]  {
 interface DiscountedLineItemPrice [[DiscountedLineItemPrice.svg]]  {
     value: [[TypedMoney.svg TypedMoney]]
     includedDiscounts: [[DiscountedLineItemPortion.svg List<DiscountedLineItemPortion>]]
-}
-interface LineItem [[LineItem.svg]]  {
-    id: String
-    productId: String
-    productKey: String
-    name: [[LocalizedString.svg LocalizedString]]
-    productSlug: [[LocalizedString.svg LocalizedString]]
-    productType: [[ProductTypeReference.svg ProductTypeReference]]
-    variant: [[ProductVariant.svg ProductVariant]]
-    price: [[Price.svg Price]]
-    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
-    taxedPricePortions: [[MethodTaxedPrice.svg List<MethodTaxedPrice>]]
-    totalPrice: [[TypedMoney.svg TypedMoney]]
-    quantity: Long
-    addedAt: DateTime
-    state: [[ItemState.svg List<ItemState>]]
-    taxRate: [[TaxRate.svg TaxRate]]
-    perMethodTaxRate: [[MethodTaxRate.svg List<MethodTaxRate>]]
-    supplyChannel: [[ChannelReference.svg ChannelReference]]
-    distributionChannel: [[ChannelReference.svg ChannelReference]]
-    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
-    priceMode: [[LineItemPriceMode.svg LineItemPriceMode]]
-    lineItemMode: [[LineItemMode.svg LineItemMode]]
-    custom: [[CustomFields.svg CustomFields]]
-    inventoryMode: [[InventoryMode.svg InventoryMode]]
-    shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
-    lastModifiedAt: DateTime
-}
-interface ShippingInfo [[ShippingInfo.svg]]  {
-    shippingMethodName: String
-    price: [[TypedMoney.svg TypedMoney]]
-    shippingRate: [[ShippingRate.svg ShippingRate]]
-    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
-    taxRate: [[TaxRate.svg TaxRate]]
-    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
-    shippingMethod: [[ShippingMethodReference.svg ShippingMethodReference]]
-    deliveries: [[Delivery.svg List<Delivery>]]
-    discountedPrice: [[DiscountedLineItemPrice.svg DiscountedLineItemPrice]]
-    shippingMethodState: [[ShippingMethodState.svg ShippingMethodState]]
-}
-interface TaxPortion [[TaxPortion.svg]]  {
-    name: String
-    rate: Double
-    amount: [[TypedMoney.svg TypedMoney]]
-}
-interface TaxedItemPrice [[TaxedItemPrice.svg]]  {
-    totalNet: [[TypedMoney.svg TypedMoney]]
-    totalGross: [[TypedMoney.svg TypedMoney]]
-    totalTax: [[TypedMoney.svg TypedMoney]]
-}
-interface TaxedPrice [[TaxedPrice.svg]]  {
-    totalNet: [[TypedMoney.svg TypedMoney]]
-    totalGross: [[TypedMoney.svg TypedMoney]]
-    taxPortions: [[TaxPortion.svg List<TaxPortion>]]
-    totalTax: [[TypedMoney.svg TypedMoney]]
 }
 interface DiscountedPrice [[DiscountedPrice.svg]]  {
     value: [[TypedMoney.svg TypedMoney]]
@@ -368,20 +271,9 @@ interface StandalonePrice [[StandalonePrice.svg]]  {
 }
 TypedMoney --> CentPrecisionMoney #blue;text:blue : "type : centPrecision"
 TypedMoney --> HighPrecisionMoney #blue;text:blue : "type : highPrecision"
-TypedMoney --> Cart #green;text:green : "totalPrice"
 TypedMoney --> CustomLineItem #green;text:green : "money"
-TypedMoney --> CustomLineItem #green;text:green : "totalPrice"
 TypedMoney --> DiscountedLineItemPortion #green;text:green : "discountedAmount"
 TypedMoney --> DiscountedLineItemPrice #green;text:green : "value"
-TypedMoney --> LineItem #green;text:green : "totalPrice"
-TypedMoney --> ShippingInfo #green;text:green : "price"
-TypedMoney --> TaxPortion #green;text:green : "amount"
-TypedMoney --> TaxedItemPrice #green;text:green : "totalNet"
-TypedMoney --> TaxedItemPrice #green;text:green : "totalGross"
-TypedMoney --> TaxedItemPrice #green;text:green : "totalTax"
-TypedMoney --> TaxedPrice #green;text:green : "totalNet"
-TypedMoney --> TaxedPrice #green;text:green : "totalGross"
-TypedMoney --> TaxedPrice #green;text:green : "totalTax"
 TypedMoney --> DiscountedPrice #green;text:green : "value"
 TypedMoney --> Price #green;text:green : "value"
 TypedMoney --> PriceTier #green;text:green : "value"

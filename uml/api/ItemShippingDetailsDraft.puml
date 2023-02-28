@@ -34,22 +34,94 @@ interface LineItemDraft [[LineItemDraft.svg]]  {
     supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
-    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
     externalPrice: [[Money.svg Money]]
     externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
     inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface CartAddCustomLineItemAction [[CartAddCustomLineItemAction.svg]]  {
+    action: String
+    money: [[Money.svg Money]]
+    name: [[LocalizedString.svg LocalizedString]]
+    quantity: Long
+    slug: String
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+}
+interface CartAddLineItemAction [[CartAddLineItemAction.svg]]  {
+    action: String
+    productId: String
+    variantId: Long
+    sku: String
+    quantity: Long
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface CartRemoveLineItemAction [[CartRemoveLineItemAction.svg]]  {
+    action: String
+    lineItemId: String
+    quantity: Long
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    shippingDetailsToRemove: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface CartSetCustomLineItemShippingDetailsAction [[CartSetCustomLineItemShippingDetailsAction.svg]]  {
+    action: String
+    customLineItemId: String
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface CartSetLineItemShippingDetailsAction [[CartSetLineItemShippingDetailsAction.svg]]  {
+    action: String
+    lineItemId: String
     shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
 }
 interface MyLineItemDraft [[MyLineItemDraft.svg]]  {
     productId: String
     variantId: Long
+    sku: String
     quantity: Long
     addedAt: DateTime
     supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
-    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
     shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface MyCartAddLineItemAction [[MyCartAddLineItemAction.svg]]  {
+    action: String
+    productId: String
+    variantId: Long
     sku: String
+    quantity: Long
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    addedAt: DateTime
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface MyCartRemoveLineItemAction [[MyCartRemoveLineItemAction.svg]]  {
+    action: String
+    lineItemId: String
+    quantity: Long
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    shippingDetailsToRemove: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface MyCartSetLineItemShippingDetailsAction [[MyCartSetLineItemShippingDetailsAction.svg]]  {
+    action: String
+    lineItemId: String
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
 }
 interface CustomLineItemImportDraft [[CustomLineItemImportDraft.svg]]  {
     name: [[LocalizedString.svg LocalizedString]]
@@ -80,7 +152,15 @@ interface LineItemImportDraft [[LineItemImportDraft.svg]]  {
 
 ItemShippingDetailsDraft --> CustomLineItemDraft #green;text:green : "shippingDetails"
 ItemShippingDetailsDraft --> LineItemDraft #green;text:green : "shippingDetails"
+ItemShippingDetailsDraft --> CartAddCustomLineItemAction #green;text:green : "shippingDetails"
+ItemShippingDetailsDraft --> CartAddLineItemAction #green;text:green : "shippingDetails"
+ItemShippingDetailsDraft --> CartRemoveLineItemAction #green;text:green : "shippingDetailsToRemove"
+ItemShippingDetailsDraft --> CartSetCustomLineItemShippingDetailsAction #green;text:green : "shippingDetails"
+ItemShippingDetailsDraft --> CartSetLineItemShippingDetailsAction #green;text:green : "shippingDetails"
 ItemShippingDetailsDraft --> MyLineItemDraft #green;text:green : "shippingDetails"
+ItemShippingDetailsDraft --> MyCartAddLineItemAction #green;text:green : "shippingDetails"
+ItemShippingDetailsDraft --> MyCartRemoveLineItemAction #green;text:green : "shippingDetailsToRemove"
+ItemShippingDetailsDraft --> MyCartSetLineItemShippingDetailsAction #green;text:green : "shippingDetails"
 ItemShippingDetailsDraft --> CustomLineItemImportDraft #green;text:green : "shippingDetails"
 ItemShippingDetailsDraft --> LineItemImportDraft #green;text:green : "shippingDetails"
 @enduml
