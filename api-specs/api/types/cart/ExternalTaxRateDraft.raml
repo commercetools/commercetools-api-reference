@@ -1,32 +1,40 @@
 #%RAML 1.0 DataType
 (package): Cart
-(docs-uri): https://docs.commercetools.com/http-api-projects-carts.html#externaltaxratedraft
+(docs-uri): https://docs.commercetools.com/api/projects/carts#externaltaxratedraft
 displayName: ExternalTaxRateDraft
 type: object
+description: |
+  Controls calculation of taxed prices for Line Items, Custom Line Items, and Shipping Methods as explained in [Cart tax calculation](ctp:api:type:CartTaxCalculation).
 properties:
   name:
     type: string
-    description: ''
+    description: |
+      Name of the Tax Rate.
   amount?:
     type: number
-    description: |-
-      Percentage in the range of [0..1].
-      Must be supplied if no `subRates` are specified.
-      If `subRates` are specified
-      then the `amount` can be omitted or it must be the sum of the amounts of all `subRates`.
-  country:
-    type: string
-    description: A two-digit country code as per [ISO 3166-1
-      alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
-  state?:
-    type: string
-    description: The state in the country
-  subRates?:
-    type: SubRate[]
-    description: |-
-      For countries (e.g.
-      the US) where the total tax is a combination of multiple taxes (e.g.
-      state and local taxes).
+    description: |
+      Percentage in the range of 0-1.
+
+      - If no `subRates` are specified, a value must be defined.
+      - If `subRates` are specified, this can be omitted or its value must be the sum of all `subRates` amounts.
+    minimum: 0
+    maximum: 1
   includedInPrice?:
     type: boolean
-    description: The default value for `includedInPrice` is FALSE.
+    description: |
+      - If set to `false`, the related price is considered the net price and the provided `amount` is applied to calculate the gross price.
+      - If set to `true`, the related price is considered the gross price, and the provided `amount` is applied to calculate the net price.
+    default: false
+  country:
+    type: CountryCode
+    description: |
+      Country for which the tax applies.
+  state?:
+    type: string
+    description: |
+      State within the specified country.
+  subRates?:
+    type: SubRate[]
+    description: |
+      For countries (such as the US) where the total tax is a combination of multiple taxes (such as state and local taxes).
+    (beta): true

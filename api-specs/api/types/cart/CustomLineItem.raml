@@ -1,64 +1,72 @@
 #%RAML 1.0 DataType
 (package): Cart
-(docs-uri): https://docs.commercetools.com/http-api-projects-carts.html#customlineitem
+(docs-uri): https://docs.commercetools.com/api/projects/carts#customlineitem
 displayName: CustomLineItem
 type: object
+description: |
+  A generic item that can be added to the Cart but is not bound to a Product that can be used for discounts (negative money), vouchers, complex cart rules, additional services, or fees.
+  You control the lifecycle of this item.
 properties:
   id:
     type: string
-    description: Unique identifier of the CustomLineItem.
+    description: |
+      Unique identifier of the Custom Line Item.
   name:
     type: LocalizedString
-    description: The name of this CustomLineItem.
+    description: |
+      Name of the Custom Line Item.
   money:
     type: TypedMoney
-    description: |-
-      The cost to add to the cart.
-      The amount can be negative.
+    description: |
+      Money value of the Custom Line Item.
   taxedPrice?:
     type: TaxedItemPrice
-    description: Set once the `taxRate` is set.
+    description: |
+      Automatically set after the `taxRate` is set.
   totalPrice:
-    type: TypedMoney
-    description: |-
-      The total price of this custom line item.
-      If custom line item is discounted, then the `totalPrice` would be the discounted custom line item price multiplied by `quantity`.
-      Otherwise a total price is just a `money` multiplied by the `quantity`.
-      `totalPrice` may or may not include the taxes: it depends on the taxRate.includedInPrice property.
+    type: CentPrecisionMoney
+    description: |
+      Total price of the Custom Line Item (`money` multiplied by `quantity`).
+      If the Custom Line Item is discounted, the total price is `discountedPricePerQuantity` multiplied by `quantity`.
+
+      Includes taxes if the [TaxRate](ctp:api:type:TaxRate) `includedInPrice` is `true`.
   slug:
-    description: A unique String in the cart to identify this CustomLineItem.
     type: string
+    description: |
+      User-defined identifier used in a deep-link URL for the Custom Line Item.
+      It matches the pattern `[a-zA-Z0-9_-]{2,256}`.
   quantity:
     type: number
     format: int64
-    description: |-
-      The amount of a CustomLineItem in the cart.
-      Must be a positive integer.
+    description: |
+      Number of Custom Line Items in the Cart.
+    default: 1
   state:
-    description: ''
     type: ItemState[]
+    description: |
+      State of the Custom Line Item in the Cart.
   taxCategory?:
     type: TaxCategoryReference
-    description: ''
+    description: |
+      Used to select a Tax Rate when a Cart has the `Platform` [TaxMode](ctp:api:type:TaxMode).
   taxRate?:
     type: TaxRate
-    description: |-
-      Will be set automatically in the `Platform` TaxMode once the shipping address is set is set.
-      For the `External` tax mode the tax rate has to be set explicitly with the ExternalTaxRateDraft.
+    description: |
+      - For a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode), the `taxRate` of Custom Line Items is set automatically once a shipping address is set. The rate is based on the [TaxCategory](ctp:api:type:TaxCategory) that applies for the shipping address.
+      - For a Cart with `External` TaxMode, the `taxRate` of Custom Line Items can be set using [ExternalTaxRateDraft](ctp:api:type:ExternalTaxRateDraft).
   discountedPricePerQuantity:
-    description: ''
     type: DiscountedLineItemPriceForQuantity[]
+    description: |
+      Discounted price of a single quantity of the Custom Line Item.
   custom?:
     type: CustomFields
-    description: ''
+    description: |
+      Custom Fields of the Custom Line Item.
   shippingDetails?:
     type: ItemShippingDetails
-    description: |-
-      Container for custom line item specific address(es).
-      CustomLineItem fields that can be used in query predicates: `slug`, `name`, `quantity`,
-      `money`, `state`, `discountedPricePerQuantity`.
+    description: |
+      Container for Custom Line Item-specific addresses.
   priceMode:
     type: CustomLineItemPriceMode
     description: |
-      Specifies whether Cart Discounts with a matching [CartDiscountCustomLineItemsTarget](ctp:api:type:CartDiscountCustomLineItemsTarget)
-      are applied to the Custom Line Item.
+      Indicates whether Cart Discounts with a matching [CartDiscountCustomLineItemsTarget](ctp:api:type:CartDiscountCustomLineItemsTarget) are applied to the Custom Line Item.

@@ -1,39 +1,56 @@
 #%RAML 1.0 DataType
 (package): Me
-(docs-uri): https://docs.commercetools.com/http-api-projects-me-carts.html#mylineitemdraft
+(docs-uri): https://docs.commercetools.com/api/projects/me-carts#mylineitemdraft
 displayName: MyLineItemDraft
 type: object
+description: |
+  For Product Variant identification, either the `productId` and `variantId`, or `sku` must be provided.
 properties:
   productId?:
     type: string
+    description: |
+      `id` of the [Product](ctp:api:type:Product).
   variantId?:
     type: number
     format: int64
-  quantity:
-    type: number
-    format: int64
-    description: ''
-  addedAt?:
-    type: datetime
-    description: |-
-      When the line item was added to the cart. Optional for backwards
-      compatibility reasons only.
-  supplyChannel?:
-    type: ChannelResourceIdentifier
-    description: |-
-      By providing supply channel information, you can unique identify
-      inventory entries that should be reserved.
-      The provided channel should have the InventorySupply role.
-  distributionChannel?:
-    type: ChannelResourceIdentifier
-    description: |-
-      The channel is used to select a ProductPrice.
-      The provided channel should have the ProductDistribution role.
-  custom?:
-    type: CustomFieldsDraft
-    description: The custom fields.
-  shippingDetails?:
-    type: ItemShippingDetailsDraft
-    description: Container for line item specific address(es).
+    description: |
+      `id` of the [ProductVariant](ctp:api:type:ProductVariant) in the Product.
+      If not provided, the Master Variant is used.
   sku?:
     type: string
+    description: |
+      `sku` of the [ProductVariant](ctp:api:type:ProductVariant).
+  quantity?:
+    type: number
+    format: int64
+    description: |
+      Number of Product Variants to add to the Cart.
+    default: 1
+  addedAt?:
+    type: datetime
+    description: |
+      Date and time (UTC) the Product Variant is added to the Cart.
+      If not set, it defaults to the current date and time.
+
+      Optional for backwards compatibility reasons.
+  supplyChannel?:
+    type: ChannelResourceIdentifier
+    description: |
+      Used to identify [Inventory entries](/../api/projects/inventory) that must be reserved.
+      The Channel must have the `InventorySupply` [ChannelRoleEnum](ctp:api:type:ChannelRoleEnum).
+  distributionChannel?:
+    type: ChannelResourceIdentifier
+    description: |
+      Used to [select](ctp:api:type:LineItemPriceSelection) a Product Price.
+      The Channel must have the `ProductDistribution` [ChannelRoleEnum](ctp:api:type:ChannelRoleEnum).
+
+      If the Cart is bound to a [Store](ctp:api:type:Store) with `distributionChannels` set,
+      the Channel must match one of the Store's distribution channels.
+  shippingDetails?:
+    type: ItemShippingDetailsDraft
+    description: |
+      Container for Line Item-specific addresses.
+  custom?:
+    type: CustomFieldsDraft
+    description: |
+      Custom Fields for the Cart.

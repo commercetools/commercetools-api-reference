@@ -1,8 +1,25 @@
 #%RAML 1.0 DataType
 (package): Cart
+(docs-uri): https://docs.commercetools.com/api/projects/carts#lineitempricemode
 displayName: LineItemPriceMode
 type: string
+description: |
+  This mode indicates how the price is set for the Line Item.
 enum:
   - Platform
-  - ExternalTotal
   - ExternalPrice
+  - ExternalTotal
+(enumDescriptions):
+  Platform: |
+    The [price is selected](ctp:api:type:LineItemPriceSelection) from the Product Variant.
+    This is the default mode.
+  ExternalPrice: |
+    The Line Item price is set externally.
+    Cart Discounts can apply to Line Items with this price mode.
+    All update actions that change the quantity of a Line Item with this price mode require the `externalPrice` field to be given.
+  ExternalTotal: |
+    The Line Item price with the total is set externally.
+    Cart Discounts are deactivated for Line Items with this price mode.
+    Although a Line Item with this price mode has both `price` and `totalPrice` set externally, only `totalPrice` is used to calculate the total price of a Cart.
+    All update actions that change the quantity of a Line Item with this price mode can set the new price with the `externalTotal` field.
+    If the `externalTotal` field is not given in the update actions, the external price is unset and the price mode is set to `Platform`.

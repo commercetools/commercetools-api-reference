@@ -1,17 +1,42 @@
 #%RAML 1.0 DataType
 (package): Cart
-(docs-uri): https://docs.commercetools.com/http-api-projects-carts.html#change-lineitem-quantity
+(docs-uri): https://docs.commercetools.com/api/projects/carts#change-lineitem-quantity
 type: CartUpdateAction
 displayName: CartChangeLineItemQuantityAction
 discriminatorValue: changeLineItemQuantity
 example: !include ../../../examples/Cart/CartChangeLineItemQuantityAction.json
+description: |
+  When multiple shipping addresses are set for a Line Item,
+  use the [Remove LineItem](ctp:api:type:CartRemoveLineItemAction) and [Add LineItem](ctp:api:type:CartAddLineItemAction) update action
+  to change the shipping details.
+  Since it is not possible for the API to infer how the overall change in the Line Item quantity should be distributed over the sub-quantities,
+  the `shippingDetails` field is kept in its current state to avoid data loss.
+
+  To change the Line Item quantity and shipping details together,
+  use this update action in combination with the [Set LineItemShippingDetails](ctp:api:type:CartSetCustomLineItemShippingDetailsAction) update action
+  in a single Cart update command.
+
+  The [LineItem](ctp:api:type:LineItem) price is set as described in [LineItem Price selection](ctp:api:type:LineItemPriceSelection).
 properties:
   lineItemId:
     type: string
+    description: |
+      `id` of the [LineItem](ctp:api:type:LineItem) to update.
   quantity:
     type: number
     format: int64
+    description: |
+      New value to set.
+
+      If `0`, the Line Item is removed from the Cart.
+    minimum: 0
   externalPrice?:
     type: Money
+    description: |
+      Sets the [LineItem](ctp:api:type:LineItem) `price` to the given value when changing the quantity of a Line Item with the `ExternalPrice` [LineItemPriceMode](ctp:api:type:LineItemPriceMode).
+
+      The LineItem price is updated as described in LineItem Price selection.
   externalTotalPrice?:
     type: ExternalLineItemTotalPrice
+    description: |
+      Sets the [LineItem](ctp:api:type:LineItem) `price` and `totalPrice` to the given value when changing the quantity of a Line Item with the `ExternalTotal` [LineItemPriceMode](ctp:api:type:LineItemPriceMode).

@@ -1,68 +1,73 @@
 #%RAML 1.0 DataType
 (package): Cart
-(docs-uri): https://docs.commercetools.com/http-api-projects-carts.html#lineitemdraft
+(docs-uri): https://docs.commercetools.com/api/projects/carts#lineitemdraft
 displayName: LineItemDraft
-(builder):
-  - paramNames:
-      - productId
-      - variantId
-      - quantity
-  - paramNames:
-      - sku
-      - quantity
+type: object
+description: |
+  For Product Variant identification, either the `productId` and `variantId`, or `sku` must be provided.
 properties:
   productId?:
     type: string
+    description: |
+      `id` of the [Product](ctp:api:type:Product).
   variantId?:
     type: number
     format: int64
+    description: |
+      `id` of the [ProductVariant](ctp:api:type:ProductVariant) in the Product.
+      If not provided, the Master Variant is used.
   sku?:
     type: string
+    description: |
+      `sku` of the [ProductVariant](ctp:api:type:ProductVariant).
   quantity?:
     type: number
     format: int64
+    description: |
+      Number of Product Variants to add to the Cart.
     default: 1
-    description: |-
-      The amount of a `LineItem`in the cart.
-      Must be a positive integer.
   addedAt?:
     type: datetime
-    description: |-
-      When the line item was added to the cart. Optional for backwards
-      compatibility reasons only.
+    description: |
+      Date and time (UTC) the Product Variant is added to the Cart.
+      If not set, it defaults to the current date and time.
+
+      Optional for backwards compatibility reasons.
   supplyChannel?:
     type: ChannelResourceIdentifier
-    description: |-
-      By providing supply channel information, you can unique identify
-      inventory entries that should be reserved.
-      The provided channel should have
-      the InventorySupply role.
+    description: |
+      Used to identify [Inventory entries](/../api/projects/inventory) that must be reserved.
+      The referenced Channel must have the `InventorySupply` [ChannelRoleEnum](ctp:api:type:ChannelRoleEnum).
   distributionChannel?:
     type: ChannelResourceIdentifier
-    description: |-
-      The channel is used to select a ProductPrice.
-      The provided channel should have the ProductDistribution role.
+    description: |
+      Used to [select](ctp:api:type:LineItemPriceSelection) a Product Price.
+      The referenced Channel must have the `ProductDistribution` [ChannelRoleEnum](ctp:api:type:ChannelRoleEnum).
+
+      If the Cart is bound to a [Store](ctp:api:type:Store) with `distributionChannels` set,
+      the Channel must match one of the Store's distribution channels.
   externalTaxRate?:
     type: ExternalTaxRateDraft
-    description: An external tax rate can be set if the cart has the `External` TaxMode.
-  custom?:
-    type: CustomFieldsDraft
-    description: The custom fields.
+    description: |
+      External Tax Rate for the Line Item if the Cart has the `External` [TaxMode](ctp:api:type:TaxMode).
   externalPrice?:
     type: Money
-    description:
-      Sets the line item `price` to the given value and sets the line item
-      `priceMode` to `ExternalPrice` LineItemPriceMode.
+    description: |
+      Sets the [LineItem](ctp:api:type:LineItem) `price` value, and the `priceMode` to `ExternalPrice` [LineItemPriceMode](ctp:api:type:LineItemPriceMode).
   externalTotalPrice?:
     type: ExternalLineItemTotalPrice
-    description:
-      Sets the line item `price` and `totalPrice` to the given values and sets
-      the line item `priceMode` to `ExternalTotal` LineItemPriceMode.
+    description: |
+      Sets the [LineItem](ctp:api:type:LineItem) `price` and `totalPrice` values, and the `priceMode` to `ExternalTotal` [LineItemPriceMode](ctp:api:type:LineItemPriceMode).
   inventoryMode?:
     type: InventoryMode
-    description: |-
-      Inventory mode specific to the line item only, valid for the entire `quantity` of the line item.
-      Set only if inventory mode should be different from the `inventoryMode` specified on the [Cart](ctp:api:type:Cart).
+    description: |
+      Inventory mode specific to the Line Item only, and valid for the entire `quantity` of the Line Item.
+      Set only if the inventory mode should be different from the `inventoryMode` specified on the [Cart](ctp:api:type:Cart).
   shippingDetails?:
     type: ItemShippingDetailsDraft
-    description: Container for line item specific address(es).
+    description: |
+      Container for Line Item-specific addresses.
+  custom?:
+    type: CustomFieldsDraft
+    description: |
+      Custom Fields for the Line Item.

@@ -28,7 +28,6 @@ uriParameters:
           },
       ]
     displayName: Query carts in store
-    description: Queries carts in a specific Store.
     responses:
       200:
         body:
@@ -48,9 +47,9 @@ uriParameters:
           },
       ]
     description: |
-      Creates a [Cart](ctp:api:type:Cart) in the Store specified by `storeKey`.
-      When using this endpoint the Cart's `store` field is always set to the store specified in the path parameter.
-      If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
+      The `store` field in the created [Cart](ctp:api:type:Cart) is set to the Store specified by the `storeKey` path parameter.
+
+      Specific Error Codes: [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
     body:
       application/json:
         example: !include ../examples/cart-create.example.json
@@ -68,15 +67,22 @@ uriParameters:
     get:
       displayName: Get cart by customer id in store
       securedBy:
-        [oauth_2_0: { scopes: ['view_orders:{projectKey}:{storeKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_orders:{projectKey}',
+                  'view_orders:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       description: |
-        Retrieves the active cart of the customer that has been modified most recently in a specific Store.
+        Retrieves the recently modified active Cart of a Customer with [CartOrigin](ctp:api:type:CartOrigin) `Customer`. If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
 
-        If the cart exists in the project but does not have the store field, or the store field
-        references a different store, this method returns a ResourceNotFound error.
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
 
-        The cart may not contain up-to-date prices, discounts etc. If you want to ensure they're up-to-date,
-        send an Update request with the Recalculate update action instead.
+        To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       responses:
         200:
           body:
@@ -103,11 +109,9 @@ uriParameters:
             },
         ]
       description: |
-        Returns a cart by its key from a specific Store.
-        If the cart exists in the project but does not have the store field,
-        or the store field references a different store, this method returns a ResourceNotFound error.
-        The cart may not contain up-to-date prices, discounts etc.
-        If you want to ensure they're up-to-date, send an Update request with the Recalculate update action instead.
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+
+        To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       responses:
         200:
           body:
@@ -127,9 +131,7 @@ uriParameters:
             },
         ]
       description: |
-        Updates a [Cart](ctp:api:type:Cart) in the Store specified by `storeKey`.
-        If the Cart exists in the Project but does not have the store field,
-        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFound) error.
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       body:
         application/json:
           example: !include ../examples/cart-update.example.json
@@ -140,6 +142,8 @@ uriParameters:
               example: !include ../examples/cart.example.json
     delete:
       displayName: Delete cart by key in store
+      description: |
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       is:
         - dataErasure
       securedBy:
@@ -162,6 +166,12 @@ uriParameters:
     type: base
     post:
       displayName: Replicate cart for store
+      description: |
+        Creates a new Cart by replicating an existing Cart or Order. Can be useful in cases where a customer wants to cancel a recent order to make some changes or reorder a previous order.
+
+        The replicated Cart preserves Customer information, Line Items and Custom Line Items, Custom Fields, Discount Codes, and other settings of the Cart or Order. If the Line Items become invalid, for example, due to removed Products or Prices, they are removed from the new Cart. If the Customer switches to another Customer Group, the new Cart is updated with the new value. It has up-to-date Tax Rates, Prices, and Line Item product data and is in `Active` [CartState](ctp:api:type:CartState).
+
+        The new Cart does not contain payments or deliveries. The [State](ctp:api:type:ItemState) of Line Items and Custom Line Items is reset to `initial`.
       body:
         application/json:
           type: ReplicaCartDraft
@@ -203,11 +213,9 @@ uriParameters:
             },
         ]
       description: |
-        Returns a cart by its ID from a specific Store.
-        If the cart exists in the project but does not have the store field,
-        or the store field references a different store, this method returns a ResourceNotFound error.
-        The cart may not contain up-to-date prices, discounts etc.
-        If you want to ensure they're up-to-date, send an Update request with the Recalculate update action instead.
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+
+        To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       responses:
         200:
           body:
@@ -239,6 +247,8 @@ uriParameters:
               example: !include ../examples/cart.example.json
     delete:
       displayName: Delete cart by id in store
+      description: |
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       is:
         - dataErasure
       securedBy:
@@ -340,7 +350,7 @@ uriParameters:
         Returns an order by its order number from a specific Store.
 
         If the order exists in the project but does not have the store field,
-        or the store field references a different store, this method returns a ResourceNotFound error.
+        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
         In case the orderNumber does not match the regular expression [a-zA-Z0-9_\-]+,
         it should be provided in URL-encoded format.
       responses:
@@ -364,7 +374,7 @@ uriParameters:
       description: |
         Updates an order in the store specified by {storeKey}.
         If the order exists in the project but does not have the store field,
-        or the store field references a different store, this method returns a ResourceNotFound error.
+        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
         In case the orderNumber does not match the regular expression [a-zA-Z0-9_\-]+,
         it should be provided in URL-encoded format.
       body:
@@ -418,7 +428,7 @@ uriParameters:
       description: |
         Returns an order by its ID from a specific Store.
         If the order exists in the project but does not have the store field,
-        or the store field references a different store, this method returns a ResourceNotFound error.
+        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       responses:
         200:
           body:
@@ -440,7 +450,7 @@ uriParameters:
       description: |
         Updates an order in the store specified by {storeKey}.
         If the order exists in the project but does not have the store field,
-        or the store field references a different store, this method returns a ResourceNotFound error.
+        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       body:
         application/json:
           example: !include ../examples/order-update.example.json
@@ -513,6 +523,10 @@ uriParameters:
                 ],
             },
         ]
+      description: |
+        The `store` field in the created [Cart](ctp:api:type:Cart) is set to the Store specified by the `storeKey` path parameter.
+
+        Specific Error Codes: [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
       body:
         application/json:
           example: !include ../examples/cart-create.example.json
@@ -548,6 +562,8 @@ uriParameters:
                 example: !include ../examples/cart.example.json
       post:
         displayName: Update my cart by id in store
+        description: |
+          If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
         securedBy:
           [
             oauth_2_0:
@@ -665,6 +681,14 @@ uriParameters:
     type: base
     get:
       displayName: Get my active cart in store
+      description: |
+        Retrieves the Customer's most recently modified active Cart in the Store specified by the `storeKey` path parameter.
+
+        Carts with `Merchant` or `Quote` [CartOrigin](ctp:api:type:CartOrigin) are ignored.
+
+        If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+      is:
+        - expandable
       securedBy:
         [
           oauth_2_0:
@@ -1129,7 +1153,7 @@ uriParameters:
         - If the Customer does not have a Cart, the most recently modified anonymous cart becomes the Customer's Cart.
         - If the Customer already has a Cart, the most recently modified anonymous cart is handled according to [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
 
-        If a Cart is returned as part of [CustomerSignInResult](ctp:api:type:CustomerSignInResult), it has been [recalculated](/../api/projects/carts#recalculate) with up-to-date prices, taxes, discounts, and invalid line items removed.
+        If a Cart is returned as part of [CustomerSignInResult](ctp:api:type:CustomerSignInResult), it has been [recalculated](ctp:api:type:MyCartRecalculateAction) with up-to-date prices, taxes, discounts, and invalid line items removed.
 
         If an account with the given credentials is not found, an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error is returned.
       securedBy:

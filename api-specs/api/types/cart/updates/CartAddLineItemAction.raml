@@ -1,32 +1,75 @@
 #%RAML 1.0 DataType
 (package): Cart
-(docs-uri): https://docs.commercetools.com/http-api-projects-carts.html#add-lineitem
+(docs-uri): https://docs.commercetools.com/api/projects/carts#add-lineitem
 type: CartUpdateAction
 displayName: CartAddLineItemAction
 discriminatorValue: addLineItem
 example: !include ../../../examples/Cart/CartAddLineItemAction.json
+description: |
+  If the Cart contains a [LineItem](ctp:api:type:LineItem) for a Product Variant with the same [LineItemMode](ctp:api:type:LineItemMode), [Custom Fields](/../api/projects/custom-fields), supply and distribution channel, then only the quantity of the existing Line Item is increased.
+  If [LineItem](ctp:api:type:LineItem) `shippingDetails` is set, it is merged. All addresses will be present afterwards and, for address keys present in both shipping details, the quantity will be summed up.
+  A new Line Item is added when the `externalPrice` or `externalTotalPrice` is set in this update action.
+  The [LineItem](ctp:api:type:LineItem) price is set as described in [LineItem Price selection](ctp:api:type:LineItemPriceSelection).
+
+  If the Tax Rate is not set, a [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError) error is returned.
+
+  If the Line Items do not have a Price according to the [Product](ctp:api:type:Product) `priceMode` value for a selected currency and/or country, Customer Group, or Channel, a [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError) error is returned.
 properties:
-  custom?:
-    type: CustomFieldsDraft
-  distributionChannel?:
-    type: ChannelResourceIdentifier
-  externalTaxRate?:
-    type: ExternalTaxRateDraft
   productId?:
     type: string
+    description: |
+      ID of an existing [Product](ctp:api:type:Product).
+
+      Either the `productId` and `variantId`, or `sku` must be provided.
   variantId?:
     type: number
     format: int64
+    description: |
+      ID of an existing [ProductVariant](ctp:api:type:ProductVariant) in the Product.
+
+      If not given, the Master Variant is used.
+
+      Either the `productId` and `variantId`, or `sku` must be provided.
   sku?:
     type: string
+    description: |
+      SKU of an existing [ProductVariant](ctp:api:type:ProductVariant).
+
+      Either the `productId` and `variantId`, or `sku` must be provided.
   quantity?:
     type: number
     format: int64
+    description: |
+      Number of Line Items to add to the Cart.
+    default: 1
+  distributionChannel?:
+    type: ChannelResourceIdentifier
+    description: |
+      Used to [select](ctp:api:type:LineItemPriceSelection) a Product Price.
+      The Channel must have the `ProductDistribution` [ChannelRoleEnum](ctp:api:type:ChannelRoleEnum).
+      If the Cart is bound to a [Store](ctp:api:type:Store) with `distributionChannels` set, the Channel must match one of the Store's distribution channels.
   supplyChannel?:
     type: ChannelResourceIdentifier
+    description: |
+      Used to identify [Inventory entries](/../api/projects/inventory) that must be reserved.
+      The Channel must have the `InventorySupply` [ChannelRoleEnum](ctp:api:type:ChannelRoleEnum).
   externalPrice?:
     type: Money
+    description: |
+      Sets the [LineItem](ctp:api:type:LineItem) `price` value, and the `priceMode` to `ExternalPrice` [LineItemPriceMode](ctp:api:type:LineItemPriceMode).
   externalTotalPrice?:
     type: ExternalLineItemTotalPrice
+    description: |
+      Sets the [LineItem](ctp:api:type:LineItem) `price` and `totalPrice` values, and the `priceMode` to `ExternalTotal` [LineItemPriceMode](ctp:api:type:LineItemPriceMode).
+  externalTaxRate?:
+    type: ExternalTaxRateDraft
+    description: |
+      External Tax Rate for the Line Item, if the Cart has the `External` [TaxMode](ctp:api:type:TaxMode).
   shippingDetails?:
     type: ItemShippingDetailsDraft
+    description: |
+      Container for Line Item-specific addresses.
+  custom?:
+    type: CustomFieldsDraft
+    description: |
+      Custom Fields for the Line Item.

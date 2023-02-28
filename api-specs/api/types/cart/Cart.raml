@@ -1,6 +1,6 @@
 #%RAML 1.0 DataType
 (package): Cart
-(docs-uri): https://docs.commercetools.com/http-api-projects-carts.html#cart
+(docs-uri): https://docs.commercetools.com/api/projects/carts#cart
 displayName: Cart
 (updateType): CartUpdate
 type: BaseResource
@@ -8,173 +8,189 @@ properties:
   id:
     (identifier): true
     type: string
-    description: Unique identifier of the Cart.
-  key?:
-    type: string
-    description: User-defined unique identifier of the Cart.
-    pattern: ^[A-Za-z0-9_-]+$
-    minLength: 2
-    maxLength: 256
+    description: |
+      Unique identifier of the Cart.
   version:
     type: number
     format: int64
-    description: The current version of the cart.
-  createdAt:
-    type: datetime
-    description: ''
-  lastModifiedAt:
-    type: datetime
-    description: ''
-  lastModifiedBy?:
-    type: LastModifiedBy
-    (beta): true
     description: |
-      Present on resources updated after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
-  createdBy?:
-    type: CreatedBy
-    (beta): true
+      Current version of the Cart.
+  key?:
+    type: string
     description: |
-      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
+      User-defined unique identifier of the Cart.
+    pattern: ^[A-Za-z0-9_-]+$
+    minLength: 2
+    maxLength: 256
   customerId?:
     type: string
-    description: ''
+    description: |
+      `id` of the [Customer](ctp:api:type:Customer) that the Cart belongs to.
   customerEmail?:
     type: string
-    description: ''
+    description: |
+      Email address of the Customer that the Cart belongs to.
+  customerGroup?:
+    type: CustomerGroupReference
+    description: |
+      [Reference](ctp:api:type:Reference) to the Customer Group of the Customer that the Cart belongs to. Used for [LineItem Price selection](ctp:api:type:LineItemPriceSelection).
   anonymousId?:
     type: string
-    description:
-      Identifies carts and orders belonging to an anonymous session (the
-      customer has not signed up/in yet).
+    description: |
+      [Anonymous session](ctp:api:type:AnonymousSession) associated with the Cart.
   businessUnit?:
     type: BusinessUnitKeyReference
     (beta): true
     description: |
-      The Business Unit the Cart belongs to.
+      [Reference](ctp:api:type:Reference) to a Business Unit the Cart belongs to.
   store?:
     type: StoreKeyReference
-    description: ''
+    description: |
+      [Reference](ctp:api:type:Reference) to a Store the Cart belongs to.
   lineItems:
     type: LineItem[]
-    description: ''
+    description: |
+      [Line Items](ctp:api:type:LineItems) added to the Cart.
   customLineItems:
     type: CustomLineItem[]
-    description: ''
-  totalPrice:
-    description: |-
-      The sum of all `totalPrice` fields of the `lineItems` and `customLineItems`, as well as the `price` field of `shippingInfo` (if it exists).
-      `totalPrice` may or may not include the taxes: it depends on the taxRate.includedInPrice property of each price.
-    type: TypedMoney
-  taxedPrice?:
-    type: TaxedPrice
-    description: |-
-      Not set until the shipping address is set.
-      Will be set automatically in the `Platform` TaxMode.
-      For the `External` tax mode it will be set  as soon as the external tax rates for all line items, custom line items, and shipping in the cart are set.
-  taxedShippingPrice?:
-    type: TaxedPrice
-    description: |-
-      Sum of `taxedPrice` of [ShippingInfo](ctp:api:type:ShippingInfo) across all Shipping Methods.
-      For `Platform` [TaxMode](ctp:api:type:TaxMode), it is set automatically only if [shipping address is set](ctp:api:type:CartSetShippingAddressAction) or [Shipping Method is added](ctp:api:type:CartAddShippingMethodAction) to the Cart.
-  cartState:
-    type: CartState
-    description: ''
-  shippingAddress?:
-    type: Address
-    description:
-      The shipping address is used to determine the eligible shipping methods
-      and rates as well as the tax rate of the line items.
-  billingAddress?:
-    type: Address
-    description: ''
-  shippingMode:
-    type: ShippingMode
-    description: |-
-      Indicates whether one or multiple Shipping Methods are added to the Cart.
-    default: Single
-  shipping:
-    type: Shipping[]
-    description: |-
-      Holds all shipping-related information per Shipping Method of a Cart with `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
-
-      It is automatically updated after the [Shipping Method is added](ctp:api:type:CartAddShippingMethodAction).
-  inventoryMode?:
-    type: InventoryMode
-    description: ''
-  taxMode:
-    type: TaxMode
-    description: ''
-  taxRoundingMode:
-    type: RoundingMode
-    description:
-      When calculating taxes for `taxedPrice`, the selected mode is used for
-      rounding.
-  taxCalculationMode:
-    type: TaxCalculationMode
-    description:
-      When calculating taxes for `taxedPrice`, the selected mode is used for
-      calculating the price with `LineItemLevel` (horizontally) or
-      `UnitPriceLevel` (vertically) calculation mode.
-  customerGroup?:
-    type: CustomerGroupReference
-    description: |-
-      Set automatically when the customer is set and the customer is a member of a customer group.
-      Used for product variant
-      price selection.
-  country?:
-    type: CountryCode
-    description: |-
-      A two-digit country code as per [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
-      Used for product variant price selection.
-  shippingInfo?:
-    type: ShippingInfo
     description: |
-      Shipping-related information of a Cart with `Single` [ShippingMode](ctp:api:type:ShippingMode).
-      Set automatically once the ShippingMethod is set.
-  discountCodes?:
-    type: DiscountCodeInfo[]
-    description: ''
-  directDiscounts?:
-    type: DirectDiscount[]
-    (beta): true
-    description: ''
-  custom?:
-    type: CustomFields
-    description: ''
-  paymentInfo?:
-    type: PaymentInfo
-    description: ''
-  locale?:
-    type: string
-    description: ''
-  deleteDaysAfterLastModification?:
-    type: integer
-    description:
-      The cart will be deleted automatically if it hasn't been modified for the
-      specified amount of days and it is in the `Active` CartState.
-  refusedGifts:
-    type: CartDiscountReference[]
-    description:
-      Automatically filled when a line item with LineItemMode `GiftLineItem` is
-      removed from the cart.
-  origin:
-    type: CartOrigin
-    description: |-
-      The origin field indicates how this cart was created.
-      The value `Customer` indicates, that the cart was created by the customer.
-  shippingRateInput?:
-    type: ShippingRateInput
-    description: The shippingRateInput is used as an input to select a
-      ShippingRatePriceTier.
-  itemShippingAddresses?:
-    type: Address[]
-    description: |-
-      Contains addresses for carts with multiple shipping addresses.
-      Line items reference these addresses under their `shippingDetails`.
-      The addresses captured here are not used to determine eligible shipping methods or the applicable tax rate.
-      Only the cart's `shippingAddress` is used for this.
+      [Custom Line Items](ctp:api:type:CustomLineItems) added to the Cart.
   totalLineItemQuantity?:
     type: number
     format: int64
+    description: |
+      Sum of all [LineItem](ctp:api:type:LineItem) quantities, excluding [CustomLineItems](ctp:api:type:CustomLineItem). Only present when the Cart has at least one LineItem.
+  totalPrice:
+    type: CentPrecisionMoney
+    description: |
+      Sum of the `totalPrice` field of all [LineItems](ctp:api:type:LineItem) and [CustomLineItems](ctp:api:type:CustomLineItem), and if available, the `price` field of [ShippingInfo](ctp:api:type:ShippingInfo).
+
+      Taxes are included if [TaxRate](ctp:api:type:TaxRate) `includedInPrice` is `true` for each price.
+  taxedPrice?:
+    type: TaxedPrice
+    description: |
+      - For a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode), it is automatically set when a [shipping address is set](ctp:api:type:CartSetShippingAddressAction).
+      - For a Cart with `External` [TaxMode](ctp:api:type:TaxMode), it is automatically set when the external Tax Rate for all Line Items, Custom Line Items, and Shipping Methods in the Cart are set.
+  taxedShippingPrice?:
+    type: TaxedPrice
     description: |-
-      The sum off all the [Line Items](ctp:api:type:LineItem) quantities. Does not take [Custom Line Items](ctp:api:type:CustomLineItem) into consideration.
+      Sum of the `taxedPrice` field of [ShippingInfo](ctp:api:type:ShippingInfo) across all Shipping Methods.
+  taxMode:
+    type: TaxMode
+    description: |
+      Indicates how Tax Rates are set.
+    default: Platform
+  taxRoundingMode:
+    type: RoundingMode
+    description: |
+      Indicates how monetary values are rounded when calculating taxes for `taxedPrice`.
+    default: HalfEven
+  taxCalculationMode:
+    type: TaxCalculationMode
+    description: |
+      Indicates how taxes are calculated when calculating taxes for `taxedPrice`.
+    default: LineItemLevel
+  inventoryMode:
+    type: InventoryMode
+    description: |
+      Indicates how stock quantities are tracked for Line Items in the Cart.
+    default: None
+  cartState:
+    type: CartState
+    description: |
+      Current status of the Cart.
+    default: Active
+  billingAddress?:
+    type: Address
+    description: |
+      Billing address associated with the Cart.
+  shippingAddress?:
+    type: Address
+    description: |
+      Shipping address associated with the Cart. Determines eligible [ShippingMethod](ctp:api:type:ShippingMethod) rates and Tax Rates of Line Items.
+  shippingMode:
+    type: ShippingMode
+    description: |-
+      Indicates whether the Cart has one or multiple Shipping Methods.
+    default: Single
+  shippingInfo?:
+    type: ShippingInfo
+    description: |
+      Shipping-related information of a Cart with `Single` [ShippingMode](ctp:api:type:ShippingMode). Automatically set when a [Shipping Method is set](ctp:api:type:CartSetShippingMethodAction).
+  shipping:
+    type: Shipping[]
+    description: |-
+      Shipping-related information of a Cart with `Multiple` [ShippingMode](ctp:api:type:ShippingMode). Updated automatically each time a new [Shipping Method is added](ctp:api:type:CartAddShippingMethodAction).
+  shippingRateInput?:
+    type: ShippingRateInput
+    description: |
+      Input used to select a [ShippingRatePriceTier](ctp:api:type:ShippingRatePriceTier).
+      The data type of this field depends on the `shippingRateInputType.type` configured in the [Project](ctp:api:type:Project):
+
+      - If `CartClassification`, it is [ClassificationShippingRateInput](ctp:api:type:ClassificationShippingRateInput).
+      - If `CartScore`, it is [ScoreShippingRateInput](ctp:api:type:ScoreShippingRateInput).
+      - If `CartValue`, it cannot be used.
+
+  itemShippingAddresses:
+    type: Address[]
+    description: |
+      Additional shipping addresses of the Cart as specified by [LineItems](ctp:api:type:LineItem) using the `shippingDetails` field.
+
+      Eligible Shipping Methods or applicable Tax Rates are determined by the address in `shippingAddress`, and not `itemShippingAddresses`.
+  discountCodes:
+    type: DiscountCodeInfo[]
+    description: |
+      Discount Codes applied to the Cart. A Cart that has `directDiscounts` cannot have `discountCodes`.
+  directDiscounts:
+    type: DirectDiscount[]
+    (beta): true
+    description: |
+      Direct Discounts added to the Cart. A Cart that has `discountCodes` cannot have `directDiscounts`.
+  refusedGifts:
+    type: CartDiscountReference[]
+    description: |
+      Automatically set when a Line Item with `GiftLineItem` [LineItemMode](ctp:api:type:LineItemMode) is [removed](ctp:api:type:CartRemoveLineItemAction) from the Cart.
+  paymentInfo?:
+    type: PaymentInfo
+    description: |
+      Payment information related to the Cart.
+  country?:
+    type: CountryCode
+    description: |
+      Used for [LineItem Price selection](ctp:api:type:LineItemPriceSelection).
+  locale?:
+    type: Locale
+    description: |
+      Languages of the Cart. Can only contain languages supported by the [Project](ctp:api:type:Project).
+  origin:
+    type: CartOrigin
+    description: |
+      Indicates how the Cart was created.
+    default: Customer
+  custom?:
+    type: CustomFields
+    description: |
+      Custom Fields of the Cart.
+  deleteDaysAfterLastModification?:
+    type: integer
+    description: |
+      Number of days after which an active Cart is deleted since its last modification. Configured in [Project settings](ctp:api:type:CartsConfiguration).
+    default: 90
+  createdAt:
+    type: datetime
+    description: |
+      Date and time (UTC) the Cart was initially created.
+  lastModifiedAt:
+    type: datetime
+    description: |
+      Date and time (UTC) the Cart was last updated.
+  lastModifiedBy?:
+    type: LastModifiedBy
+    (beta): true
+    description: |
+      Present on resources updated after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).
+  createdBy?:
+    type: CreatedBy
+    (beta): true
+    description: |
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).

@@ -1,7 +1,22 @@
 #%RAML 1.0 DataType
 (package): Cart
+(docs-uri): https://docs.commercetools.com/api/projects/carts#lineitemmode
 displayName: LineItemMode
 type: string
+description: |
+  Indicates how a Line Item is added to a Cart.
 enum:
   - Standard
   - GiftLineItem
+(enumDescriptions):
+  Standard: |
+    The Line Item is added during [Cart creation](/../api/projects/carts#create-cart) or using the [Add LineItem](ctp:api:type:CartAddLineItemAction) update action.
+    The Line Item quantity can be changed without restriction.
+  GiftLineItem: |
+    The Line Item is added automatically by a Cart Discount with [CartDiscountValueGiftLineItem](ctp:api:type:CartDiscountValueGiftLineItem).
+
+    The quantity cannot be [increased](ctp:api:type:CartChangeLineItemQuantityAction), and it won't be merged when the same Line Item is [added](ctp:api:type:CartAddLineItemAction) to the Cart.
+    If the gift is [removed](ctp:api:type:CartRemoveLineItemAction), an entry is added to the `refusedGifts` array and the discount won't be applied to the Cart.
+    The price cannot be changed [externally](ctp:api:type:CartSetLineItemTotalPriceAction).
+
+    All other updates, such as the ones related to Custom Fields, can be used.

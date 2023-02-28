@@ -1,13 +1,13 @@
 #%RAML 1.0 DataType
 (package): Cart
-(docs-uri): https://docs.commercetools.com/http-api-projects-carts.html#cartdraft
+(docs-uri): https://docs.commercetools.com/api/projects/carts#cartdraft
 displayName: CartDraft
 type: object
 properties:
   currency:
     type: CurrencyCode
-    description: A three-digit currency code as per [ISO
-      4217](https://en.wikipedia.org/wiki/ISO_4217).
+    description: |
+      Currency the Cart uses.
   key?:
     type: string
     description: |
@@ -17,88 +17,90 @@ properties:
     maxLength: 256
   customerId?:
     type: string
-    description: Id of an existing Customer.
+    description: |
+      `id` of the [Customer](ctp:api:type:Customer) that the Cart belongs to.
   customerEmail?:
     type: string
-    description: ''
+    description: |
+      Email address of the Customer that the Cart belongs to.
   customerGroup?:
     type: CustomerGroupResourceIdentifier
-    description: |-
-      Will be set automatically when the `customerId` is set and the customer is a member of a customer group.
-      Can be set explicitly when no `customerId` is present.
+    description: |
+      [ResourceIdentifier](ctp:api:type:ResourceIdentifier) to the Customer Group of the Customer that the Cart belongs to. Used for [LineItem Price selection](ctp:api:type:LineItemPriceSelection).
+
+      It is automatically set if the Customer referenced in `customerId` belongs to a Customer Group.
+      It can also be set explicitly when no `customerId` is present.
   anonymousId?:
     type: string
-    description:
-      Assigns the new cart to an anonymous session (the customer has not signed
-      up/in yet).
+    description: |
+      [Anonymous session](ctp:api:type:AnonymousSession) associated with the Cart.
   businessUnit?:
     type: BusinessUnitResourceIdentifier
     (beta): true
     description: |
-      The Business Unit the Cart belongs to.
+      [ResourceIdentifier](ctp:api:type:ResourceIdentifier) to the Business Unit the Cart should belong to.
   store?:
     type: StoreResourceIdentifier
-    description: |-
-      Assigns the new cart to the store.
-      The store assignment can not be modified.
-  country?:
-    type: string
-    description: A two-digit country code as per [ISO 3166-1
-      alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
-  inventoryMode?:
-    type: InventoryMode
-    description: Default inventory mode is `None`.
+    description: |
+      [ResourceIdentifier](ctp:api:type:ResourceIdentifier) to the Store the Cart should belong to. Once set, it cannot be updated.
+  lineItems?:
+    type: LineItemDraft[]
+    description: |
+      [Line Items](ctp:api:type:LineItems) to add to the Cart.
+  customLineItems?:
+    type: CustomLineItemDraft[]
+    description: |
+      [Custom Line Items](ctp:api:type:CustomLineItems) to add to the Cart.
   taxMode?:
     type: TaxMode
-    description: The default tax mode is `Platform`.
-  taxRoundingMode?:
-    type: RoundingMode
-    description: The default tax rounding mode is `HalfEven`.
-  taxCalculationMode?:
-    type: TaxCalculationMode
-    description: The default tax calculation mode is `LineItemLevel`.
-  lineItems?:
-    description: ''
-    type: LineItemDraft[]
-  customLineItems?:
-    description: ''
-    type: CustomLineItemDraft[]
-  shippingAddress?:
-    type: BaseAddress
-    description:
-      The shipping address is used to determine the eligible shipping methods
-      and rates as well as the tax rate of the line items.
-  billingAddress?:
-    type: BaseAddress
-    description: ''
-  shippingMethod?:
-    type: ShippingMethodResourceIdentifier
-    description: ''
+    description: |
+      Determines how Tax Rates are set.
+    default: Platform
   externalTaxRateForShippingMethod?:
     type: ExternalTaxRateDraft
-    description:
-      An external tax rate can be set for the `shippingMethod` if the cart has
-      the `External` TaxMode.
-  custom?:
-    type: CustomFieldsDraft
-    description: The custom fields.
-  locale?:
-    type: string
-    description: Must be one of the languages supported for this project
-  deleteDaysAfterLastModification?:
-    type: number
-    format: int64
-    description: |-
-      The cart will be deleted automatically if it hasn't been modified for the specified amount of days and it is in the `Active` CartState.
-      If a ChangeSubscription for carts exists, a `ResourceDeleted` notification will be sent.
-  origin?:
-    type: CartOrigin
-    description: The default origin is `Customer`.
+    description: |
+      External Tax Rate for the `shippingMethod` if the Cart has `External` [TaxMode](ctp:api:type:TaxMode).
+  taxRoundingMode?:
+    type: RoundingMode
+    description: |
+      Determines how monetary values are rounded when calculating taxes for `taxedPrice`.
+    default: HalfEven
+  taxCalculationMode?:
+    type: TaxCalculationMode
+    description: |
+      Determines how taxes are calculated when calculating taxes for `taxedPrice`.
+    default: LineItemLevel
+  inventoryMode?:
+    type: InventoryMode
+    description: |
+      Determines how stock quantities are tracked for Line Items in the Cart.
+    default: None
+  billingAddress?:
+    type: BaseAddress
+    description: |
+      Billing address associated with the Cart.
+  shippingAddress?:
+    type: BaseAddress
+    description: |
+      Shipping address associated with the Cart. Determines eligible [ShippingMethod](ctp:api:type:ShippingMethod) rates and Tax Rates of Line Items.
+  shippingMethod?:
+    type: ShippingMethodResourceIdentifier
+    description: |
+      Shipping Method for a Cart with `Single` [ShippingMode](ctp:api:type:ShippingMode). If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) has a `predicate` that does not match the Cart, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned when [creating a Cart](#create-cart).
+  shippingRateInput?:
+    type: ShippingRateInputDraft
+    description: |
+      Used as an input to select a [ShippingRatePriceTier](ctp:api:type:ShippingRatePriceTier).
+      The data type of this field depends on the `shippingRateInputType.type` configured in the [Project](ctp:api:type:Project):
+
+      - If `CartClassification`, it must be [ClassificationShippingRateInputDraft](ctp:api:type:ClassificationShippingRateInputDraft).
+      - If `CartScore`, it must be [ScoreShippingRateInputDraft](ctp:api:type:ScoreShippingRateInputDraft).
+      - If `CartValue`, it cannot be set.
   shippingMode?:
     type: ShippingMode
     description: |-
-      - If `Single`, only a single Shipping Method can be added to the Cart.
-      - If `Multiple`, multiple Shipping Methods can be added to the Cart.
+      - If set to `Single`, only a single Shipping Method can be added to the Cart.
+      - If set to `Multiple`, multiple Shipping Methods can be added to the Cart.
     default: Single
   customShipping?:
     type: CustomShippingDraft[]
@@ -108,23 +110,40 @@ properties:
     type: ShippingDraft[]
     description: |-
       Shipping Methods for a Cart with `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
-  shippingRateInput?:
-    type: ShippingRateInputDraft
-    description: |-
-      The shippingRateInput is used as an input to select a ShippingRatePriceTier.
-      Based on the definition of ShippingRateInputType.
-      If CartClassification is defined, it must be ClassificationShippingRateInput.
-      If CartScore is defined, it must be ScoreShippingRateInput.
-      Otherwise it can not bet set.
   itemShippingAddresses?:
     type: BaseAddress[]
-    description: |-
-      Contains addresses for carts with multiple shipping addresses.
-      Each address must contain a key which is unique in this cart.
-      Line items will use these keys to reference the addresses under their `shippingDetails`.
-      The addresses captured here are not used to determine eligible shipping methods or the applicable tax rate.
-      Only the cart's `shippingAddress` is used for this.
+    description: |
+      Multiple shipping addresses of the Cart. Each address must contain a `key` that is unique in this Cart.
+      The keys are used by [LineItems](ctp:api:type:LineItem) to reference these addresses under their `shippingDetails`.
+
+      Eligible Shipping Methods or applicable Tax Rates are determined by the address `shippingAddress`, and not `itemShippingAddresses`.
   discountCodes?:
     type: string[]
-    description: |-
-      The code of existing DiscountCodes.
+    description: |
+      `code` of the existing [DiscountCodes](ctp:api:type:DiscountCode) to add to the Cart.
+  country?:
+    type: CountryCode
+    description: |
+      Used for [LineItem Price selection](ctp:api:type:LineItemPriceSelection).
+      If used for [Create Cart in Store](ctp:api:endpoint:/{projectKey}/in-store/carts:POST), the provided country must be one of the [Store's](ctp:api:type:Store) `countries`.
+  locale?:
+    type: Locale
+    description: |
+      Languages of the Cart. Can only contain languages supported by the [Project](ctp:api:type:Project).
+  origin?:
+    type: CartOrigin
+    description: |
+      Indicates how the Cart was created.
+    default: Customer
+  deleteDaysAfterLastModification?:
+    type: number
+    format: int64
+    description: |
+      Number of days after which an active Cart is deleted since its last modification.
+      If not provided, the default value for this field configured in [Project settings](ctp:api:type:CartsConfiguration) is assigned.
+
+      Create a [ChangeSubscription](ctp:api:type:ChangeSubscription) for Carts to receive a [ResourceDeletedDeliveryPayload](ctp:api:type:ResourceDeletedDeliveryPayload) upon deletion of the Cart.
+  custom?:
+    type: CustomFieldsDraft
+    description: |
+      Custom Fields for the Cart.

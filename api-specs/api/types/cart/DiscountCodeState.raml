@@ -1,12 +1,32 @@
 #%RAML 1.0 DataType
 (package): Cart
-(docs-uri): https://docs.commercetools.com/http-api-projects-carts.html#discountcodestate
+(docs-uri): https://docs.commercetools.com/api/projects/carts#discountcodestate
 displayName: DiscountCodeState
 type: string
+description: |
+  Indicates the state of a Discount Code in a Cart.
+
+  If an Order is created from a Cart with a state other than `MatchesCart`, a [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError) error is returned.
 enum:
   - NotActive
+  - NotValid
   - DoesNotMatchCart
   - MatchesCart
   - MaxApplicationReached
   - ApplicationStoppedByPreviousDiscount
-  - NotValid
+(enumDescriptions):
+  NotActive: |
+    The Discount Code is not active or does not contain any active Cart Discounts.
+  NotValid: |
+    The Discount Code is not valid or does not contain any valid Cart Discounts.
+    Validity is determined by the [CartDiscount](ctp:api:type:CartDiscount) `validFrom` and `validUntil` dates.
+  DoesNotMatchCart: |
+    The Discount Code is active and contains at least one active and valid Cart Discount.
+    The [DiscountCode](ctp:api:type:DiscountCode) `cartPredicate` does not match the Cart or the contained active discount's cart predicates do no match the Cart.
+  MatchesCart: |
+    The Discount Code is active and contains at least one active and valid Cart Discount.
+    The [DiscountCode](ctp:api:type:DiscountCode) `cartPredicate` matches the Cart and at least one of the contained active discount's cart predicates matches the Cart.
+  MaxApplicationReached: |
+    The `maxApplications` or `maxApplicationsPerCustomer` for a [DiscountCode](ctp:api:type:DiscountCode) has been reached.
+  ApplicationStoppedByPreviousDiscount: |
+    The Discount Code is active and no discounts are applied after a discount with `StopAfterThisDiscount` [StackingMode](ctp:api:type:StackingMode) is defined.

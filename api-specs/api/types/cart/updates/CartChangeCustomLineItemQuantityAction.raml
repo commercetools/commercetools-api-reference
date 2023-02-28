@@ -1,13 +1,29 @@
 #%RAML 1.0 DataType
 (package): Cart
-(docs-uri): https://docs.commercetools.com/http-api-projects-carts.html#change-customlineitem-quantity
+(docs-uri): https://docs.commercetools.com/api/projects/carts#change-customlineitem-quantity
 type: CartUpdateAction
 displayName: CartChangeCustomLineItemQuantityAction
 discriminatorValue: changeCustomLineItemQuantity
 example: !include ../../../examples/Cart/CartChangeCustomLineItemQuantityAction.json
+description: |
+  When multiple shipping addresses are set for a Custom Line Item,
+  use the [Add CustomLineItem](ctp:api:type:CartAddCustomLineItemAction) update action to change the shipping details.
+  Since it is not possible for the API to infer how the overall change in the Custom Line Item quantity should be distributed over the sub-quantities,
+  the `shippingDetails` field is kept in its current state to avoid data loss.
+
+  To change the Custom Line Item quantity and shipping details together,
+  use this update action in combination with the [Set CustomLineItemShippingDetails](ctp:api:type:CartSetCustomLineItemShippingDetailsAction) update action
+  in a single Cart update command.
 properties:
   customLineItemId:
     type: string
+    description: |
+      `id` of the [CustomLineItem](ctp:api:type:CustomLineItem) to update.
   quantity:
     type: number
     format: int64
+    description: |
+      New value to set.
+
+      If `0`, the Custom Line Item is removed from the Cart.
+    minimum: 0

@@ -102,7 +102,7 @@ delete:
   post:
     displayName: Signup my customer
     description: |
-      If used with an [access token for an anonymous session](/../api/authorization#tokens-for-anonymous-sessions), all Orders and Carts that belong to the `anonymousId` are assigned to the newly created Customer.
+      If used with an [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly created Customer.
 
       Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
     securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
@@ -123,12 +123,12 @@ delete:
     description: |
       Retrieves the authenticated customer (that matches the given email/password pair).
 
-      If used with [an access token for an anonymous session](/../api/authorization#tokens-for-anonymous-sessions), all Orders and Carts that belong to the `anonymousId` are assigned to the newly logged-in Customer.
+      If used with [an access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly logged-in Customer.
 
       - If the Customer does not have a Cart yet, the most recently modified anonymous cart becomes the Customer's Cart.
       - If the Customer already has a Cart, the most recently modified anonymous cart is handled in accordance with [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
 
-      A Cart returned as part of the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) is [recalculated](ctp:api:type:Recalculate) with up-to-date prices, taxes, discounts, and invalid line items removed.
+      A Cart returned as part of the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) is [recalculated](ctp:api:type:MyCartRecalculateAction) with up-to-date prices, taxes, discounts, and invalid line items removed.
 
       If an account with the given credentials is not found, an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error is returned.
     securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
@@ -146,6 +146,11 @@ delete:
   type: base
   get:
     displayName: Get my active cart
+    description: |
+      Retrieves the Customer's most recently modified active Cart.
+      Carts with `Merchant` or `Quote` [CartOrigin](ctp:api:type:CartOrigin) are ignored.
+
+      If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
     is:
       - expandable
     securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
@@ -179,6 +184,8 @@ delete:
     displayName: Create My Business Units
     securedBy:
       [oauth_2_0: { scopes: ['manage_my_business_units:{projectKey}'] }]
+    description: |
+      Automatically assigns the authenticated user to the Business Unit in the [Associate Roles](ctp:api:type:AssociateRole) of `Admin` as well as `Buyer`.
     body:
       application/json:
         example: !include ../examples/my-business-unit-create.example.json
@@ -364,6 +371,18 @@ delete:
     type: base
     post:
       displayName: Replicate my cart
+      description: |
+        Creates a new Cart by replicating an existing Cart or Order of the authenticated Customer.
+        This can be useful in cases where a customer wants to cancel a recent order to make some changes or reorder a previous order.
+
+        The replicated Cart preserves Customer information, Line Items and Custom Line Items, Custom Fields, Discount Codes, and other settings of the Cart or Order.
+        If the Line Items become invalid, for example, due to removed Products or Prices, they are removed from the new Cart.
+        If the Customer switches to another Customer Group, the new Cart is updated with the new value.
+        It has up-to-date Tax Rates, Prices, and Line Item product data and is in `Active` [CartState](ctp:api:type:CartState).
+
+        The new Cart does not contain Payments or Deliveries. The [State](ctp:api:type:ItemState) of Line Items and Custom Line Items is reset to `initial`.
+
+        In case the Cart or Order to be replicated does not belong to the authenticaed Customer, the API returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error
       body:
         application/json:
           type: ReplicaMyCartDraft
@@ -421,6 +440,20 @@ delete:
           body:
             application/json:
               example: !include ../examples/order.example.json
+  /quotes:
+    post:
+      displayName: Create My Order from Quote
+      securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
+      body:
+        application/json:
+          example: !include ../examples/my-order-from-quote.example.json
+          type: MyOrderFromQuoteDraft
+      responses:
+        201:
+          body:
+            application/json:
+              example: !include ../examples/order.example.json
+              type: Order
 /payments:
   type:
     baseDomain:

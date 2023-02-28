@@ -1,9 +1,33 @@
 #%RAML 1.0 DataType
 (package): Cart
+(docs-uri): https://docs.commercetools.com/api/projects/carts#taxmode
 displayName: TaxMode
 type: string
+description: |
+  Indicates how taxes are set on the Cart.
 enum:
   - Platform
   - External
   - ExternalAmount
   - Disabled
+(enumDescriptions):
+  Platform: |
+    Tax Rates are selected automatically from the [TaxCategories](ctp:api:type:TaxCategory) based on the [Cart](ctp:api:type:Cart) `shippingAddress`.
+    This is the default tax mode for a new Cart.
+
+    `totalNet`, `totalGross`, and `taxPortions` fields are calculated based on the `taxRoundingMode`.
+  External: |
+    Tax Rates are set externally per [ExternalTaxRateDraft](ctp:api:type:ExternalTaxRateDraft).
+    A Cart can be ordered only if all Line Items, Custom Line Items, and the Shipping Method have an external Tax Rate set.
+
+    `totalNet`, `totalGross`, and `taxPortions` fields are calculated based on the `taxRoundingMode`.
+  ExternalAmount: |
+    Tax amounts, Tax Rates, and tax portions are set externally per [ExternalTaxRateDraft](ctp:api:type:ExternalTaxRateDraft).
+    A Cart can be ordered only if the Cart and all Line Items, Custom Line Items, and the Shipping Method have an external tax amount and rate set.
+
+    Price-specific update actions on Carts require external recalculation of the total gross price.
+    Hence, the `externalTaxAmount` is removed in these cases and must be reset with [Set LineItem TaxAmount](ctp:api:type:CartSetLineItemTaxAmountAction), [Set CustomLineItem TaxAmount](ctp:api:type:CartSetCustomLineItemTaxAmountAction), or [Set ShippingMethod TaxAmount](ctp:api:type:CartSetShippingMethodTaxAmountAction) update actions.
+  Disabled: |
+    No taxes are added to the Cart.
+
+    Note that this tax mode cannot be set on the [My Carts](/../api/projects/me-carts) API.

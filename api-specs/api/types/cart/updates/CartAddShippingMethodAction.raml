@@ -1,22 +1,22 @@
 #%RAML 1.0 DataType
 (package): Cart
-(docs-uri): https://docs.commercetools.com/api/projects/carts.html#add-shipping-method
+(docs-uri): https://docs.commercetools.com/api/projects/carts#add-shippingmethod
 type: CartUpdateAction
 displayName: CartAddShippingMethodAction
 discriminatorValue: addShippingMethod
 example: !include ../../../examples/Cart/CartAddShippingMethodAction.json
 description: |
-  This update action fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error if the referenced shipping method has a predicate that does not match the Cart.
+  Adds a Shipping Method for a specified shipping address to a Cart with `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
 properties:
   shippingKey:
     type: string
     description: |
-      User-defined unique identifier of the Shipping Method in a Cart with `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
+      User-defined identifier for the [Shipping](ctp:api:type:Shipping) that must be unique across the Cart with `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
   shippingMethod:
-    type: ShippingMethodReference
+    type: ShippingMethodResourceIdentifier
     description: |
-      Value to set.
-      If empty, any existing value is removed.
+      RecourceIdentifier to a [ShippingMethod](ctp:api:type:ShippingMethod) to add to the Cart with `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
+      If the referenced Shipping Method has a predicate that does not match the Cart, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
   shippingAddress:
     type: BaseAddress
     description: |
@@ -24,22 +24,22 @@ properties:
   shippingRateInput?:
     type: ShippingRateInputDraft
     description: |
-      Used as an input to select a [ShippingRatePriceTier](ctp:api:type:ShippingRatePriceTier).
+      Input used to select a [ShippingRatePriceTier](ctp:api:type:ShippingRatePriceTier).
+      The data type of this field depends on the `shippingRateInputType.type` configured in the [Project](ctp:api:type:Project):
 
-      - Must be [ClassificationShippingRateInput](ctp:api:type:ClassificationShippingRateInput) if [ShippingRateInputType](ctp:api:type:ShippingRateInputType) is [CartClassificationType](ctp:api:type:CartClassificationType).
-      - Must be [ScoreShippingRateInput](ctp:api:type:ScoreShippingRateInput) if [ShippingRateInputType](ctp:api:type:ShippingRateInputType) is [CartScoreType](ctp:api:type:CartScoreType).
+      - If `CartClassification`, it must be [ClassificationShippingRateInputDraft](ctp:api:type:ClassificationShippingRateInputDraft).
+      - If `CartScore`, it must be [ScoreShippingRateInputDraft](ctp:api:type:ScoreShippingRateInputDraft).
+      - If `CartValue`, it cannot be set.
 
-      The `shippingRateInput` cannot be set on the Cart if [CartValueType](ctp:api:type:CartValueType) is defined.
   externalTaxRate?:
-    type: string
+    type: ExternalTaxRateDraft
     description: |
-      Tax Rate used to tax a shipping expense if a Cart has the `External` [TaxMode](ctp:api:type:TaxMode).
-  deliveries:
-    type: Delivery[]
+      Tax Rate used to tax a shipping expense if the Cart has the `External` [TaxMode](ctp:api:type:TaxMode).
+  deliveries?:
+    type: DeliveryDraft[]
     description: |
-      Deliveries tied to a Shipping Method in a multi-shipping method Cart.
-      It holds information on how items are delivered to customers.
+      Deliveries to be shipped with the referenced Shipping Method.
   custom?:
-    type: string
+    type: CustomFieldsDraft
     description: |
       Custom Fields for the Shipping Method.

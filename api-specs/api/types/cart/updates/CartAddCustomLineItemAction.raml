@@ -1,26 +1,59 @@
 #%RAML 1.0 DataType
 (package): Cart
-(docs-uri): https://docs.commercetools.com/http-api-projects-carts.html#add-customlineitem
+(docs-uri): https://docs.commercetools.com/api/projects/carts#add-customlineitem
 type: CartUpdateAction
 displayName: CartAddCustomLineItemAction
 discriminatorValue: addCustomLineItem
 example: !include ../../../examples/Cart/CartAddCustomLineItemAction.json
+description: |
+  If the Cart already contains a [CustomLineItem](ctp:api:type:CustomLineItem) with the same `slug`, `name`, `money`, `taxCategory`, `state`,
+  and Custom Fields, then only the quantity of the existing Custom Line Item is increased.
+  If [CustomLineItem](ctp:api:type:CustomLineItem) `shippingDetails` are set, they are merged with the `targets` that already exist on the
+  [ItemShippingDetails](ctp:api:type:ItemShippingDetails) of the Custom Line Item.
+  In case of overlapping address keys the [ItemShippingTarget](ctp:api:type:ItemShippingTarget) `quantity` is summed up.
+
+  If the Cart already contains a Custom Line Item with the same slug that is otherwise not identical, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
+
+  If the Tax Rate is not set, a [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError) error is returned.
 properties:
   money:
     type: Money
+    description: |
+      Money value of the Custom Line Item.
+      The value can be negative.
   name:
     type: LocalizedString
-  quantity:
+    description: |
+      Name of the Custom Line Item.
+  quantity?:
     type: number
     format: int64
+    description: |
+      Number of Custom Line Items to add to the Cart.
+    default: 1
   slug:
     type: string
+    description: |
+      User-defined identifier used in a deep-link URL for the Custom Line Item.
+      It must match the pattern `[a-zA-Z0-9_-]{2,256}`.
   taxCategory?:
     type: TaxCategoryResourceIdentifier
-  custom?:
-    type: CustomFieldsDraft
+    description: |
+      Used to select a Tax Rate when a Cart has the `Platform` [TaxMode](ctp:api:type:TaxMode).
+
+      If [TaxMode](ctp:api:type:TaxMode) is `Platform`, this field must not be empty.
   externalTaxRate?:
     type: ExternalTaxRateDraft
+    description: |
+      An external Tax Rate can be set if the Cart has `External` [TaxMode](ctp:api:type:TaxMode).
+  shippingDetails?:
+    type: ItemShippingDetailsDraft
+    description: |
+      Container for Custom Line Item-specific addresses.
+  custom?:
+    type: CustomFieldsDraft
+    description: |
+      Custom Fields for the Custom Line Item.
   priceMode?:
     type: CustomLineItemPriceMode
     description: |

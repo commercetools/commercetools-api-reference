@@ -1,6 +1,6 @@
 #%RAML 1.0 DataType
 (package): Cart
-(docs-uri): https://docs.commercetools.com/http-api-projects-carts.html#shippingdraft
+(docs-uri): https://docs.commercetools.com/api/projects/carts#shippingdraft
 displayName: ShippingDraft
 type: object
 description: |
@@ -9,33 +9,34 @@ properties:
   key:
     type: string
     description: |
-      User-defined unique identifier of the Shipping Method in a Cart with `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
+      User-defined unique identifier for the Shipping in a Cart with `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
   shippingMethod?:
     type: ShippingMethodReference
     description: |
       Shipping Methods added to the Cart with `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
-  shippingAddress?:
+  shippingAddress:
     type: BaseAddress
     description: |
       Determines the shipping rate and Tax Rate of the associated Line Items.
   shippingRateInput?:
     type: ShippingRateInputDraft
     description: |
-      Used as an input to select a [ShippingRatePriceTier](ctp:api:type:ShippingRatePriceTier).
+      Input used to select a [ShippingRatePriceTier](ctp:api:type:ShippingRatePriceTier).
+      The data type of this field depends on the `shippingRateInputType.type` configured in the [Project](ctp:api:type:Project):
 
-      - Must be [ClassificationShippingRateInput](ctp:api:type:ClassificationShippingRateInput) if [ShippingRateInputType](ctp:api:type:ShippingRateInputType) is [CartClassificationType](ctp:api:type:CartClassificationType).
-      - Must be [ScoreShippingRateInput](ctp:api:type:ScoreShippingRateInput) if [ShippingRateInputType](ctp:api:type:ShippingRateInputType) is [CartScoreType](ctp:api:type:CartScoreType).
+      - If `CartClassification`, it must be [ClassificationShippingRateInputDraft](ctp:api:type:ClassificationShippingRateInputDraft).
+      - If `CartScore`, it must be [ScoreShippingRateInputDraft](ctp:api:type:ScoreShippingRateInputDraft).
+      - If `CartValue`, it cannot be set.
 
-      The `shippingRateInput` cannot be set on the Cart if [CartValueType](ctp:api:type:CartValueType) is defined.
   externalTaxRate?:
-    type: string
+    type: ExternalTaxRateDraft
     description: |
       Tax Rate used for taxing a shipping expense if the Cart has the `External` [TaxMode](ctp:api:type:TaxMode).
-  deliveries:
-    type: Delivery[]
+  deliveries?:
+    type: DeliveryDraft[]
     description: |
-      Holds information on how items are delivered to customers.
+      Deliveries to be shipped with the Shipping Method.
   custom?:
-    type: string
+    type: CustomFieldsDraft
     description: |
       Custom Fields for Shipping.
