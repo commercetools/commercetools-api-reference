@@ -8,6 +8,15 @@ uses:
   annotations: ../annotationTypes/annotations.raml
 
 types:
+  AuthenticationMode:
+    default: Password
+    type: string
+    enum:
+      - Password
+      - ExternalAuth
+    (annotations.enumDescriptions):
+      Password: If set, the `password` field is required for the Customer.
+      ExternalAuth: If set, the `password` field is optional for the Customer.
   CustomerAddress:
     description: |
       Different from Address in that `key` is required and `id` is not supported.
@@ -56,7 +65,7 @@ types:
         description: |
           Maps to `Customer.email`.
         type: string
-      password:
+      password?:
         description: |
           Maps to `Customer.password`.
         type: string
@@ -134,5 +143,12 @@ types:
           Maps to `Customer.locale`.
         type: string
       custom?:
-        description: The custom fields for this Customer.
+        description: |
+          The Custom Fields for this Customer.
         type: custom-field.Custom
+      authenticationMode?:
+        description: |
+          - Set to `Password` to make the `password` field required for the Customer.
+          - Set to `ExternalAuth` when the password is not required for the Customer.
+        type: AuthenticationMode
+        default: Password
