@@ -18,30 +18,36 @@ properties:
   productId?:
     type: string
     description: |
-      ID of an existing [Product](ctp:api:type:Product).
+      `id` of the published [Product](ctp:api:type:Product).
 
       Either the `productId` and `variantId`, or `sku` must be provided.
   variantId?:
     type: number
     format: int64
     description: |
-      ID of an existing [ProductVariant](ctp:api:type:ProductVariant) in the Product.
-
-      If not given, the Master Variant is used.
+      `id` of the [ProductVariant](ctp:api:type:ProductVariant) in the Product.
+      If not provided, the Master Variant is used.
 
       Either the `productId` and `variantId`, or `sku` must be provided.
   sku?:
     type: string
     description: |
-      SKU of an existing [ProductVariant](ctp:api:type:ProductVariant).
+      SKU of the [ProductVariant](ctp:api:type:ProductVariant).
 
       Either the `productId` and `variantId`, or `sku` must be provided.
   quantity?:
     type: number
     format: int64
     description: |
-      Number of Line Items to add to the Cart.
+      Quantity of the Product Variant to add to the Cart.
     default: 1
+  addedAt?:
+    type: datetime
+    description: |
+      Date and time (UTC) the Product Variant is added to the Cart.
+      If not set, it defaults to the current date and time.
+
+      Optional for backwards compatibility reasons.
   distributionChannel?:
     type: ChannelResourceIdentifier
     description: |
@@ -65,6 +71,11 @@ properties:
     type: ExternalTaxRateDraft
     description: |
       External Tax Rate for the Line Item, if the Cart has the `External` [TaxMode](ctp:api:type:TaxMode).
+  inventoryMode?:
+    type: InventoryMode
+    description: |
+      Inventory mode specific to the Line Item only, and valid for the entire `quantity` of the Line Item.
+      Set only if the inventory mode should be different from the `inventoryMode` specified on the [Cart](ctp:api:type:Cart).
   shippingDetails?:
     type: ItemShippingDetailsDraft
     description: |
