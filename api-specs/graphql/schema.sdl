@@ -2355,6 +2355,7 @@ input CreateApiClient {
 input CreateProductSelectionDraft {
   key: String
   name: [LocalizedStringItemInputType!]!
+  type: String
   custom: CustomFieldsDraft
 }
 
@@ -3382,6 +3383,11 @@ input EventGridDestinationInput {
   accessKey: String!
 }
 
+input ExcludeProductSelectionProduct {
+  product: ResourceIdentifierInput!
+  variantExclusion: ProductVariantExclusionDraft
+}
+
 input ExistsFilterInput {
   path: String!
 }
@@ -3828,6 +3834,19 @@ type InStoreMe implements MeQueryInterface & CartQueryInterface & ActiveCartInte
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   shoppingLists(where: String, sort: [String!], limit: Int, offset: Int): ShoppingListQueryResult!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type IndividualExclusionProductSelectionCreatedPayload implements ProductSelectionCreatedPayload {
+  custom: CustomFieldsType
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  nameAllLocales: [LocalizedString!]!
+  type: String!
 }
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
@@ -6361,6 +6380,8 @@ type ProductAssignment {
   product: Product
   productSelectionRef: Reference!
   productSelection: ProductSelection
+  variantSelection: ProductVariantSelection
+  variantExclusion: ProductVariantExclusion
 }
 
 type ProductAssignmentQueryResult {
@@ -6605,6 +6626,7 @@ type ProductOfSelection {
   productRef: Reference!
   product: Product
   variantSelection: ProductVariantSelection
+  variantExclusion: ProductVariantExclusion
 }
 
 type ProductOfSelectionQueryResult {
@@ -7002,6 +7024,7 @@ type ProductSelection implements Versioned {
   productRefs(where: String, sort: [String!], limit: Int, offset: Int): ProductOfSelectionQueryResult!
   productCount: Int!
   custom: CustomFieldsType
+  type: ProductSelectionType!
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -7036,6 +7059,14 @@ type ProductSelectionDeleted implements MessagePayload {
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 type ProductSelectionProductAdded implements MessagePayload {
   variantSelection: ProductVariantSelection
+  product: Product
+  productRef: Reference!
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductSelectionProductExcluded implements MessagePayload {
+  variantExclusion: ProductVariantExclusion
   product: Product
   productRef: Reference!
   type: String!
@@ -7083,14 +7114,35 @@ input ProductSelectionSettingInActionInput {
   active: Boolean
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum ProductSelectionType {
+  "Type of Product Selection used to include a specific list of individual Products"
+  individual
+
+  "Type of Product Selection used to exclude a specific list of individual Products"
+  individualExclusion
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 input ProductSelectionUpdateAction {
   addProduct: AddProductSelectionProduct
   changeName: ChangeProductSelectionName
+  excludeProduct: ExcludeProductSelectionProduct
   removeProduct: RemoveProductSelectionProduct
   setCustomField: SetProductSelectionCustomField
   setCustomType: SetProductSelectionCustomType
   setKey: SetProductSelectionKey
+  setVariantExclusion: SetProductSelectionVariantExclusion
   setVariantSelection: SetProductSelectionVariantSelection
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductSelectionVariantExclusionChanged implements MessagePayload {
+  oldVariantExclusion: ProductVariantExclusion
+  newVariantExclusion: ProductVariantExclusion
+  product: Product
+  productRef: Reference!
+  type: String!
 }
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
@@ -7338,6 +7390,16 @@ type ProductVariantDeleted implements MessagePayload {
   removedImageUrls: Set!
   variant: ProductVariant
   type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductVariantExclusion {
+  skus: [String!]!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ProductVariantExclusionDraft {
+  skus: [String!]
 }
 
 input ProductVariantImportDraft {
@@ -8701,6 +8763,7 @@ type SelectionOfProduct {
   productSelectionRef: Reference!
   productSelection: ProductSelection
   variantSelection: ProductVariantSelection
+  variantExclusion: ProductVariantExclusion
   createdAt: DateTime!
 }
 
@@ -9913,6 +9976,11 @@ input SetProductSelectionCustomType {
 
 input SetProductSelectionKey {
   key: String
+}
+
+input SetProductSelectionVariantExclusion {
+  product: ResourceIdentifierInput!
+  variantExclusion: ProductVariantExclusionDraft
 }
 
 input SetProductSelectionVariantSelection {
