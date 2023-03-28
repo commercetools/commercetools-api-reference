@@ -688,7 +688,7 @@ type Associate {
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 input AssociateDraft {
-  roles: [SimpleAssociateRole!]!
+  roles: [SimpleAssociateRole!]
   customer: ResourceIdentifierInput!
 }
 
@@ -944,7 +944,7 @@ type BusinessUnitBillingAddressRemoved implements MessagePayload {
 }
 
 type BusinessUnitConfiguration {
-  myBusinessUnitStatusOnCreation: BusinessUnitStatus!
+  myBusinessUnitStatusOnCreation: BusinessUnitConfigurationStatus!
 }
 
 type BusinessUnitContactEmailSet implements MessagePayload {
@@ -1003,8 +1003,10 @@ type BusinessUnitNameChanged implements MessagePayload {
 }
 
 type BusinessUnitParentChanged implements MessagePayload {
-  oldParentUnit: KeyReference
-  newParentUnit: KeyReference
+  oldParentUnit: BusinessUnit
+  newParentUnit: BusinessUnit
+  oldParentUnitRef: KeyReference
+  newParentUnitRef: KeyReference
   type: String!
 }
 
@@ -1039,26 +1041,36 @@ type BusinessUnitStatusChanged implements MessagePayload {
   type: String!
 }
 
+enum BusinessUnitConfigurationStatus {
+  Active
+  Inactive
+}
+
 type BusinessUnitStoreAdded implements MessagePayload {
-  store: KeyReference!
+  store: Store!
+  storeRef: KeyReference!
   type: String!
 }
 
 type BusinessUnitStoreModeChanged implements MessagePayload {
   storeMode: String!
   oldStoreMode: String!
-  stores: [KeyReference!]
-  oldStores: [KeyReference!]
+  stores: [Store!]
+  oldStores: [Store!]
+  storesRef: [KeyReference!]
+  oldStoresRef: [KeyReference!]
   type: String!
 }
 
 type BusinessUnitStoreRemoved implements MessagePayload {
-  store: KeyReference!
+  store: Store!
+  storeRef: KeyReference!
   type: String!
 }
 
 type BusinessUnitStoresSet implements MessagePayload {
-  stores: [KeyReference!]!
+  stores: [Store!]!
+  storesRef: [KeyReference!]!
   type: String!
 }
 
@@ -1947,7 +1959,7 @@ input ChangeProjectSettingsMessagesEnabled {
 }
 
 input ChangeProjectSettingsMyBusinessUnitStatusOnCreation {
-  status: BusinessUnitStatus!
+  status: BusinessUnitConfigurationStatus!
 }
 
 input ChangeProjectSettingsName {
