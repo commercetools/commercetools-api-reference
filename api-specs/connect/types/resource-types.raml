@@ -1,0 +1,129 @@
+base:
+  get?:
+    displayName: Query <<resourcePathName>>
+    responses:
+      200:
+  post?:
+    displayName: Create <<resourceType | !singularize>>
+    responses:
+      201:
+  delete?:
+    displayName: Delete <<resourceType | !singularize>>
+    responses:
+      200:
+baseByParam:
+  type: base
+  uriParameters:
+    <<uriParameterName>>:
+      description: |
+        `<<uriParameterName | !lowercamelcase>>` of the <<resourceType | !singularize>>
+      type: string
+  get?:
+    displayName: Get <<resourceType | !singularize>> by <<uriParameterName>>
+    responses:
+      200:
+        description: The requested  <<resourceType | !singularize>> was found.
+      404:
+        description: The requested <<resourceType | !singularize>> wasn't found.
+        body:
+          type: error.ErrorResponse
+          example: !include ../examples/error/not-found.json
+  post?:
+    displayName: Update <<resourceType | !singularize>> by <<uriParameterName>>
+    responses:
+      201:
+        description: The  <<resourceType | !singularize>> was successfully updated.
+      404:
+        description: The requested connector wasn't found.
+        body:
+          type: error.ErrorResponse
+          example: !include ../examples/error/not-found.json
+connectorByParam:
+  type: baseByParam
+  get:
+    is:
+      - secured_by_view_connectors
+    responses:
+      200:
+        body:
+          type: ConnectorStaged
+          example: !include ../examples/connector/staged.json
+  post:
+    is:
+      - secured_by_manage_connectors
+    body:
+      type: ConnectorUpdate
+      example: !include ../examples/connector/update.json
+    responses:
+      201:
+        body:
+          type: ConnectorStaged
+          example: !include ../examples/connector/staged.json
+deploymentByParam:
+  type: baseByParam
+  get:
+    is:
+      - secured_by_view_deployments
+    responses:
+      200:
+        body:
+          type: Deployment
+          example: !include ../examples/deployment/minimal.json
+  post:
+    is:
+      - secured_by_manage_deployments
+    body:
+      type: DeploymentUpdate
+      example: !include ../examples/deployment/update.json
+    responses:
+      201:
+        body:
+          type: Deployment
+          example: !include ../examples/deployment/minimal.json
+  delete:
+    is:
+      - secured_by_manage_deployments
+    responses:
+      202:
+        body:
+          type: Deployment
+          example: !include ../examples/deployment/minimal.json
+deploymentLogs:
+  type: base
+  get:
+    description: Retrieves logs for the given deployment.
+    is:
+      - secured_by_view_deployments
+    queryParameters:
+      pageToken?:
+        type: string
+      applicationName?:
+        type: string
+        description: Filter results by a specific `applicationName`.
+      startDate?:
+        type: datetime
+        description: Filter results by defining a start date of the logs.
+      endDate?:
+        type: datetime
+        description: Filter results by defining an end date of the logs.
+    responses:
+      200:
+        body:
+          type: common.CursorPaged
+          properties:
+            data: DeploymentLog[]
+          example: !include ../examples/deployment-log/cursor-paged.json
+deploymentLogsStream:
+  type: base
+  get:
+    description: Stream logs for the given deployment.
+    is:
+      - secured_by_view_deployments
+    queryParameters:
+      applicationName?:
+        type: string
+    responses:
+      200:
+        body:
+          text/event-stream:
+            example: !include ../examples/deployment-log/stream.txt

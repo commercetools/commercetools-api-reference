@@ -1,0 +1,242 @@
+#%RAML 1.0 Library
+usage: Common data types.
+(annotations.package): common
+
+uses:
+  annotations: annotations.raml
+
+types:
+  Artifact:
+    description: |
+      A connector internal build artifact (ex: docker image).
+    properties:
+      applicationName: string
+      artifactPath: string
+  CertificationInfo:
+    properties:
+      comments:
+        type: CertificationInfoComment[]
+        description: Comments made during the certification process.
+  CertificationInfoComment:
+    description: |
+      Contains metadata and body text of a comment made during the certification process.
+    example: !include ../examples/connector/CertificationInfoComment.json
+    properties:
+      userId:
+        type: string
+        description: The commercetools Composable Commerce Project key associated with the person making the comment.
+      datetime:
+        type: datetime
+        description: Date and time (UTC) the comment was added.
+      comment:
+        type: string
+        description: The body text of the comment.
+  ConfigurationKey:
+    example: !include ../examples/connector/ConfigurationKey.json
+    properties:
+      key:
+        type: string
+        description: Name of the environment variable.
+      description:
+        type: string
+        description: Description of the environment variable.
+  ConfigurationValue:
+    example: !include ../examples/deployment/ConfigurationValue.json
+    properties:
+      key:
+        type: string
+        description: Name of the environment variable.
+      value:
+        type: string
+        description: Value of the environment variable.
+  ConnectorConfigurationApplication:
+    example: !include ../examples/connector/ConnectorConfigurationApplication.json
+    description: |
+      Describes the required configuration for a Connector.
+    properties:
+      applicationName:
+        type: string
+        description: Name of the application. Should match the value of `name` within the connect.yaml file of the Connect application.
+      standardConfiguration:
+        type: ConfigurationKey[]
+        description: Contains the name and description of keys saved as plain text.
+      securedConfiguration:
+        type: ConfigurationKey[]
+        description: Contains the name and description of secret keys.
+  DeploymentConfigurationApplication:
+    description: |
+      Describes the configuration set of a given application.
+    properties:
+      applicationName:
+        type: string
+        description: Name of the application. Should match the value of `name` within the connect.yaml file of the Connect application.
+      standardConfiguration:
+        type: ConfigurationValue[]
+        description: Contains values of keys that are saved in plain text. Can be accessed after being set.
+      securedConfiguration:
+        type: ConfigurationValue[]
+        description: Contains values of secret keys. Cannot be accessed after being set.
+  ApplicationDeployment:
+    description: |
+      Describes an application deployment of the Connector.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the application deployment.
+      applicationName:
+        type: string
+        description: Name of the application. Should match the value of `name` within the connect.yaml file of the Connector.
+      standardConfiguration:
+        type: ConfigurationValue[]
+        description: Contains values of keys that are saved in plain text. Can be accessed after being set.
+      securedConfiguration:
+        type: ConfigurationValue[]
+        description: Contains values of secret keys. Cannot be accessed after being set.
+  ConnectorStatus:
+    description: |
+      Indicates the current status of the ConnectorStaged.
+    type: string
+    enum:
+      - Draft
+      - ReadyForCertification
+      - InCertification
+      - FeedbackRequired
+      - Certified
+  ConnectorReference:
+    description: Reference to a Connector. Either `id` or `key` is required.
+    example: !include ../examples/connector/ConnectorReference.json
+    properties:
+      id?:
+        type: string
+        description: Unique identifier of the referenced Connector.
+      key?:
+        type: string
+        description: User-defined unique identifier of the referenced Connector.
+      version:
+        type: number
+        format: int64
+        description: Version of the referenced Connector.
+  Creator:
+    example: !include ../examples/connector/Creator.json
+    description: |
+      Contains details of the creator of the Connector.
+          These details are used to contact the creator during the certification process.
+    properties:
+      name?:
+        type: string
+        description: Name of the person who owns the Connector.
+      title?:
+        type: string
+        description: Title of the person who owns the Connector.
+      email:
+        type: string
+        description: Contact email address of the Creator.
+      company?:
+        type: string
+        description: Name of the company that owns the Connector.
+      noOfDevelopers?:
+        type: integer
+        description: Number of developers currently working for the company.
+  DeploymentConnector:
+    example: !include ../examples/deployment/DeploymentConnector.json
+    description: The details of the deployed [Connector](ctp:connect:type:Connector).
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          `id` of the Connector.
+      key?:
+        type: string
+        description: User-defined unique identifier of the Connector.
+      version:
+        type: integer
+        description: Version of the Connector.
+      name:
+        type: string
+        description: Name of the Connector.
+      description?:
+        type: string
+        description: Description of the Connector.
+      creator:
+        type: Creator
+        description: Owner of the Connector.
+      repository:
+        type: Repository
+        description: GitHub repository details of the Connector.
+  DeploymentDetailsBuildApplication:
+    example: !include ../examples/deployment/DeploymentDetailsBuildApplication.json
+    properties:
+      name:
+        type: string
+        description: Name of the application. Should match the value of `name` within the connect.yaml file of the Connect application.
+      url?:
+        type: string
+        description: URL generated after deployment of service applications.
+      topic?:
+        type: string
+        description: Pub/Sub Topic generated after deployment of event applications.
+      schedule?:
+        type: string
+        description: Cron schedule for job applications.
+  DeploymentDetailsBuild:
+    example: !include ../examples/deployment/DeploymentDetailsBuild.json
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the build.
+      applications:
+        type: array
+        items: DeploymentDetailsBuildApplication
+        description: The Connect applications to be deployed.
+  DeploymentDetails:
+    type: object
+    properties:
+      build:
+        type: DeploymentDetailsBuild
+        description: Build and runtime details of deployed applications.
+  DeploymentStatus:
+    description: |
+      Indicates the current status of the Deployment.
+    type: string
+    enum:
+      - Draft
+      - Queued
+      - Deploying
+      - Deployed
+      - Failed
+      - Undeploying
+      - UndeployFailed
+  Region:
+    description: |
+      The host Region of a commercetools Composable Commerce Project. For more information, see [Hosts](hosts-and-authorization#hosts).
+    enum:
+      - europe-west1.gcp
+      - us-central1.gcp
+      - australia-southeast1.gcp
+  Repository:
+    example: !include ../examples/connector/Repository.json
+    description: |
+      Details of the GitHub repository that contains the Connect application.
+    properties:
+      url:
+        type: string
+        description: HTTPS or SSH GitHub URL of the GitHub repository.
+      tag:
+        type: string
+        description: Git tag of the release to use.
+  Paged:
+    description: |
+      A Paged Result.
+    properties:
+      limit: number
+      offset: number
+      count: number
+      total: number
+      results: any
+  CursorPaged:
+    description: |
+      A Cursor Paged Result.
+    properties:
+      data: any
+      next: string

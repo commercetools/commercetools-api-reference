@@ -1,0 +1,300 @@
+#%RAML 1.0
+---
+title: commercetools Connect API
+version: v1
+mediaType: application/json
+baseUri: https://connect.{region}.commercetools.com
+(annotations.sdkBaseUri): https://connect.{region}.commercetools.com
+baseUriParameters:
+  region:
+    type: string
+    enum:
+      - europe-west1.gcp
+      - us-central1.gcp
+      - australia-southeast1
+    description: |
+      [Region](hosts-and-authorization#hosts) in which the Project is hosted.
+(annotations.serviceRegions):
+  - uri: https://connect.us-central1.gcp.commercetools.com/
+    region: us-central1
+    provider: gcp
+    name: North America (Google Cloud, Iowa)
+  - uri: https://connect.europe-west1.gcp.commercetools.com
+    region: europe-west1
+    provider: gcp
+    name: Europe (Google Cloud, Belgium)
+  - uri: https://connect.australia-southeast1.gcp.commercetools.com
+    region: australia-southeast1
+    provider: gcp
+    name: Australia (Google Cloud, Sydney)
+
+uses:
+  annotations: types/annotations.raml
+  common: types/common.raml
+  error: types/error.raml
+
+types: !include types/types.raml
+
+securitySchemes:
+  oauth_2_0: !include security-schemes/oauth2.raml
+securedBy: [oauth_2_0]
+
+traits:
+  secured_by_view_connectors:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_project:{projectKey}',
+                'manage_connectors:{projectKey}',
+                'view_connectors:{projectKey}',
+              ],
+          },
+      ]
+  secured_by_manage_connectors:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              ['manage_project:{projectKey}', 'manage_connectors:{projectKey}'],
+          },
+      ]
+  secured_by_view_deployments:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_project:{projectKey}',
+                'manage_deployments:{projectKey}',
+                'view_deployments:{projectKey}',
+              ],
+          },
+      ]
+  secured_by_manage_deployments:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_project:{projectKey}',
+                'manage_deployments:{projectKey}',
+              ],
+          },
+      ]
+
+resourceTypes: !include types/resource-types.raml
+
+/{projectKey}:
+  (annotations.methodName): withProjectKey
+  uriParameters:
+    projectKey:
+      type: string
+      description: The Composable Commerce Project key.
+  displayName: Project
+  description: The Project endpoint is used to retrieve certain information from a project.
+  /deployments:
+    type:
+      base:
+        resourceType: Deployment
+    post:
+      is:
+        - secured_by_manage_deployments
+      body:
+        type: DeploymentDraft
+        example: !include ./examples/deployment/draft.json
+      responses:
+        201:
+          body:
+            type: Deployment
+            example: !include ./examples/deployment/minimal.json
+        400:
+          description: The request was invalid.
+          body:
+            type: error.ErrorResponse
+    get:
+      queryParameters:
+        limit?:
+          type: number
+          format: int64
+          description: |
+            Number of [results requested](/../api/general-concepts#limit).
+        offset?:
+          type: number
+          format: int64
+          description: |
+            Number of [elements skipped](/../api/general-concepts#offset).
+        sort?:
+          type: string[]
+      description: Retrieves all deployments of a project key.
+      is:
+        - secured_by_view_deployments
+      responses:
+        200:
+          body:
+            type: common.Paged
+            properties:
+              results: Deployment[]
+            example: !include ./examples/deployment/paged.json
+    /{ID}:
+      (annotations.methodName): withId
+      type:
+        deploymentByParam:
+          uriParameterName: ID
+          resourceType: Deployment
+      /logs:
+        type: deploymentLogs
+        get:
+          displayName: Query logs from Deployment by ID
+      /logs/stream:
+        type: deploymentLogsStream
+        get:
+          displayName: Stream logs from Deployment by ID
+    /key={key}:
+      (annotations.methodName): withKey
+      type:
+        deploymentByParam:
+          uriParameterName: key
+          resourceType: Deployment
+      /logs:
+        type: deploymentLogs
+        get:
+          displayName: Query logs from Deployment by key
+      /logs/stream:
+        type: deploymentLogsStream
+        get:
+          displayName: Stream logs from Deployment by key
+/connectors:
+  /{ID}:
+    (annotations.methodName): withId
+    type:
+      baseByParam:
+        uriParameterName: ID
+        resourceType: Connector
+    get:
+      is:
+        - secured_by_view_connectors
+      responses:
+        200:
+          body:
+            type: Connector
+            example: !include ./examples/connector/minimal.json
+  /key={key}:
+    (annotations.methodName): withKey
+    type:
+      baseByParam:
+        uriParameterName: key
+        resourceType: Connector
+    get:
+      is:
+        - secured_by_view_connectors
+      responses:
+        200:
+          body:
+            type: Connector
+            example: !include ./examples/connector/minimal.json
+  /search:
+    type:
+      base:
+        resourceType: Connector
+    get:
+      displayName: Search Connectors
+      description: Retrieves all available Connectors.
+      queryParameters:
+        text?:
+          description: The text to search for. For example, as supplied by a user through a search input field. Search results will be based on if the `name` and `description` fields of a Connector contain this text.
+          type: string
+        limit?:
+          type: number
+          format: int64
+          description: |
+            Number of [results requested](/../api/general-concepts#limit).
+        offset?:
+          type: number
+          format: int64
+          description: |
+            Number of [elements skipped](/../api/general-concepts#offset).
+        sort?:
+          type: string[]
+        private?:
+          description: If `true` then only Connectors assigned to your Project are retrieved. If `false` then all available Connectors are retrieved.
+          type: boolean
+        creator.company?:
+          description: Company name of a creator to search for.
+          type: string
+        id?:
+          description: |
+            `id` of a Connector to search for.
+          type: string[]
+        key?:
+          description: |
+            `key` of a Connector to search for.
+          type: string[]
+      is:
+        - secured_by_view_connectors
+      responses:
+        200:
+          body:
+            type: common.Paged
+            properties:
+              results: Connector[]
+            example: !include ./examples/connector/paged.json
+  /drafts:
+    type:
+      base:
+        resourceType: ConnectorDraft
+    post:
+      is:
+        - secured_by_manage_connectors
+      body:
+        type: ConnectorDraft
+        example: !include ./examples/connector/draft.json
+      responses:
+        201:
+          body:
+            type: ConnectorStaged
+            example: !include ./examples/connector/staged.json
+        400:
+          description: The request was invalid.
+          body:
+            type: error.ErrorResponse
+    get:
+      queryParameters:
+        limit?:
+          type: number
+          format: int64
+          description: |
+            Number of [results requested](/../api/general-concepts#limit).
+        offset?:
+          type: number
+          format: int64
+          description: |
+            Number of [elements skipped](/../api/general-concepts#offset).
+        sort?:
+          type: string[]
+      is:
+        - secured_by_view_connectors
+      responses:
+        200:
+          body:
+            type: common.Paged
+            properties:
+              results: ConnectorStaged[]
+            example: !include ./examples/connector/staged-paged.json
+    /{ID}:
+      (annotations.methodName): withId
+      type:
+        connectorByParam:
+          uriParameterName: ID
+          resourceType: ConnectorDraft
+    /key={key}:
+      (annotations.methodName): withKey
+      type:
+        connectorByParam:
+          uriParameterName: key
+          resourceType: ConnectorDraft
