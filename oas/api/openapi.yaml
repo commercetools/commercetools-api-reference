@@ -16115,7 +16115,7 @@ paths:
     description: |-
       Manage individual Store assortments through Product Selections.
 
-      After you have created Product Selections and populated them by Products,
+      After you have created Product Selections and populated them with Products,
       you can manage Store assortments by assigning Product Selections to Stores.
       Product Selections may be used by a single Store or shared across several Stores.
 
@@ -40495,7 +40495,7 @@ components:
             resourceUserProvidedIdentifiers:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             productSelection:
-              $ref: '#/components/schemas/ProductSelectionType'
+              $ref: '#/components/schemas/ProductSelection'
     ProductSelectionDeletedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -43830,7 +43830,7 @@ components:
             type:
               type: "string"
             productSelection:
-              $ref: '#/components/schemas/ProductSelectionType'
+              $ref: '#/components/schemas/ProductSelection'
     ProductSelectionDeletedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -48863,9 +48863,9 @@ components:
             - createdAt
             - id
             - lastModifiedAt
+            - mode
             - name
             - productCount
-            - type
             - version
           properties:
             id:
@@ -48892,6 +48892,8 @@ components:
               format: "int32"
             type:
               $ref: '#/components/schemas/ProductSelectionTypeEnum'
+            mode:
+              $ref: '#/components/schemas/ProductSelectionMode'
             custom:
               $ref: '#/components/schemas/CustomFields'
     ProductSelectionAssignment:
@@ -48921,6 +48923,22 @@ components:
           $ref: '#/components/schemas/CustomFieldsDraft'
         type:
           $ref: '#/components/schemas/ProductSelectionTypeEnum'
+        mode:
+          $ref: '#/components/schemas/ProductSelectionMode'
+    ProductSelectionMode:
+      type: "string"
+      enum:
+        - Individual
+        - IndividualExclusion
+      x-annotation-package: "ProductSelection"
+      x-annotation-docs-uri: --- ""
+      x-annotation-enumDescriptions:
+        Individual: "For this mode of Product Selection, the Products are to be assigned individually
+         by using the [Add Product](/projects/product-selections#add-product) update action.n"
+        IndividualExclusion: "Defines the Product Selection to contain Products that are excluded
+         from the catalog.nFor this mode of Product Selection, the Products are to be
+         excluded individually by using the [Exclude Product](/projects/product-selections#exclude-product)
+         update action.n"
     ProductSelectionPagedQueryResponse:
       type: "object"
       required:
@@ -49011,6 +49029,8 @@ components:
         - individual
         - individualExclusion
       x-annotation-package: "ProductSelection"
+      x-beta: true
+      x-markDeprecated: true
       x-annotation-docs-uri: --- ""
       x-annotation-enumDescriptions:
         individual: "For this type of Product Selection, the Products are to be assigned individually
