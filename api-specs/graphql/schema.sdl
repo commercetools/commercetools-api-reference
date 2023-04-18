@@ -2369,7 +2369,6 @@ input CreateApiClient {
 input CreateProductSelectionDraft {
   key: String
   name: [LocalizedStringItemInputType!]!
-  type: String
   custom: CustomFieldsDraft
 }
 
@@ -3848,32 +3847,6 @@ type InStoreMe implements MeQueryInterface & CartQueryInterface & ActiveCartInte
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   shoppingLists(where: String, sort: [String!], limit: Int, offset: Int): ShoppingListQueryResult!
-}
-
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-type IndividualExclusionProductSelectionCreatedPayload implements ProductSelectionCreatedPayload {
-  custom: CustomFieldsType
-  name(
-    "String is defined for different locales. This argument specifies the desired locale."
-    locale: Locale,
-
-    "List of languages the client is able to understand, and which locale variant is preferred."
-    acceptLanguage: [Locale!]): String
-  nameAllLocales: [LocalizedString!]!
-  type: String!
-}
-
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-type IndividualProductSelectionCreatedPayload implements ProductSelectionCreatedPayload {
-  custom: CustomFieldsType
-  name(
-    "String is defined for different locales. This argument specifies the desired locale."
-    locale: Locale,
-
-    "List of languages the client is able to understand, and which locale variant is preferred."
-    acceptLanguage: [Locale!]): String
-  nameAllLocales: [LocalizedString!]!
-  type: String!
 }
 
 type Initiator {
@@ -7040,7 +7013,6 @@ type ProductSelection implements Versioned {
   productRefs(where: String, sort: [String!], limit: Int, offset: Int): ProductOfSelectionQueryResult!
   productCount: Int!
   custom: CustomFieldsType
-  type: ProductSelectionType!
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -7051,19 +7023,7 @@ type ProductSelection implements Versioned {
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 type ProductSelectionCreated implements MessagePayload {
-  productSelection: ProductSelectionCreatedPayload!
-  type: String!
-}
-
-interface ProductSelectionCreatedPayload {
-  name(
-    "String is defined for different locales. This argument specifies the desired locale."
-    locale: Locale,
-
-    "List of languages the client is able to understand, and which locale variant is preferred."
-    acceptLanguage: [Locale!]): String
-  nameAllLocales: [LocalizedString!]!
-  custom: CustomFieldsType
+  productSelection: ProductSelection!
   type: String!
 }
 
@@ -7128,15 +7088,6 @@ input ProductSelectionSettingDraft {
 input ProductSelectionSettingInActionInput {
   productSelection: ResourceIdentifierInput!
   active: Boolean
-}
-
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-enum ProductSelectionType {
-  "Type of Product Selection used to include a specific list of individual Products"
-  individual
-
-  "Type of Product Selection used to exclude a specific list of individual Products"
-  individualExclusion
 }
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
