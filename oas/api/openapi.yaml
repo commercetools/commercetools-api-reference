@@ -46192,6 +46192,276 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/Hit'
+    OrderSearchAndExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchCompoundExpression'
+        - type: "object"
+          required:
+            - and
+          properties:
+            and:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/OrderSearchQuery'
+    OrderSearchAnyValue:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpressionValue'
+        - type: "object"
+          required:
+            - value
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "integer"
+              format: "int32"
+            customType:
+              type: "string"
+            value:
+              {}
+            language:
+              type: "string"
+            caseInsensitive:
+              type: "boolean"
+    OrderSearchCompoundExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQuery'
+        - type: "object"
+    OrderSearchDateRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/OrderSearchDateRangeValue'
+    OrderSearchDateRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "integer"
+              format: "int32"
+            customType:
+              type: "string"
+            gte:
+              type: "string"
+              format: "datetime"
+            lte:
+              type: "string"
+              format: "datetime"
+    OrderSearchExactExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpression'
+        - type: "object"
+          required:
+            - exact
+          properties:
+            exact:
+              $ref: '#/components/schemas/OrderSearchAnyValue'
+    OrderSearchExistsExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpression'
+        - type: "object"
+          required:
+            - exists
+          properties:
+            exists:
+              $ref: '#/components/schemas/OrderSearchQueryExpressionValue'
+    OrderSearchFilterExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchCompoundExpression'
+        - type: "object"
+          required:
+            - filter
+          properties:
+            filter:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/OrderSearchQueryExpression'
+    OrderSearchFullTextExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpression'
+        - type: "object"
+          required:
+            - fullText
+          properties:
+            fullText:
+              $ref: '#/components/schemas/OrderSearchFullTextValue'
+    OrderSearchFullTextValue:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpressionValue'
+        - type: "object"
+          required:
+            - value
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "integer"
+              format: "int32"
+            customType:
+              type: "string"
+            value:
+              type: "string"
+            language:
+              type: "string"
+            mustMatch:
+              $ref: '#/components/schemas/OrderSearchMatchType'
+    OrderSearchLongRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/OrderSearchLongRangeValue'
+    OrderSearchLongRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "integer"
+              format: "int32"
+            customType:
+              type: "string"
+            gte:
+              type: "integer"
+              format: "int64"
+            lte:
+              type: "integer"
+              format: "int64"
+    OrderSearchMatchType:
+      type: "string"
+      enum:
+        - any
+        - all
+      x-annotation-package: "Order"
+    OrderSearchNotExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchCompoundExpression'
+        - type: "object"
+          required:
+            - not
+          properties:
+            not:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/OrderSearchQuery'
+    OrderSearchNumberRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/OrderSearchNumberRangeValue'
+    OrderSearchNumberRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "integer"
+              format: "int32"
+            customType:
+              type: "string"
+            gte:
+              type: "number"
+              format: "double"
+            lte:
+              type: "number"
+              format: "double"
+    OrderSearchOrExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchCompoundExpression'
+        - type: "object"
+          required:
+            - or
+          properties:
+            or:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/OrderSearchQuery'
+    OrderSearchPrefixExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpression'
+        - type: "object"
+          required:
+            - prefix
+          properties:
+            prefix:
+              $ref: '#/components/schemas/OrderSearchStringValue'
+    OrderSearchQueryExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQuery'
+        - type: "object"
+    OrderSearchQueryExpressionValue:
+      type: "object"
+      required:
+        - field
+      properties:
+        field:
+          type: "string"
+        boost:
+          type: "integer"
+          format: "int32"
+        customType:
+          type: "string"
+    OrderSearchSortMode:
+      type: "string"
+      enum:
+        - min
+        - max
+        - avg
+        - sum
+      x-annotation-package: "Order"
+    OrderSearchSortOrder:
+      type: "string"
+      enum:
+        - asc
+        - desc
+      x-annotation-package: "Order"
+    OrderSearchStringValue:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpressionValue'
+        - type: "object"
+          required:
+            - value
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "integer"
+              format: "int32"
+            customType:
+              type: "string"
+            value:
+              type: "string"
+            language:
+              type: "string"
+            caseInsensitive:
+              type: "boolean"
+    OrderSearchWildCardExpression:
+      allOf:
+        - $ref: '#/components/schemas/OrderSearchQueryExpression'
+        - type: "object"
+          required:
+            - wildcard
+          properties:
+            wildcard:
+              $ref: '#/components/schemas/OrderSearchStringValue'
     CustomLineItemImportDraft:
       type: "object"
       required:
@@ -46709,6 +46979,19 @@ components:
           format: "int32"
     OrderSearchSorting:
       type: "object"
+      required:
+        - field
+      properties:
+        field:
+          type: "string"
+        language:
+          type: "string"
+        order:
+          $ref: '#/components/schemas/OrderSearchSortOrder'
+        mode:
+          $ref: '#/components/schemas/OrderSearchSortMode'
+        filter:
+          $ref: '#/components/schemas/OrderSearchQueryExpression'
     OrderState:
       type: "string"
       enum:
