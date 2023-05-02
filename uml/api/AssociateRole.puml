@@ -1,18 +1,67 @@
 @startuml
 
-hide methods
-enum AssociateRole {
-    ADMIN
-    BUYER
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface AssociateRole [[AssociateRole.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    buyerAssignable: Boolean
+    name: String
+    permissions: [[Permission.svg List<Permission>]]
+    custom: [[CustomFields.svg CustomFields]]
 }
-interface Associate [[Associate.svg]]  {
-    roles: [[AssociateRole.svg List<AssociateRole>]]
-    customer: [[CustomerReference.svg CustomerReference]]
+interface BaseResource [[BaseResource.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
 }
-interface AssociateDraft [[AssociateDraft.svg]]  {
-    roles: [[AssociateRole.svg List<AssociateRole>]]
-    customer: [[CustomerResourceIdentifier.svg CustomerResourceIdentifier]]
+
+
+interface AssociateRolePagedQueryResponse [[AssociateRolePagedQueryResponse.svg]]  {
+    limit: Long
+    offset: Long
+    count: Long
+    total: Long
+    results: [[AssociateRole.svg List<AssociateRole>]]
 }
-AssociateRole --> Associate #green;text:green : "roles"
-AssociateRole --> AssociateDraft #green;text:green : "roles"
+interface AssociateRoleReference [[AssociateRoleReference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[AssociateRole.svg AssociateRole]]
+}
+interface AssociateRoleCreatedMessage [[AssociateRoleCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    associateRole: [[AssociateRole.svg AssociateRole]]
+}
+interface AssociateRoleCreatedMessagePayload [[AssociateRoleCreatedMessagePayload.svg]]  {
+    type: String
+    associateRole: [[AssociateRole.svg AssociateRole]]
+}
+
+AssociateRole --> AssociateRolePagedQueryResponse #green;text:green : "results"
+AssociateRole --> AssociateRoleReference #green;text:green : "obj"
+AssociateRole --> AssociateRoleCreatedMessage #green;text:green : "associateRole"
+AssociateRole --> AssociateRoleCreatedMessagePayload #green;text:green : "associateRole"
 @enduml
