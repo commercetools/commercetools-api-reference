@@ -1,0 +1,491 @@
+type: base
+/{associateId}:
+  type: base
+  uriParameters:
+    associateId:
+      type: string
+      description: '`id` of the [Customer](ctp:api:type:Customer) who is acting on behalf of the [BusinessUnit](ctp:api:type:BusinessUnit).'
+  /business-units:
+    type:
+      baseDomain:
+        resourceType: BusinessUnit
+        resourceQueryType: BusinessUnitPagedQueryResponse
+        resourceDraft: BusinessUnitDraft
+        whereExample: 'name = "Some company"'
+        sortExample: createdAt asc
+    (updateable): BusinessUnit
+    (deleteable): BusinessUnit
+    (createable): BusinessUnitDraft
+    description: A Business Unit can represent a Company or a Division.
+    get:
+      securedBy: [oauth_2_0: { scopes: ['view_business_units:{projectKey}'] }]
+      displayName: Query business units
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../examples/business-units.example.json
+    post:
+      securedBy: [oauth_2_0: { scopes: ['manage_business_units:{projectKey}'] }]
+      body:
+        application/json:
+          example: !include ../examples/business-unit-create.example.json
+      responses:
+        201:
+          body:
+            application/json:
+              example: !include ../examples/business-unit.example.json
+    /key={key}:
+      (methodName): withKey
+      type:
+        baseResource:
+          uriParameterName: key
+          resourceType: BusinessUnit
+          resourceUpdateType: BusinessUnitUpdate
+      get:
+        securedBy: [oauth_2_0: { scopes: ['view_business_units:{projectKey}'] }]
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/business-unit.example.json
+      post:
+        securedBy:
+          [oauth_2_0: { scopes: ['manage_business_units:{projectKey}'] }]
+        body:
+          application/json:
+            example: !include ../examples/business-unit-update.example.json
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/business-unit.example.json
+    /{ID}:
+      (methodName): withId
+      type:
+        baseResource:
+          uriParameterName: ID
+          resourceType: BusinessUnit
+          resourceUpdateType: BusinessUnitUpdate
+      get:
+        securedBy: [oauth_2_0: { scopes: ['view_business_units:{projectKey}'] }]
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/business-unit.example.json
+      post:
+        securedBy:
+          [oauth_2_0: { scopes: ['manage_business_units:{projectKey}'] }]
+        body:
+          application/json:
+            example: !include ../examples/business-unit-update.example.json
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/business-unit.example.json
+  /in-business-unit/key={businessUnitKey}:
+    type: base
+    uriParameters:
+      businessUnitKey:
+        type: string
+        description: '`key` of the [BusinessUnit](ctp:api:type:BusinessUnit).'
+    /carts:
+      type:
+        baseDomain:
+          resourceType: Cart
+          resourceQueryType: CartPagedQueryResponse
+          resourceDraft: CartDraft
+          whereExample: 'customerEmail = "john.doe@example.com"'
+          sortExample: createdAt asc
+      (updateable): Cart
+      (deleteable): Cart
+      (createable): CartDraft
+      description: A shopping cart holds product variants and can be ordered.
+      get:
+        securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
+        displayName: Query carts in business unit
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/b2b-carts.example.json
+      post:
+        displayName: Create cart in business unit
+        securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+        description: |
+          Creates a [Cart](ctp:api:type:Cart) in the [BusinessUnit](ctp:api:type:BusinessUnit) referenced by `businessUnitKey`. As such, the `businessUnit` field on [CartDraft](ctp:api:type:CartDraft) is ignored for this request.
+          Creating a Cart can fail with an [InvalidOperation](ctp:api:type:InvalidOperationError) if the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match the Cart.
+        body:
+          application/json:
+            example: !include ../examples/cart-create.example.json
+        responses:
+          201:
+            body:
+              application/json:
+                example: !include ../examples/b2b-cart.example.json
+      /key={key}:
+        (methodName): withKey
+        type:
+          baseResource:
+            uriParameterName: key
+            resourceType: Cart
+            resourceUpdateType: CartUpdate
+        get:
+          displayName: Get cart by key in business unit
+          securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
+          description: |
+            If the Cart exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/b2b-cart.example.json
+        post:
+          displayName: Update cart by key in business unit
+          securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+          description: |
+            If the Cart exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          body:
+            application/json:
+              example: !include ../examples/cart-update.example.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/b2b-cart.example.json
+        delete:
+          displayName: Delete cart by key in business unit
+          is:
+            - dataErasure
+          securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+          description: If the Cart exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/b2b-cart.example.json
+      /{ID}:
+        (methodName): withId
+        type:
+          baseResource:
+            uriParameterName: ID
+            resourceType: Cart
+            resourceUpdateType: CartUpdate
+        get:
+          displayName: Get cart by id in business unit
+          securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
+          description: |
+            If the Cart exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/b2b-cart.example.json
+        post:
+          displayName: Update cart by id in business unit
+          securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+          description: |
+            If the Cart exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          body:
+            application/json:
+              example: !include ../examples/cart-update.example.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/b2b-cart.example.json
+        delete:
+          displayName: Delete cart by id in business unit
+          is:
+            - dataErasure
+          securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+          description: If the Cart exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/b2b-cart.example.json
+    /orders:
+      type:
+        baseDomain:
+          resourceType: Order
+          resourceQueryType: OrderPagedQueryResponse
+          resourceDraft: OrderFromCartDraft
+          whereExample: 'customerEmail = "john.doe@example.com"'
+          sortExample: createdAt asc
+      (updateable): Order
+      (deleteable): Order
+      (createable): OrderFromCartDraft
+      get:
+        displayName: Query orders in business unit
+        securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/orders.example.json
+      post:
+        displayName: Create order from cart in business unit
+        securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+        description: |
+          Creates an Order from a [Cart](ctp:api:type:Cart) in a [BusinessUnit](ctp:api:type:BusinessUnit).
+          The Cart must have a shipping address set before creating an Order.
+          Creating an Order fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) if the Cart does not reference the same BusinessUnit as the `businessUnitKey` path parameter.
+        body:
+          application/json:
+            example: !include ../examples/order-create.example.json
+        responses:
+          201:
+            body:
+              application/json:
+                example: !include ../examples/order.example.json
+      /quotes:
+        (methodName): orderQuote
+        type: base
+        displayName: Create order from quote in a business unit
+        post:
+          displayName: Create an Order from a Quote
+          securedBy: [oauth_2_0: { scopes: ['manage_quotes:{projectKey}'] }]
+          description: |
+            Creates an Order from a [Quote](ctp:api:type:Cart) in a [BusinessUnit](ctp:api:type:BusinessUnit).
+            Creating an Order fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) if the Quote does not reference the same BusinessUnit as the `businessUnitKey` path parameter.
+          body:
+            application/json:
+              example: !include ../examples/order-from-quote.example.json
+              type: OrderFromQuoteDraft
+          responses:
+            201:
+              body:
+                application/json:
+                  example: !include ../examples/order.example.json
+                  type: Order
+      /order-number={orderNumber}:
+        (methodName): withOrderNumber
+        type:
+          baseResource:
+            uriParameterName: orderNumber
+            description: '`orderNumber` of the [Order](ctp:api:type:Order). Should be provided in a URL-encoded format.'
+            resourceType: Order
+            resourceUpdateType: OrderUpdate
+        get:
+          displayName: Get order by order number in business unit
+          securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
+          description: |
+            If the Order exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/order.example.json
+        post:
+          displayName: Update order by order number in business unit
+          securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+          description: |
+            If the Order exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          body:
+            application/json:
+              example: !include ../examples/order-update.example.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/order.example.json
+      /{ID}:
+        (methodName): withId
+        type:
+          baseResource:
+            uriParameterName: ID
+            resourceType: Order
+            resourceUpdateType: OrderUpdate
+        get:
+          displayName: Get order by id in business unit
+          securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
+          description: |
+            If the Order exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/order.example.json
+        post:
+          displayName: Update order by id in business unit
+          securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+          description: |
+            If the Order exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          body:
+            application/json:
+              example: !include ../examples/order-update.example.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/order.example.json
+    /quotes:
+      type:
+        baseDomain:
+          resourceType: Quote
+          resourceQueryType: QuotePagedQueryResponse
+          resourceDraft: QuoteDraft
+          whereExample: 'quoteState = "Accepted"'
+          sortExample: createdAt asc
+      (updateable): Quote
+      (deleteable): Quote
+      (createable): QuoteDraft
+      description: A quote holds the negotiated offer.
+      get:
+        securedBy: [oauth_2_0: { scopes: ['view_quotes:{projectKey}'] }]
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/quotes.example.json
+      /key={key}:
+        (methodName): withKey
+        type:
+          baseResource:
+            uriParameterName: key
+            resourceType: Quote
+            resourceUpdateType: QuoteUpdate
+        get:
+          securedBy: [oauth_2_0: { scopes: ['view_quotes:{projectKey}'] }]
+          description: |
+            If the Quote exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/quote.example.json
+        post:
+          securedBy: [oauth_2_0: { scopes: ['manage_quotes:{projectKey}'] }]
+          description: |
+            If the Quote exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          body:
+            application/json:
+              example: !include ../examples/quote-update.example.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/quote.example.json
+      /{ID}:
+        (methodName): withId
+        type:
+          baseResource:
+            uriParameterName: ID
+            resourceType: Quote
+            resourceUpdateType: QuoteUpdate
+        get:
+          securedBy: [oauth_2_0: { scopes: ['view_quotes:{projectKey}'] }]
+          description: |
+            If the Quote exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/quote.example.json
+        post:
+          securedBy: [oauth_2_0: { scopes: ['manage_quotes:{projectKey}'] }]
+          description: |
+            If the Quote exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          body:
+            application/json:
+              example: !include ../examples/quote-update.example.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/quote.example.json
+    /quote-requests:
+      type:
+        baseDomain:
+          resourceType: QuoteRequest
+          resourceQueryType: QuoteRequestPagedQueryResponse
+          resourceDraft: QuoteRequestDraft
+          whereExample: 'quoteRequestState = "Submitted"'
+          sortExample: createdAt asc
+      (updateable): QuoteRequest
+      (deleteable): QuoteRequest
+      (createable): QuoteRequestDraft
+      get:
+        securedBy: [oauth_2_0: { scopes: ['view_quote_requests:{projectKey}'] }]
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/quote-requests.example.json
+      post:
+        securedBy:
+          [oauth_2_0: { scopes: ['manage_quote_requests:{projectKey}'] }]
+        description:
+          Creates a QuoteRequest in a [BusinessUnit](ctp:api:type:BusinessUnit).
+          Creating QuoteRequest fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) if the Cart does not reference the same BusinessUnit as the `businessUnitKey` path parameter.
+        body:
+          application/json:
+            example: !include ../examples/quote-request-create.example.json
+        responses:
+          201:
+            body:
+              application/json:
+                example: !include ../examples/quote-request.example.json
+      /key={key}:
+        (methodName): withKey
+        type:
+          baseResource:
+            uriParameterName: key
+            resourceType: QuoteRequest
+            resourceUpdateType: QuoteRequestUpdate
+        get:
+          securedBy:
+            [oauth_2_0: { scopes: ['view_quote_requests:{projectKey}'] }]
+          description: |
+            If the QuoteRequest exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/quote-request.example.json
+        post:
+          securedBy:
+            [oauth_2_0: { scopes: ['manage_quote_requests:{projectKey}'] }]
+          description: |
+            If the QuoteRequest exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          body:
+            application/json:
+              example: !include ../examples/quote-request-update.example.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/quote-request-update-response.example.json
+      /{ID}:
+        (methodName): withId
+        type:
+          baseResource:
+            uriParameterName: ID
+            resourceType: QuoteRequest
+            resourceUpdateType: QuoteRequestUpdate
+        get:
+          securedBy:
+            [oauth_2_0: { scopes: ['view_quote_requests:{projectKey}'] }]
+          description: |
+            If the QuoteRequest exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/quote-request.example.json
+        post:
+          securedBy:
+            [oauth_2_0: { scopes: ['manage_quote_requests:{projectKey}'] }]
+          description: |
+            If the QuoteRequest exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          body:
+            application/json:
+              example: !include ../examples/quote-request-update.example.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/quote-request-update-response.example.json
