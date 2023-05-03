@@ -1447,6 +1447,17 @@ type CartDiscountLimitsProjection {
   totalActiveWithoutDiscountCodes: CartDiscountLimitWithCurrent!
 }
 
+"Fields to access cartDiscounts. Includes direct access to a single cartDiscount and searching for cartDiscounts."
+interface CartDiscountQueryInterface {
+  cartDiscount(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): CartDiscount
+  cartDiscounts(where: String, sort: [String!], limit: Int, offset: Int): CartDiscountQueryResult!
+}
+
 type CartDiscountQueryResult {
   offset: Int!
   count: Int!
@@ -5321,7 +5332,6 @@ type Mutation {
   createMyPayment(draft: MyPaymentDraft!): MyPayment
   updateMyPayment(id: String!, version: Long!, actions: [MyPaymentUpdateAction!]!): MyPayment
   deleteMyPayment(id: String!, version: Long!): MyPayment
-
   createProductSelection(draft: CreateProductSelectionDraft!): ProductSelection
   updateProductSelection(version: Long!, actions: [ProductSelectionUpdateAction!]!,
 
@@ -7544,6 +7554,7 @@ input ProductUpdateAction {
   publish: PublishProduct
   unpublish: UnpublishProduct
   transitionState: TransitionProductState
+  removePrice: RemoveProductPrice
   addAsset: AddProductAsset
   addExternalImage: AddProductExternalImage
   addPrice: AddProductPrice
@@ -7559,7 +7570,6 @@ input ProductUpdateAction {
   removeAsset: RemoveProductAsset
   removeFromCategory: RemoveProductFromCategory
   removeImage: RemoveProductImage
-  removePrice: RemoveProductPrice
   removeVariant: RemoveProductVariant
   setAssetCustomField: SetProductAssetCustomField
   setAssetCustomType: SetProductAssetCustomType
