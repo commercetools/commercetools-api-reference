@@ -39,7 +39,7 @@ paths:
             - "view_types:{projectKey}"
       operationId: ByProjectKeyGet
       parameters:
-        - name: resourceType
+        - name: resourceTypes
           in: query
           required: false
           style: form
@@ -252,6 +252,7 @@ paths:
       operationId: ByProjectKeyByResourceTypeGet
       parameters:
         - name: date.from
+          x-annotation-default: 24
           in: query
           required: false
           style: form
@@ -1188,6 +1189,7 @@ components:
           SetCategoryOrderHintChange: '#/components/schemas/SetCategoryOrderHintChange'
           SetChannelRolesChange: '#/components/schemas/SetChannelRolesChange'
           SetCompanyNameChange: '#/components/schemas/SetCompanyNameChange'
+          SetCountriesChange: '#/components/schemas/SetCountriesChange'
           SetCountryChange: '#/components/schemas/SetCountryChange'
           SetCustomFieldChange: '#/components/schemas/SetCustomFieldChange'
           SetCustomLineItemCustomFieldChange: '#/components/schemas/SetCustomLineItemCustomFieldChange'
@@ -1266,6 +1268,7 @@ components:
           SetProductSelectionsChange: '#/components/schemas/SetProductSelectionsChange'
           SetProductVariantKeyChange: '#/components/schemas/SetProductVariantKeyChange'
           SetPropertyChange: '#/components/schemas/SetPropertyChange'
+          SetPurchaseOrderNumberChange: '#/components/schemas/SetPurchaseOrderNumberChange'
           SetRatingChange: '#/components/schemas/SetRatingChange'
           SetReservationsChange: '#/components/schemas/SetReservationsChange'
           SetRestockableInDaysChange: '#/components/schemas/SetRestockableInDaysChange'
@@ -5343,6 +5346,28 @@ components:
               $ref: '#/components/schemas/CountryCode'
             nextValue:
               $ref: '#/components/schemas/CountryCode'
+    SetCountriesChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreCountry'
+            nextValue:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreCountry'
     SetCustomFieldChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -6814,6 +6839,24 @@ components:
               $ref: '#/components/schemas/TrackingData'
             previousValue:
               $ref: '#/components/schemas/TrackingData'
+    SetPurchaseOrderNumberChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              type: "string"
+            nextValue:
+              type: "string"
     SetPricesChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -7919,6 +7962,13 @@ components:
         - ReviewState
         - PaymentState
       x-annotation-package: "Common"
+    StoreCountry:
+      type: "object"
+      required:
+        - code
+      properties:
+        code:
+          $ref: '#/components/schemas/CountryCode'
     StringLabel:
       allOf:
         - $ref: '#/components/schemas/Label'
