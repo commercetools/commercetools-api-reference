@@ -79,14 +79,6 @@ jobs:
         with:
           path: commercetools-api-reference
 
-      - name: Retrieve branch name
-        id: branch_name
-        run: |
-          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
-          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
-          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
-        working-directory: commercetools-api-reference
-
       - name: "Checkout PHP SDK"
         uses: actions/checkout@v3
         with:
@@ -106,9 +98,9 @@ jobs:
       - name: "Switch SDK to update branch"
         if: github.ref != 'refs/heads/main'
         run: |
-          git fetch --depth=1 origin ${{ steps.branch_name.outputs.SOURCE_BRANCH }} || true
-          git checkout -B gen-sdk-updates origin/${{ steps.branch_name.outputs.SOURCE_BRANCH }} || true
-          git checkout -B ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
+          git fetch --depth=1 origin ${{ github.ref_name }} || true
+          git checkout -B gen-sdk-updates origin/${{ github.ref_name }} || true
+          git checkout -B ${{ github.ref_name }}
           git log -1
         working-directory: commercetools-sdk-php-v2
 
@@ -130,9 +122,9 @@ jobs:
       - name: "Store api reference version"
         run: |
           if [ ! -f ../commercetools-sdk-php-v2/reference.txt ]; then
-            git log --format='%H' --no-merges -n 1 --skip 1 > ../commercetools-sdk-php-v2/reference.txt
+            git log --format='%H' --no-merges -n 1 --skip 1 >> ../commercetools-sdk-php-v2/reference.txt
           fi
-          echo "previous=$(cat ../commercetools-sdk-php-v2/reference.txt)" >> $GITHUB_ENV
+          echo "previous=$(cat ../commercetools-sdk-php-v2/reference.txt | head -n 1)" >> $GITHUB_ENV
         working-directory: commercetools-api-reference-previous
 
       - name: "Switch to previous commit"
@@ -200,7 +192,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
         with:
           repository: commercetools-sdk-php-v2
-          branch: ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
+          branch: ${{ github.ref_name }}
           commit_message: "TASK: Updating SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
@@ -285,14 +277,6 @@ jobs:
           path: commercetools-sdk-java-v2
           ssh-key: ${{ secrets.JAVA_SDK_DEPLOY_KEY }}
 
-      - name: Retrieve branch name
-        id: branch_name
-        run: |
-          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
-          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
-          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
-        working-directory: commercetools-api-reference
-
       - name: "Switch SDK to update branch"
         if: github.ref == 'refs/heads/main'
         run: |
@@ -305,9 +289,9 @@ jobs:
       - name: "Switch SDK to update branch"
         if: github.ref != 'refs/heads/main'
         run: |
-          git fetch --depth=1 origin ${{ steps.branch_name.outputs.SOURCE_BRANCH }} || true
-          git checkout -B gen-sdk-updates origin/${{ steps.branch_name.outputs.SOURCE_BRANCH }} || true
-          git checkout -B ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
+          git fetch --depth=1 origin ${{ github.ref_name }} || true
+          git checkout -B gen-sdk-updates origin/${{ github.ref_name }} || true
+          git checkout -B ${{ github.ref_name }}
           git log -1
         working-directory: commercetools-sdk-java-v2
 
@@ -340,9 +324,9 @@ jobs:
       - name: "Store api reference version"
         run: |
           if [ ! -f ../commercetools-sdk-java-v2/reference.txt ]; then
-            git log --format='%H' --no-merges -n 1 --skip 1 > ../commercetools-sdk-java-v2/reference.txt
+            git log --format='%H' --no-merges -n 1 --skip 1 >> ../commercetools-sdk-java-v2/reference.txt
           fi
-          echo "previous=$(cat ../commercetools-sdk-java-v2/reference.txt)" >> $GITHUB_ENV
+          echo "previous=$(cat ../commercetools-sdk-java-v2/reference.txt | head -n 1)" >> $GITHUB_ENV
         working-directory: commercetools-api-reference-previous
 
       - name: "Switch to previous commit"
@@ -410,7 +394,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
         with:
           repository: commercetools-sdk-java-v2
-          branch: ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
+          branch: ${{ github.ref_name }}
           commit_message: "TASK: Updating SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
@@ -446,14 +430,6 @@ jobs:
         with:
           node-version-file: 'commercetools-sdk-typescript/.nvmrc'
 
-      - name: Retrieve branch name
-        id: branch_name
-        run: |
-          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
-          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
-          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
-        working-directory: commercetools-api-reference
-
       - name: "Switch SDK to update branch"
         if: github.ref == 'refs/heads/main'
         run: |
@@ -466,9 +442,9 @@ jobs:
       - name: "Switch SDK to update branch"
         if: github.ref != 'refs/heads/main'
         run: |
-          git fetch --depth=1 origin ${{ steps.branch_name.outputs.SOURCE_BRANCH }} || true
-          git checkout -B gen-sdk-updates origin/${{ steps.branch_name.outputs.SOURCE_BRANCH }} || true
-          git checkout -B ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
+          git fetch --depth=1 origin ${{ github.ref_name }} || true
+          git checkout -B gen-sdk-updates origin/${{ github.ref_name }} || true
+          git checkout -B ${{ github.ref_name }}
           git log -1
         working-directory: commercetools-sdk-typescript
 
@@ -491,9 +467,9 @@ jobs:
       - name: "Store api reference version"
         run: |
           if [ ! -f ../commercetools-sdk-typescript/reference.txt ]; then
-            git log --format='%H' --no-merges -n 1 --skip 1 > ../commercetools-sdk-typescript/reference.txt
+            git log --format='%H' --no-merges -n 1 --skip 1 >> ../commercetools-sdk-typescript/reference.txt
           fi
-          echo "previous=$(cat ../commercetools-sdk-typescript/reference.txt)" >> $GITHUB_ENV
+          echo "previous=$(cat ../commercetools-sdk-typescript/reference.txt | head -n 1)" >> $GITHUB_ENV
         working-directory: commercetools-api-reference-previous
 
       - name: "Switch to previous commit"
@@ -561,7 +537,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
         with:
           repository: commercetools-sdk-typescript
-          branch: ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
+          branch: ${{ github.ref_name }}
           commit_message: "build(codegen): updating SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
@@ -600,14 +576,6 @@ jobs:
           path: commercetools-dotnet-core-sdk-v2
           ssh-key: ${{ secrets.CSHARP_SDK_DEPLOY_KEY }}
 
-      - name: Retrieve branch name
-        id: branch_name
-        run: |
-          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
-          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
-          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
-        working-directory: commercetools-api-reference
-
       - name: "Switch SDK to update branch"
         if: github.ref == 'refs/heads/main'
         run: |
@@ -620,9 +588,9 @@ jobs:
       - name: "Switch SDK to update branch"
         if: github.ref != 'refs/heads/main'
         run: |
-          git fetch --depth=1 origin ${{ steps.branch_name.outputs.SOURCE_BRANCH }} || true
-          git checkout -B gen-sdk-updates origin/${{ steps.branch_name.outputs.SOURCE_BRANCH }} || true
-          git checkout -B ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
+          git fetch --depth=1 origin ${{ github.ref_name }} || true
+          git checkout -B gen-sdk-updates origin/${{ github.ref_name }} || true
+          git checkout -B ${{ github.ref_name }}
           git log -1
         working-directory: commercetools-dotnet-core-sdk-v2
 
@@ -655,9 +623,9 @@ jobs:
       - name: "Store api reference version"
         run: |
           if [ ! -f ../commercetools-dotnet-core-sdk-v2/reference.txt ]; then
-            git log --format='%H' --no-merges -n 1 --skip 1 > ../commercetools-dotnet-core-sdk-v2/reference.txt
+            git log --format='%H' --no-merges -n 1 --skip 1 >> ../commercetools-dotnet-core-sdk-v2/reference.txt
           fi
-          echo "previous=$(cat ../commercetools-dotnet-core-sdk-v2/reference.txt)" >> $GITHUB_ENV
+          echo "previous=$(cat ../commercetools-dotnet-core-sdk-v2/reference.txt | head -n 1)" >> $GITHUB_ENV
         working-directory: commercetools-api-reference-previous
 
       - name: "Switch to previous commit"
@@ -725,7 +693,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
         with:
           repository: commercetools-dotnet-core-sdk-v2
-          branch: ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
+          branch: ${{ github.ref_name }}
           commit_message: "TASK: Updating SDK"
           commit_user_name: Auto Mation
           commit_user_email: automation@commercetools.com
