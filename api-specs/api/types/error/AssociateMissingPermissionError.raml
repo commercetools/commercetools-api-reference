@@ -1,0 +1,32 @@
+#%RAML 1.0 DataType
+(package): Error
+type: ErrorObject
+displayName: AssociateMissingPermissionError
+discriminatorValue: AssociateMissingPermission
+description: |
+  Returned when an [Associate](/projects/business-units#associate) is missing a [Permission](/projects/associate-roles#ctp:api:type:Permission) on a [B2B resource](/associates-overview#b2b-resources).
+properties:
+  code:
+    type: string
+  message:
+    type: string
+    description: |
+      - When an action is performed by an Associate: `"Associate '$idOfAssociate' has no rights to $action in business-unit '$idOrKeyOfBusinessUnit'. Needs '$requiredPermission'."`
+      - When an action is performed for another Associate, like [viewing their Cart](/projects/associate-carts#get-cart-in-businessunit): `"Associate '$idOfAssociate' has no rights to $action for customer '$idOfCustomer' in business-unit '$idOrKeyOfBusinessUnit'. Needs '$requiredPermission'."`
+      - When viewing an entity: `"Associate '$idOfAssociate' has no rights to $action in business-unit '$idOrKeyOfBusinessUnit'. Needs '$requiredViewMyPermission' or '$requiredViewOthersPermission'."`
+  associate:
+    type: CustomerResourceIdentifier
+    description: |
+      [ResourceIdentifier](ctp:api:type:CustomerResourceIdentifier) to the [Associate](ctp:api:type:Associate) that tried to perform the action.
+  businessUnit:
+    type: BusinessUnitResourceIdentifier
+    description: |
+      [ResourceIdentifier](ctp:api:type:BusinessUnitResourceIdentifier) to the [BusinessUnit](ctp:api:type:BusinessUnit).
+  associateOnBehalf?:
+    type: CustomerResourceIdentifier
+    description: |
+      [ResourceIdentifier](ctp:api:type:CustomerResourceIdentifier) of the [Associate](ctp:api:type:Associate) on whose behalf the action is performed.
+  permissions:
+    type: Permission[]
+    description: |
+      The Permissions that the [Associate](ctp:api:type:Associate) performing the action lacks. At least one of these Permissions is needed.
