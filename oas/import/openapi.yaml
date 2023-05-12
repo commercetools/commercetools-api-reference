@@ -834,6 +834,49 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /{projectKey}/types/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_project:{projectKey}"
+            - "manage_types:{projectKey}"
+      operationId: ByProjectKeyTypesImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a request for creating new Type or updating existing ones.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TypeImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 
 components:
 
@@ -1400,6 +1443,7 @@ components:
           product-variant: '#/components/schemas/ProductVariantImportRequest'
           product-variant-patch: '#/components/schemas/ProductVariantPatchRequest'
           standalone-price: '#/components/schemas/StandalonePriceImportRequest'
+          type: '#/components/schemas/TypeImportRequest'
       required:
         - type
       properties:
@@ -1570,6 +1614,19 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/InventoryImport'
+    TypeImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          required:
+            - resources
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/TypeImport'
     SubRate:
       type: "object"
       required:
@@ -3416,6 +3473,299 @@ components:
               $ref: '#/components/schemas/ChannelKeyReference'
             custom:
               $ref: '#/components/schemas/Custom'
+    TypeTextInputHint:
+      type: "string"
+      enum:
+        - SingleLine
+        - MultiLine
+      x-annotation-enumDescriptions:
+        SingleLine: "Hint for GUIs to display the field's content in a single line of text."
+        MultiLine: "Hint for GUIs to display the field's content over multiple lines of text."
+    ResourceTypeId:
+      type: "string"
+      enum:
+        - address
+        - asset
+        - business-unit
+        - cart-discount
+        - category
+        - channel
+        - customer
+        - customer-group
+        - custom-line-item
+        - discount-code
+        - inventory-entry
+        - line-item
+        - order
+        - order-edit
+        - order-delivery
+        - order-parcel
+        - order-return-item
+        - payment
+        - payment-interface-interaction
+        - product-price
+        - product-selection
+        - quote
+        - review
+        - shipping
+        - shipping-method
+        - shopping-list
+        - shopping-list-text-line-item
+        - standalone-price
+        - store
+        - transaction
+      x-annotation-enumDescriptions:
+        address: "[Address](/../api/types#address) on [BusinessUnit](/../api/projects/business-units#businessunit),
+         [Cart](/../api/projects/carts#cart), [Order](/../api/projects/orders#order), [OrderEdit](/../api/projects/order-edits#orderedit),
+         [Customer](/../api/projects/customers#customer), and [Channel](/../api/projects/channels#channel)n"
+        asset: "[Asset](/../api/types#asset) on [Category](/../api/projects/categories#category)
+         and [ProductVariant](/../api/projects/products#productvariant)n"
+        business-unit: "[BusinessUnit](/../api/projects/business-units#businessunit)n"
+        cart-discount: "[CartDiscount](/../api/projects/cartDiscounts#cartdiscount)n"
+        category: "[Category](/../api/projects/categories#category)n"
+        channel: "[Channel](/../api/projects/channels#channel)n"
+        custom-line-item: "[CustomLineItem](/../api/projects/carts#customlineitem) on [Cart](/../api/projects/carts#cart)
+         and [Order](/../api/projects/orders#order)n"
+        customer: "[Customer](/../api/projects/customers#customer)n"
+        customer-group: "[CustomerGroup](/../api/projects/customerGroups#customergroup)n"
+        discount-code: "[DiscountCode](/../api/projects/discountCodes#discountcode)n"
+        inventory-entry: "[InventoryEntry](/../api/projects/inventory#inventoryentry)n"
+        line-item: "[LineItem](/../api/projects/carts#lineitem) on [Cart](/../api/projects/carts#cart)
+         and [Order](/../api/projects/orders#order), and [LineItem](/../api/projects/carts#lineitem)
+         on [ShoppingList](/../api/projects/shoppingLists#shoppinglist)n"
+        order: "[Cart](/../api/projects/carts#cart) and [Order](/../api/projects/orders#order).n
+        When a [Cart](/../api/projects/carts#cart) is ordered, the [CustomFields](/../api/projects/custom-fields#customfields)
+         need to be copied to the [Order](/../api/projects/orders#order).nFor this reason,
+         the Types for Carts are also valid for Orders, and hence both have the same identifier:
+         `order`.n"
+        order-edit: "[OrderEdit](/../api/projects/order-edits#orderedit)n"
+        order-delivery: "[Delivery](/../api/projects/orders#delivery)n"
+        order-parcel: "[Parcel](/../api/projects/orders#parcel)n"
+        order-return-item: "[ReturnItem](/../api/projects/orders#returnitem)n"
+        payment: "[Payment](/../api/projects/payments#payment)n"
+        payment-interface-interaction: "[InterfaceInteraction](/../api/projects/payments#add-interfaceinteraction)
+         on [Payment](/../api/projects/payments#payment)n"
+        product-price: "[Embedded Price](/../api/projects/products#embedded-price) on [ProductVariant](/../api/projects/products#productvariant)n"
+        product-selection: "[ProductSelection](/../api/projects/product-selections#productselection)n"
+        quote: "[Quote](/../api/projects/quotes#quote), [QuoteRequest](/../api/projects/quote-requests#quoterequest)
+         and [StagedQuote](/../api/projects/staged-quotes#stagedquote).nWhen a [StagedQuote](/../api/projects/staged-quotes#stagedquote)
+         is created, the [CustomFields](/../api/projects/custom-fields#customfields) will
+         be copied from the [QuoteRequest](/../api/projects/quote-requests#quoterequest)
+         and when a [Quote](/../api/projects/quotes#quote) is created, the [CustomFields](/../api/projects/custom-fields#customfields)
+         will be copied from the [StagedQuote](/../api/projects/staged-quotes#stagedquote).n
+        For this reason, the Types for Quotes are also valid for QuoteRequests and StagedQuotes,
+         and hence all have the same identifier: `quote`.n"
+        review: "[Review](/../api/projects/reviews#review)n"
+        shipping: "[Shipping](/../api/projects/carts#shipping)n"
+        shipping-method: "[ShippingMethod](/../api/projects/shippingMethods#shippingmethod)n"
+        shopping-list: "[ShoppingList](/../api/projects/shoppingLists#shoppinglist)n"
+        shopping-list-text-line-item: "[TextLineItem](/../api/projects/shoppingLists#textlineitem)
+         on [ShoppingList](/../api/projects/shoppingLists#shoppinglist)n"
+        standalone-price: "[StandalonePrice](/../api/projects/standalone-prices#standaloneprice)n"
+        store: "[Store](/../api/projects/stores#store)n"
+        transaction: "[Transaction](/../api/projects/payments#transaction) on [Payment](/../api/projects/payments#payment)n"
+    FieldType:
+      type: "object"
+      discriminator:
+        propertyName: name
+        mapping:
+          Boolean: '#/components/schemas/CustomFieldBooleanType'
+          DateTime: '#/components/schemas/CustomFieldDateTimeType'
+          Date: '#/components/schemas/CustomFieldDateType'
+          Enum: '#/components/schemas/CustomFieldEnumType'
+          LocalizedEnum: '#/components/schemas/CustomFieldLocalizedEnumType'
+          LocalizedString: '#/components/schemas/CustomFieldLocalizedStringType'
+          Money: '#/components/schemas/CustomFieldMoneyType'
+          Number: '#/components/schemas/CustomFieldNumberType'
+          Reference: '#/components/schemas/CustomFieldReferenceType'
+          Set: '#/components/schemas/CustomFieldSetType'
+          String: '#/components/schemas/CustomFieldStringType'
+          Time: '#/components/schemas/CustomFieldTimeType'
+      required:
+        - name
+      properties:
+        name:
+          type: "string"
+    CustomFieldBooleanType:
+      allOf:
+        - $ref: '#/components/schemas/FieldType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    CustomFieldDateTimeType:
+      allOf:
+        - $ref: '#/components/schemas/FieldType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    CustomFieldDateType:
+      allOf:
+        - $ref: '#/components/schemas/FieldType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    CustomFieldEnumType:
+      allOf:
+        - $ref: '#/components/schemas/FieldType'
+        - type: "object"
+          required:
+            - values
+          properties:
+            name:
+              type: "string"
+            values:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomFieldEnumValue'
+    CustomFieldEnumValue:
+      type: "object"
+      required:
+        - key
+        - label
+      properties:
+        key:
+          type: "string"
+        label:
+          type: "string"
+    CustomFieldLocalizedEnumType:
+      allOf:
+        - $ref: '#/components/schemas/FieldType'
+        - type: "object"
+          required:
+            - values
+          properties:
+            name:
+              type: "string"
+            values:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomFieldLocalizedEnumValue'
+    CustomFieldLocalizedEnumValue:
+      type: "object"
+      required:
+        - key
+        - label
+      properties:
+        key:
+          type: "string"
+        label:
+          $ref: '#/components/schemas/LocalizedString'
+    CustomFieldLocalizedStringType:
+      allOf:
+        - $ref: '#/components/schemas/FieldType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    CustomFieldMoneyType:
+      allOf:
+        - $ref: '#/components/schemas/FieldType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    CustomFieldNumberType:
+      allOf:
+        - $ref: '#/components/schemas/FieldType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    CustomFieldReferenceType:
+      allOf:
+        - $ref: '#/components/schemas/FieldType'
+        - type: "object"
+          required:
+            - referenceTypeId
+          properties:
+            name:
+              type: "string"
+            referenceTypeId:
+              $ref: '#/components/schemas/CustomFieldReferenceValue'
+    CustomFieldReferenceValue:
+      type: "string"
+      enum:
+        - cart
+        - category
+        - channel
+        - customer
+        - key-value-document
+        - order
+        - product
+        - product-type
+        - review
+        - state
+        - shipping-method
+        - zone
+    CustomFieldSetType:
+      allOf:
+        - $ref: '#/components/schemas/FieldType'
+        - type: "object"
+          required:
+            - elementType
+          properties:
+            name:
+              type: "string"
+            elementType:
+              $ref: '#/components/schemas/FieldType'
+    CustomFieldStringType:
+      allOf:
+        - $ref: '#/components/schemas/FieldType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    CustomFieldTimeType:
+      allOf:
+        - $ref: '#/components/schemas/FieldType'
+        - type: "object"
+          properties:
+            name:
+              type: "string"
+    FieldDefinition:
+      type: "object"
+      required:
+        - label
+        - name
+        - required
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/FieldType'
+        name:
+          type: "string"
+        label:
+          $ref: '#/components/schemas/LocalizedString'
+        required:
+          type: "boolean"
+        inputHint:
+          $ref: '#/components/schemas/TypeTextInputHint'
+    TypeImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          required:
+            - key
+            - name
+            - resourceTypeIds
+          properties:
+            key:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+            resourceTypeIds:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ResourceTypeId'
+            fieldDefinitions:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/FieldDefinition'
     Custom:
       type: "object"
       required:
@@ -4157,6 +4507,7 @@ components:
         - customer
         - inventory
         - standalone-price
+        - type
       x-annotation-enumDescriptions:
         category: "The [Category import](ctp:import:type:CategoryImport) resource type."
         order: "The [Order import](ctp:import:type:OrderImport) resource type."
