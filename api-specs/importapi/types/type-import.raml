@@ -1,0 +1,282 @@
+#%RAML 1.0 Library
+usage: Type import.
+(annotations.package): Types
+
+uses:
+  common: common.raml
+  annotations: ../annotationTypes/annotations.raml
+
+types:
+  TypeTextInputHint:
+    type: string
+    description: |
+      Provides a visual representation type for this field. It is only relevant for string-based field types like [CustomFieldStringType](ctp:import:type:CustomFieldStringType) and [CustomFieldLocalizedStringType](ctp:import:type:CustomFieldLocalizedStringType).
+    default: SingleLine
+    enum:
+      - SingleLine
+      - MultiLine
+    (annotations.enumDescriptions):
+      SingleLine: Hint for GUIs to display the field's content in a single line of text.
+      MultiLine: Hint for GUIs to display the field's content over multiple lines of text.
+
+  ResourceTypeId:
+    type: string
+    description: |
+      IDs indicating the [customizable resources and data types](/../api/projects/types#list-of-customizable-data-types). Maps to `Type.resourceTypeId`.
+    enum:
+      - address
+      - asset
+      - business-unit
+      - cart-discount
+      - category
+      - channel
+      - customer
+      - customer-group
+      - custom-line-item
+      - discount-code
+      - inventory-entry
+      - line-item
+      - order
+      - order-edit
+      - order-delivery
+      - order-parcel
+      - order-return-item
+      - payment
+      - payment-interface-interaction
+      - product-price
+      - product-selection
+      - quote
+      - review
+      - shipping
+      - shipping-method
+      - shopping-list
+      - shopping-list-text-line-item
+      - standalone-price
+      - store
+      - transaction
+    (annotations.enumDescriptions):
+      address: |
+        [Address](/../api/types#address) on [BusinessUnit](/../api/projects/business-units#businessunit), [Cart](/../api/projects/carts#cart), [Order](/../api/projects/orders#order), [OrderEdit](/../api/projects/order-edits#orderedit), [Customer](/../api/projects/customers#customer), and [Channel](/../api/projects/channels#channel)
+      asset: |
+        [Asset](/../api/types#asset) on [Category](/../api/projects/categories#category) and [ProductVariant](/../api/projects/products#productvariant)
+      business-unit: |
+        [BusinessUnit](/../api/projects/business-units#businessunit)
+      cart-discount: |
+        [CartDiscount](/../api/projects/cartDiscounts#cartdiscount)
+      category: |
+        [Category](/../api/projects/categories#category)
+      channel: |
+        [Channel](/../api/projects/channels#channel)
+      custom-line-item: |
+        [CustomLineItem](/../api/projects/carts#customlineitem) on [Cart](/../api/projects/carts#cart) and [Order](/../api/projects/orders#order)
+      customer: |
+        [Customer](/../api/projects/customers#customer)
+      customer-group: |
+        [CustomerGroup](/../api/projects/customerGroups#customergroup)
+      discount-code: |
+        [DiscountCode](/../api/projects/discountCodes#discountcode)
+      inventory-entry: |
+        [InventoryEntry](/../api/projects/inventory#inventoryentry)
+      line-item: |
+        [LineItem](/../api/projects/carts#lineitem) on [Cart](/../api/projects/carts#cart) and [Order](/../api/projects/orders#order), and [LineItem](/../api/projects/carts#lineitem) on [ShoppingList](/../api/projects/shoppingLists#shoppinglist)
+      order: |
+        [Cart](/../api/projects/carts#cart) and [Order](/../api/projects/orders#order).
+        When a [Cart](/../api/projects/carts#cart) is ordered, the [CustomFields](/../api/projects/custom-fields#customfields) need to be copied to the [Order](/../api/projects/orders#order).
+        For this reason, the Types for Carts are also valid for Orders, and hence both have the same identifier: `order`.
+      order-edit: |
+        [OrderEdit](/../api/projects/order-edits#orderedit)
+      order-delivery: |
+        [Delivery](/../api/projects/orders#delivery)
+      order-parcel: |
+        [Parcel](/../api/projects/orders#parcel)
+      order-return-item: |
+        [ReturnItem](/../api/projects/orders#returnitem)
+      payment: |
+        [Payment](/../api/projects/payments#payment)
+      payment-interface-interaction: |
+        [InterfaceInteraction](/../api/projects/payments#add-interfaceinteraction) on [Payment](/../api/projects/payments#payment)
+      product-price: |
+        [Embedded Price](/../api/projects/products#embedded-price) on [ProductVariant](/../api/projects/products#productvariant)
+      product-selection: |
+        [ProductSelection](/../api/projects/product-selections#productselection)
+      quote: |
+        [Quote](/../api/projects/quotes#quote), [QuoteRequest](/../api/projects/quote-requests#quoterequest) and [StagedQuote](/../api/projects/staged-quotes#stagedquote).
+        When a [StagedQuote](/../api/projects/staged-quotes#stagedquote) is created, the [CustomFields](/../api/projects/custom-fields#customfields) will be copied from the [QuoteRequest](/../api/projects/quote-requests#quoterequest) and when a [Quote](/../api/projects/quotes#quote) is created, the [CustomFields](/../api/projects/custom-fields#customfields) will be copied from the [StagedQuote](/../api/projects/staged-quotes#stagedquote).
+        For this reason, the Types for Quotes are also valid for QuoteRequests and StagedQuotes, and hence all have the same identifier: `quote`.
+      review: |
+        [Review](/../api/projects/reviews#review)
+      shipping: |
+        [Shipping](/../api/projects/carts#shipping)
+      shipping-method: |
+        [ShippingMethod](/../api/projects/shippingMethods#shippingmethod)
+      shopping-list: |
+        [ShoppingList](/../api/projects/shoppingLists#shoppinglist)
+      shopping-list-text-line-item: |
+        [TextLineItem](/../api/projects/shoppingLists#textlineitem) on [ShoppingList](/../api/projects/shoppingLists#shoppinglist)
+      standalone-price: |
+        [StandalonePrice](/../api/projects/standalone-prices#standaloneprice)
+      store: |
+        [Store](/../api/projects/stores#store)
+      transaction: |
+        [Transaction](/../api/projects/payments#transaction) on [Payment](/../api/projects/payments#payment)
+
+  FieldType:
+    type: object
+    discriminator: name
+    properties:
+      name:
+        type: string
+
+  CustomFieldBooleanType:
+    type: FieldType
+    description: Field type for Boolean values.
+    discriminatorValue: Boolean
+  CustomFieldDateTimeType:
+    type: FieldType
+    description: Field type for [DateTime](ctp:import:type:DateTime) values.
+    discriminatorValue: DateTime
+  CustomFieldDateType:
+    type: FieldType
+    description: Field type for [Date](ctp:import:type:Date) values.
+    discriminatorValue: Date
+  CustomFieldEnumType:
+    type: FieldType
+    description: Field type for enum values.
+    discriminatorValue: Enum
+    properties:
+      values:
+        type: CustomFieldEnumValue[]
+        description: Allowed values.
+  CustomFieldEnumValue:
+    type: object
+    description: Defines an allowed value of a [CustomFieldEnumType](ctp:import:type:CustomFieldEnumType) field.
+    properties:
+      key:
+        type: string
+        description: Key of the value used as a programmatic identifier.
+      label:
+        type: string
+        description: Descriptive label of the value.
+  CustomFieldLocalizedEnumType:
+    type: FieldType
+    description: Field type for localized enum values.
+    discriminatorValue: LocalizedEnum
+    properties:
+      values:
+        type: CustomFieldLocalizedEnumValue[]
+        description: Allowed values.
+  CustomFieldLocalizedEnumValue:
+    type: object
+    description: Defines an allowed value of a [CustomFieldLocalizedEnumType](ctp:import:type:CustomFieldLocalizedEnumType) field.
+    properties:
+      key:
+        type: string
+        description: Key of the value used as a programmatic identifier.
+      label:
+        type: common.LocalizedString
+        description: Descriptive localized label of the value.
+  CustomFieldLocalizedStringType:
+    type: FieldType
+    description: Field type for [LocalizedString](ctp:import:type:LocalizedString) values.
+    discriminatorValue: LocalizedString
+  CustomFieldMoneyType:
+    type: FieldType
+    description: Field type for [CentPrecisionMoney](ctp:import:type:CentPrecisionMoney) values.
+    discriminatorValue: Money
+  CustomFieldNumberType:
+    type: FieldType
+    description: Field type for number values.
+    discriminatorValue: Number
+  CustomFieldReferenceType:
+    type: FieldType
+    description: Field type for [Reference](ctp:import:type:Reference) values.
+    discriminatorValue: Reference
+    properties:
+      referenceTypeId:
+        type: CustomFieldReferenceValue
+        description: Resource type the Custom Field can reference.
+  CustomFieldReferenceValue:
+    type: string
+    description: Defines which resource type a [CustomFieldReferenceType](ctp:import:type:CustomFieldReferenceType) can reference.
+    enum:
+      - cart
+      - category
+      - channel
+      - customer
+      - key-value-document
+      - order
+      - product
+      - product-type
+      - review
+      - state
+      - shipping-method
+      - zone
+  CustomFieldSetType:
+    type: FieldType
+    description: Values of a SetType Custom Field are sets of values of the specified `elementType` (without duplicate elements).
+    discriminatorValue: Set
+    properties:
+      elementType:
+        type: FieldType
+        description: Field type of the elements in the set.
+  CustomFieldStringType:
+    type: FieldType
+    description: Field type for string values.
+    discriminatorValue: String
+  CustomFieldTimeType:
+    type: FieldType
+    description: Field type for [Time](ctp:import:type:Time) values.
+    discriminatorValue: Time
+
+  FieldDefinition:
+    description: |
+      Defines a [Custom Field](/../api/projects/custom-fields) and its meta-information. Maps to `Type.FieldDefinition`.
+    properties:
+      type:
+        type: FieldType
+        description: Data type of the Custom Field to define.
+      name:
+        type: string
+        description: |
+          Name of the Custom Field to define. Must be unique for a given [ResourceTypeId](ctp:import:type:ResourceTypeId). In case there is a FieldDefinition with the same `name` in another Type, both FieldDefinitions must have the same `type`. This value cannot be changed after the Type is imported.
+        pattern: ^[A-Za-z0-9_-]+$
+        minLength: 2
+        maxLength: 36
+      label:
+        type: common.LocalizedString
+        description: A human-readable label for the field.
+      required:
+        type: boolean
+        description: Defines whether the field is required to have a value. This value cannot be changed after the Type is imported.
+      inputHint?:
+        type: TypeTextInputHint
+
+  TypeImport:
+    description: |
+      The data representation for a Type to be imported that is persisted as a [Type](/../api/projects/types#type) in the Project.
+    type: common.ImportResource
+    properties:
+      key:
+        description: |
+          User-defined unique identifier for the Type.
+        type: string
+        pattern: ^[A-Za-z0-9_-]+$
+        minLength: 2
+        maxLength: 256
+      name:
+        description: |
+          Maps to `Type.name`.
+        type: common.LocalizedString
+      description?:
+        description: |
+          Maps to `Type.description`.
+        type: common.LocalizedString
+      resourceTypeIds:
+        description: |
+          Maps to `Type.resourceTypeIds`. This value cannot be changed after the Type is imported.
+        type: ResourceTypeId[]
+        minItems: 1
+      fieldDefinitions?:
+        description: |
+          Maps to `Type.fieldDefinitions`.
+        type: FieldDefinition[]
