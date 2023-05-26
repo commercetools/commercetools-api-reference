@@ -27160,6 +27160,8 @@ components:
         - DeclineOthersQuotes
         - RenegotiateMyQuotes
         - RenegotiateOthersQuotes
+        - ReassignMyQuotes
+        - ReassignOthersQuotes
         - ViewMyQuoteRequests
         - ViewOthersQuoteRequests
         - UpdateMyQuoteRequests
@@ -27200,6 +27202,8 @@ components:
         RenegotiateMyQuotes: "An Associate can renegotiate their own B2B Quotes.n"
         RenegotiateOthersQuotes: "An Associate can renegotiate B2B Quotes that belong to other
          Associates.n"
+        ReassignMyQuotes: "An Associate can reassign their own B2B Quotes to a different Associate.n"
+        ReassignOthersQuotes: "An Associate can reassign B2B Quotes that belong to other Associates.n"
         ViewMyQuotes: "An Associate can view their own B2B Quotes.n"
         ViewOthersQuotes: "An Associate can view B2B Quotes that belong to other Associates.n"
         CreateMyQuoteRequestsFromMyCarts: "An Associate can create their own Quote Requests
@@ -27240,6 +27244,8 @@ components:
         DeclineOthersQuotes: "Quote Permissions"
         RenegotiateMyQuotes: "Quote Permissions"
         RenegotiateOthersQuotes: "Quote Permissions"
+        ReassignMyQuotes: "Quote Permissions"
+        ReassignOthersQuotes: "Quote Permissions"
         ViewMyQuoteRequests: "Quote Request Permissions"
         ViewOthersQuoteRequests: "Quote Request Permissions"
         UpdateMyQuoteRequests: "Quote Request Permissions"
@@ -41333,8 +41339,10 @@ components:
               ProductVariantAdded: '#/components/schemas/ProductVariantAddedMessage'
               ProductVariantDeleted: '#/components/schemas/ProductVariantDeletedMessage'
               QuoteCreated: '#/components/schemas/QuoteCreatedMessage'
+              QuoteCustomerChanged: '#/components/schemas/QuoteCustomerChangedMessage'
               QuoteDeleted: '#/components/schemas/QuoteDeletedMessage'
               QuoteRequestCreated: '#/components/schemas/QuoteRequestCreatedMessage'
+              QuoteRequestCustomerChanged: '#/components/schemas/QuoteRequestCustomerChangedMessage'
               QuoteRequestDeleted: '#/components/schemas/QuoteRequestDeletedMessage'
               QuoteRequestStateChanged: '#/components/schemas/QuoteRequestStateChangedMessage'
               QuoteRequestStateTransition: '#/components/schemas/QuoteRequestStateTransitionMessage'
@@ -44226,6 +44234,45 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             quote:
               $ref: '#/components/schemas/Quote'
+    QuoteCustomerChangedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - customer
+            - previousCustomer
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            customer:
+              $ref: '#/components/schemas/CustomerReference'
+            previousCustomer:
+              $ref: '#/components/schemas/CustomerReference'
     QuoteDeletedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -44294,6 +44341,45 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             quoteRequest:
               $ref: '#/components/schemas/QuoteRequest'
+    QuoteRequestCustomerChangedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - customer
+            - previousCustomer
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            customer:
+              $ref: '#/components/schemas/CustomerReference'
+            previousCustomer:
+              $ref: '#/components/schemas/CustomerReference'
     QuoteRequestDeletedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -46311,8 +46397,10 @@ components:
           ProductVariantAdded: '#/components/schemas/ProductVariantAddedMessagePayload'
           ProductVariantDeleted: '#/components/schemas/ProductVariantDeletedMessagePayload'
           QuoteCreated: '#/components/schemas/QuoteCreatedMessagePayload'
+          QuoteCustomerChanged: '#/components/schemas/QuoteCustomerChangedMessagePayload'
           QuoteDeleted: '#/components/schemas/QuoteDeletedMessagePayload'
           QuoteRequestCreated: '#/components/schemas/QuoteRequestCreatedMessagePayload'
+          QuoteRequestCustomerChanged: '#/components/schemas/QuoteRequestCustomerChangedMessagePayload'
           QuoteRequestDeleted: '#/components/schemas/QuoteRequestDeletedMessagePayload'
           QuoteRequestStateChanged: '#/components/schemas/QuoteRequestStateChangedMessagePayload'
           QuoteRequestStateTransition: '#/components/schemas/QuoteRequestStateTransitionMessagePayload'
@@ -47358,6 +47446,20 @@ components:
               type: "string"
             quote:
               $ref: '#/components/schemas/Quote'
+    QuoteCustomerChangedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - customer
+            - previousCustomer
+          properties:
+            type:
+              type: "string"
+            customer:
+              $ref: '#/components/schemas/CustomerReference'
+            previousCustomer:
+              $ref: '#/components/schemas/CustomerReference'
     QuoteDeletedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -47376,6 +47478,20 @@ components:
               type: "string"
             quoteRequest:
               $ref: '#/components/schemas/QuoteRequest'
+    QuoteRequestCustomerChangedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - customer
+            - previousCustomer
+          properties:
+            type:
+              type: "string"
+            customer:
+              $ref: '#/components/schemas/CustomerReference'
+            previousCustomer:
+              $ref: '#/components/schemas/CustomerReference'
     QuoteRequestDeletedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -55745,6 +55861,7 @@ components:
       discriminator:
         propertyName: action
         mapping:
+          changeCustomer: '#/components/schemas/QuoteRequestChangeCustomerAction'
           changeQuoteRequestState: '#/components/schemas/QuoteRequestChangeQuoteRequestStateAction'
           setCustomField: '#/components/schemas/QuoteRequestSetCustomFieldAction'
           setCustomType: '#/components/schemas/QuoteRequestSetCustomTypeAction'
@@ -55754,6 +55871,17 @@ components:
       properties:
         action:
           type: "string"
+    QuoteRequestChangeCustomerAction:
+      allOf:
+        - $ref: '#/components/schemas/QuoteRequestUpdateAction'
+        - type: "object"
+          required:
+            - customer
+          properties:
+            action:
+              type: "string"
+            customer:
+              $ref: '#/components/schemas/CustomerResourceIdentifier'
     QuoteRequestChangeQuoteRequestStateAction:
       allOf:
         - $ref: '#/components/schemas/QuoteRequestUpdateAction'
@@ -56015,6 +56143,7 @@ components:
       discriminator:
         propertyName: action
         mapping:
+          changeCustomer: '#/components/schemas/QuoteChangeCustomerAction'
           changeQuoteState: '#/components/schemas/QuoteChangeQuoteStateAction'
           requestQuoteRenegotiation: '#/components/schemas/QuoteRequestQuoteRenegotiationAction'
           setCustomField: '#/components/schemas/QuoteSetCustomFieldAction'
@@ -56025,6 +56154,17 @@ components:
       properties:
         action:
           type: "string"
+    QuoteChangeCustomerAction:
+      allOf:
+        - $ref: '#/components/schemas/QuoteUpdateAction'
+        - type: "object"
+          required:
+            - customer
+          properties:
+            action:
+              type: "string"
+            customer:
+              $ref: '#/components/schemas/CustomerResourceIdentifier'
     QuoteChangeQuoteStateAction:
       allOf:
         - $ref: '#/components/schemas/QuoteUpdateAction'
