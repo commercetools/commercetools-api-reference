@@ -69,6 +69,10 @@ input AddAssociateRolePermission {
   permission: Permission!
 }
 
+input AddAttributeGroupAttribute {
+  attribute: AttributeReferenceInput!
+}
+
 input AddBusinessUnitAddress {
   address: AddressInput!
 }
@@ -928,6 +932,65 @@ type AttributeDefinitionResult {
 "(https://docs.commercetools.com/api/projects/productTypes#attributetype)[https://docs.commercetools.com/api/projects/productTypes#attributetype]"
 interface AttributeDefinitionType {
   name: String!
+}
+
+type AttributeGroup implements Versioned {
+  id: String!
+  version: Long!
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  nameAllLocales: [LocalizedString!]!
+  description(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  descriptionAllLocales: [LocalizedString!]
+  key: String
+  attributes: [AttributeReference!]!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+input AttributeGroupDraft {
+  name: [LocalizedStringItemInputType!]!
+  description: [LocalizedStringItemInputType!]
+  key: String
+  attributes: [AttributeReferenceInput!]!
+}
+
+type AttributeGroupQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  exists: Boolean!
+  results: [AttributeGroup!]!
+}
+
+input AttributeGroupUpdateAction {
+  addAttribute: AddAttributeGroupAttribute
+  changeName: ChangeAttributeGroupName
+  removeAttribute: RemoveAttributeGroupAttribute
+  setDescription: SetAttributeGroupDescription
+  setKey: SetAttributeGroupKey
+  setAttributes: SetAttributeGroupAttributes
+}
+
+type AttributeReference {
+  key: String!
+}
+
+input AttributeReferenceInput {
+  key: String!
 }
 
 input AttributeSetElementTypeDraft {
@@ -1855,6 +1918,10 @@ input CategoryUpdateAction {
 
 input ChangeAssociateRoleBuyerAssignable {
   buyerAssignable: Boolean!
+}
+
+input ChangeAttributeGroupName {
+  name: [LocalizedStringItemInputType!]!
 }
 
 input ChangeBusinessUnitAddress {
@@ -4973,6 +5040,21 @@ type Mutation {
 
     "Queries with specified key"
     key: String): ProductDiscount
+  createAttributeGroup(draft: AttributeGroupDraft!): AttributeGroup
+  updateAttributeGroup(version: Long!, actions: [AttributeGroupUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): AttributeGroup
+  deleteAttributeGroup(version: Long!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): AttributeGroup
   createProduct(draft: ProductDraft!): Product
   updateProduct(version: Long!, actions: [ProductUpdateAction!]!,
 
@@ -7920,6 +8002,13 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): ProductDiscount
   productDiscounts(where: String, sort: [String!], limit: Int, offset: Int): ProductDiscountQueryResult!
+  attributeGroup(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): AttributeGroup
+  attributeGroups(where: String, sort: [String!], limit: Int, offset: Int): AttributeGroupQueryResult!
   product(projectExpandedProducts: Boolean = false, localeProjection: [Locale!],
 
     "Queries for a product with specified SKU"
@@ -8444,6 +8533,10 @@ input RelativeDiscountValueInput {
 
 input RemoveAssociateRolePermission {
   permission: Permission!
+}
+
+input RemoveAttributeGroupAttribute {
+  attribute: AttributeReferenceInput!
 }
 
 input RemoveBusinessUnitAddress {
@@ -9133,6 +9226,18 @@ input SetAssociateRolePermissions {
 type SetAttributeDefinitionType implements AttributeDefinitionType {
   elementType: AttributeDefinitionType!
   name: String!
+}
+
+input SetAttributeGroupAttributes {
+  attributes: [AttributeReferenceInput!]!
+}
+
+input SetAttributeGroupDescription {
+  description: [LocalizedStringItemInputType!]
+}
+
+input SetAttributeGroupKey {
+  key: String
 }
 
 input SetBusinessUnitAddressCustomField {
