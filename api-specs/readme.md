@@ -1146,7 +1146,7 @@ queryParameters:
 #### ResourceCatchAllRule
 
 When specifying a so-called _Catch-All_ path that fetches a collection of resources, like our Query endpoints, make sure there is only one like it in the route.
-A consumer either needs information about how to distinguish the paths or has to decide on a priority order. 
+A consumer either needs information about how to distinguish the paths or has to decide on a priority order.
 
 Instead of multiple catch ALL paths:
 
@@ -1157,7 +1157,7 @@ or using an URI parameter with multiple purposes:
 
 `/{idOrKey}/options:`
 
-insert a  path segment that clearly distinguishes the routes and avoids ambiguity, like:
+insert a path segment that clearly distinguishes the routes and avoids ambiguity, like:
 
 `/key={key}/options:`
 `/{ID}/options:`
