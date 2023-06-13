@@ -339,16 +339,46 @@ To add a new field in the properties:
 
 1. Go in the [/types](./api/types) folder and then in the resource related folder.
 2. Add the name of the field based on our naming convention guidelines. If the field is **Optional** add `?`.
-3. Identify if it's an object type and if it is, create a separated file which contains the fields of the object. Like for instance, in the Cart we have in the property the field **customLineItems** which is an object. So there is a file [CustomLineItem.raml](./api/types/cart/CustomLineItem.raml) which defines it in details.
+
+   - for numbers:\
+     Use a specific type if applicable, like `integer`, or `number` plus `format`, and specify `minimum` and/or `maximum` if different from the physical limits of the data type. For optional fields in write models, specify a `default` value.
 
    ```raml
-     customLineItems:
-       type: CustomLineItem[]
-       description: ''
+     accessTokenValiditySeconds?:
+       type: number
+       format: int32
+       minimum: 3600
+       maximum: 604800
+       default: 172800
    ```
 
-4. Add `(beta): true` if it relates to a Beta feature.
-5. Add `(markDeprecated): true` if the field is deprecated.
+   - for strings:\
+     Specify a `pattern` if applicable, also `minLength` and `maxLength` if useful.
+
+   ```raml
+     key?:
+       type: string
+       pattern: ^[A-Za-z0-9_-]+$
+       minLength: 2
+       maxLength: 256
+   ```
+
+   - for arrays:\
+     Choose a property name in plural.\
+     Declare property as **required** in read models since the value cannot be `null`, just empty.\
+     In write models declare the field as **optional** in case array can be empty, like in "Set ..." update actions used for setting as well as unsetting fields.
+   - for objects :\
+     Use singular form for the property name. Use a named type. Creating an inline type is not allowed as it can't be projected in a nominal type system.
+
+   ```raml
+    geoLocation?:
+      type: GeoJson
+      description: |
+        GeoJSON geometry object encoding the geo location.
+   ```
+
+3. Add `(beta): true` if it relates to a Beta feature.
+4. Add `(markDeprecated): true` if the field is deprecated.
 
 #### Add a custom field
 
