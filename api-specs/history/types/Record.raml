@@ -4,28 +4,30 @@ type: object
 displayName: Record
 example: !include ../examples/Record.json
 description: |
-  A Record captures the differences in a resource between one version and the next.
-  (Recall that the version number is not always incremented by one; see [Optimistic Concurrency Control](/general-concepts#optimistic-concurrency-control).)
+  Captures the differences between the previous and next version of a resource.
+
+  The maximum number of Records that can be stored and their retention period are subject to a [limit](/../api/limits#records).
 properties:
   version:
     type: integer
-    description: Version of the resource after the change.
+    description: |
+      Version of the resource after the change.
+
+      For more information on how the version is incremented, see [Optimistic Concurrency Control](/../api/general-concepts#optimistic-concurrency-control).
   previousVersion:
     type: integer
     description: Version of the resource before the change.
   type:
     type: string
-    enum:
-      - ResourceUpdated
-      - ResourceCreated
-      - ResourceDeleted
-    description: Type of the change (creation, update or deletion).
+    description: |
+      Indicates the type of change.
+      For creation, update, or deletion, the value is `"ResourceCreated"`, `"ResourceUpdated"`, or `"ResourceDeleted"` respectively.
   modifiedBy:
     type: ModifiedBy
-    description: Information about the user or the API client who performed the change.
+    description: Information about the user or API Client who performed the change.
   modifiedAt:
     type: string
-    description: Date and time when the change was made.
+    description: Date and time (UTC) when the change was made.
   label:
     description: Information that describes the resource after the change.
     type: Label
@@ -35,6 +37,7 @@ properties:
   changes:
     description: |
       Shows the differences in the resource between `previousVersion` and `version`.
+
       The value is not identical to the actual array of update actions sent and is not limited to update actions (see, for example, [Optimistic  Concurrency Control](/general-concepts#optimistic-concurrency-control)).
     type: array
     items:
@@ -46,9 +49,10 @@ properties:
   stores:
     type: KeyReference[]
     description: |
-      References to the [Stores](ctp:api:type:Store) attached to the [Change](ctp:history:type:Change).
+      References to the [Stores](ctp:api:type:Store) associated with the [Change](ctp:history:type:Change).
   withoutChanges:
     description: |
       `true` if no change was detected.
+
       The version number of the resource can be increased even without any change in the resource.
     type: boolean

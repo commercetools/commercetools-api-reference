@@ -76,6 +76,7 @@ types: !include types/types.raml
 resourceTypes:
   base:
     get:
+      description: The `view_audit_log:{projectKey}` scope is required, and depending on the [resource type](ctp:history:type:ChangeHistoryResourceType) queried, their respective scopes must be granted.
       responses:
         200:
           body:
@@ -167,7 +168,8 @@ resourceTypes:
       resourceTypes?:
         type: ChangeHistoryResourceType[]
         description: |
-          Can be used to filter for Records of specified resource types.
+          Can be used to filter Records of specified resource types.
+
           By default, the API returns the Records of all supported resource types.
         example: ['order', 'product']
       date.from?:
@@ -195,20 +197,18 @@ resourceTypes:
         type: string
         description: |
           [ID](/general-concepts#identifier) of the Merchant Center user who made the change.
+
           Can be used to query changes made by a Merchant Center user.
       type?:
         type: string
         description: |
           Can be `"ResourceCreated"`, `"ResourceUpdated"`, or `"ResourceDeleted"`.
-          Can be used to filter for a specific type of change.
-        enum:
-          - ResourceCreated
-          - ResourceUpdated
-          - ResourceDeleted
+
+          Can be used to filter for a specific type of change (creation, update, or deletion).
       clientId?:
         type: string
         description: |
-          [ID](/general-concepts#identifier) of the [API Client](/projects/api-clients#apiclient) that made the change.
+          [ID](/general-concepts#identifier) of the [API Client](ctp:api:type:ApiClient) that made the change.
       resourceId?:
         type: string
         description: |
@@ -216,24 +216,24 @@ resourceTypes:
       source?:
         type: string
         description: |
-          Name of the source with which changes were made. Can be `"MerchantCenter"`, `"ImpEx"`, or `"ApiClient"`.
+          Source from which changes were made: `"MerchantCenter"`, `"ImpEx"`, or `"ApiClient"`.
       changes?:
         type: string[]
         description: |
-          Restrict the types of [Changes](/history/change-types#change) returned by passing the value of the `change` field.
+          Restrict the types of [Changes](ctp:history:type:Change) returned by passing the value of the `change` field.
           The values must belong to the resource type specified in the path parameter.
       stores?:
         type: string[]
         description: |
-          `key` of the [Store](/api/projects/stores#store) linked to the Change.
+          `key` of the [Store](ctp:api:type:Store) linked to the Change.
       customerId?:
         type: string
         description: |
-          [ID](/general-concepts#identifier) of the [Customer](/projects/customers#customer) who made the change using a token from the [Password Flow](/authorization#password-flow).
+          [ID](/general-concepts#identifier) of the [Customer](ctp:api:type:Customer) who made the change using a token from the [password flow](/authorization#password-flow).
       excludePlatformInitiatedChanges?:
         description: |
-          Exclude [Changes](/history/change-types#change) initiated by background processes by passing the values of the `change` field.
-          Only [Changes](/history/change-types#change) of resource type `product`, `product-discount`, `discount-code`, and `shopping-list` can be filtered.
+          Excludes [Changes](ctp:history:type:Change) initiated by background processes by passing the values of the `change` field.
+          Only [Changes](ctp:history:type:Change) of resource type `product`, `product-discount`, `discount-code`, and `shopping-list` can be filtered.
           Allowed values depend on resource types.
             - To filter Product Changes, `excludeAll`, `changeReviewRatingStatistics`, and `setVariantAvailability` can be passed.
             - To filter Product Discount Changes, `excludeAll` and `setIsValid` can be passed.
@@ -245,7 +245,7 @@ resourceTypes:
       expand?:
         type: boolean
         description: |
-          If `true`, [CustomFieldExpandedValue](/history/change-types#customfieldexpandedvalue) is made available.
+          If `true`, [CustomFieldExpandedValue](ctp:history:type:CustomFieldExpandedValue) is made available.
   /{resourceType}:
     type: base
     uriParameters:
@@ -382,7 +382,7 @@ resourceTypes:
         expand?:
           type: boolean
           description: |
-            If `true`, [CustomFieldExpandedValue](/history/change-types#customfieldexpandedvalue) is made available.
+            If `true`, [CustomFieldExpandedValue](ctp:history:type:CustomFieldExpandedValue) is made available.
     /{ID}:
       type: base
       uriParameters:
@@ -484,4 +484,4 @@ resourceTypes:
           expand?:
             type: boolean
             description: |
-              If `true`, [CustomFieldExpandedValue](/history/change-types#customfieldexpandedvalue) is made available.
+              If `true`, [CustomFieldExpandedValue](ctp:history:type:CustomFieldExpandedValue) is made available.
