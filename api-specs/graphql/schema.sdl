@@ -56,8 +56,8 @@ input AbsoluteDiscountValueInput {
 }
 
 enum ActionType {
-  Update
   Create
+  Update
 }
 
 "A field to access the active cart."
@@ -372,8 +372,8 @@ input AddStagedOrderDelivery {
 }
 
 type AddStagedOrderDeliveryOutput implements StagedOrderUpdateActionOutput {
-  deliveryKey: String
   type: String!
+  deliveryKey: String
   items: [DeliveryItem!]!
   parcels: [ParcelData!]!
   address: AddressDraft
@@ -611,9 +611,6 @@ input AddressInput {
 }
 
 enum AnonymousCartSignInMode {
-  "The anonymous cart is used as new active customer cart. No `LineItem`s get merged."
-  UseAsNewActiveCustomerCart
-
   """
   `LineItem`s of the anonymous cart will be copied to the customer’s active cart that has been modified most recently.
 
@@ -624,6 +621,9 @@ enum AnonymousCartSignInMode {
   If a `LineItem` in the anonymous cart matches an existing line item in the customer’s cart (same product ID and variant ID), the maximum quantity of both LineItems is used as the new quantity. In that case `CustomFields` on the `LineItem` of the anonymous cart will not be in the resulting `LineItem`.
   """
   MergeWithExistingCustomerCart
+
+  "The anonymous cart is used as new active customer cart. No `LineItem`s get merged."
+  UseAsNewActiveCustomerCart
 }
 
 type Applied implements OrderEditResult {
@@ -1054,8 +1054,8 @@ input AuthorizationHeaderInput {
 }
 
 enum AwsAuthenticationMode {
-  IAM
   Credentials
+  IAM
 }
 
 type AzureFunctionsAuthentication implements HttpDestinationAuthentication {
@@ -1226,6 +1226,11 @@ type BusinessUnitConfiguration {
   myBusinessUnitAssociateRoleOnCreation: AssociateRole
 }
 
+enum BusinessUnitConfigurationStatus {
+  Active
+  Inactive
+}
+
 type BusinessUnitContactEmailSet implements MessagePayload {
   contactEmail: String
   type: String!
@@ -1321,11 +1326,6 @@ enum BusinessUnitStatus {
 type BusinessUnitStatusChanged implements MessagePayload {
   status: BusinessUnitStatus!
   type: String!
-}
-
-enum BusinessUnitConfigurationStatus {
-  Active
-  Inactive
 }
 
 type BusinessUnitStoreAdded implements MessagePayload {
@@ -1667,17 +1667,17 @@ type CartScoreType implements ShippingRateInputType {
 }
 
 enum CartState {
+  "The cart can be updated and ordered. It is the default state."
+  Active
+
   "The cart is frozen. The cart is ready for checkout and a few update actions are not allowed."
   Frozen
-
-  "The cart was ordered. No further operations on the cart are allowed."
-  Ordered
 
   "Anonymous cart whose content was merged into a customers cart on signin. No further operations on the cart are allowed."
   Merged
 
-  "The cart can be updated and ordered. It is the default state."
-  Active
+  "The cart was ordered. No further operations on the cart are allowed."
+  Ordered
 }
 
 input CartUpdateAction {
@@ -3589,20 +3589,20 @@ enum DiscountCodeState {
   "The discount code is active and none of the discounts were applied because the discount application was stopped by one discount that has the StackingMode of StopAfterThisDiscount defined"
   ApplicationStoppedByPreviousDiscount
 
-  "The discount code is not valid or it does not contain any valid cart discounts. Validity is determined based on the validFrom and validUntil dates"
-  NotValid
-
-  "maxApplications or maxApplicationsPerCustomer for discountCode has been reached."
-  MaxApplicationReached
+  "The discount code is active and it contains at least one active and valid CartDiscount. But its cart predicate does not match the cart or none of the contained active discount\u2019s cart predicates match the cart"
+  DoesNotMatchCart
 
   "The discount code is active and it contains at least one active and valid CartDiscount. The discount code cartPredicate matches the cart and at least one of the contained active discount\u2019s cart predicates matches the cart."
   MatchesCart
 
-  "The discount code is active and it contains at least one active and valid CartDiscount. But its cart predicate does not match the cart or none of the contained active discount\u2019s cart predicates match the cart"
-  DoesNotMatchCart
+  "maxApplications or maxApplicationsPerCustomer for discountCode has been reached."
+  MaxApplicationReached
 
   "The discount code is not active or it does not contain any active cart discounts."
   NotActive
+
+  "The discount code is not valid or it does not contain any valid cart discounts. Validity is determined based on the validFrom and validUntil dates"
+  NotValid
 }
 
 input DiscountCodeUpdateAction {
@@ -4111,9 +4111,8 @@ type InStore implements CartQueryInterface & CustomerActiveCartInterface & Order
   """
   me: InStoreMe!
   shippingMethodsByCart(id: String!): [ShippingMethod!]!
-  product(
-    projectExpandedProducts: Boolean = false,
-    localeProjection: [Locale!],
+  product(projectExpandedProducts: Boolean = false, localeProjection: [Locale!],
+
     "Queries for a product with specified SKU"
     sku: String,
 
@@ -4518,14 +4517,14 @@ enum LineItemMode {
 }
 
 enum LineItemPriceMode {
-  "The price is selected form the product variant. This is the default mode."
-  Platform
-
   "The line item price was set externally. Cart discounts can apply to line items with this price mode. All update actions that change the quantity of a line item with this price mode require the externalPrice field to be given."
   ExternalPrice
 
   "The line item price with the total was set externally."
   ExternalTotal
+
+  "The price is selected form the product variant. This is the default mode."
+  Platform
 }
 
 type LineItemReturnItem implements ReturnItem {
@@ -4761,7 +4760,7 @@ interface MeFieldInterface {
   me: MeQueryInterface!
 }
 
-interface MeQueryInterface {
+interface MeQueryInterface implements CartQueryInterface & ActiveCartInterface & OrderQueryInterface & ShoppingListQueryInterface {
   cart(id: String!): Cart
   carts(where: String, sort: [String!], limit: Int, offset: Int): CartQueryResult!
   activeCart: Cart
@@ -6347,9 +6346,9 @@ type OrderShippingRateInputSet implements MessagePayload & OrderMessagePayload {
 }
 
 enum OrderState {
-  Confirmed
   Cancelled
   Complete
+  Confirmed
   Open
 }
 
@@ -6609,11 +6608,11 @@ type PaymentQueryResult {
 }
 
 enum PaymentState {
-  Paid
-  CreditOwed
-  Pending
-  Failed
   BalanceDue
+  CreditOwed
+  Failed
+  Paid
+  Pending
 }
 
 type PaymentStatus {
@@ -6682,42 +6681,42 @@ input PaymentUpdateAction {
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 enum Permission {
+  AcceptMyQuotes
+  AcceptOthersQuotes
+  AddChildUnits
+  CreateMyCarts
+  CreateMyOrdersFromMyCarts
   CreateMyOrdersFromMyQuotes
   CreateMyQuoteRequestsFromMyCarts
-  CreateMyCarts
   CreateOrdersFromOthersCarts
-  DeclineOthersQuotes
-  UpdateMyCarts
-  ViewOthersQuotes
-  RenegotiateMyQuotes
-  UpdateParentUnit
-  CreateOthersCarts
-  UpdateBusinessUnitDetails
-  AcceptMyQuotes
-  RenegotiateOthersQuotes
-  UpdateOthersCarts
-  DeleteOthersCarts
-  DeclineMyQuotes
-  ViewMyCarts
-  AddChildUnits
-  DeleteMyCarts
-  UpdateAssociates
-  AcceptOthersQuotes
-  ViewOthersOrders
-  ViewOthersCarts
-  UpdateMyQuoteRequests
-  CreateQuoteRequestsFromOthersCarts
-  ViewMyQuotes
-  ViewMyQuoteRequests
-  CreateMyOrdersFromMyCarts
-  UpdateOthersOrders
-  UpdateMyOrders
-  ViewOthersQuoteRequests
   CreateOrdersFromOthersQuotes
-  ViewMyOrders
-  UpdateOthersQuoteRequests
+  CreateOthersCarts
+  CreateQuoteRequestsFromOthersCarts
+  DeclineMyQuotes
+  DeclineOthersQuotes
+  DeleteMyCarts
+  DeleteOthersCarts
   ReassignMyQuotes
   ReassignOthersQuotes
+  RenegotiateMyQuotes
+  RenegotiateOthersQuotes
+  UpdateAssociates
+  UpdateBusinessUnitDetails
+  UpdateMyCarts
+  UpdateMyOrders
+  UpdateMyQuoteRequests
+  UpdateOthersCarts
+  UpdateOthersOrders
+  UpdateOthersQuoteRequests
+  UpdateParentUnit
+  ViewMyCarts
+  ViewMyOrders
+  ViewMyQuoteRequests
+  ViewMyQuotes
+  ViewOthersCarts
+  ViewOthersOrders
+  ViewOthersQuoteRequests
+  ViewOthersQuotes
 }
 
 type PlainEnumValue {
@@ -6776,11 +6775,11 @@ This mode determines which type of Prices the system uses for
 Product Price Selection as well as for LineItem Price selection
 """
 enum PriceMode {
-  "The system looks up prices from Standalone Prices, stored separately from Products."
-  Standalone
-
   "The system looks up prices from the `prices` field of the ProductVariant inside a Product."
   Embedded
+
+  "The system looks up prices from Standalone Prices, stored separately from Products."
+  Standalone
 }
 
 input PriceSelectorInput {
@@ -8052,8 +8051,6 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): TaxCategory
   taxCategories(where: String, sort: [String!], limit: Int, offset: Int): TaxCategoryQueryResult!
-  discountCode(id: String!): DiscountCode
-  discountCodes(where: String, sort: [String!], limit: Int, offset: Int): DiscountCodeQueryResult!
   cartDiscount(
     "Queries with specified ID"
     id: String,
@@ -8061,6 +8058,8 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): CartDiscount
   cartDiscounts(where: String, sort: [String!], limit: Int, offset: Int): CartDiscountQueryResult!
+  discountCode(id: String!): DiscountCode
+  discountCodes(where: String, sort: [String!], limit: Int, offset: Int): DiscountCodeQueryResult!
   productDiscount(
     "Queries with specified ID"
     id: String,
@@ -8088,9 +8087,8 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
 
     "Queries with specified key"
     key: String): Product
-  products(where: String, sort: [String!], limit: Int, offset: Int,
+  products(where: String, sort: [String!], limit: Int, offset: Int, projectExpandedProducts: Boolean = false, localeProjection: [Locale!],
 
-    projectExpandedProducts: Boolean = false, localeProjection: [Locale!],
     "Queries for products with specified SKUs"
     skus: [String!]): ProductQueryResult!
   state(
@@ -8396,12 +8394,12 @@ type QuoteRequestQueryResult {
 }
 
 enum QuoteRequestState {
-  UnderReview
-  Submitted
-  Closed
-  Cancelled
-  Rejected
   Accepted
+  Cancelled
+  Closed
+  Rejected
+  Submitted
+  UnderReview
 }
 
 input QuoteRequestUpdateAction {
@@ -8413,13 +8411,13 @@ input QuoteRequestUpdateAction {
 }
 
 enum QuoteState {
-  Failed
-  Withdrawn
-  Pending
-  DeclinedForRenegotiation
-  RenegotiationAddressed
   Accepted
   Declined
+  DeclinedForRenegotiation
+  Failed
+  Pending
+  RenegotiationAddressed
+  Withdrawn
 }
 
 input QuoteUpdateAction {
@@ -8967,17 +8965,17 @@ type ReturnItemDraftTypeOutput {
 }
 
 enum ReturnPaymentState {
-  NotRefunded
-  Refunded
   Initial
   NonRefundable
+  NotRefunded
+  Refunded
 }
 
 enum ReturnShipmentState {
-  Unusable
+  Advised
   BackInStock
   Returned
-  Advised
+  Unusable
 }
 
 input RevertStagedChanges {
@@ -9093,11 +9091,11 @@ enum RoundingMode {
   "[Round half down](https://en.wikipedia.org/wiki/Rounding#Round_half_down)"
   HalfDown
 
-  "[Round half up](https://en.wikipedia.org/wiki/Rounding#Round_half_up)"
-  HalfUp
-
   "[Round half to even](https://en.wikipedia.org/wiki/Rounding#Round_half_to_even). Default rounding mode as used in IEEE 754 computing functions and operators."
   HalfEven
+
+  "[Round half up](https://en.wikipedia.org/wiki/Rounding#Round_half_up)"
+  HalfUp
 }
 
 type SNSDestination implements Destination {
@@ -9244,8 +9242,8 @@ type SearchLimitsProjection {
 
 "In order to decide which of the matching items will actually be discounted"
 enum SelectionMode {
-  MostExpensive
   Cheapest
+  MostExpensive
 }
 
 type SelectionOfProduct {
@@ -11593,9 +11591,9 @@ input SetZoneKey {
 }
 
 enum ShipmentState {
-  Delivered
-  Delayed
   Backorder
+  Delayed
+  Delivered
   Partial
   Pending
   Ready
@@ -11713,11 +11711,11 @@ type ShippingMethodQueryResult {
 }
 
 enum ShippingMethodState {
-  "Either there is no predicate defined for the ShippingMethod or the given predicate matches the cart"
-  MatchesCart
-
   "The ShippingMethod predicate does not match the cart. Ordering this cart will fail with error ShippingMethodDoesNotMatchCart"
   DoesNotMatchCart
+
+  "Either there is no predicate defined for the ShippingMethod or the given predicate matches the cart"
+  MatchesCart
 }
 
 input ShippingMethodUpdateAction {
@@ -12041,11 +12039,11 @@ input SimpleFieldTypeDraft {
 
 "Describes how this discount interacts with other discounts"
 enum StackingMode {
-  "Don\u2019t apply any more matching discounts after this one."
-  StopAfterThisDiscount
-
   "Default. Continue applying other matching discounts after applying this one."
   Stacking
+
+  "Don\u2019t apply any more matching discounts after this one."
+  StopAfterThisDiscount
 }
 
 input StagedOrderUpdateAction {
@@ -12410,14 +12408,14 @@ enum StateRole {
 }
 
 enum StateType {
-  QuoteState
-  StagedQuoteState
-  QuoteRequestState
-  OrderState
-  ProductState
-  ReviewState
-  PaymentState
   LineItemState
+  OrderState
+  PaymentState
+  ProductState
+  QuoteRequestState
+  QuoteState
+  ReviewState
+  StagedQuoteState
 }
 
 input StateUpdateAction {
@@ -12616,10 +12614,10 @@ input SubscriptionFormatInput {
 }
 
 enum SubscriptionHealthStatus {
-  TemporaryError
-  ConfigurationErrorDeliveryStopped
   ConfigurationError
+  ConfigurationErrorDeliveryStopped
   Healthy
+  TemporaryError
 }
 
 input SubscriptionUpdateAction {
@@ -12666,16 +12664,16 @@ input TargetReferenceInput {
 
 enum TaxCalculationMode {
   """
-  This calculation mode calculates the taxes on the unit price before multiplying with the quantity.
-  E.g. `($1.08 * 1.19 = $1.2852 -> $1.29 rounded) * 3 = $3.87`
-  """
-  UnitPriceLevel
-
-  """
   Default. This calculation mode calculates the taxes after the unit price is multiplied with the quantity.
   E.g. `($1.08 * 3 = $3.24) * 1.19 = $3.8556 -> $3.86 rounded`
   """
   LineItemLevel
+
+  """
+  This calculation mode calculates the taxes on the unit price before multiplying with the quantity.
+  E.g. `($1.08 * 1.19 = $1.2852 -> $1.29 rounded) * 3 = $3.87`
+  """
+  UnitPriceLevel
 }
 
 "Tax Categories define how products are to be taxed in different countries."
@@ -12755,18 +12753,18 @@ enum TaxMode {
   Disabled
 
   """
-  The tax amounts and the tax rates as well as the tax portions are set externally per ExternalTaxAmountDraft.
-  A cart with this tax mode can only be ordered if the cart itself and all line items, all custom line items and
-  the shipping method have an external tax amount and rate set
-  """
-  ExternalAmount
-
-  """
   The tax rates are set externally per ExternalTaxRateDraft. A cart with this tax mode can only be ordered if all
   line items, all custom line items and the shipping method have an external tax rate set. The totalNet and
   totalGross as well as the taxPortions fields are calculated according to the taxRoundingMode.
   """
   External
+
+  """
+  The tax amounts and the tax rates as well as the tax portions are set externally per ExternalTaxAmountDraft.
+  A cart with this tax mode can only be ordered if the cart itself and all line items, all custom line items and
+  the shipping method have an external tax amount and rate set
+  """
+  ExternalAmount
 
   """
   The tax rates are selected from the TaxCategories based on the cart shipping address.
@@ -12963,17 +12961,17 @@ input TransactionDraft {
 
 enum TransactionState {
   Failure
-  Success
-  Pending
   Initial
+  Pending
+  Success
 }
 
 enum TransactionType {
+  Authorization
+  CancelAuthorization
+  Charge
   Chargeback
   Refund
-  Charge
-  CancelAuthorization
-  Authorization
 }
 
 input TransitionOrderCustomLineItemState {
