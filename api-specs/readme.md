@@ -35,8 +35,6 @@ Our APIs have to follow our
     - [(deprecated)](#deprecated)
     - [(markDeprecated)](#markdeprecated)
     - [(actionType)](#actiontype)
-    - [(java-implements) or (csharp-implements)](#java-implements-or-csharp-implements)
-    - [(java-extends) or (csharp-extends)](#java-extends-or-csharp-extends)
     - [(beta)](#beta)
     - [(sdkBaseUri)](#sdkbaseuri)
     - [(enumDescriptions)](#enumdescriptions)
@@ -133,9 +131,6 @@ Our APIs have to follow our
    (createable): CartDraft
    description: A shopping cart holds product variants and can be ordered.
    get:
-     (java-implements):
-       'com.commercetools.api.models.PagedQueryResourceRequest<ByProjectKeyCartsGet,
-       com.commercetools.api.models.cart.CartPagedQueryResponse>'
      securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
      queryParameters:
        customerId?:
@@ -701,14 +696,6 @@ Here below, an example about how to add the annotation, in general, the annotati
 
 This annotation has to be mentioned in the definition of the resource itself in the [/types](#types) folder in the resource data, so for instance in [CartDiscount.raml](./api/types/cart-discount/CartDiscount.raml). It's necessary to assign the related `<Resource>Action` to the resource.
 
-##### (java-implements) or (csharp-implements)
-
-This annotation is included in the [/resources](#resources) files. Use this annotation for mapping with the related class in the Java V2 and Dotnet V2 SDKs.
-
-##### (java-extends) or (csharp-extends)
-
-This annotation is included in the [/types](#types) files. The scope is mapping the related name of the **PagedQueryResourceRequest** and **PagedQueryResponse** classes in the Java V2 and Dotnet V2 SDKs.
-
 ##### (beta)
 
 Use this annotation to indicate that the related feature is still in a beta phase.
@@ -828,8 +815,6 @@ The Update is defined generically in the main resource data as **(updateType)** 
 (package): CartDiscount
 type: object
 displayName: CartDiscountUpdate
-(java-extends): 'com.commercetools.api.models.ResourceUpdate<CartDiscountUpdate,
-  CartDiscountUpdateAction>'
 properties:
   version:
     type: number
