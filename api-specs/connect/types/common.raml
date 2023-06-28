@@ -102,9 +102,15 @@ types:
         type: string
         description: Cron schedule for job applications.
   ConnectorStatus:
+    type: string
     description: |
       Indicates the current status of the ConnectorStaged.
-    type: string
+    (annotations.enumDescriptions):
+      Draft: The ConnectorStaged is currently a draft.
+      ReadyForCertification: The ConnectorStaged is ready to be certified.
+      InCertification: The ConnectorStaged is in the certification process.
+      FeedbackRequired: The ConnectorStaged requires action from the creator to continue with the certification process.
+      Certified: The ConnectorStaged is certified.
     enum:
       - Draft
       - ReadyForCertification
@@ -132,8 +138,7 @@ types:
   Creator:
     example: !include ../examples/connector/Creator.json
     description: |
-      Contains details of the creator of the Connector.
-          These details are used to contact the creator during the certification process.
+       Details of the individual or organization who developed the Connector. This information is used to facilitate communication during the certification process.
     properties:
       name?:
         type: string
@@ -176,7 +181,7 @@ types:
         description: Owner of the Connector.
       repository:
         type: Repository
-        description: GitHub repository details of the Connector.
+        description: Details of the GitHub repository that contains the Connect application.
   DeploymentDetailsBuild:
     example: !include ../examples/deployment/DeploymentDetailsBuild.json
     properties:
@@ -191,9 +196,16 @@ types:
         type: DeploymentDetailsBuild
         description: The build details of deployed applications.
   DeploymentStatus:
+    type: string
     description: |
       Indicates the current status of the Deployment.
-    type: string
+    (annotations.enumDescriptions):
+      Queued: The Deployment is in a queue waiting to be processed.
+      Deploying: The deployment process has started.
+      Deployed: The Deployment is live.
+      Failed: The deployment process failed.
+      Undeploying: The Deployment is being undeployed.
+      UndeployFailed: The process to undeploy failed.
     enum:
       - Draft
       - Queued
@@ -202,6 +214,29 @@ types:
       - Failed
       - Undeploying
       - UndeployFailed
+  DeploymentLogSeverity:
+    type: string
+    description: Indicates the severity of the log message.
+    (annotations.enumDescriptions):
+      DEFAULT: The log entry has no assigned severity level.
+      DEBUG: Debug or trace information.
+      INFO: Routine information, such as ongoing status or performance.
+      NOTICE: Normal but significant events, such as start up, shut down, or a configuration change.
+      WARNING: Warning events might cause problems.
+      ERROR: Error events are likely to cause problems.
+      CRITICAL: Critical events cause more severe problems or outages.
+      ALERT: A person must take an action immediately.
+      EMERGENCY: One or more systems are unusable.
+    enum:
+      - DEFAULT
+      - DEBUG
+      - INFO
+      - NOTICE
+      - WARNING
+      - ERROR
+      - CRITICAL
+      - ALERT
+      - EMERGENCY
   Region:
     description: |
       The host Region of a commercetools Composable Commerce Project. For more information, see [Hosts](hosts-and-authorization#hosts).
@@ -220,6 +255,11 @@ types:
       tag:
         type: string
         description: Git tag of the release to use.
+  ProjectIdentifier:
+    type: string
+    pattern: ^[a-zA-Z0-9-_.]+:[a-zA-Z0-9-_]{2,36}$
+    description: Identifies a Composable Commerce Project. Uses the format "{region}:{projectKey}".
+    example: europe-west1.gcp:my-project-key
   Paged:
     description: |
       A Paged Result.
