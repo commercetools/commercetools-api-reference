@@ -18,6 +18,7 @@ paths:
       security:
         - oauth_2_0:
             - "view_audit_log:{projectKey}"
+            - "view_business_units:{projectKey}"
             - "view_cart_discounts:{projectKey}"
             - "view_categories:{projectKey}"
             - "view_customers:{projectKey}"
@@ -112,6 +113,13 @@ paths:
             type: "string"
           explode: true
         - name: resourceId
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
+        - name: resourceKey
           in: query
           required: false
           style: form
@@ -232,6 +240,7 @@ paths:
       security:
         - oauth_2_0:
             - "view_audit_log:{projectKey}"
+            - "view_business_units:{projectKey}"
             - "view_cart_discounts:{projectKey}"
             - "view_categories:{projectKey}"
             - "view_customers:{projectKey}"
@@ -317,7 +326,7 @@ paths:
           schema:
             type: "string"
           explode: true
-        - name: resourceId
+        - name: resourceKey
           in: query
           required: false
           style: form
@@ -443,6 +452,7 @@ paths:
       security:
         - oauth_2_0:
             - "view_audit_log:{projectKey}"
+            - "view_business_units:{projectKey}"
             - "view_cart_discounts:{projectKey}"
             - "view_orders:{projectKey}"
             - "view_orders:{projectKey}:{storeKey}"
@@ -721,7 +731,7 @@ components:
           items:
             $ref: '#/components/schemas/Change'
         resource:
-          $ref: '#/components/schemas/Reference'
+          $ref: '#/components/schemas/ResourceIdentifier'
         stores:
           type: "array"
           items:
@@ -756,6 +766,7 @@ components:
     ChangeHistoryResourceType:
       type: "string"
       enum:
+        - business-unit
         - cart-discount
         - category
         - channel
@@ -856,9 +867,12 @@ components:
       enum:
         - addAddress
         - addAsset
+        - addAssociate
         - addAttributeDefinition
         - addBillingAddressId
+        - addCustomLineItem
         - addDelivery
+        - addDiscountCode
         - addEnumValue
         - addExternalImage
         - addFieldDefinition
@@ -871,6 +885,9 @@ components:
         - addPayment
         - addPlainEnumValue
         - addPrice
+        - addProduct
+        - addProductSelection
+        - addProperty
         - addReturnInfo
         - addRoles
         - addShippingAddressId
@@ -880,14 +897,18 @@ components:
         - addTransaction
         - addVariant
         - changeAddress
+        - changeAmountAuthorized
         - changeAmountPlanned
         - changeAssetName
         - changeAssetOrder
+        - changeAssociate
+        - changeAssociateMode
         - changeAttributeConstraint
         - changeAttributeName
         - changeAttributeOrderByName
         - changeCartDiscounts
         - changeCartPredicate
+        - changeCustomLineItemQuantity
         - changeDescription
         - changeEmail
         - changeEnumKey
@@ -901,6 +922,7 @@ components:
         - changeIsSearchable
         - changeKey
         - changeLabel
+        - changeLineItemName
         - changeLineItemQuantity
         - changeLineItemsOrder
         - changeLocalizedEnumValueLabel
@@ -910,18 +932,27 @@ components:
         - changeOrderHint
         - changeOrderState
         - changeParent
+        - changeParentUnit
         - changePaymentState
         - changePlainEnumValueLabel
         - changePredicate
         - changePrice
+        - changeProductSelectionActive
         - changeQuantity
+        - changeQuoteRequestState
+        - changeQuoteState
         - changeRequiresDiscountCode
         - changeReviewRatingStatistics
         - changeShipmentState
         - changeSlug
         - changeSortOrder
         - changeStackingMode
+        - changeStagedQuoteState
+        - changeStatus
         - changeTarget
+        - changeTaxCalculationMode
+        - changeTaxMode
+        - changeTaxRoundingMode
         - changeTextLineItemName
         - changeTextLineItemQuantity
         - changeTextLineItemsOrder
@@ -930,12 +961,16 @@ components:
         - changeTransactionTimestamp
         - changeType
         - changeValue
+        - moveImageToPosition
         - publish
         - removeAddress
         - removeAsset
+        - removeAssociate
         - removeAttributeDefinition
         - removeBillingAddressId
+        - removeCustomLineItem
         - removeDelivery
+        - removeDiscountCode
         - removeEnumValues
         - removeFieldDefinition
         - removeFromCategory
@@ -946,13 +981,20 @@ components:
         - removeParcelFromDelivery
         - removePayment
         - removePrice
+        - removeProduct
+        - removeProductSelection
+        - removeProperty
         - removeRoles
         - removeShippingAddressId
         - removeTaxRate
         - removeTextLineItem
         - removeVariant
+        - requestQuoteRenegotiation
         - setAddress
+        - setAddressCustomField
+        - setAddressCustomType
         - setAnonymousId
+        - setApplicationVersion
         - setAssetCustomField
         - setAssetCustomType
         - setAssetDescription
@@ -960,15 +1002,26 @@ components:
         - setAssetTags
         - setAsssetKey
         - setAttribute
+        - setAuthenticationMode
         - setAuthorName
         - setBillingAddress
         - setCartPredicate
         - setCategoryOrderHint
         - setCompanyName
+        - setContactEmail
+        - setCountries
+        - setCountry
         - setCustomField
         - setCustomLineItemCustomField
         - setCustomLineItemCustomType
+        - setCustomLineItemMoney
         - setCustomLineItemShippingDetails
+        - setCustomLineItemTaxAmount
+        - setCustomLineItemTaxCategory
+        - setCustomLineItemTaxRate
+        - setCustomLineItemTaxedPrice
+        - setCustomLineItemTotalPrice
+        - setCustomShippingMethod
         - setCustomType
         - setCustomer
         - setCustomerEmail
@@ -991,12 +1044,24 @@ components:
         - setImageLabel
         - setInputTip
         - setInterfaceId
+        - setIsValid
         - setKey
         - setLanguages
         - setLastName
         - setLineItemCustomField
         - setLineItemCustomType
+        - setLineItemDeactivatedAt
+        - setLineItemDiscountedPrice
+        - setLineItemDiscountedPricePerQuantity
+        - setLineItemDistributionChannel
+        - setLineItemPrice
+        - setLineItemProductKey
+        - setLineItemProductSlug
         - setLineItemShippingDetails
+        - setLineItemTaxAmount
+        - setLineItemTaxRate
+        - setLineItemTaxedPrice
+        - setLineItemTotalPrice
         - setLocale
         - setMaxApplications
         - setMaxApplicationsPerCustomer
@@ -1009,28 +1074,47 @@ components:
         - setMiddleName
         - setName
         - setOrderNumber
+        - setOrderTaxedPrice
+        - setOrderTotalPrice
+        - setOrderTotalTax
         - setParcelItems
         - setParcelMeasurements
         - setParcelTrackingData
         - setPassword
+        - setPrices
+        - setProductCount
         - setProductPriceCustomField
         - setProductPriceCustomType
+        - setProductSelections
         - setProductVariantKey
+        - setProperty
+        - setPurchaseOrderNumber
         - setRating
+        - setReservations
         - setRestockableInDays
         - setReturnPaymentState
         - setReturnShipmentState
         - setRoles
         - setSalutation
         - setSearchKeywords
+        - setSellerComment
         - setShippingAddress
+        - setShippingInfoPrice
+        - setShippingInfoTaxedPrice
+        - setShippingMethod
+        - setShippingMethodTaxAmount
+        - setShippingMethodTaxRate
+        - setShippingRate
+        - setShippingRateInput
         - setSku
         - setSlug
         - setStatusInterfaceCode
         - setStatusInterfaceText
         - setStore
+        - setStoreMode
         - setStores
         - setSupplyChannel
+        - setSupplyChannels
         - setTarget
         - setTaxCategory
         - setText
@@ -1041,8 +1125,11 @@ components:
         - setTransitions
         - setValidFrom
         - setValidFromAndUntil
+        - setValidTo
         - setValidUntil
+        - setValue
         - setVariantAvailability
+        - setVariantSelection
         - setVatId
         - transitionCustomLineItemState
         - transitionLineItemState
@@ -1059,6 +1146,7 @@ components:
         mapping:
           AddAddressChange: '#/components/schemas/AddAddressChange'
           AddAssetChange: '#/components/schemas/AddAssetChange'
+          AddAssociateChange: '#/components/schemas/AddAssociateChange'
           AddAttributeDefinitionChange: '#/components/schemas/AddAttributeDefinitionChange'
           AddBillingAddressIdChange: '#/components/schemas/AddBillingAddressIdChange'
           AddChannelRolesChange: '#/components/schemas/AddChannelRolesChange'
@@ -1078,6 +1166,7 @@ components:
           AddPlainEnumValueChange: '#/components/schemas/AddPlainEnumValueChange'
           AddPriceChange: '#/components/schemas/AddPriceChange'
           AddProductChange: '#/components/schemas/AddProductChange'
+          AddProductSelectionChange: '#/components/schemas/AddProductSelectionChange'
           AddPropertyChange: '#/components/schemas/AddPropertyChange'
           AddReturnInfoChange: '#/components/schemas/AddReturnInfoChange'
           AddShippingAddressIdChange: '#/components/schemas/AddShippingAddressIdChange'
@@ -1093,6 +1182,8 @@ components:
           ChangeAmountPlannedChange: '#/components/schemas/ChangeAmountPlannedChange'
           ChangeAssetNameChange: '#/components/schemas/ChangeAssetNameChange'
           ChangeAssetOrderChange: '#/components/schemas/ChangeAssetOrderChange'
+          ChangeAssociateChange: '#/components/schemas/ChangeAssociateChange'
+          ChangeAssociateModeChange: '#/components/schemas/ChangeAssociateModeChange'
           ChangeAttributeConstraintChange: '#/components/schemas/ChangeAttributeConstraintChange'
           ChangeAttributeOrderByNameChange: '#/components/schemas/ChangeAttributeOrderByNameChange'
           ChangeCartDiscountsChange: '#/components/schemas/ChangeCartDiscountsChange'
@@ -1120,11 +1211,13 @@ components:
           ChangeOrderHintChange: '#/components/schemas/ChangeOrderHintChange'
           ChangeOrderStateChange: '#/components/schemas/ChangeOrderStateChange'
           ChangeParentChange: '#/components/schemas/ChangeParentChange'
+          ChangeParentUnitChange: '#/components/schemas/ChangeParentUnitChange'
           ChangePaymentStateChange: '#/components/schemas/ChangePaymentStateChange'
           ChangePlainEnumValueLabelChange: '#/components/schemas/ChangePlainEnumValueLabelChange'
           ChangePlainEnumValueOrderChange: '#/components/schemas/ChangePlainEnumValueOrderChange'
           ChangePredicateChange: '#/components/schemas/ChangePredicateChange'
           ChangePriceChange: '#/components/schemas/ChangePriceChange'
+          ChangeProductSelectionActiveChange: '#/components/schemas/ChangeProductSelectionActiveChange'
           ChangeQuantityChange: '#/components/schemas/ChangeQuantityChange'
           ChangeQuoteRequestStateChange: '#/components/schemas/ChangeQuoteRequestStateChange'
           ChangeQuoteStateChange: '#/components/schemas/ChangeQuoteStateChange'
@@ -1138,6 +1231,7 @@ components:
           ChangeStackingModeChange: '#/components/schemas/ChangeStackingModeChange'
           ChangeStagedQuoteStateChange: '#/components/schemas/ChangeStagedQuoteStateChange'
           ChangeStateTypeChange: '#/components/schemas/ChangeStateTypeChange'
+          ChangeStatusChange: '#/components/schemas/ChangeStatusChange'
           ChangeTargetChange: '#/components/schemas/ChangeTargetChange'
           ChangeTaxCalculationModeChange: '#/components/schemas/ChangeTaxCalculationModeChange'
           ChangeTaxModeChange: '#/components/schemas/ChangeTaxModeChange'
@@ -1153,6 +1247,7 @@ components:
           PublishChange: '#/components/schemas/PublishChange'
           RemoveAddressChange: '#/components/schemas/RemoveAddressChange'
           RemoveAssetChange: '#/components/schemas/RemoveAssetChange'
+          RemoveAssociateChange: '#/components/schemas/RemoveAssociateChange'
           RemoveAttributeDefinitionChange: '#/components/schemas/RemoveAttributeDefinitionChange'
           RemoveBillingAddressIdChange: '#/components/schemas/RemoveBillingAddressIdChange'
           RemoveChannelRolesChange: '#/components/schemas/RemoveChannelRolesChange'
@@ -1171,6 +1266,7 @@ components:
           RemovePaymentChange: '#/components/schemas/RemovePaymentChange'
           RemovePriceChange: '#/components/schemas/RemovePriceChange'
           RemoveProductChange: '#/components/schemas/RemoveProductChange'
+          RemoveProductSelectionChange: '#/components/schemas/RemoveProductSelectionChange'
           RemovePropertyChange: '#/components/schemas/RemovePropertyChange'
           RemoveShippingAddressIdChange: '#/components/schemas/RemoveShippingAddressIdChange'
           RemoveShoppingListLineItemChange: '#/components/schemas/RemoveShoppingListLineItemChange'
@@ -1178,7 +1274,10 @@ components:
           RemoveTaxRateChange: '#/components/schemas/RemoveTaxRateChange'
           RemoveTextLineItemChange: '#/components/schemas/RemoveTextLineItemChange'
           RemoveVariantChange: '#/components/schemas/RemoveVariantChange'
+          RequestQuoteRenegotiationChange: '#/components/schemas/RequestQuoteRenegotiationChange'
           SetAddressChange: '#/components/schemas/SetAddressChange'
+          SetAddressCustomFieldChange: '#/components/schemas/SetAddressCustomFieldChange'
+          SetAddressCustomTypeChange: '#/components/schemas/SetAddressCustomTypeChange'
           SetAnonymousIdChange: '#/components/schemas/SetAnonymousIdChange'
           SetApplicationVersionChange: '#/components/schemas/SetApplicationVersionChange'
           SetAssetCustomFieldChange: '#/components/schemas/SetAssetCustomFieldChange'
@@ -1195,6 +1294,7 @@ components:
           SetCategoryOrderHintChange: '#/components/schemas/SetCategoryOrderHintChange'
           SetChannelRolesChange: '#/components/schemas/SetChannelRolesChange'
           SetCompanyNameChange: '#/components/schemas/SetCompanyNameChange'
+          SetContactEmailChange: '#/components/schemas/SetContactEmailChange'
           SetCountriesChange: '#/components/schemas/SetCountriesChange'
           SetCountryChange: '#/components/schemas/SetCountryChange'
           SetCustomFieldChange: '#/components/schemas/SetCustomFieldChange'
@@ -1299,6 +1399,7 @@ components:
           SetStatusInterfaceCodeChange: '#/components/schemas/SetStatusInterfaceCodeChange'
           SetStatusInterfaceTextChange: '#/components/schemas/SetStatusInterfaceTextChange'
           SetStoreChange: '#/components/schemas/SetStoreChange'
+          SetStoreModeChange: '#/components/schemas/SetStoreModeChange'
           SetStoresChange: '#/components/schemas/SetStoresChange'
           SetSupplyChannelChange: '#/components/schemas/SetSupplyChannelChange'
           SetSupplyChannelsChange: '#/components/schemas/SetSupplyChannelsChange'
@@ -1316,6 +1417,7 @@ components:
           SetValidUntilChange: '#/components/schemas/SetValidUntilChange'
           SetValueChange: '#/components/schemas/SetValueChange'
           SetVariantAvailabilityChange: '#/components/schemas/SetVariantAvailabilityChange'
+          SetVariantSelectionChange: '#/components/schemas/SetVariantSelectionChange'
           SetVatIdChange: '#/components/schemas/SetVatIdChange'
           TransitionCustomLineItemStateChange: '#/components/schemas/TransitionCustomLineItemStateChange'
           TransitionLineItemStateChange: '#/components/schemas/TransitionLineItemStateChange'
@@ -1337,6 +1439,7 @@ components:
       discriminator:
         propertyName: type
         mapping:
+          BusinessUnitLabel: '#/components/schemas/BusinessUnitLabel'
           CustomObjectLabel: '#/components/schemas/CustomObjectLabel'
           CustomerLabel: '#/components/schemas/CustomerLabel'
           LocalizedLabel: '#/components/schemas/LocalizedLabel'
@@ -1424,6 +1527,21 @@ components:
               $ref: '#/components/schemas/Asset'
             nextValue:
               $ref: '#/components/schemas/Asset'
+    AddAssociateChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            nextValue:
+              $ref: '#/components/schemas/Associate'
     AddAttributeDefinitionChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -1768,6 +1886,7 @@ components:
             - change
             - nextValue
             - type
+            - variantSelection
           properties:
             type:
               type: "string"
@@ -1775,6 +1894,26 @@ components:
               type: "string"
             nextValue:
               $ref: '#/components/schemas/Reference'
+            variantSelection:
+              $ref: '#/components/schemas/ProductVariantSelection'
+    AddProductSelectionChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/ProductSelectionSetting'
+            nextValue:
+              $ref: '#/components/schemas/ProductSelectionSetting'
     AddPropertyChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -2100,6 +2239,34 @@ components:
           $ref: '#/components/schemas/AssetDimensions'
         contentType:
           type: "string"
+    Associate:
+      type: "object"
+      required:
+        - associateRoleAssignments
+        - customer
+      properties:
+        associateRoleAssignments:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/AssociateRoleAssignment'
+        customer:
+          $ref: '#/components/schemas/Reference'
+    AssociateRoleAssignment:
+      type: "object"
+      required:
+        - associateRole
+        - inheritance
+      properties:
+        associateRole:
+          $ref: '#/components/schemas/KeyReference'
+        inheritance:
+          $ref: '#/components/schemas/AssociateRoleInheritanceMode'
+    AssociateRoleInheritanceMode:
+      type: "string"
+      enum:
+        - Enabled
+        - Disabled
+      x-annotation-package: "Common"
     AttributeConstraintEnum:
       type: "string"
       enum:
@@ -2158,6 +2325,39 @@ components:
       enum:
         - Password
         - ExternalAuth
+      x-annotation-package: "Common"
+    BusinessUnitAssociateMode:
+      type: "string"
+      enum:
+        - Explicit
+        - ExplicitAndFromParent
+      x-annotation-package: "Common"
+    BusinessUnitLabel:
+      allOf:
+        - $ref: '#/components/schemas/Label'
+        - type: "object"
+          required:
+            - key
+            - name
+            - type
+          properties:
+            type:
+              type: "string"
+            key:
+              type: "string"
+            name:
+              type: "string"
+    BusinessUnitStatus:
+      type: "string"
+      enum:
+        - Active
+        - Inactive
+      x-annotation-package: "Common"
+    BusinessUnitStoreMode:
+      type: "string"
+      enum:
+        - Explicit
+        - FromParent
       x-annotation-package: "Common"
     CategoryOrderHints:
       type: "object"
@@ -2262,6 +2462,42 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/LocalizedString'
+    ChangeAssociateChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/Associate'
+            nextValue:
+              $ref: '#/components/schemas/Associate'
+    ChangeAssociateModeChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/BusinessUnitAssociateMode'
+            nextValue:
+              $ref: '#/components/schemas/BusinessUnitAssociateMode'
     ChangeAttributeConstraintChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -2833,6 +3069,24 @@ components:
               $ref: '#/components/schemas/Reference'
             nextValue:
               $ref: '#/components/schemas/Reference'
+    ChangeParentUnitChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/KeyReference'
+            nextValue:
+              $ref: '#/components/schemas/KeyReference'
     ChangePaymentStateChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -2942,6 +3196,27 @@ components:
               type: "string"
             priceId:
               type: "string"
+    ChangeProductSelectionActiveChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - productSelection
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            productSelection:
+              $ref: '#/components/schemas/Reference'
+            previousValue:
+              type: "boolean"
+            nextValue:
+              type: "boolean"
     ChangeQuantityChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -3185,6 +3460,24 @@ components:
               $ref: '#/components/schemas/StateType'
             nextValue:
               $ref: '#/components/schemas/StateType'
+    ChangeStatusChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/BusinessUnitStatus'
+            nextValue:
+              $ref: '#/components/schemas/BusinessUnitStatus'
     ChangeTargetChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -4192,6 +4485,24 @@ components:
         - //
       additionalProperties:
         type: "string"
+    ProductVariantSelection:
+      type: "object"
+      required:
+        - skus
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/ProductVariantSelectionTypeEnum'
+        skus:
+          type: "array"
+          items:
+            type: "string"
+    ProductVariantSelectionTypeEnum:
+      type: "string"
+      enum:
+        - inclusion
+        - exclusion
+      x-annotation-package: "Common"
     PublishChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -4254,6 +4565,7 @@ components:
       enum:
         - Pending
         - Declined
+        - DeclinedForRenegotiation
         - Accepted
         - Failed
         - Withdrawn
@@ -4271,6 +4583,8 @@ components:
     ReferenceTypeId:
       type: "string"
       enum:
+        - associate-role
+        - business-unit
         - cart
         - cart-discount
         - category
@@ -4333,6 +4647,21 @@ components:
               type: "string"
             previousValue:
               $ref: '#/components/schemas/Asset'
+    RemoveAssociateChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/Associate'
     RemoveAttributeDefinitionChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -4673,6 +5002,21 @@ components:
               type: "string"
             previousValue:
               $ref: '#/components/schemas/Reference'
+    RemoveProductSelectionChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/ProductSelectionSetting'
     RemovePropertyChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -4813,6 +5157,27 @@ components:
               $ref: '#/components/schemas/Variant'
             catalogData:
               type: "string"
+    RequestQuoteRenegotiationChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - buyerComment
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/QuoteState'
+            nextValue:
+              $ref: '#/components/schemas/QuoteState'
+            buyerComment:
+              type: "string"
     Reservation:
       type: "object"
       required:
@@ -4830,6 +5195,19 @@ components:
           type: "string"
         checkoutStartedAt:
           type: "string"
+    ResourceIdentifier:
+      type: "object"
+      required:
+        - id
+        - key
+        - typeId
+      properties:
+        id:
+          type: "string"
+        key:
+          type: "string"
+        typeId:
+          $ref: '#/components/schemas/ReferenceTypeId'
     ReturnInfo:
       type: "object"
       required:
@@ -4975,6 +5353,54 @@ components:
               $ref: '#/components/schemas/Address'
             nextValue:
               $ref: '#/components/schemas/Address'
+    SetAddressCustomFieldChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - address
+            - change
+            - customTypeId
+            - name
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            address:
+              $ref: '#/components/schemas/Address'
+            name:
+              type: "string"
+            customTypeId:
+              type: "string"
+            previousValue:
+              {}
+            nextValue:
+              {}
+    SetAddressCustomTypeChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - address
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            address:
+              $ref: '#/components/schemas/Address'
+            previousValue:
+              $ref: '#/components/schemas/CustomFields'
+            nextValue:
+              $ref: '#/components/schemas/CustomFields'
     SetAnonymousIdChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -5334,7 +5760,7 @@ components:
               type: "string"
             nextValue:
               type: "string"
-    SetCountryChange:
+    SetContactEmailChange:
       allOf:
         - $ref: '#/components/schemas/Change'
         - type: "object"
@@ -5349,9 +5775,9 @@ components:
             change:
               type: "string"
             previousValue:
-              $ref: '#/components/schemas/CountryCode'
+              type: "string"
             nextValue:
-              $ref: '#/components/schemas/CountryCode'
+              type: "string"
     SetCountriesChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -5374,6 +5800,24 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/StoreCountry'
+    SetCountryChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/CountryCode'
+            nextValue:
+              $ref: '#/components/schemas/CountryCode'
     SetCustomFieldChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -6845,24 +7289,6 @@ components:
               $ref: '#/components/schemas/TrackingData'
             parcel:
               $ref: '#/components/schemas/ParcelChangeValue'
-    SetPurchaseOrderNumberChange:
-      allOf:
-        - $ref: '#/components/schemas/Change'
-        - type: "object"
-          required:
-            - change
-            - nextValue
-            - previousValue
-            - type
-          properties:
-            type:
-              type: "string"
-            change:
-              type: "string"
-            previousValue:
-              type: "string"
-            nextValue:
-              type: "string"
     SetPricesChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -7016,6 +7442,24 @@ components:
             nextValue:
               {}
             path:
+              type: "string"
+    SetPurchaseOrderNumberChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              type: "string"
+            nextValue:
               type: "string"
     SetRatingChange:
       allOf:
@@ -7489,6 +7933,24 @@ components:
               $ref: '#/components/schemas/Reference'
             nextValue:
               $ref: '#/components/schemas/Reference'
+    SetStoreModeChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/BusinessUnitStoreMode'
+            nextValue:
+              $ref: '#/components/schemas/BusinessUnitStoreMode'
     SetStoresChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -7828,6 +8290,27 @@ components:
               type: "string"
             variant:
               type: "string"
+    SetVariantSelectionChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - product
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/ProductVariantSelection'
+            nextValue:
+              $ref: '#/components/schemas/ProductVariantSelection'
+            product:
+              $ref: '#/components/schemas/Reference'
     SetVatIdChange:
       allOf:
         - $ref: '#/components/schemas/Change'
