@@ -44,6 +44,29 @@ interface BusinessUnit [[BusinessUnit.svg]]  {
     parentUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
     topLevelUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
 }
+interface CartDiscount [[CartDiscount.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    name: [[LocalizedString.svg LocalizedString]]
+    key: String
+    description: [[LocalizedString.svg LocalizedString]]
+    value: [[CartDiscountValue.svg CartDiscountValue]]
+    cartPredicate: String
+    target: [[CartDiscountTarget.svg CartDiscountTarget]]
+    sortOrder: String
+    stores: [[StoreKeyReference.svg List<StoreKeyReference>]]
+    isActive: Boolean
+    validFrom: DateTime
+    validUntil: DateTime
+    requiresDiscountCode: Boolean
+    references: [[Reference.svg List<Reference>]]
+    stackingMode: [[StackingMode.svg StackingMode]]
+    custom: [[CustomFields.svg CustomFields]]
+}
 interface Customer [[Customer.svg]]  {
     id: String
     version: Long
@@ -75,6 +98,15 @@ interface Customer [[Customer.svg]]  {
     salutation: String
     stores: [[StoreKeyReference.svg List<StoreKeyReference>]]
     authenticationMode: [[AuthenticationMode.svg AuthenticationMode]]
+}
+interface StoreCartDiscountsLimitReachedError [[StoreCartDiscountsLimitReachedError.svg]]  {
+    code: String
+    message: String
+    stores: [[StoreKeyReference.svg List<StoreKeyReference>]]
+}
+interface GraphQLStoreCartDiscountsLimitReachedError [[GraphQLStoreCartDiscountsLimitReachedError.svg]]  {
+    code: String
+    stores: [[StoreKeyReference.svg List<StoreKeyReference>]]
 }
 interface BusinessUnitStoreModeChangedMessage [[BusinessUnitStoreModeChangedMessage.svg]]  {
     id: String
@@ -360,7 +392,10 @@ interface ShoppingList [[ShoppingList.svg]]  {
 }
 
 StoreKeyReference --> BusinessUnit #green;text:green : "stores"
+StoreKeyReference --> CartDiscount #green;text:green : "stores"
 StoreKeyReference --> Customer #green;text:green : "stores"
+StoreKeyReference --> StoreCartDiscountsLimitReachedError #green;text:green : "stores"
+StoreKeyReference --> GraphQLStoreCartDiscountsLimitReachedError #green;text:green : "stores"
 StoreKeyReference --> BusinessUnitStoreModeChangedMessage #green;text:green : "stores"
 StoreKeyReference --> BusinessUnitStoreModeChangedMessage #green;text:green : "oldStores"
 StoreKeyReference --> BusinessUnitStoresSetMessage #green;text:green : "stores"

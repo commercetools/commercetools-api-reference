@@ -7741,6 +7741,385 @@ paths:
               schema:
                 $ref: '#/components/schemas/CustomerSignInResult'
 
+  /{projectKey}/in-store/key={storeKey}/cart-discounts:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: storeKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "manage_orders:{projectKey}"
+            - "manage_orders:{projectKey}:{storeKey}"
+            - "manage_cart_discounts:{projectKey}"
+            - "manage_cart_discounts:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsGet
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDiscount'
+
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_orders:{projectKey}"
+            - "manage_orders:{projectKey}:{storeKey}"
+            - "manage_cart_discounts:{projectKey}"
+            - "manage_cart_discounts:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsPost
+      description: |-
+        When using the endpoint, the Store specified in the path and the Stores specified in the payload's `stores` field are added to the CartDiscount.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartDiscountDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDiscount'
+
+  /{projectKey}/in-store/key={storeKey}/cart-discounts/key={key}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: storeKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_orders:{projectKey}"
+            - "view_orders:{projectKey}:{storeKey}"
+            - "view_cart_discounts:{projectKey}"
+            - "view_cart_discounts:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsKeyByKeyGet
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDiscount'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_orders:{projectKey}"
+            - "manage_orders:{projectKey}:{storeKey}"
+            - "manage_cart_discounts:{projectKey}"
+            - "manage_cart_discounts:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsKeyByKeyPost
+      description: |-
+        To update a CartDiscount, you must have permissions for all Stores the CartDiscount is associated with, except when [removing a Store](ctp:api:type:CartDiscountRemoveStoreAction).
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartDiscountUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDiscount'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_orders:{projectKey}"
+            - "manage_orders:{projectKey}:{storeKey}"
+            - "manage_cart_discounts:{projectKey}"
+            - "manage_cart_discounts:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsKeyByKeyDelete
+      description: |-
+        To delete a CartDiscount, specify the `manage_cart_discounts:{projectKey}:{storeKey}` scope for all Stores associated with the CartDiscount.
+      parameters:
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDiscount'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/in-store/key={storeKey}/cart-discounts/{ID}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: storeKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_orders:{projectKey}"
+            - "view_orders:{projectKey}:{storeKey}"
+            - "view_cart_discounts:{projectKey}"
+            - "view_cart_discounts:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsByIDGet
+      description: |-
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDiscount'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_orders:{projectKey}"
+            - "manage_orders:{projectKey}:{storeKey}"
+            - "manage_cart_discounts:{projectKey}"
+            - "manage_cart_discounts:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsByIDPost
+      description: |-
+        To update a CartDiscount, you must have permissions for all Stores the CartDiscount is associated with, except when [removing a Store](ctp:api:type:CartDiscountRemoveStoreAction).
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartDiscountUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDiscount'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_orders:{projectKey}"
+            - "manage_orders:{projectKey}:{storeKey}"
+            - "manage_cart_discounts:{projectKey}"
+            - "manage_cart_discounts:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsByIDDelete
+      description: |-
+        To delete a CartDiscount, specify the `manage_cart_discounts:{projectKey}:{storeKey}` scope for all Stores associated with the CartDiscount.
+      parameters:
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDiscount'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
   /{projectKey}/in-store/key={storeKey}/carts:
     description: |-
       A shopping cart holds product variants and can be ordered.
@@ -7761,6 +8140,8 @@ paths:
             - "view_orders:{projectKey}"
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsGet
+      description: |-
+        Queries carts in a specific [Store](ctp:api:type:Store).
       parameters:
         - name: expand
           in: query
@@ -7852,9 +8233,9 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsPost
       description: |-
-        The `store` field in the created [Cart](ctp:api:type:Cart) is set to the Store specified by the `storeKey` path parameter.
-
-        Specific Error Codes: [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
+        Creates a [Cart](ctp:api:type:Cart) in the [Store](ctp:api:type:Store) specified by `storeKey`.
+        When using this endpoint the Cart's `store` field is always set to the [Store](ctp:api:type:Store) specified in the path parameter.
+        If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
       parameters:
         - name: expand
           in: query
@@ -8243,7 +8624,7 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsByIDPost
       description: |-
-        Updates a [Cart](ctp:api:type:Cart) in the Store specified by `storeKey`.
+        Updates a [Cart](ctp:api:type:Cart) in the [Store](ctp:api:type:Store) specified by `storeKey`.
         If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
       parameters:
         - name: expand
@@ -8456,11 +8837,11 @@ paths:
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersPost
       description: |-
-        When using this endpoint, if omitted, the Customer `stores` field is set to the Store specified in the path parameter.
+        When using this endpoint, if omitted, the Customer `stores` field is set to the [Store](ctp:api:type:Store) specified in the path parameter.
 
         If the `anonymousCart` field is set on the [CustomerDraft](ctp:api:type:CustomerDraft), then the newly created Customer will be assigned to that [Cart](ctp:api:type:Cart).
         Similarly, if the `anonymousId` field is set, the Customer will be set on all [Carts](ctp:api:type:Cart), [Orders](ctp:api:type:Order), [ShoppingLists](ctp:api:type:ShoppingList) and [Payments](ctp:api:type:Payment) with the same `anonymousId`.
-        If a Cart with a `store` field specified, the `store` field must reference the same Store specified in the `{storeKey}` path parameter.
+        If a Cart with a `store` field specified, the `store` field must reference the same [Store](ctp:api:type:Store) specified in the `{storeKey}` path parameter.
         Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
       parameters:
         - name: expand
@@ -8574,7 +8955,7 @@ paths:
             - "view_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersEmailTokenByEmailTokenGet
       description: |-
-        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -8630,7 +9011,7 @@ paths:
         The customer verifies the email using the token value.
         Verifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.
 
-        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       requestBody:
         content:
           application/json:
@@ -8684,7 +9065,7 @@ paths:
             - "view_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersKeyByKeyGet
       description: |-
-        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -8776,7 +9157,7 @@ paths:
       description: |-
         Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.
 
-        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: dataErasure
           in: query
@@ -9004,7 +9385,7 @@ paths:
       description: |-
         Resetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
 
-        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       requestBody:
         content:
           application/json:
@@ -9099,7 +9480,7 @@ paths:
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersByIDPost
       description: |-
-        If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -9222,9 +9603,9 @@ paths:
             - "manage_customers:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyLoginPost
       description: |-
-        Authenticates a Customer associated with a Store. For more information, see [Global versus Store-specific Customers](/../api/customers-overview#global-versus-store-specific-customers).
+        Authenticates a Customer associated with a [Store](ctp:api:type:Store). For more information, see [Global versus Store-specific Customers](/../api/customers-overview#global-versus-store-specific-customers).
 
-        If the Customer exists in the Project but the `stores` field references a different Store, this method returns an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error.
+        If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error.
       requestBody:
         content:
           application/json:
@@ -10278,7 +10659,7 @@ paths:
             - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsPost
       description: |-
-        When using this endpoint, the `store` field of a ShoppingList is always set to the Store specified in the path parameter.
+        When using this endpoint, the `store` field of a ShoppingList is always set to the [Store](ctp:api:type:Store) specified in the path parameter.
       parameters:
         - name: expand
           in: query
@@ -10342,7 +10723,7 @@ paths:
             - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsKeyByKeyGet
       description: |-
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store, the [ResourceNotFound](/errors#404-not-found-1) error is returned.
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store), the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
           in: query
@@ -10383,7 +10764,7 @@ paths:
             - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsKeyByKeyPost
       description: |-
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
@@ -10433,7 +10814,7 @@ paths:
             - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsKeyByKeyDelete
       description: |-
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
@@ -10509,7 +10890,7 @@ paths:
             - "manage_my_shopping_lists:{projectKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsByIDGet
       description: |-
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
@@ -10551,7 +10932,7 @@ paths:
             - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsByIDPost
       description: |-
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
@@ -10601,7 +10982,7 @@ paths:
             - "manage_my_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeShoppingListsByIDDelete
       description: |-
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
@@ -10672,7 +11053,7 @@ paths:
             - "manage_my_profile:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeSignupPost
       description: |-
-        If omitted in the request body, the [Customer](ctp:api:type:Customer) `stores` field is set to the Store specified in the path parameter.
+        If omitted in the request body, the [Customer](ctp:api:type:Customer) `stores` field is set to the [Store](ctp:api:type:Store) specified in the path parameter.
 
         Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
       requestBody:
@@ -10725,7 +11106,7 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersGet
       description: |-
-        Queries orders in a specific Store.
+        Queries orders in a specific [Store](ctp:api:type:Store).
       parameters:
         - name: expand
           in: query
@@ -10817,8 +11198,8 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersPost
       description: |-
-        Creates an order from a Cart from a specific Store.
-        When using this endpoint the orders's store field is always set to the store specified in the path parameter.
+        Creates an order from a Cart from a specific [Store](ctp:api:type:Store).
+        When using this endpoint the orders's `store` field is always set to the [Store](ctp:api:type:Store) specified in the path parameter.
         The cart must have a shipping address set before creating an order. When using the Platform TaxMode,
         the shipping address is used for tax calculation.
       parameters:
@@ -10884,10 +11265,10 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersOrderNumberByOrderNumberGet
       description: |-
-        Returns an order by its order number from a specific Store.
+        Returns an order by its order number from a specific [Store](ctp:api:type:Store).
 
-        If the order exists in the project but does not have the store field,
-        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        If the Order exists in the Project but does not have the `store` field,
+        or the `store` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
         In case the orderNumber does not match the regular expression [a-zA-Z0-9_-]+,
         it should be provided in URL-encoded format.
       parameters:
@@ -10930,8 +11311,9 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersOrderNumberByOrderNumberPost
       description: |-
-        Updates an order in the store specified by {storeKey}.
-        If the order exists in the project but does not have the store field,
+        Updates an order in the [Store](ctp:api:type:Store) specified by {storeKey}.
+
+        If the [Order](ctp:api:type:Order) exists in the Project but does not have the `store` field,
         or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
         In case the orderNumber does not match the regular expression [a-zA-Z0-9_-]+,
         it should be provided in URL-encoded format.
@@ -11056,8 +11438,8 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersByIDGet
       description: |-
-        Returns an order by its ID from a specific Store.
-        If the order exists in the project but does not have the store field,
+        Returns an [Order](ctp:api:type:Order) by its ID from a specific [Store](ctp:api:type:Store).
+        If the Order exists in the Project but does not have the `store` field,
         or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
@@ -11099,8 +11481,8 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersByIDPost
       description: |-
-        Updates an order in the store specified by {storeKey}.
-        If the order exists in the project but does not have the store field,
+        Updates an [Order](ctp:api:type:Order) in the [Store](ctp:api:type:Store) specified by {storeKey}.
+        If the Order exists in the Project but does not have the `store` field,
         or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
@@ -11433,7 +11815,7 @@ paths:
             - "view_product_selections:{projectKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyProductSelectionAssignmentsGet
       description: |-
-        Queries Product Selection assignments over all Product Selections that are active in a specific Store.
+        Queries Product Selection assignments in a specific [Store](ctp:api:type:Store).
 
         The response will include duplicate Products whenever more than one active Product Selection of the Store
         includes a Product. To make clear through which Product Selection a Product is available in the Store
@@ -11521,7 +11903,7 @@ paths:
             - "manage_my_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShippingMethodsMatchingCartGet
       description: |-
-        Retrieves all the ShippingMethods that can ship to the shipping address of the given Cart in a given Store.
+        Retrieves all the ShippingMethods that can ship to the shipping address of the given Cart in a given [Store](ctp:api:type:Store).
         Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
         This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
       parameters:
@@ -11675,7 +12057,7 @@ paths:
             - "manage_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsPost
       description: |-
-        When using this endpoint, the `store` field of a ShoppingList is always set to the Store specified in the path parameter.
+        When using this endpoint, the `store` field of a ShoppingList is always set to the [Store](ctp:api:type:Store) specified in the path parameter.
       parameters:
         - name: expand
           in: query
@@ -11739,7 +12121,7 @@ paths:
             - "view_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsKeyByKeyGet
       description: |-
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
@@ -11781,7 +12163,7 @@ paths:
             - "manage_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsKeyByKeyPost
       description: |-
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
@@ -11831,7 +12213,7 @@ paths:
             - "manage_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsKeyByKeyDelete
       description: |-
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
@@ -11907,7 +12289,7 @@ paths:
             - "view_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsByIDGet
       description: |-
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
@@ -11949,7 +12331,7 @@ paths:
             - "manage_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsByIDPost
       description: |-
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
@@ -11999,7 +12381,7 @@ paths:
             - "manage_shopping_lists:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShoppingListsByIDDelete
       description: |-
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       parameters:
         - name: expand
@@ -28487,6 +28869,7 @@ components:
             - requiresDiscountCode
             - sortOrder
             - stackingMode
+            - stores
             - value
             - version
           properties:
@@ -28519,6 +28902,10 @@ components:
               $ref: '#/components/schemas/CartDiscountTarget'
             sortOrder:
               type: "string"
+            stores:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreKeyReference'
             isActive:
               type: "boolean"
             validFrom:
@@ -28570,6 +28957,10 @@ components:
           $ref: '#/components/schemas/CartDiscountTarget'
         sortOrder:
           type: "string"
+        stores:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/StoreResourceIdentifier'
         isActive:
           type: "boolean"
         validFrom:
@@ -28683,6 +29074,7 @@ components:
       discriminator:
         propertyName: action
         mapping:
+          addStore: '#/components/schemas/CartDiscountAddStoreAction'
           changeCartPredicate: '#/components/schemas/CartDiscountChangeCartPredicateAction'
           changeIsActive: '#/components/schemas/CartDiscountChangeIsActiveAction'
           changeName: '#/components/schemas/CartDiscountChangeNameAction'
@@ -28691,10 +29083,12 @@ components:
           changeStackingMode: '#/components/schemas/CartDiscountChangeStackingModeAction'
           changeTarget: '#/components/schemas/CartDiscountChangeTargetAction'
           changeValue: '#/components/schemas/CartDiscountChangeValueAction'
+          removeStore: '#/components/schemas/CartDiscountRemoveStoreAction'
           setCustomField: '#/components/schemas/CartDiscountSetCustomFieldAction'
           setCustomType: '#/components/schemas/CartDiscountSetCustomTypeAction'
           setDescription: '#/components/schemas/CartDiscountSetDescriptionAction'
           setKey: '#/components/schemas/CartDiscountSetKeyAction'
+          setStores: '#/components/schemas/CartDiscountSetStoresAction'
           setValidFrom: '#/components/schemas/CartDiscountSetValidFromAction'
           setValidFromAndUntil: '#/components/schemas/CartDiscountSetValidFromAndUntilAction'
           setValidUntil: '#/components/schemas/CartDiscountSetValidUntilAction'
@@ -28914,6 +29308,17 @@ components:
         Stacking: "Applies other matching Discounts after applying this one."
         StopAfterThisDiscount: "Doesn't apply any more matching Discounts after this one if
          it's successfully applied."
+    CartDiscountAddStoreAction:
+      allOf:
+        - $ref: '#/components/schemas/CartDiscountUpdateAction'
+        - type: "object"
+          required:
+            - store
+          properties:
+            action:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreResourceIdentifier'
     CartDiscountChangeCartPredicateAction:
       allOf:
         - $ref: '#/components/schemas/CartDiscountUpdateAction'
@@ -29002,6 +29407,17 @@ components:
               type: "string"
             value:
               $ref: '#/components/schemas/CartDiscountValueDraft'
+    CartDiscountRemoveStoreAction:
+      allOf:
+        - $ref: '#/components/schemas/CartDiscountUpdateAction'
+        - type: "object"
+          required:
+            - store
+          properties:
+            action:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreResourceIdentifier'
     CartDiscountSetCustomFieldAction:
       allOf:
         - $ref: '#/components/schemas/CartDiscountUpdateAction'
@@ -29044,6 +29460,17 @@ components:
               type: "string"
             key:
               type: "string"
+    CartDiscountSetStoresAction:
+      allOf:
+        - $ref: '#/components/schemas/CartDiscountUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            stores:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreResourceIdentifier'
     CartDiscountSetValidFromAction:
       allOf:
         - $ref: '#/components/schemas/CartDiscountUpdateAction'
@@ -34734,7 +35161,9 @@ components:
           invalid_token: '#/components/schemas/InvalidTokenError'
           LanguageUsedInStores: '#/components/schemas/LanguageUsedInStoresError'
           MatchingPriceNotFound: '#/components/schemas/MatchingPriceNotFoundError'
+          MaxCartDiscountsReached: '#/components/schemas/MaxCartDiscountsReachedError'
           MaxResourceLimitExceeded: '#/components/schemas/MaxResourceLimitExceededError'
+          MaxStoreReferencesReached: '#/components/schemas/MaxStoreReferencesReachedError'
           MissingRoleOnChannel: '#/components/schemas/MissingRoleOnChannelError'
           MissingTaxRateForCountry: '#/components/schemas/MissingTaxRateForCountryError'
           MoneyOverflow: '#/components/schemas/MoneyOverflowError'
@@ -34762,6 +35191,7 @@ components:
           SearchIndexingInProgress: '#/components/schemas/SearchIndexingInProgressError'
           SemanticError: '#/components/schemas/SemanticErrorError'
           ShippingMethodDoesNotMatchCart: '#/components/schemas/ShippingMethodDoesNotMatchCartError'
+          StoreCartDiscountsLimitReached: '#/components/schemas/StoreCartDiscountsLimitReachedError'
           SyntaxError: '#/components/schemas/SyntaxErrorError'
       required:
         - //
@@ -35148,6 +35578,20 @@ components:
               $ref: '#/components/schemas/ChannelReference'
           additionalProperties:
             type: "string"
+    MaxCartDiscountsReachedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
     MaxResourceLimitExceededError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -35163,6 +35607,20 @@ components:
               type: "string"
             exceededResource:
               $ref: '#/components/schemas/ReferenceTypeId'
+          additionalProperties:
+            type: "string"
+    MaxStoreReferencesReachedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
           additionalProperties:
             type: "string"
     MissingRoleOnChannelError:
@@ -35623,6 +36081,25 @@ components:
               type: "string"
             message:
               type: "string"
+          additionalProperties:
+            type: "string"
+    StoreCartDiscountsLimitReachedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+            - stores
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            stores:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreKeyReference'
           additionalProperties:
             type: "string"
     SyntaxErrorError:
@@ -36089,7 +36566,9 @@ components:
           invalid_token: '#/components/schemas/GraphQLInvalidTokenError'
           LanguageUsedInStores: '#/components/schemas/GraphQLLanguageUsedInStoresError'
           MatchingPriceNotFound: '#/components/schemas/GraphQLMatchingPriceNotFoundError'
+          MaxCartDiscountsReached: '#/components/schemas/GraphQLMaxCartDiscountsReachedError'
           MaxResourceLimitExceeded: '#/components/schemas/GraphQLMaxResourceLimitExceededError'
+          MaxStoreReferencesReached: '#/components/schemas/GraphQLMaxStoreReferencesReachedError'
           MissingRoleOnChannel: '#/components/schemas/GraphQLMissingRoleOnChannelError'
           MissingTaxRateForCountry: '#/components/schemas/GraphQLMissingTaxRateForCountryError'
           MoneyOverflow: '#/components/schemas/GraphQLMoneyOverflowError'
@@ -36117,6 +36596,7 @@ components:
           SearchIndexingInProgress: '#/components/schemas/GraphQLSearchIndexingInProgressError'
           SemanticError: '#/components/schemas/GraphQLSemanticErrorError'
           ShippingMethodDoesNotMatchCart: '#/components/schemas/GraphQLShippingMethodDoesNotMatchCartError'
+          StoreCartDiscountsLimitReached: '#/components/schemas/GraphQLStoreCartDiscountsLimitReachedError'
           SyntaxError: '#/components/schemas/GraphQLSyntaxErrorError'
       required:
         - //
@@ -36410,6 +36890,17 @@ components:
               $ref: '#/components/schemas/ChannelReference'
           additionalProperties:
             type: "string"
+    GraphQLMaxCartDiscountsReachedError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
+          additionalProperties:
+            type: "string"
     GraphQLMaxResourceLimitExceededError:
       allOf:
         - $ref: '#/components/schemas/GraphQLErrorObject'
@@ -36422,6 +36913,17 @@ components:
               type: "string"
             exceededResource:
               $ref: '#/components/schemas/ReferenceTypeId'
+          additionalProperties:
+            type: "string"
+    GraphQLMaxStoreReferencesReachedError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
           additionalProperties:
             type: "string"
     GraphQLMissingRoleOnChannelError:
@@ -36801,6 +37303,22 @@ components:
           properties:
             code:
               type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLStoreCartDiscountsLimitReachedError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+            - stores
+          properties:
+            code:
+              type: "string"
+            stores:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreKeyReference'
           additionalProperties:
             type: "string"
     GraphQLSyntaxErrorError:
