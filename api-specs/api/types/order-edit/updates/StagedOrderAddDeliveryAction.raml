@@ -1,28 +1,39 @@
 #%RAML 1.0 DataType
 (package): OrderEdit
-(docs-uri): https://docs.commercetools.com/http-api-projects-order-edits.html#add-delivery
+(docs-uri): https://docs.commercetools.com/api/projects/order-edits#add-delivery
+example: !include ../../../examples/OrderEdit/StagedOrderAddDeliveryAction.json
 type: StagedOrderUpdateAction
 displayName: StagedOrderAddDeliveryAction
 discriminatorValue: addDelivery
-example: !include ../../../examples/OrderEdit/StagedOrderAddDeliveryAction.json
 description: |
   A [Delivery](ctp:api:type:Delivery) can only be added to an [Order](ctp:api:type:Order) if
   its `shippingInfo` (for `shippingMode` = `Single`), or its `shipping` (for `shippingMode` = `Multiple`) exists.
+
+  Produces the [Delivery Added](ctp:api:type:DeliveryAddedMessage) Message.
 properties:
   deliveryKey?:
     type: string
     description: |
-      User-defined unique identifier of a Delivery.
+      `key` of an existing [Delivery](ctp:api:type:Delivery).
   shippingKey?:
     type: string
     description: |
-      `key` of the [ShippingMethod](ctp:api:type:ShippingMethod),required for `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
+      `key` of the [ShippingMethod](ctp:api:type:ShippingMethod), required for `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
   items?:
     type: DeliveryItem[]
+    description: |
+      Items to be included in the Delivery.
   address?:
     type: BaseAddress
+    description: |
+      Address the `parcels` should be delivered to.
   parcels?:
     type: ParcelDraft[]
+    description: |
+      Parcels of the Delivery.
+
+      If provided, this update action also produces the [Parcel Added To Delivery](ctp:api:type:ParcelAddedToDeliveryMessage) Message.
   custom?:
     type: CustomFieldsDraft
-    description: Custom Fields for the Transaction.
+    description: |
+      Custom Fields for the Delivery.

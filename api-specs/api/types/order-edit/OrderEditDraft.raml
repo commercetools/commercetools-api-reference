@@ -1,26 +1,38 @@
 #%RAML 1.0 DataType
 (package): OrderEdit
-(docs-uri): https://docs.commercetools.com/http-api-projects-order-edits.html#ordereditdraft
+(docs-uri): https://docs.commercetools.com/api/projects/order-edits#ordereditdraft
 displayName: OrderEditDraft
 type: object
 properties:
   key?:
     type: string
-    description: User-defined unique identifier for the OrderEdit.
+    description: |
+      User-defined unique identifier for the Order Edit.
+    pattern: ^[A-Za-z0-9_-]+$
+    minLength: 2
+    maxLength: 256
   resource:
     type: OrderReference
-    description: The order to be updated with this edit.
+    description: |
+      [Reference](ctp:api:type:Reference) to the Order updated with this edit.
   stagedActions?:
     type: StagedOrderUpdateAction[]
-    description: The actions to apply to `resource`.
+    description: |
+      Update actions to apply to the Order referenced in `resource`.
+      Cannot be updated if the [edit has been applied](ctp:api:endpoint:/{projectKey}/orders/edits/{id}/apply:POST).
   custom?:
     type: CustomFieldsDraft
-    description: The custom fields.
+    description: |
+      Custom Fields for the Order Edit.
   comment?:
     type: string
-    description:
-      This field can be used to add additional textual information regarding the
-      edit.
+    description: |
+      User-defined description regarding the Order Edit.
   dryRun?:
     type: boolean
-    description: When set to `true` the edit is applied on the Order without persisting it.
+    default: false
+    description: |
+      Set to `true` if you want to [peview](ctp:api:type:OrderEditPreviewSuccess) the edited Order first without persisting it (dry run).
+      A dry run allows checking for potential [errors](ctp:api:type:OrderEditPreviewFailure) when trying to apply the `stagedActions`.
+
+      Order [API Extensions](/../api/projects/api-extensions), if any, are also called in dry runs.

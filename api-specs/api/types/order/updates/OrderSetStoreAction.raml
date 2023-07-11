@@ -1,10 +1,22 @@
 #%RAML 1.0 DataType
 (package): Order
-(docs-uri): https://docs.commercetools.com/http-api-projects-orders.html#set-store-beta
+(docs-uri): https://docs.commercetools.com/api/projects/orders#set-store
+example: !include ../../../examples/Order/OrderSetStoreAction.json
 type: OrderUpdateAction
 displayName: OrderSetStoreAction
 discriminatorValue: setStore
-example: !include ../../../examples/Order/OrderSetStoreAction.json
+description: |
+  Sets the [Store](ctp:api:type:Store) the Order is assigned to.
+  It should be used to migrate Orders to a new Store.
+  No validations are performed (such as that the Customer is allowed to create Orders in the Store).
+
+  Produces the [Order Store Set](ctp:api:type:OrderStoreSetMessage) Message.
+  Returns a `400` error if `store` references the same Store the Order is currently assigned to, including if you try to remove the value when no Store is currently assigned.
 properties:
   store?:
     type: StoreResourceIdentifier
+    description: |
+      Value to set.
+      If empty, any existing value is removed.
+
+      If `store` references the same Store the Order is currently assigned to or if you try to remove the value when no Store is currently assigned, a `400` error is returned.

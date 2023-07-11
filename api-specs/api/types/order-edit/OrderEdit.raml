@@ -1,6 +1,6 @@
 #%RAML 1.0 DataType
 (package): OrderEdit
-(docs-uri): https://docs.commercetools.com/http-api-projects-order-edits.html#orderedit
+(docs-uri): https://docs.commercetools.com/api/projects/order-edits#orderedit
 displayName: OrderEdit
 (updateType): OrderEditUpdate
 type: BaseResource
@@ -8,17 +8,49 @@ properties:
   id:
     (identifier): true
     type: string
-    description: Unique identifier of the OrderEdit.
+    description: |
+      Unique identifier of the Order Edit.
   version:
     type: number
     format: int64
-    description: The current version of the OrderEdit.
+    description: |
+      Current version of the Order Edit.
+  key?:
+    type: string
+    description: |
+      User-defined unique identifier of the Order Edit.
+    pattern: ^[A-Za-z0-9_-]+$
+    minLength: 2
+    maxLength: 256
+  resource:
+    type: OrderReference
+    description: |
+      [Reference](ctp:api:type:Reference) to the Order updated with this edit.
+  stagedActions:
+    type: StagedOrderUpdateAction[]
+    description: |
+      Update actions applied to the Order referenced by `resource`.
+  result:
+    type: OrderEditResult
+    description: |
+      For applied edits, it's a summary of the changes on the Order.
+      For unapplied edits, it's a preview of the changes.
+  comment?:
+    type: string
+    description: |
+      User-defined information regarding the Order Edit.
+  custom?:
+    type: CustomFields
+    description: |
+      Custom Fields of the Order Edit.
   createdAt:
     type: datetime
-    description: ''
+    description: |
+      Date and time (UTC) the Order Edit was initially created.
   lastModifiedAt:
     type: datetime
-    description: ''
+    description: |
+      Date and time (UTC) the Order Edit was last updated.
   lastModifiedBy?:
     type: LastModifiedBy
     (beta): true
@@ -29,25 +61,3 @@ properties:
     (beta): true
     description: |
       Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
-  key?:
-    type: string
-    description: User-defined unique identifier of the OrderEdit.
-  resource:
-    type: OrderReference
-    description: The order to be updated with this edit.
-  stagedActions:
-    type: StagedOrderUpdateAction[]
-    description: |-
-      The actions to apply to the Order.
-      Cannot be updated after the edit has been applied.
-  custom?:
-    type: CustomFields
-    description: ''
-  result:
-    type: OrderEditResult
-    description: |-
-      Contains a preview of the changes in case of unapplied edit.
-      For applied edits, it contains the summary of the changes.
-  comment?:
-    type: string
-    description: This field can be used to add textual information regarding the edit.

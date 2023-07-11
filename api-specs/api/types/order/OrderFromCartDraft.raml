@@ -6,47 +6,52 @@ properties:
   id?:
     (markDeprecated): true
     type: string
-    description: Unique identifier of the Cart from which you can create an Order.
+    description: |
+      `id` of the [Cart](ctp:api:type:Cart) used to create the Order.
   cart?:
     type: CartResourceIdentifier
-    description: ResourceIdentifier of the Cart from which the Order is created.
+    description: |
+      [ResourceIdentifier](ctp:api:type:ResourceIdentifier) to the Cart from which the Order is created.
+
+      This field is required, but is marked as optional for backwards compatibility reasons.
   version:
     type: number
     format: int64
     description: |
-      Expected version of the Cart from which the Order is created.
-      If the expected version does not match the actual version, a [409 Conflict](/../api/errors#409-conflict) error will be returned.
+      `version` of the [Cart](ctp:api:type:Cart) from which the Order is created.
   orderNumber?:
     type: string
-    description: |-
-      String that uniquely identifies an order.
-      It can be used to create more human-readable (in contrast to ID) identifier for the order.
-      It should be unique across a project.
-      Once it's set it cannot be changed.
-      For easier use on Get, Update and Delete actions we suggest assigning order numbers that match the regular expression `[a-z0-9_\-]{2,36}`.
+    description: |
+      User-defined identifier for the Order that is unique across a Project.
+      Once set, the value cannot be changed.
   purchaseOrderNumber?:
     type: string
     description: |-
-      Identifier for a purchase order, usually in a B2B context.
-      The Purchase Order Number is typically entered by the [Buyer](/quotes-overview#buyer) and can also be used with [Quotes](/quotes-overview).
+      User-defined identifier for a purchase Order.
+
+      It is typically set by the [Buyer](ctp:api:type:Buyer) and can be used with [Quotes](/quotes-overview) to track the purchase Order during the [quote and order flow](/../api/quotes-overview#intended-workflow).
   paymentState?:
     type: PaymentState
     description: |
-      Payment state for the Order.
+      Payment status for the Order.
   shipmentState?:
     type: ShipmentState
     description: |
-      Shipment state for the Order.
+      Shipment status for the Order.
   orderState?:
     type: OrderState
-    description: Order will be created with `Open` status by default.
+    description: |
+      Current status for the Order.
+    default: Open
   state?:
     type: StateResourceIdentifier
     description: |
-      [Reference](ctp:api:type:Reference) to a [State](ctp:api:type:State) indicating the Order's state.
+      State for the Order in a custom workflow.
   custom?:
     type: CustomFieldsDraft
     description: |
-      [Custom Fields](/../api/projects/custom-fields) for the Order. The Custom Field type must match the type of the Custom Fields in the referenced [Cart](/../api/projects/carts#cart).
-      If specified, the Custom Fields are merged with the Custom Fields on the referenced [Cart](/../api/projects/carts#cart) and added to the Order.
-      If empty, the Custom Fields on the referenced [Cart](/../api/projects/carts#cart) are added to the Order automatically.
+      Custom Fields for the Order.
+      The Custom Fields' type must match the Custom Fields' type in the referenced [Cart](ctp:api:type:Cart).
+
+      - If empty, the Custom Fields on the referenced [Cart](ctp:api:type:Cart) are added to the Order automatically.
+      - If specified, the Custom Fields are merged with the Custom Fields on the referenced [Cart](ctp:api:type:Cart) and added to the Order.

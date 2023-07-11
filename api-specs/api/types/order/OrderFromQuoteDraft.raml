@@ -5,12 +5,14 @@ type: object
 properties:
   quote:
     type: QuoteResourceIdentifier
-    description: ResourceIdentifier of the Quote from which this Order is created. If the Quote has `QuoteState` in `Accepted`, `Declined` or `Withdrawn` then the order creation will fail. The creation will also fail if the `Quote` has expired (`validTo` check).
+    description: |
+      [ResourceIdentifier](ctp:api:type:ResourceIdentifier) to the Quote from which the Order is created.
+      If the referenced [Quote](ctp:api:type:Quote) has expired (`validTo` check) or its `quoteState` is `Accepted`, `Declined`, or `Withdrawn`, the Order creation will fail.
   version:
     type: number
     format: int64
     description: |
-      `version` of the [Quote](ctp:api:type:Quote) from which an Order is created.
+      `version` of the [Quote](ctp:api:type:Quote) from which the Order is created.
   quoteStateToAccepted?:
     type: boolean
     description: |
@@ -18,23 +20,23 @@ properties:
     default: false
   orderNumber?:
     type: string
-    description: |-
-      String that uniquely identifies an order.
-      It can be used to create more human-readable (in contrast to ID) identifier for the order.
-      It should be unique across a project.
-      Once it's set it cannot be changed.
-      For easier use on Get, Update and Delete actions we suggest assigning order numbers that match the regular expression `[a-z0-9_\-]{2,36}`.
+    description: |
+      User-defined identifier for the Order that is unique across a Project.
+      Once set, the value cannot be changed.
   paymentState?:
     type: PaymentState
     description: |
-      Payment state of the Order.
+      Payment status for the Order.
   shipmentState?:
     type: ShipmentState
-    description: Shipment state of the Order.
+    description: |
+      Shipment status for the Order.
   orderState?:
     type: OrderState
-    description: Order will be created with `Open` status by default.
+    description: |
+      Current status for the Order.
+    default: Open
   state?:
     type: StateResourceIdentifier
     description: |
-      [Reference](ctp:api:type:Reference) to a [State](ctp:api:type:State) indicating the Order's state.
+      State of the Order in a custom workflow.

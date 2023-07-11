@@ -1,6 +1,6 @@
 #%RAML 1.0 DataType
 (package): Order
-(docs-uri): https://docs.commercetools.com/http-api-projects-orders.html#order
+(docs-uri): https://docs.commercetools.com/api/projects/orders#order
 displayName: Order
 (updateType): OrderUpdate
 type: BaseResource
@@ -8,184 +8,113 @@ properties:
   id:
     (identifier): true
     type: string
-    description: Unique identifier of the Order.
+    description: |
+      Unique identifier of the Order.
   version:
     type: number
     format: int64
-    description: The current version of the order.
-  createdAt:
-    type: datetime
-    description: ''
-  lastModifiedAt:
-    type: datetime
-    description: ''
-  lastModifiedBy?:
-    type: LastModifiedBy
-    (beta): true
     description: |
-      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
-  createdBy?:
-    type: CreatedBy
-    (beta): true
-    description: |
-      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
-  completedAt?:
-    type: datetime
-    description: This field will only be present if it was set for Order Import
+      Current version of the Order.
   orderNumber?:
     type: string
+    description: |
+      User-defined identifier of the Order that is unique across a Project.
+  purchaseOrderNumber?:
+    type: string
     description: |-
-      String that uniquely identifies an order.
-      It can be used to create more human-readable (in contrast to ID) identifier for the order.
-      It should be unique across a project.
-      Once it's set it cannot be changed.
+      User-defined identifier of a purchase Order.
+
+      It is typically set by the [Buyer](ctp:api:type:Buyer) and can be used with [Quotes](/quotes-overview) to track the purchase Order during the [quote and order flow](/../api/quotes-overview#intended-workflow).
   customerId?:
     type: string
-    description: ''
+    description: |
+      `id` of the [Customer](ctp:api:type:Customer) that the Order belongs to.
   customerEmail?:
     type: string
-    description: ''
+    description: |
+      Email address of the Customer that the Order belongs to.
+  customerGroup?:
+    type: CustomerGroupReference
+    description: |-
+      [Reference](ctp:api:type:Reference) to the Customer Group of the Customer that the Order belongs to.
+      Used for [LineItem Price selection](ctp:api:type:LineItemPriceSelection).
   anonymousId?:
     type: string
-    description:
-      Identifies carts and orders belonging to an anonymous session (the
-      customer has not signed up/in yet).
+    description: |
+      [Anonymous session](ctp:api:type:AnonymousSession) associated with the Order.
   businessUnit?:
     type: BusinessUnitKeyReference
     (beta): true
     description: |
-      The Business Unit the Order belongs to.
+      [Reference](ctp:api:type:Reference) to a Business Unit the Order belongs to.
   store?:
     type: StoreKeyReference
-    description: ''
+    description: |
+      [Reference](ctp:api:type:Reference) to a Store the Order belongs to.
   lineItems:
     type: LineItem[]
-    description: ''
+    description: |
+      [Line Items](ctp:api:type:LineItems) that are part of the Order.
   customLineItems:
     type: CustomLineItem[]
-    description: ''
+    description: |
+      [Custom Line Items](ctp:api:type:CustomLineItems) that are part of the Order.
   totalPrice:
-    description: ''
     type: TypedMoney
+    description: |
+      Sum of the `totalPrice` field of all [LineItems](ctp:api:type:LineItem) and [CustomLineItems](ctp:api:type:CustomLineItem), and if available, the `price` field of [ShippingInfo](ctp:api:type:ShippingInfo).
+      Taxes are included if [TaxRate](ctp:api:type:TaxRate) `includedInPrice` is `true` for each price.
   taxedPrice?:
     type: TaxedPrice
-    description: The taxes are calculated based on the shipping address.
+    description: |
+      - For `Platform` [TaxMode](ctp:api:type:TaxMode), it is automatically set when a [shipping address is set](ctp:api:type:OrderSetShippingAddressAction).
+      - For `External` [TaxMode](ctp:api:type:TaxMode), it is automatically set when the external Tax Rate for all Line Items, Custom Line Items, and Shipping Methods in the Cart are set.
   taxedShippingPrice?:
     type: TaxedPrice
-    description: |-
-      Sum of `taxedPrice` of [ShippingInfo](ctp:api:type:ShippingInfo) across all Shipping Methods.
-      For `Platform` [TaxMode](ctp:api:type:TaxMode), it is set automatically only if [shipping address is set](ctp:api:type:CartSetShippingAddressAction) or [Shipping Method is added](ctp:api:type:CartAddShippingMethodAction) to the Cart.
+    description: |
+      Sum of the `taxedPrice` field of [ShippingInfo](ctp:api:type:ShippingInfo) across all Shipping Methods.
+  taxMode?:
+    type: TaxMode
+    description: |
+      Indicates how Tax Rates are set.
+    default: Platform
+  taxRoundingMode?:
+    type: RoundingMode
+    description: Indicates how monetary values are rounded when calculating taxes for `taxedPrice`.
+    default: HalfEven
+  taxCalculationMode?:
+    type: TaxCalculationMode
+    description: |
+      Indicates how taxes are calculated when calculating taxes for `taxedPrice`.
+    default: LineItemLevel
+  inventoryMode?:
+    type: InventoryMode
+    description: |
+      Indicates how stock quantities are tracked for Line Items in the Order.
+    default: None
+  billingAddress?:
+    type: Address
+    description: |
+      Billing address associated with the Order.
   shippingAddress?:
     type: Address
     description: |
-      Holds all shipping-related information per Shipping Method.
-
-      For `Multiple` [ShippingMode](ctp:api:typeShippingMode), it is updated automatically after the Shipping Methods are added.
-  billingAddress?:
-    type: Address
-    description: ''
+      Shipping address associated with the Order.
+      Determines eligible [ShippingMethod](ctp:api:type:ShippingMethod) rates and Tax Rates of Line Items.
   shippingMode:
     type: ShippingMode
     description: |
-      Indicates whether one or multiple Shipping Methods are added to the Cart.
+      Indicates whether there can be one or multiple Shipping Methods.
     default: Single
   shippingKey?:
     type: string
     description: |
       `key` of the [ShippingMethod](ctp:api:type:ShippingMethod) for `Single` [ShippingMode](ctp:api:type:ShippingMode).
-  shippingCustomFields?:
-    type: CustomFields
-    description: |
-      Custom Fields of the Shipping Method for `Single` [ShippingMode](ctp:api:type:ShippingMode).
-  shipping:
-    type: Shipping[]
-    description: |
-      Holds all shipping-related information per Shipping Method for `Multiple` [ShippingMode](ctp:api:typeShippingMode).
-
-      It is updated automatically after the [Shipping Method is added](ctp:api:type:CartAddShippingMethodAction).
-  taxMode?:
-    type: TaxMode
-    description: ''
-  taxRoundingMode?:
-    type: RoundingMode
-    description:
-      When calculating taxes for `taxedPrice`, the selected mode is used for
-      rouding.
-  customerGroup?:
-    type: CustomerGroupReference
-    description: |-
-      Set when the customer is set and the customer is a member of a customer group.
-      Used for product variant price selection.
-  country?:
-    type: string
-    description: |-
-      A two-digit country code as per [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
-      Used for product variant price selection.
-  orderState:
-    type: OrderState
-    description: One of the four predefined OrderStates.
-  state?:
-    type: StateReference
-    description: This reference can point to a state in a custom workflow.
-  shipmentState?:
-    type: ShipmentState
-    description: ''
-  paymentState?:
-    type: PaymentState
-    description: ''
   shippingInfo?:
     type: ShippingInfo
-    description: Set if the ShippingMethod is set.
-  syncInfo:
-    type: SyncInfo[]
-    description: ''
-  returnInfo?:
-    type: ReturnInfo[]
-    description: ''
-  purchaseOrderNumber?:
-    type: string
-    description: |-
-      The Purchase Order Number is typically set by the [Buyer](/quotes-overview#buyer) on a [QuoteRequest](ctp:api:type:QuoteRequest) to
-      track the purchase order during the [quote and order flow](/../api/quotes-overview#intended-workflow).
-  discountCodes?:
-    description: ''
-    type: DiscountCodeInfo[]
-  lastMessageSequenceNumber?:
-    (markDeprecated): true
-    type: number
-    format: int64
-    description: |-
-      Internal-only field.
-  cart?:
-    type: CartReference
-    description: |-
-      Set when this order was created from a cart.
-      The cart will have the state `Ordered`.
-  quote?:
-    type: QuoteReference
-    description: |-
-      Set when this order was created from a quote.
-  custom?:
-    type: CustomFields
-    description: ''
-  paymentInfo?:
-    type: PaymentInfo
-    description: ''
-  locale?:
-    type: string
-    description: ''
-  inventoryMode?:
-    type: InventoryMode
-    description: ''
-  origin:
-    type: CartOrigin
-    description: ''
-  taxCalculationMode?:
-    type: TaxCalculationMode
-    description:
-      When calculating taxes for `taxedPrice`, the selected mode is used for
-      calculating the price with LineItemLevel (horizontally) or UnitPriceLevel
-      (vertically) calculation mode.
+    description: |
+      Shipping-related information for `Single` [ShippingMode](ctp:api:type:ShippingMode).
+      Automatically set when a [Shipping Method is set](ctp:api:type:StagedOrderSetShippingMethodAction).
   shippingRateInput?:
     type: ShippingRateInput
     description: |
@@ -195,12 +124,118 @@ properties:
       - If `CartClassification`, it is [ClassificationShippingRateInput](ctp:api:type:ClassificationShippingRateInput).
       - If `CartScore`, it is [ScoreShippingRateInput](ctp:api:type:ScoreShippingRateInput).
       - If `CartValue`, it cannot be used.
-
+  shippingCustomFields?:
+    type: CustomFields
+    description: |
+      Custom Fields of the Shipping Method for `Single` [ShippingMode](ctp:api:type:ShippingMode).
+  shipping:
+    type: Shipping[]
+    description: |
+      Shipping-related information for `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
+      Updated automatically each time a new [Shipping Method is added](ctp:api:type:CartAddShippingMethodAction).
   itemShippingAddresses?:
     type: Address[]
-    description: Contains addresses for orders with multiple shipping addresses.
+    description: |
+      Additional shipping addresses of the Order as specified by [LineItems](ctp:api:type:LineItem) using the `shippingDetails` field.
+      Eligible Shipping Methods or applicable Tax Rates are determined by the address in `shippingAddress`, and not `itemShippingAddresses`.
+  discountCodes?:
+    type: DiscountCodeInfo[]
+    description: |
+      Discount Codes added to the Order.
+      An Order that has `directDiscounts` cannot have `discountCodes`.
+  directDiscounts?:
+    type: DirectDiscount[]
+    (beta): true
+    description: |
+      Direct Discounts added to the Order.
+      An Order that has `discountCodes` cannot have `directDiscounts`.
   refusedGifts:
     type: CartDiscountReference[]
-    description:
-      Automatically filled when a line item with LineItemMode `GiftLineItem` is
-      removed from this order.
+    description: |
+      Automatically set when a Line Item with `GiftLineItem` [LineItemMode](ctp:api:type:LineItemMode) is [removed](ctp:api:type:StagedOrderRemoveLineItemAction) from the Order.
+  paymentInfo?:
+    type: PaymentInfo
+    description: |
+      Payment information related to the Order.
+  country?:
+    type: CountryCode
+    description: |-
+      Used for [LineItem Price selection](ctp:api:type:LineItemPriceSelection).
+  locale?:
+    type: Locale
+    description: |
+      Languages of the Order.
+      Can only contain languages supported by the [Project](ctp:api:type:Project).
+  origin:
+    type: CartOrigin
+    description: |
+      Indicates the origin of the Cart from which the Order was created.
+    default: Customer
+  cart?:
+    type: CartReference
+    description: |-
+      [Reference](ctp:api:type:Reference) to the Cart for an [Order created from Cart](ctp:api:endpoint:/{projectKey}/orders:POST).
+      The referenced Cart will have the `Ordered` [CartState](ctp:api:type:CartState).
+  quote?:
+    type: QuoteReference
+    description: |
+      [Reference](ctp:api:type:Reference) to the Quote for an [Order created from Quote](ctp:api:endpoint:/{projectKey}/orders/quotes:POST).
+  orderState:
+    type: OrderState
+    description: |
+      Current status of the Order.
+  shipmentState?:
+    type: ShipmentState
+    description: |
+      Shipment status of the Order.
+  paymentState?:
+    type: PaymentState
+    description: |
+      Payment status of the Order.
+  state?:
+    type: StateReference
+    description: |
+      [State](ctp:api:type:State) of the Order.
+      This reference can point to a State in a custom workflow.
+  syncInfo:
+    type: SyncInfo[]
+    description: |
+      Contains synchronization activity information of the Order (like export or import).
+      Can only be set with [Update SyncInfo](ctp:api:type:OrderUpdateSyncInfoAction) update action.
+  returnInfo?:
+    type: ReturnInfo[]
+    description: |
+      Contains information regarding the returns associated with the Order.
+  lastMessageSequenceNumber?:
+    (markDeprecated): true
+    type: number
+    format: int64
+    description: |-
+      Internal-only field.
+  custom?:
+    type: CustomFields
+    description: |
+      Custom Fields of the Order.
+  completedAt?:
+    type: datetime
+    description: |
+      User-defined date and time (UTC) of the Order.
+      Present only on an Order created using [Order Import](ctp:api:endpoint:/{projectKey}/orders/import:POST).
+  createdAt:
+    type: datetime
+    description: |
+      Date and time (UTC) the Order was initially created.
+  lastModifiedAt:
+    type: datetime
+    description: |
+      Date and time (UTC) the Order was last updated.
+  lastModifiedBy?:
+    type: LastModifiedBy
+    (beta): true
+    description: |
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).
+  createdBy?:
+    type: CreatedBy
+    (beta): true
+    description: |
+      Present on resources created after 1 February 2019 except for [events not tracked](/../api/client-logging#events-tracked).

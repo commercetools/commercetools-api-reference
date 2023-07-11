@@ -150,7 +150,7 @@ delete:
       Retrieves the Customer's most recently modified active Cart.
       Carts with `Merchant` or `Quote` [CartOrigin](ctp:api:type:CartOrigin) are ignored.
 
-      If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+      If no active Cart exists, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
     is:
       - expandable
     securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
@@ -416,10 +416,21 @@ delete:
     is:
       - conflicting
     displayName: Create my order
+    description: |
+      The Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction) for taxes to be calculated. When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
+
+      Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
+      Specific Error Codes:
+
+      - [OutOfStock](ctp:api:type:OutOfStockError)
+      - [PriceChanged](ctp:api:type:PriceChangedError)
+      - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
+      - [AssociateMissingPermission](ctp:api:type:AssociateMissingPermissionError)
     securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
     body:
       application/json:
-        example: !include ../examples/order-create.example.json
+        example: !include ../examples/my-order-create.example.json
     responses:
       201:
         body:
@@ -441,9 +452,24 @@ delete:
             application/json:
               example: !include ../examples/order.example.json
   /quotes:
+    (methodName): orderQuote
+    type: base
+    displayName: Order from Quote
     post:
-      displayName: Create My Order from Quote
-      securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
+      displayName: Create my Order from a Quote
+      description: |
+        When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyQuotes` [Permission](ctp:api:type:Permission).
+
+        Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
+        Specific Error Codes:
+
+        - [OutOfStock](ctp:api:type:OutOfStockError)
+        - [PriceChanged](ctp:api:type:PriceChangedError)
+        - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+        - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
+        - [AssociateMissingPermission](ctp:api:type:AssociateMissingPermissionError)
+      securedBy: [oauth_2_0: { scopes: ['manage_quotes:{projectKey}'] }]
       body:
         application/json:
           example: !include ../examples/my-order-from-quote.example.json
