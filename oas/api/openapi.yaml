@@ -4210,7 +4210,7 @@ paths:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyCartsCustomerIdByCustomerIdGet
       description: |-
-        Retrieves the recently modified active Cart of a Customer with [CartOrigin](ctp:api:type:CartOrigin) `Customer`. If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+        Retrieves the recently modified active Cart of a Customer with [CartOrigin](ctp:api:type:CartOrigin) `Customer`. If no active Cart exists, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
 
         To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       parameters:
@@ -8298,9 +8298,9 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsCustomerIdByCustomerIdGet
       description: |-
-        Retrieves the recently modified active Cart of a Customer with [CartOrigin](ctp:api:type:CartOrigin) `Customer`. If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+        Retrieves the recently modified active Cart of a Customer with [CartOrigin](ctp:api:type:CartOrigin) `Customer`. If no active Cart exists, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
 
-        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
 
         To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       parameters:
@@ -8360,7 +8360,7 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsKeyByKeyGet
       description: |-
-        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
 
         To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       parameters:
@@ -8580,7 +8580,7 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsByIDGet
       description: |-
-        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
 
         To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
       parameters:
@@ -8624,7 +8624,7 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsByIDPost
       description: |-
         Updates a [Cart](ctp:api:type:Cart) in the [Store](ctp:api:type:Store) specified by `storeKey`.
-        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -9792,7 +9792,7 @@ paths:
 
         Carts with `Merchant` or `Quote` [CartOrigin](ctp:api:type:CartOrigin) are ignored.
 
-        If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+        If no active Cart exists, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -10348,6 +10348,18 @@ paths:
             - "manage_my_orders:{projectKey}"
             - "manage_my_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeOrdersPost
+      description: |-
+        The Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction) for taxes to be calculated. When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
+
+        Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
+        Specific Error Codes:
+
+        - [OutOfStock](ctp:api:type:OutOfStockError)
+        - [PriceChanged](ctp:api:type:PriceChangedError)
+        - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
+        - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
+        - [AssociateMissingPermission](ctp:api:type:AssociateMissingPermissionError)
       parameters:
         - name: expand
           in: query
@@ -10412,6 +10424,8 @@ paths:
             - "manage_my_orders:{projectKey}"
             - "manage_my_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeOrdersByIDGet
+      description: |-
+        If the Order exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -11104,8 +11118,6 @@ paths:
             - "view_orders:{projectKey}"
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersGet
-      description: |-
-        Queries orders in a specific [Store](ctp:api:type:Store).
       parameters:
         - name: expand
           in: query
@@ -11197,10 +11209,21 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersPost
       description: |-
-        Creates an order from a Cart from a specific [Store](ctp:api:type:Store).
-        When using this endpoint the orders's `store` field is always set to the [Store](ctp:api:type:Store) specified in the path parameter.
-        The cart must have a shipping address set before creating an order. When using the Platform TaxMode,
-        the shipping address is used for tax calculation.
+        Before you create an Order, the Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction).
+        The shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).
+
+        Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
+        Specific Error Codes:
+
+        - [OutOfStock](ctp:api:type:OutOfStockError)
+        - [PriceChanged](ctp:api:type:PriceChangedError)
+        - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
+        - [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)
+        - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+        - [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)
+        - [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)
+        - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
       parameters:
         - name: expand
           in: query
@@ -11264,12 +11287,7 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersOrderNumberByOrderNumberGet
       description: |-
-        Returns an order by its order number from a specific [Store](ctp:api:type:Store).
-
-        If the Order exists in the Project but does not have the `store` field,
-        or the `store` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
-        In case the orderNumber does not match the regular expression [a-zA-Z0-9_-]+,
-        it should be provided in URL-encoded format.
+        If the Order exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -11310,12 +11328,7 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersOrderNumberByOrderNumberPost
       description: |-
-        Updates an order in the [Store](ctp:api:type:Store) specified by {storeKey}.
-
-        If the [Order](ctp:api:type:Order) exists in the Project but does not have the `store` field,
-        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
-        In case the orderNumber does not match the regular expression [a-zA-Z0-9_-]+,
-        it should be provided in URL-encoded format.
+        If the Order exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -11363,6 +11376,10 @@ paths:
             - "manage_orders:{projectKey}"
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersOrderNumberByOrderNumberDelete
+      description: |-
+        If the Order exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+        Deleting an Order produces the [OrderDeleted](ctp:api:type:OrderDeletedMessage) Message.
       parameters:
         - name: dataErasure
           in: query
@@ -11437,9 +11454,7 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersByIDGet
       description: |-
-        Returns an [Order](ctp:api:type:Order) by its ID from a specific [Store](ctp:api:type:Store).
-        If the Order exists in the Project but does not have the `store` field,
-        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        If the Order exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -11480,9 +11495,7 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersByIDPost
       description: |-
-        Updates an [Order](ctp:api:type:Order) in the [Store](ctp:api:type:Store) specified by {storeKey}.
-        If the Order exists in the Project but does not have the `store` field,
-        or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        If the Order exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -11530,6 +11543,10 @@ paths:
             - "manage_orders:{projectKey}"
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersByIDDelete
+      description: |-
+        If the Order exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+        Deleting an Order produces the [OrderDeleted](ctp:api:type:OrderDeletedMessage) Message.
       parameters:
         - name: dataErasure
           in: query
@@ -13120,7 +13137,7 @@ paths:
         Retrieves the Customer's most recently modified active Cart.
         Carts with `Merchant` or `Quote` [CartOrigin](ctp:api:type:CartOrigin) are ignored.
 
-        If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+        If no active Cart exists, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -14267,6 +14284,17 @@ paths:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyMeOrdersPost
+      description: |-
+        The Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction) for taxes to be calculated. When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
+
+        Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
+        Specific Error Codes:
+
+        - [OutOfStock](ctp:api:type:OutOfStockError)
+        - [PriceChanged](ctp:api:type:PriceChangedError)
+        - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
+        - [AssociateMissingPermission](ctp:api:type:AssociateMissingPermissionError)
       parameters:
         - name: expand
           in: query
@@ -14318,8 +14346,20 @@ paths:
     post:
       security:
         - oauth_2_0:
-            - "manage_my_orders:{projectKey}"
+            - "manage_quotes:{projectKey}"
       operationId: ByProjectKeyMeOrdersQuotesPost
+      description: |-
+        When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyQuotes` [Permission](ctp:api:type:Permission).
+
+        Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
+        Specific Error Codes:
+
+        - [OutOfStock](ctp:api:type:OutOfStockError)
+        - [PriceChanged](ctp:api:type:PriceChangedError)
+        - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+        - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
+        - [AssociateMissingPermission](ctp:api:type:AssociateMissingPermissionError)
       requestBody:
         content:
           application/json:
@@ -14335,6 +14375,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/Order'
 
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
   /{projectKey}/me/orders/{ID}:
     parameters:
       - name: projectKey
@@ -16362,9 +16416,20 @@ paths:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyOrdersPost
       description: |-
-        Creates an order from a Cart.
-        The cart must have a shipping address set before creating an order.
-        When using the Platform TaxMode, the shipping address is used for tax calculation.
+        Before you create an Order, the Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction).
+        The shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).
+
+        Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
+        Specific Error Codes:
+
+        - [OutOfStock](ctp:api:type:OutOfStockError)
+        - [PriceChanged](ctp:api:type:PriceChangedError)
+        - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
+        - [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)
+        - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+        - [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)
+        - [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)
       parameters:
         - name: expand
           in: query
@@ -16509,6 +16574,8 @@ paths:
         - oauth_2_0:
             - "manage_order_edits:{projectKey}"
       operationId: ByProjectKeyOrdersEditsPost
+      description: |-
+        You can either create multiple Order Edits for an Order and apply them sequentially to an Order, or create multiple Order Edits parallelly (as alternatives to each other) and apply one of them to the Order.
       parameters:
         - name: expand
           in: query
@@ -16853,6 +16920,8 @@ paths:
         - oauth_2_0:
             - "manage_order_edits:{projectKey}"
       operationId: ByProjectKeyOrdersEditsByIDApplyPost
+      description: |-
+        Applying an OrderEdit produces the [OrderEditApplied](ctp:api:type:OrderEditAppliedMessage) Message.
       requestBody:
         content:
           application/json:
@@ -16942,9 +17011,6 @@ paths:
         - oauth_2_0:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyOrdersOrderNumberByOrderNumberGet
-      description: |-
-        In case the orderNumber does not match the regular expression [a-zA-Z0-9_-]+,
-        it should be provided in URL-encoded format.
       parameters:
         - name: expand
           in: query
@@ -17029,6 +17095,8 @@ paths:
         - oauth_2_0:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyOrdersOrderNumberByOrderNumberDelete
+      description: |-
+        Deleting an Order produces the [OrderDeleted](ctp:api:type:OrderDeletedMessage) Message.
       parameters:
         - name: dataErasure
           in: query
@@ -17092,7 +17160,15 @@ paths:
             - "manage_quotes:{projectKey}"
       operationId: ByProjectKeyOrdersQuotesPost
       description: |-
-        Create an Order from a Quote
+        Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
+        Specific Error Codes:
+
+        - [OutOfStock](ctp:api:type:OutOfStockError)
+        - [PriceChanged](ctp:api:type:PriceChangedError)
+        - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+        - [InvalidOperation](ctp:api:type:InvalidOperationError)
+        - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
       requestBody:
         content:
           application/json:
@@ -17292,6 +17368,8 @@ paths:
         - oauth_2_0:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyOrdersByIDDelete
+      description: |-
+        Deleting an Order produces the [OrderDeleted](ctp:api:type:OrderDeletedMessage) Message.
       parameters:
         - name: dataErasure
           in: query
@@ -48874,10 +48952,6 @@ components:
             lastModifiedAt:
               type: "string"
               format: "datetime"
-            lastModifiedBy:
-              $ref: '#/components/schemas/LastModifiedBy'
-            createdBy:
-              $ref: '#/components/schemas/CreatedBy'
             key:
               type: "string"
             resource:
@@ -48886,12 +48960,16 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/StagedOrderUpdateAction'
-            custom:
-              $ref: '#/components/schemas/CustomFields'
             result:
               $ref: '#/components/schemas/OrderEditResult'
             comment:
               type: "string"
+            custom:
+              $ref: '#/components/schemas/CustomFields'
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
     OrderEditApplied:
       allOf:
         - $ref: '#/components/schemas/OrderEditResult'
@@ -48900,6 +48978,7 @@ components:
             - appliedAt
             - excerptAfterEdit
             - excerptBeforeEdit
+            - type
           properties:
             type:
               type: "string"
@@ -48945,6 +49024,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/OrderEditResult'
         - type: "object"
+          required:
+            - type
           properties:
             type:
               type: "string"
@@ -48959,13 +49040,13 @@ components:
         limit:
           type: "integer"
           format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
         count:
           type: "integer"
           format: "int64"
         total:
-          type: "integer"
-          format: "int64"
-        offset:
           type: "integer"
           format: "int64"
         results:
@@ -49099,19 +49180,16 @@ components:
             lastModifiedAt:
               type: "string"
               format: "datetime"
-            lastModifiedBy:
-              $ref: '#/components/schemas/LastModifiedBy'
-            createdBy:
-              $ref: '#/components/schemas/CreatedBy'
-            completedAt:
-              type: "string"
-              format: "datetime"
             orderNumber:
+              type: "string"
+            purchaseOrderNumber:
               type: "string"
             customerId:
               type: "string"
             customerEmail:
               type: "string"
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupReference'
             anonymousId:
               type: "string"
             businessUnit:
@@ -49132,38 +49210,68 @@ components:
               $ref: '#/components/schemas/TaxedPrice'
             taxedShippingPrice:
               $ref: '#/components/schemas/TaxedPrice'
-            shippingAddress:
-              $ref: '#/components/schemas/Address'
+            taxMode:
+              $ref: '#/components/schemas/TaxMode'
+            taxRoundingMode:
+              $ref: '#/components/schemas/RoundingMode'
+            taxCalculationMode:
+              $ref: '#/components/schemas/TaxCalculationMode'
+            inventoryMode:
+              $ref: '#/components/schemas/InventoryMode'
             billingAddress:
+              $ref: '#/components/schemas/Address'
+            shippingAddress:
               $ref: '#/components/schemas/Address'
             shippingMode:
               $ref: '#/components/schemas/ShippingMode'
             shippingKey:
               type: "string"
+            shippingInfo:
+              $ref: '#/components/schemas/ShippingInfo'
+            shippingRateInput:
+              $ref: '#/components/schemas/ShippingRateInput'
             shippingCustomFields:
               $ref: '#/components/schemas/CustomFields'
             shipping:
               type: "array"
               items:
                 $ref: '#/components/schemas/Shipping'
-            taxMode:
-              $ref: '#/components/schemas/TaxMode'
-            taxRoundingMode:
-              $ref: '#/components/schemas/RoundingMode'
-            customerGroup:
-              $ref: '#/components/schemas/CustomerGroupReference'
+            itemShippingAddresses:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Address'
+            discountCodes:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/DiscountCodeInfo'
+            directDiscounts:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/DirectDiscount'
+            refusedGifts:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CartDiscountReference'
+            paymentInfo:
+              $ref: '#/components/schemas/PaymentInfo'
             country:
-              type: "string"
+              $ref: '#/components/schemas/CountryCode'
+            locale:
+              $ref: '#/components/schemas/Locale'
+            origin:
+              $ref: '#/components/schemas/CartOrigin'
+            cart:
+              $ref: '#/components/schemas/CartReference'
+            quote:
+              $ref: '#/components/schemas/QuoteReference'
             orderState:
               $ref: '#/components/schemas/OrderState'
-            state:
-              $ref: '#/components/schemas/StateReference'
             shipmentState:
               $ref: '#/components/schemas/ShipmentState'
             paymentState:
               $ref: '#/components/schemas/PaymentState'
-            shippingInfo:
-              $ref: '#/components/schemas/ShippingInfo'
+            state:
+              $ref: '#/components/schemas/StateReference'
             syncInfo:
               type: "array"
               items:
@@ -49172,41 +49280,18 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ReturnInfo'
-            purchaseOrderNumber:
-              type: "string"
-            discountCodes:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/DiscountCodeInfo'
             lastMessageSequenceNumber:
               type: "integer"
               format: "int64"
-            cart:
-              $ref: '#/components/schemas/CartReference'
-            quote:
-              $ref: '#/components/schemas/QuoteReference'
             custom:
               $ref: '#/components/schemas/CustomFields'
-            paymentInfo:
-              $ref: '#/components/schemas/PaymentInfo'
-            locale:
+            completedAt:
               type: "string"
-            inventoryMode:
-              $ref: '#/components/schemas/InventoryMode'
-            origin:
-              $ref: '#/components/schemas/CartOrigin'
-            taxCalculationMode:
-              $ref: '#/components/schemas/TaxCalculationMode'
-            shippingRateInput:
-              $ref: '#/components/schemas/ShippingRateInput'
-            itemShippingAddresses:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/Address'
-            refusedGifts:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/CartDiscountReference'
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
     StagedOrderUpdateAction:
       type: "object"
       discriminator:
@@ -49260,6 +49345,7 @@ components:
           setDeliveryCustomField: '#/components/schemas/StagedOrderSetDeliveryCustomFieldAction'
           setDeliveryCustomType: '#/components/schemas/StagedOrderSetDeliveryCustomTypeAction'
           setDeliveryItems: '#/components/schemas/StagedOrderSetDeliveryItemsAction'
+          setDirectDiscounts: '#/components/schemas/StagedOrderSetDirectDiscountsAction'
           setItemShippingAddressCustomField: '#/components/schemas/StagedOrderSetItemShippingAddressCustomFieldAction'
           setItemShippingAddressCustomType: '#/components/schemas/StagedOrderSetItemShippingAddressCustomTypeAction'
           setLineItemCustomField: '#/components/schemas/StagedOrderSetLineItemCustomFieldAction'
@@ -49293,6 +49379,7 @@ components:
           setShippingMethodTaxAmount: '#/components/schemas/StagedOrderSetShippingMethodTaxAmountAction'
           setShippingMethodTaxRate: '#/components/schemas/StagedOrderSetShippingMethodTaxRateAction'
           setShippingRateInput: '#/components/schemas/StagedOrderSetShippingRateInputAction'
+          setStore: '#/components/schemas/StagedOrderSetStoreAction'
           transitionCustomLineItemState: '#/components/schemas/StagedOrderTransitionCustomLineItemStateAction'
           transitionLineItemState: '#/components/schemas/StagedOrderTransitionLineItemStateAction'
           transitionState: '#/components/schemas/StagedOrderTransitionStateAction'
@@ -49393,12 +49480,14 @@ components:
               type: "string"
             taxCategory:
               $ref: '#/components/schemas/TaxCategoryResourceIdentifier'
-            custom:
-              $ref: '#/components/schemas/CustomFieldsDraft'
             externalTaxRate:
               $ref: '#/components/schemas/ExternalTaxRateDraft'
+            shippingDetails:
+              $ref: '#/components/schemas/ItemShippingDetailsDraft'
             priceMode:
               $ref: '#/components/schemas/CustomLineItemPriceMode'
+            custom:
+              $ref: '#/components/schemas/CustomFieldsDraft'
     StagedOrderAddDeliveryAction:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
@@ -49453,12 +49542,6 @@ components:
               type: "string"
             key:
               type: "string"
-            custom:
-              $ref: '#/components/schemas/CustomFieldsDraft'
-            distributionChannel:
-              $ref: '#/components/schemas/ChannelResourceIdentifier'
-            externalTaxRate:
-              $ref: '#/components/schemas/ExternalTaxRateDraft'
             productId:
               type: "string"
             variantId:
@@ -49472,14 +49555,22 @@ components:
             addedAt:
               type: "string"
               format: "datetime"
+            distributionChannel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
             supplyChannel:
               $ref: '#/components/schemas/ChannelResourceIdentifier'
             externalPrice:
               $ref: '#/components/schemas/Money'
             externalTotalPrice:
               $ref: '#/components/schemas/ExternalLineItemTotalPrice'
+            externalTaxRate:
+              $ref: '#/components/schemas/ExternalTaxRateDraft'
+            inventoryMode:
+              $ref: '#/components/schemas/InventoryMode'
             shippingDetails:
               $ref: '#/components/schemas/ItemShippingDetailsDraft'
+            custom:
+              $ref: '#/components/schemas/CustomFieldsDraft'
     StagedOrderAddParcelToDeliveryAction:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
@@ -49541,9 +49632,9 @@ components:
               type: "string"
             shoppingList:
               $ref: '#/components/schemas/ShoppingListResourceIdentifier'
-            supplyChannel:
-              $ref: '#/components/schemas/ChannelResourceIdentifier'
             distributionChannel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
+            supplyChannel:
               $ref: '#/components/schemas/ChannelResourceIdentifier'
     StagedOrderChangeCustomLineItemMoneyAction:
       allOf:
@@ -49609,6 +49700,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
         - type: "object"
+          required:
+            - paymentState
           properties:
             action:
               type: "string"
@@ -49618,6 +49711,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
         - type: "object"
+          required:
+            - shipmentState
           properties:
             action:
               type: "string"
@@ -49815,7 +49910,7 @@ components:
             action:
               type: "string"
             country:
-              type: "string"
+              $ref: '#/components/schemas/CountryCode'
     StagedOrderSetCustomFieldAction:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
@@ -50049,6 +50144,19 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/DeliveryItem'
+    StagedOrderSetDirectDiscountsAction:
+      allOf:
+        - $ref: '#/components/schemas/StagedOrderUpdateAction'
+        - type: "object"
+          required:
+            - discounts
+          properties:
+            action:
+              type: "string"
+            discounts:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/DirectDiscountDraft'
     StagedOrderSetItemShippingAddressCustomFieldAction:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
@@ -50202,7 +50310,7 @@ components:
             action:
               type: "string"
             locale:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
     StagedOrderSetOrderNumberAction:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
@@ -50492,6 +50600,15 @@ components:
               type: "string"
             shippingRateInput:
               $ref: '#/components/schemas/ShippingRateInputDraft'
+    StagedOrderSetStoreAction:
+      allOf:
+        - $ref: '#/components/schemas/StagedOrderUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreResourceIdentifier'
     StagedOrderTransitionCustomLineItemStateAction:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
@@ -50573,10 +50690,10 @@ components:
           properties:
             action:
               type: "string"
-            channel:
-              $ref: '#/components/schemas/ChannelResourceIdentifier'
             externalId:
               type: "string"
+            channel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
             syncedAt:
               type: "string"
               format: "datetime"
@@ -50921,6 +51038,7 @@ components:
         - type: "object"
           required:
             - customLineItemId
+            - quantity
           properties:
             id:
               type: "string"
@@ -51064,6 +51182,7 @@ components:
         - type: "object"
           required:
             - lineItemId
+            - quantity
           properties:
             id:
               type: "string"
@@ -51118,19 +51237,16 @@ components:
             lastModifiedAt:
               type: "string"
               format: "datetime"
-            lastModifiedBy:
-              $ref: '#/components/schemas/LastModifiedBy'
-            createdBy:
-              $ref: '#/components/schemas/CreatedBy'
-            completedAt:
-              type: "string"
-              format: "datetime"
             orderNumber:
+              type: "string"
+            purchaseOrderNumber:
               type: "string"
             customerId:
               type: "string"
             customerEmail:
               type: "string"
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupReference'
             anonymousId:
               type: "string"
             businessUnit:
@@ -51151,38 +51267,68 @@ components:
               $ref: '#/components/schemas/TaxedPrice'
             taxedShippingPrice:
               $ref: '#/components/schemas/TaxedPrice'
-            shippingAddress:
-              $ref: '#/components/schemas/Address'
+            taxMode:
+              $ref: '#/components/schemas/TaxMode'
+            taxRoundingMode:
+              $ref: '#/components/schemas/RoundingMode'
+            taxCalculationMode:
+              $ref: '#/components/schemas/TaxCalculationMode'
+            inventoryMode:
+              $ref: '#/components/schemas/InventoryMode'
             billingAddress:
+              $ref: '#/components/schemas/Address'
+            shippingAddress:
               $ref: '#/components/schemas/Address'
             shippingMode:
               $ref: '#/components/schemas/ShippingMode'
             shippingKey:
               type: "string"
+            shippingInfo:
+              $ref: '#/components/schemas/ShippingInfo'
+            shippingRateInput:
+              $ref: '#/components/schemas/ShippingRateInput'
             shippingCustomFields:
               $ref: '#/components/schemas/CustomFields'
             shipping:
               type: "array"
               items:
                 $ref: '#/components/schemas/Shipping'
-            taxMode:
-              $ref: '#/components/schemas/TaxMode'
-            taxRoundingMode:
-              $ref: '#/components/schemas/RoundingMode'
-            customerGroup:
-              $ref: '#/components/schemas/CustomerGroupReference'
+            itemShippingAddresses:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Address'
+            discountCodes:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/DiscountCodeInfo'
+            directDiscounts:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/DirectDiscount'
+            refusedGifts:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CartDiscountReference'
+            paymentInfo:
+              $ref: '#/components/schemas/PaymentInfo'
             country:
-              type: "string"
+              $ref: '#/components/schemas/CountryCode'
+            locale:
+              $ref: '#/components/schemas/Locale'
+            origin:
+              $ref: '#/components/schemas/CartOrigin'
+            cart:
+              $ref: '#/components/schemas/CartReference'
+            quote:
+              $ref: '#/components/schemas/QuoteReference'
             orderState:
               $ref: '#/components/schemas/OrderState'
-            state:
-              $ref: '#/components/schemas/StateReference'
             shipmentState:
               $ref: '#/components/schemas/ShipmentState'
             paymentState:
               $ref: '#/components/schemas/PaymentState'
-            shippingInfo:
-              $ref: '#/components/schemas/ShippingInfo'
+            state:
+              $ref: '#/components/schemas/StateReference'
             syncInfo:
               type: "array"
               items:
@@ -51191,41 +51337,18 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ReturnInfo'
-            purchaseOrderNumber:
-              type: "string"
-            discountCodes:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/DiscountCodeInfo'
             lastMessageSequenceNumber:
               type: "integer"
               format: "int64"
-            cart:
-              $ref: '#/components/schemas/CartReference'
-            quote:
-              $ref: '#/components/schemas/QuoteReference'
             custom:
               $ref: '#/components/schemas/CustomFields'
-            paymentInfo:
-              $ref: '#/components/schemas/PaymentInfo'
-            locale:
+            completedAt:
               type: "string"
-            inventoryMode:
-              $ref: '#/components/schemas/InventoryMode'
-            origin:
-              $ref: '#/components/schemas/CartOrigin'
-            taxCalculationMode:
-              $ref: '#/components/schemas/TaxCalculationMode'
-            shippingRateInput:
-              $ref: '#/components/schemas/ShippingRateInput'
-            itemShippingAddresses:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/Address'
-            refusedGifts:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/CartDiscountReference'
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
     OrderFromCartDraft:
       type: "object"
       required:
@@ -51348,13 +51471,13 @@ components:
         limit:
           type: "integer"
           format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
         count:
           type: "integer"
           format: "int64"
         total:
-          type: "integer"
-          format: "int64"
-        offset:
           type: "integer"
           format: "int64"
         results:
@@ -51365,6 +51488,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Reference'
         - type: "object"
+          required:
+            - id
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -51425,7 +51550,12 @@ components:
         - Complete
         - Cancelled
       x-annotation-package: "Order"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-orders.html#orderstate"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/orders#orderstate"
+      x-annotation-enumDescriptions:
+        Open: "The default state of a new Order.n"
+        Confirmed: "Indicates that the Order is accepted and being processed.n"
+        Complete: "Indicates that the Order is fulfilled.n"
+        Cancelled: "Indicates that the Order is canceled.n"
     OrderUpdate:
       type: "object"
       required:
@@ -51577,7 +51707,13 @@ components:
         - CreditOwed
         - Paid
       x-annotation-package: "Order"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-orders.html#paymentstate"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/orders#paymentstate"
+      x-annotation-enumDescriptions:
+        BalanceDue: "Indicates that payment balance is due for the Order.n"
+        Failed: "Indicates that payment for the Order has failed.n"
+        Pending: "Indicates that payment for the Order is pending.n"
+        CreditOwed: "Indicates that payment for the Order is made on a credit basis.n"
+        Paid: "Indicates that the Order is paid for.n"
     ProductVariantImportDraft:
       type: "object"
       properties:
@@ -51690,7 +51826,14 @@ components:
         - Refunded
         - NotRefunded
       x-annotation-package: "Order"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-orders.html#returnpaymentstate"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/orders#returnpaymentstate"
+      x-annotation-enumDescriptions:
+        NonRefundable: "Initial state for Return Items for which payment cannot be refunded.n
+        nReturn Items have the `Advised` [ReturnShipmentState](ctp:api:type:ReturnShipmentState).n"
+        Initial: "Initial state for Return Items for which payment can be refunded.nnReturn
+         Items have the `Returned` [ReturnShipmentState](ctp:api:type:ReturnShipmentState).n"
+        Refunded: "The payment for the Return Items is refunded.n"
+        NotRefunded: "The payment for the Return Items is not refunded.n"
     ReturnShipmentState:
       type: "string"
       enum:
@@ -51699,7 +51842,15 @@ components:
         - BackInStock
         - Unusable
       x-annotation-package: "Order"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-orders.html#returnshipmentstate"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/orders#returnshipmentstate"
+      x-annotation-enumDescriptions:
+        Advised: "Initial state for Return Items that are non-refundable.nnReturn Items
+         of this state will have the `NonRefundable` [ReturnPaymentState](ctp:api:type:ReturnPaymentState).n"
+        Returned: "Initial state for Return Items that are refundable.nnReturn Items of
+         this state will have the `Initial` [ReturnPaymentState](ctp:api:type:ReturnPaymentState).n"
+        BackInStock: "A state indicating that the Return Items are restocked in inventory.n"
+        Unusable: "A state indicating that the Return Items are not in good condition and
+         cannot be restocked.n"
     ShipmentState:
       type: "string"
       enum:
@@ -51711,7 +51862,16 @@ components:
         - Partial
         - Backorder
       x-annotation-package: "Order"
-      x-annotation-docs-uri: "https://docs.commercetools.com/http-api-projects-orders.html#shipmentstate"
+      x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/orders#shipmentstate"
+      x-annotation-enumDescriptions:
+        Shipped: "Indicates that the Order is shipped.n"
+        Delivered: "Indicates that the Order is delivered.n"
+        Ready: "Indicates that the Order is ready to be shipped.n"
+        Pending: "Indicates that the shipment of the Order is pending.n"
+        Delayed: "Indicates that the shipment of the Order is delayed.n"
+        Partial: "Indicates that items in the Order are shipped in more than one shipment.n"
+        Backorder: "Indicates that items in the Order are not in stock and will be delivered
+         once the items are restocked.n"
     ShippingInfoImportDraft:
       type: "object"
       required:
@@ -51784,12 +51944,12 @@ components:
               type: "string"
             deliveryKey:
               type: "string"
+            shippingKey:
+              type: "string"
             items:
               type: "array"
               items:
                 $ref: '#/components/schemas/DeliveryItem'
-            shippingKey:
-              type: "string"
             address:
               $ref: '#/components/schemas/BaseAddress'
             parcels:
@@ -51874,6 +52034,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/OrderUpdateAction'
         - type: "object"
+          required:
+            - paymentState
           properties:
             action:
               type: "string"
@@ -51883,6 +52045,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/OrderUpdateAction'
         - type: "object"
+          required:
+            - shipmentState
           properties:
             action:
               type: "string"
@@ -52261,7 +52425,7 @@ components:
             action:
               type: "string"
             locale:
-              type: "string"
+              $ref: '#/components/schemas/Locale'
     OrderSetOrderNumberAction:
       allOf:
         - $ref: '#/components/schemas/OrderUpdateAction'
@@ -52548,10 +52712,10 @@ components:
           properties:
             action:
               type: "string"
-            channel:
-              $ref: '#/components/schemas/ChannelResourceIdentifier'
             externalId:
               type: "string"
+            channel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
             syncedAt:
               type: "string"
               format: "datetime"

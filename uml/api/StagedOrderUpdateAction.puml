@@ -21,9 +21,10 @@ interface StagedOrderAddCustomLineItemAction [[StagedOrderAddCustomLineItemActio
     quantity: Long
     slug: String
     taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
-    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
     externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
     priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
 }
 interface StagedOrderAddDeliveryAction [[StagedOrderAddDeliveryAction.svg]]  {
     action: String
@@ -45,18 +46,19 @@ interface StagedOrderAddItemShippingAddressAction [[StagedOrderAddItemShippingAd
 interface StagedOrderAddLineItemAction [[StagedOrderAddLineItemAction.svg]]  {
     action: String
     key: String
-    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
-    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
-    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
     productId: String
     variantId: Long
     sku: String
     quantity: Long
     addedAt: DateTime
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     externalPrice: [[Money.svg Money]]
     externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
     shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
 }
 interface StagedOrderAddParcelToDeliveryAction [[StagedOrderAddParcelToDeliveryAction.svg]]  {
     action: String
@@ -80,8 +82,8 @@ interface StagedOrderAddReturnInfoAction [[StagedOrderAddReturnInfoAction.svg]] 
 interface StagedOrderAddShoppingListAction [[StagedOrderAddShoppingListAction.svg]]  {
     action: String
     shoppingList: [[ShoppingListResourceIdentifier.svg ShoppingListResourceIdentifier]]
-    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
 }
 interface StagedOrderChangeCustomLineItemMoneyAction [[StagedOrderChangeCustomLineItemMoneyAction.svg]]  {
     action: String
@@ -284,6 +286,10 @@ interface StagedOrderSetDeliveryItemsAction [[StagedOrderSetDeliveryItemsAction.
     deliveryKey: String
     items: [[DeliveryItem.svg List<DeliveryItem>]]
 }
+interface StagedOrderSetDirectDiscountsAction [[StagedOrderSetDirectDiscountsAction.svg]]  {
+    action: String
+    discounts: [[DirectDiscountDraft.svg List<DirectDiscountDraft>]]
+}
 interface StagedOrderSetItemShippingAddressCustomFieldAction [[StagedOrderSetItemShippingAddressCustomFieldAction.svg]]  {
     action: String
     addressKey: String
@@ -470,6 +476,10 @@ interface StagedOrderSetShippingRateInputAction [[StagedOrderSetShippingRateInpu
     action: String
     shippingRateInput: [[ShippingRateInputDraft.svg ShippingRateInputDraft]]
 }
+interface StagedOrderSetStoreAction [[StagedOrderSetStoreAction.svg]]  {
+    action: String
+    store: [[StoreResourceIdentifier.svg StoreResourceIdentifier]]
+}
 interface StagedOrderTransitionCustomLineItemStateAction [[StagedOrderTransitionCustomLineItemStateAction.svg]]  {
     action: String
     customLineItemId: String
@@ -497,8 +507,8 @@ interface StagedOrderUpdateItemShippingAddressAction [[StagedOrderUpdateItemShip
 }
 interface StagedOrderUpdateSyncInfoAction [[StagedOrderUpdateSyncInfoAction.svg]]  {
     action: String
-    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     externalId: String
+    channel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
     syncedAt: DateTime
 }
 interface OrderEdit [[OrderEdit.svg]]  {
@@ -506,14 +516,14 @@ interface OrderEdit [[OrderEdit.svg]]  {
     version: Long
     createdAt: DateTime
     lastModifiedAt: DateTime
-    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
-    createdBy: [[CreatedBy.svg CreatedBy]]
     key: String
     resource: [[OrderReference.svg OrderReference]]
     stagedActions: [[StagedOrderUpdateAction.svg List<StagedOrderUpdateAction>]]
-    custom: [[CustomFields.svg CustomFields]]
     result: [[OrderEditResult.svg OrderEditResult]]
     comment: String
+    custom: [[CustomFields.svg CustomFields]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
 }
 interface OrderEditDraft [[OrderEditDraft.svg]]  {
     key: String
@@ -579,6 +589,7 @@ StagedOrderUpdateAction --> StagedOrderSetDeliveryAddressCustomTypeAction #blue;
 StagedOrderUpdateAction --> StagedOrderSetDeliveryCustomFieldAction #blue;text:blue : "action : setDeliveryCustomField"
 StagedOrderUpdateAction --> StagedOrderSetDeliveryCustomTypeAction #blue;text:blue : "action : setDeliveryCustomType"
 StagedOrderUpdateAction --> StagedOrderSetDeliveryItemsAction #blue;text:blue : "action : setDeliveryItems"
+StagedOrderUpdateAction --> StagedOrderSetDirectDiscountsAction #blue;text:blue : "action : setDirectDiscounts"
 StagedOrderUpdateAction --> StagedOrderSetItemShippingAddressCustomFieldAction #blue;text:blue : "action : setItemShippingAddressCustomField"
 StagedOrderUpdateAction --> StagedOrderSetItemShippingAddressCustomTypeAction #blue;text:blue : "action : setItemShippingAddressCustomType"
 StagedOrderUpdateAction --> StagedOrderSetLineItemCustomFieldAction #blue;text:blue : "action : setLineItemCustomField"
@@ -612,6 +623,7 @@ StagedOrderUpdateAction --> StagedOrderSetShippingMethodAction #blue;text:blue :
 StagedOrderUpdateAction --> StagedOrderSetShippingMethodTaxAmountAction #blue;text:blue : "action : setShippingMethodTaxAmount"
 StagedOrderUpdateAction --> StagedOrderSetShippingMethodTaxRateAction #blue;text:blue : "action : setShippingMethodTaxRate"
 StagedOrderUpdateAction --> StagedOrderSetShippingRateInputAction #blue;text:blue : "action : setShippingRateInput"
+StagedOrderUpdateAction --> StagedOrderSetStoreAction #blue;text:blue : "action : setStore"
 StagedOrderUpdateAction --> StagedOrderTransitionCustomLineItemStateAction #blue;text:blue : "action : transitionCustomLineItemState"
 StagedOrderUpdateAction --> StagedOrderTransitionLineItemStateAction #blue;text:blue : "action : transitionLineItemState"
 StagedOrderUpdateAction --> StagedOrderTransitionStateAction #blue;text:blue : "action : transitionState"

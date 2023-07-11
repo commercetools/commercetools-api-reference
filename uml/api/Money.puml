@@ -275,6 +275,69 @@ interface StandalonePriceValueChangedMessagePayload [[StandalonePriceValueChange
     staged: Boolean
     oldValue: [[Money.svg Money]]
 }
+interface StagedOrderAddCustomLineItemAction [[StagedOrderAddCustomLineItemAction.svg]]  {
+    action: String
+    money: [[Money.svg Money]]
+    name: [[LocalizedString.svg LocalizedString]]
+    key: String
+    quantity: Long
+    slug: String
+    taxCategory: [[TaxCategoryResourceIdentifier.svg TaxCategoryResourceIdentifier]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface StagedOrderAddLineItemAction [[StagedOrderAddLineItemAction.svg]]  {
+    action: String
+    key: String
+    productId: String
+    variantId: Long
+    sku: String
+    quantity: Long
+    addedAt: DateTime
+    distributionChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    supplyChannel: [[ChannelResourceIdentifier.svg ChannelResourceIdentifier]]
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    externalTaxRate: [[ExternalTaxRateDraft.svg ExternalTaxRateDraft]]
+    inventoryMode: [[InventoryMode.svg InventoryMode]]
+    shippingDetails: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface StagedOrderChangeCustomLineItemMoneyAction [[StagedOrderChangeCustomLineItemMoneyAction.svg]]  {
+    action: String
+    customLineItemId: String
+    money: [[Money.svg Money]]
+}
+interface StagedOrderChangeLineItemQuantityAction [[StagedOrderChangeLineItemQuantityAction.svg]]  {
+    action: String
+    lineItemId: String
+    lineItemKey: String
+    quantity: Long
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+}
+interface StagedOrderRemoveLineItemAction [[StagedOrderRemoveLineItemAction.svg]]  {
+    action: String
+    lineItemId: String
+    lineItemKey: String
+    quantity: Long
+    externalPrice: [[Money.svg Money]]
+    externalTotalPrice: [[ExternalLineItemTotalPrice.svg ExternalLineItemTotalPrice]]
+    shippingDetailsToRemove: [[ItemShippingDetailsDraft.svg ItemShippingDetailsDraft]]
+}
+interface StagedOrderSetLineItemPriceAction [[StagedOrderSetLineItemPriceAction.svg]]  {
+    action: String
+    lineItemId: String
+    lineItemKey: String
+    externalPrice: [[Money.svg Money]]
+}
+interface StagedOrderSetOrderTotalTaxAction [[StagedOrderSetOrderTotalTaxAction.svg]]  {
+    action: String
+    externalTotalGross: [[Money.svg Money]]
+    externalTaxPortions: [[TaxPortionDraft.svg List<TaxPortionDraft>]]
+}
 interface CustomLineItemImportDraft [[CustomLineItemImportDraft.svg]]  {
     name: [[LocalizedString.svg LocalizedString]]
     quantity: Long
@@ -434,6 +497,13 @@ Money --> StandalonePriceValueChangedMessage #green;text:green : "oldValue"
 Money --> OrderLineItemDiscountSetMessagePayload #green;text:green : "totalPrice"
 Money --> StandalonePriceValueChangedMessagePayload #green;text:green : "value"
 Money --> StandalonePriceValueChangedMessagePayload #green;text:green : "oldValue"
+Money --> StagedOrderAddCustomLineItemAction #green;text:green : "money"
+Money --> StagedOrderAddLineItemAction #green;text:green : "externalPrice"
+Money --> StagedOrderChangeCustomLineItemMoneyAction #green;text:green : "money"
+Money --> StagedOrderChangeLineItemQuantityAction #green;text:green : "externalPrice"
+Money --> StagedOrderRemoveLineItemAction #green;text:green : "externalPrice"
+Money --> StagedOrderSetLineItemPriceAction #green;text:green : "externalPrice"
+Money --> StagedOrderSetOrderTotalTaxAction #green;text:green : "externalTotalGross"
 Money --> CustomLineItemImportDraft #green;text:green : "money"
 Money --> OrderImportDraft #green;text:green : "totalPrice"
 Money --> ShippingInfoImportDraft #green;text:green : "price"
