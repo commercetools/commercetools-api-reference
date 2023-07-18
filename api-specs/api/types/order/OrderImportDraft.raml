@@ -1,98 +1,132 @@
 #%RAML 1.0 DataType
 (package): Order
-(docs-uri): https://docs.commercetools.com/http-api-projects-orders-import.html#orderimportdraft
+(docs-uri): https://docs.commercetools.com/api/projects/orders-import#orderimportdraft
 displayName: OrderImportDraft
 type: object
+description: |
+  A snapshot of an Order at the time it was imported.
 properties:
   orderNumber?:
     type: string
+    description: |
+      User-defined identifier of the Order. Must be unique across a Project.
+      Once set, the value cannot be changed.
+  purchaseOrderNumber?:
+    type: string
     description: |-
-      String that unique identifies an order.
-      It can be used to create more human-readable (in contrast to ID) identifier for the order.
-      It should be unique within a project.
+      User-defined identifier for a purchase Order.
   customerId?:
     type: string
-    description: If given the customer with that ID must exist in the project.
+    description: |
+      The `id` of the [Customer](ctp:api:type:Customer) the Order belongs to.
   customerEmail?:
     type: string
-    description:
-      The customer email can be used when no check against existing Customers is
-      desired during order import.
-  lineItems?:
-    description: If not given `customLineItems` must not be empty.
-    type: LineItemImportDraft[]
-  customLineItems?:
-    description: If not given `lineItems` must not be empty.
-    type: CustomLineItemImportDraft[]
-  totalPrice:
-    description: ''
-    type: Money
-  taxedPrice?:
-    type: TaxedPriceDraft
-    description: |-
-      Order Import does not support calculation of taxes.
-      When setting the draft the taxedPrice is to be provided.
-  shippingAddress?:
-    type: BaseAddress
-    description: ''
-  billingAddress?:
-    type: BaseAddress
-    description: ''
+    description: |
+      The Email address of the Customer the Order belongs to. Can be used instead of `customerId` when no check against existing [Customers](ctp:api:type:Customer) is required.
   customerGroup?:
     type: CustomerGroupResourceIdentifier
-    description: |-
-      Set when the customer is set and the customer is a member of a customer group.
-      Used for product variant price selection.
-  country?:
-    type: string
-    description: |-
-      A two-digit country code as per [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
-      Used for product variant price selection.
-  orderState?:
-    type: OrderState
     description: |
-      Current status of the Order.
-    default: Open
-  state?:
-    type: StateReference
-    description: This reference can point to a state in a custom workflow.
-  shipmentState?:
-    type: ShipmentState
-    description: |
-      Shipment status of the Order.
-  paymentState?:
-    type: PaymentState
-    description: ''
-  shippingInfo?:
-    type: ShippingInfoImportDraft
-    description: Set if the ShippingMethod is set.
-  paymentInfo?:
-    type: PaymentInfo
-    description: |
-      Payment information associated with the Order.
-  completedAt?:
-    type: datetime
-    description: ''
-  custom?:
-    type: CustomFieldsDraft
-    description: The custom fields.
-  inventoryMode?:
-    type: InventoryMode
-    description: If not given the mode `None` will be assigned by default.
-  taxRoundingMode?:
-    type: RoundingMode
-    description: If not given the tax rounding mode `HalfEven` will be assigned by default.
-  itemShippingAddresses?:
-    type: BaseAddress[]
-    description: Contains addresses for orders with multiple shipping addresses.
+      The Customer Group of the Customer the Order belongs to.
   businessUnit?:
     type: BusinessUnitResourceIdentifier
     (beta): true
     description: |
-      The Business Unit the Cart belongs to.
+      [ResourceIdentifier](ctp:api:type:ResourceIdentifier) to the Business Unit the Order should belong to.
+      When the `customerId` of the Order is also set, the [Customer](ctp:api:type:Customer) must be an [Associate](ctp:api:type:Associate) of the Business Unit.
   store?:
     type: StoreResourceIdentifier
-    description: ''
+    description: |
+      The Store the Order belongs to.
+      Used for [filtering](#filtering).
+
+      If a [LineItemImportDraft](ctp:api:type:LineItemImportDraft) or a [CustomLineItemImportDraft](ctp:api:type:CustomLineItemImportDraft) specifies a `distributionChannel` or a `supplyChannel` that is not defined for the referenced Store, the Order Import gets rejected.
+      The same applies when the provided `country` is not defined for the referenced Store.
+  lineItems?:
+    description: |
+      [Line Items](ctp:api:type:LineItems) to add to the Order.
+
+      If not specified, `customLineItems` must not be empty.
+    type: LineItemImportDraft[]
+  customLineItems?:
+    description: |
+      [Custom Line Items](ctp:api:type:CustomLineItems) to add to the Cart.
+
+      If not specified, `lineItems` must not be empty.
+    type: CustomLineItemImportDraft[]
+  totalPrice:
+    description: |
+      The total Price of the Order. The amount can be negative.
+    type: Money
+  taxedPrice?:
+    type: TaxedPriceDraft
+    description: |
+      Include TaxedPrice information for the Order. If not included, and if you have Tax Rates set for Line Items and Custom Line Items, the Order total will not be recalculated.
+  taxRoundingMode?:
+    type: RoundingMode
+    default: HalfEven
+    description: |
+      Determines how monetary values are rounded when calculating taxes for `taxedPrice`.
+  taxCalculationMode?:
+    type: TaxCalculationMode
+    default: LineItemLevel
+    description: |
+      Determines how taxes are calculated for `taxedPrice`.
+  inventoryMode?:
+    type: InventoryMode
+    default: None
+    description: |
+      Determines how stock quantities are tracked for Line Items in the Cart.
+  billingAddress?:
+    type: BaseAddress
+    description: |
+      Billing address associated with the Order.
+  shippingAddress?:
+    type: BaseAddress
+    description: |
+      Shipping address associated with the Order.
+  itemShippingAddresses?:
+    type: BaseAddress[]
+    description: |
+      Addresses for Orders with multiple shipping addresses. Addresses must include a value for `key`.
+  shippingInfo?:
+    type: ShippingInfoImportDraft
+    description: |
+      Shipping-related information of the Order.
+  paymentInfo?:
+    type: PaymentInfo
+    description: |
+      Payment information associated with the Order.
+  paymentState?:
+    type: PaymentState
+    description: |
+      Payment status of the Order.
+  shipmentState?:
+    type: ShipmentState
+    description: |
+      Shipment status of the Order.
+  orderState?:
+    type: OrderState
+    default: Open
+    description: |
+      Current status of the Order.
+  state?:
+    type: StateReference
+    description: |
+      State of the Order in a custom workflow.
+  country?:
+    type: CountryCode
+    description: |
+      Include a value to associate a country with the Order.
   origin?:
     type: CartOrigin
-    description: The default origin is `Customer`.
+    default: Customer
+    description: |
+      Indicates the origin of the Order.
+  completedAt?:
+    type: datetime
+    description: |
+      User-defined date and time for the Order. This value does not influence the `createdAt` or `lastModifiedAt` values of the Order created by the Order Import.
+  custom?:
+    type: CustomFieldsDraft
+    description: |
+      Custom Fields for the Order.

@@ -1,44 +1,52 @@
 #%RAML 1.0 DataType
-(package): Cart
-(docs-uri): https://docs.commercetools.com/http-api-projects-carts.html#customlineitemdraft
+(package): Order
+(docs-uri): https://docs.commercetools.com/api/projects/orders-import#customlineitemimportdraft
 displayName: CustomLineItemImportDraft
 type: object
+description: |
+  Custom Line Items contain generic user-defined items that are not linked to Products.
 properties:
   name:
     type: LocalizedString
-    description: ''
+    description: |
+      Name of the Custom Line Item.
+  slug:
+    type: string
+    description: |
+      User-defined identifier used in a deep-link URL for the Custom Line Item. This value should match the pattern `[a-zA-Z0-9_-]{2,256}`.
   quantity:
     type: number
     format: int64
-    description: |-
-      The amount of a CustomLineItem in the cart.
-      Must be a positive integer.
+    description: |
+      The number of items in the Custom Line Item. Can be a negative value.
   money:
     type: Money
     description: |-
-      The cost to add to the cart. The amount can be negative.
-  slug:
-    type: string
-    description: ''
-  state?:
-    type: ItemState[]
-    description: ''
+      The cost of individual items in the Custom Line Item. The amount can be negative.
   taxRate?:
     type: TaxRate
-    description: ''
+    description: |
+      The tax rate used to calculate the `taxedPrice` of the Order.
   taxCategory?:
     type: TaxCategoryResourceIdentifier
-    description: ''
-  custom?:
-    type: CustomFieldsDraft
-    description: The custom fields.
-  shippingDetails?:
-    type: ItemShippingDetailsDraft
-    description: ''
-  priceMode:
+    description: |
+      Include a value to associate a Tax Category with the Custom Line Item.
+  priceMode?:
     type: CustomLineItemPriceMode
+    default: Standard
     description: |
       - If `Standard`, Cart Discounts with a matching [CartDiscountCustomLineItemsTarget](ctp:api:type:CartDiscountCustomLineItemsTarget)
       are applied to the Custom Line Item.
       - If `External`, Cart Discounts are not considered on the Custom Line Item.
-    default: Standard
+  shippingDetails?:
+    type: ItemShippingDetailsDraft
+    description: |
+      Container for Custom Line Item-specific addresses.
+  state?:
+    type: ItemState[]
+    description: |
+      State of the Custom Line Items.
+  custom?:
+    type: CustomFieldsDraft
+    description: |
+      Custom Fields of the CustomLineItem.

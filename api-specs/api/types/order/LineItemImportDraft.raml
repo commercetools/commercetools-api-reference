@@ -1,54 +1,63 @@
 #%RAML 1.0 DataType
 (package): Order
-(docs-uri): https://docs.commercetools.com/http-api-projects-orders-import.html#lineitemimportdraft
+(docs-uri): https://docs.commercetools.com/api/projects/orders-import#lineitemimportdraft
 displayName: LineItemImportDraft
 type: object
+description: |
+  Represents a snapshot of a Product Variant at the time it was imported with the Order. The Product Variant can be specified by providing a `productId` and `variant.id`, or by providing a `variant.sku`.
 properties:
+  name:
+    type: LocalizedString
+    description: |
+      Name of the Line Item.
+  variant:
+    type: ProductVariantImportDraft
+    description: |-
+      The Product Variant to use as a [Line Item](ctp:api:type:LineItem).
   productId?:
     type: string
     description: |-
-      ID of the existing product.
-      You also need to specify the ID of the variant if this property is set or alternatively you can just specify SKU of the product variant.
-  name:
-    type: LocalizedString
-    description: The product name.
-  variant:
-    type: ProductVariantImportDraft
-    description: ''
-  price:
-    type: PriceDraft
-    description: ''
+      `id` of the [Product](ctp:api:type:Product) the Product Variant belongs to.
+
+      If provided, you must also set `variant.id`.
   quantity:
     type: number
     format: int64
-    description: ''
-  state?:
-    type: ItemState[]
-    description: ''
-  supplyChannel?:
-    type: ChannelResourceIdentifier
+    description: |
+      The number of Product Variants in the LineItem. Can be a negative value.
+  price:
+    type: PriceDraft
     description: |-
-      Connection to a particular supplier.
-      By providing supply channel information, you can uniquely identify
-      inventory entries that should be reserved.
-      The provided channel should have the
-      InventorySupply role.
+      The Line Item price for `quantity` = `1`. The amount can be negative.
+  taxRate?:
+    type: TaxRate
+    description: |-
+      The tax rate used to calculate the `taxedPrice` of the Order.
   distributionChannel?:
     type: ChannelResourceIdentifier
     description: |-
-      The channel is used to select a ProductPrice.
-      The provided channel should have the ProductDistribution role.
-  taxRate?:
-    type: TaxRate
-    description: ''
-  custom?:
-    type: CustomFieldsDraft
-    description: The custom fields.
+      The Channel used to [select a Price](ctp:api:type:LineItemPriceSelection).
+      This Channel must have the `ProductDistribution` role.
+  supplyChannel?:
+    type: ChannelResourceIdentifier
+    description: |-
+      The Channel used to supply Line Items.
+      By providing supply Channel information, you can uniquely identify [Inventory entries](ctp:api:type:InventoryEntry) that should be reserved.
+      This Channel must have the `InventorySupply` role.
   inventoryMode?:
     type: InventoryMode
     description: |-
-      Inventory mode specific to the line item only, valid for the entire `quantity` of the line item.
-      Set only if inventory mode should be different from the `inventoryMode` specified on the [OrderImportDraft](ctp:api:type:OrderImportDraft).
+      Inventory mode specific to the LineItem, valid for the entire `quantity` of the LineItem.
+      Set only if Inventory mode should be different from the `inventoryMode` specified on the [OrderImportDraft](ctp:api:type:OrderImportDraft).
   shippingDetails?:
     type: ItemShippingDetailsDraft
-    description: ''
+    description: |
+      Container for Line Item-specific addresses.
+  state?:
+    type: ItemState[]
+    description: |-
+      States of the Line Item.
+  custom?:
+    type: CustomFieldsDraft
+    description: |
+      Custom Fields of the LineItem.

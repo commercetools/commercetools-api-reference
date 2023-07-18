@@ -1,32 +1,34 @@
 #%RAML 1.0 DataType
 (package): Order
-(docs-uri): https://docs.commercetools.com/http-api-projects-orders-import.html#productvariantimportdraft
+(docs-uri): https://docs.commercetools.com/api/projects/orders-import#productvariantimportdraft
 displayName: ProductVariantImportDraft
 type: object
+description: |
+  Contains the Product Variant to be used in the [LineItemImportDraft](ctp:api:type:LineItemImportDraft).
 properties:
   id?:
     type: number
     format: int64
-    description: |-
-      The sequential ID of the variant within the product.
-      The variant with provided ID should exist in some existing product, so you also need to specify the productId if this property is set,
-      or alternatively you can just specify SKU of the product variant.
+    description: |
+      The `id` of the [ProductVariant](ctp:api:type:ProductVariant). Required if you do not set a value for `sku`.
+      If set, you must specify a `productId` in the [LineItemImportDraft](ctp:api:type:LineItemImportDraft) also.
   sku?:
     type: string
-    description: The SKU of the existing variant.
+    description: |
+      The `sku` of the [ProductVariant](ctp:api:type:ProductVariant). Required if you do not set a value for `id`.
   prices?:
     type: PriceDraft[]
-    description: |-
-      The [Embedded Prices](ctp:api:type:Price) of the variant.
-      The prices should not contain two prices for the same price scope (same currency, country, customer group, channel, valid from and valid until).
-      If this property is defined, then it will override the `prices` property from the original product variant, otherwise `prices` property from the original product variant would be copied in the resulting order.
+    description: |
+      The [Prices](ctp:api:type:Price) of the Product Variant if you want to override the `prices` property in the referenced [ProductVariant](ctp:api:type:ProductVariant).
+      If not set, the `prices` from the referenced [ProductVariant](ctp:api:type:ProductVariant) are used in the resulting Order.
+      If set, each Price must have its unique price scope (same `value.currencyCode`, `country`, `customerGroup`, `channel`, `validFrom` and `validUntil`).
   attributes?:
     type: Attribute[]
-    description: |-
-      If this property is defined, then it will override the `attributes` property from the original
-      product variant, otherwise `attributes` property from the original product variant would be copied in the resulting order.
+    description: |
+      The [Attributes](ctp:api:type:Attribute) of the Product Variant if you want to override the `attributes` property in the referenced [ProductVariant](ctp:api:type:ProductVariant).
+      If not set, the `attributes` from the referenced [ProductVariant](ctp:api:type:ProductVariant) are copied to the resulting Order.
   images?:
     type: Image[]
-    description: |-
-      If this property is defined, then it will override the `images` property from the original
-      product variant, otherwise `images` property from the original product variant would be copied in the resulting order.
+    description: |
+      The [Images](ctp:api:type:Image) of the Product Variant if you want to override the `images` property in the referenced [ProductVariant](ctp:api:type:ProductVariant).
+      If not set, the `images` from the referenced [ProductVariant](ctp:api:type:ProductVariant) are copied to the resulting Order.
