@@ -17,6 +17,7 @@ paths:
     get:
       security:
         - oauth_2_0:
+            - "view_associate_roles:{projectKey}"
             - "view_audit_log:{projectKey}"
             - "view_business_units:{projectKey}"
             - "view_cart_discounts:{projectKey}"
@@ -239,6 +240,7 @@ paths:
     get:
       security:
         - oauth_2_0:
+            - "view_associate_roles:{projectKey}"
             - "view_audit_log:{projectKey}"
             - "view_business_units:{projectKey}"
             - "view_cart_discounts:{projectKey}"
@@ -451,6 +453,7 @@ paths:
     get:
       security:
         - oauth_2_0:
+            - "view_associate_roles:{projectKey}"
             - "view_audit_log:{projectKey}"
             - "view_business_units:{projectKey}"
             - "view_cart_discounts:{projectKey}"
@@ -766,6 +769,7 @@ components:
     ChangeHistoryResourceType:
       type: "string"
       enum:
+        - associate-role
         - business-unit
         - cart-discount
         - category
@@ -1156,6 +1160,7 @@ components:
           AddEnumValueChange: '#/components/schemas/AddEnumValueChange'
           AddExternalImageChange: '#/components/schemas/AddExternalImageChange'
           AddFieldDefinitionChange: '#/components/schemas/AddFieldDefinitionChange'
+          AddInheritedAssociateChange: '#/components/schemas/AddInheritedAssociateChange'
           AddInterfaceInteractionChange: '#/components/schemas/AddInterfaceInteractionChange'
           AddItemShippingAddressesChange: '#/components/schemas/AddItemShippingAddressesChange'
           AddLocalizedEnumValueChange: '#/components/schemas/AddLocalizedEnumValueChange'
@@ -1186,6 +1191,7 @@ components:
           ChangeAssociateModeChange: '#/components/schemas/ChangeAssociateModeChange'
           ChangeAttributeConstraintChange: '#/components/schemas/ChangeAttributeConstraintChange'
           ChangeAttributeOrderByNameChange: '#/components/schemas/ChangeAttributeOrderByNameChange'
+          ChangeBuyerAssignableChange: '#/components/schemas/ChangeBuyerAssignableChange'
           ChangeCartDiscountsChange: '#/components/schemas/ChangeCartDiscountsChange'
           ChangeCartPredicateChange: '#/components/schemas/ChangeCartPredicateChange'
           ChangeCustomLineItemQuantityChange: '#/components/schemas/ChangeCustomLineItemQuantityChange'
@@ -1195,6 +1201,7 @@ components:
           ChangeEnumValueOrderChange: '#/components/schemas/ChangeEnumValueOrderChange'
           ChangeFieldDefinitionOrderChange: '#/components/schemas/ChangeFieldDefinitionOrderChange'
           ChangeGroupsChange: '#/components/schemas/ChangeGroupsChange'
+          ChangeInheritedAssociateChange: '#/components/schemas/ChangeInheritedAssociateChange'
           ChangeInitialChange: '#/components/schemas/ChangeInitialChange'
           ChangeInputHintChange: '#/components/schemas/ChangeInputHintChange'
           ChangeIsActiveChange: '#/components/schemas/ChangeIsActiveChange'
@@ -1258,6 +1265,7 @@ components:
           RemoveFieldDefinitionChange: '#/components/schemas/RemoveFieldDefinitionChange'
           RemoveFromCategoryChange: '#/components/schemas/RemoveFromCategoryChange'
           RemoveImageChange: '#/components/schemas/RemoveImageChange'
+          RemoveInheritedAssociateChange: '#/components/schemas/RemoveInheritedAssociateChange'
           RemoveItemShippingAddressesChange: '#/components/schemas/RemoveItemShippingAddressesChange'
           RemoveLocalizedEnumValuesChange: '#/components/schemas/RemoveLocalizedEnumValuesChange'
           RemoveLocationChange: '#/components/schemas/RemoveLocationChange'
@@ -1348,6 +1356,7 @@ components:
           SetLineItemTotalPriceChange: '#/components/schemas/SetLineItemTotalPriceChange'
           SetLocaleChange: '#/components/schemas/SetLocaleChange'
           SetLocalizedDescriptionChange: '#/components/schemas/SetLocalizedDescriptionChange'
+          SetLocalizedNameChange: '#/components/schemas/SetLocalizedNameChange'
           SetMaxApplicationsChange: '#/components/schemas/SetMaxApplicationsChange'
           SetMaxApplicationsPerCustomerChange: '#/components/schemas/SetMaxApplicationsPerCustomerChange'
           SetMetaDescriptionChange: '#/components/schemas/SetMetaDescriptionChange'
@@ -1367,6 +1376,7 @@ components:
           SetParcelItemsChange: '#/components/schemas/SetParcelItemsChange'
           SetParcelMeasurementsChange: '#/components/schemas/SetParcelMeasurementsChange'
           SetParcelTrackingDataChange: '#/components/schemas/SetParcelTrackingDataChange'
+          SetPermissionsChange: '#/components/schemas/SetPermissionsChange'
           SetPricesChange: '#/components/schemas/SetPricesChange'
           SetProductCountChange: '#/components/schemas/SetProductCountChange'
           SetProductPriceCustomFieldChange: '#/components/schemas/SetProductPriceCustomFieldChange'
@@ -1439,6 +1449,7 @@ components:
       discriminator:
         propertyName: type
         mapping:
+          AssociateRoleLabel: '#/components/schemas/AssociateRoleLabel'
           BusinessUnitLabel: '#/components/schemas/BusinessUnitLabel'
           CustomObjectLabel: '#/components/schemas/CustomObjectLabel'
           CustomerLabel: '#/components/schemas/CustomerLabel'
@@ -1713,6 +1724,21 @@ components:
               type: "string"
             nextValue:
               $ref: '#/components/schemas/FieldDefinition'
+    AddInheritedAssociateChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            nextValue:
+              $ref: '#/components/schemas/InheritedAssociate'
     AddInterfaceInteractionChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -2267,6 +2293,21 @@ components:
         - Enabled
         - Disabled
       x-annotation-package: "Common"
+    AssociateRoleLabel:
+      allOf:
+        - $ref: '#/components/schemas/Label'
+        - type: "object"
+          required:
+            - key
+            - name
+            - type
+          properties:
+            type:
+              type: "string"
+            key:
+              type: "string"
+            name:
+              type: "string"
     AttributeConstraintEnum:
       type: "string"
       enum:
@@ -2541,6 +2582,24 @@ components:
               type: "array"
               items:
                 type: "string"
+    ChangeBuyerAssignableChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              type: "boolean"
+            nextValue:
+              type: "boolean"
     ChangeCartDiscountsChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -2736,6 +2795,24 @@ components:
               type: "array"
               items:
                 type: "string"
+    ChangeInheritedAssociateChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/InheritedAssociate'
+            nextValue:
+              $ref: '#/components/schemas/InheritedAssociate'
     ChangeInitialChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -4129,6 +4206,28 @@ components:
         h:
           type: "integer"
           format: "int32"
+    InheritedAssociate:
+      type: "object"
+      required:
+        - associateRoleAssignments
+        - customer
+      properties:
+        associateRoleAssignments:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/InheritedAssociateRoleAssignment'
+        customer:
+          $ref: '#/components/schemas/Reference'
+    InheritedAssociateRoleAssignment:
+      type: "object"
+      required:
+        - associateRole
+        - source
+      properties:
+        associateRole:
+          $ref: '#/components/schemas/KeyReference'
+        source:
+          $ref: '#/components/schemas/KeyReference'
     InventoryQuantityValue:
       type: "object"
       required:
@@ -4410,6 +4509,46 @@ components:
         - Pending
         - CreditOwed
         - Paid
+      x-annotation-package: "Common"
+    Permission:
+      type: "string"
+      enum:
+        - AddChildUnits
+        - UpdateAssociates
+        - UpdateBusinessUnitDetails
+        - UpdateParentUnit
+        - ViewMyCarts
+        - ViewOthersCarts
+        - UpdateMyCarts
+        - UpdateOthersCarts
+        - CreateMyCarts
+        - CreateOthersCarts
+        - DeleteMyCarts
+        - DeleteOthersCarts
+        - ViewMyOrders
+        - ViewOthersOrders
+        - UpdateMyOrders
+        - UpdateOthersOrders
+        - CreateMyOrdersFromMyCarts
+        - CreateMyOrdersFromMyQuotes
+        - CreateOrdersFromOthersCarts
+        - CreateOrdersFromOthersQuotes
+        - ViewMyQuotes
+        - ViewOthersQuotes
+        - AcceptMyQuotes
+        - AcceptOthersQuotes
+        - DeclineMyQuotes
+        - DeclineOthersQuotes
+        - RenegotiateMyQuotes
+        - RenegotiateOthersQuotes
+        - ReassignMyQuotes
+        - ReassignOthersQuotes
+        - ViewMyQuoteRequests
+        - ViewOthersQuoteRequests
+        - UpdateMyQuoteRequests
+        - UpdateOthersQuoteRequests
+        - CreateMyQuoteRequestsFromMyCarts
+        - CreateQuoteRequestsFromOthersCarts
       x-annotation-package: "Common"
     Price:
       type: "object"
@@ -4855,6 +4994,21 @@ components:
                 $ref: '#/components/schemas/Image'
             catalogData:
               type: "string"
+    RemoveInheritedAssociateChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/InheritedAssociate'
     RemoveItemShippingAddressesChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -7090,6 +7244,24 @@ components:
               $ref: '#/components/schemas/LocalizedString'
             nextValue:
               $ref: '#/components/schemas/LocalizedString'
+    SetLocalizedNameChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              $ref: '#/components/schemas/LocalizedString'
+            nextValue:
+              $ref: '#/components/schemas/LocalizedString'
     SetOrderLineItemCustomFieldChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -7289,6 +7461,28 @@ components:
               $ref: '#/components/schemas/TrackingData'
             parcel:
               $ref: '#/components/schemas/ParcelChangeValue'
+    SetPermissionsChange:
+      allOf:
+        - $ref: '#/components/schemas/Change'
+        - type: "object"
+          required:
+            - change
+            - nextValue
+            - previousValue
+            - type
+          properties:
+            type:
+              type: "string"
+            change:
+              type: "string"
+            previousValue:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Permission'
+            nextValue:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Permission'
     SetPricesChange:
       allOf:
         - $ref: '#/components/schemas/Change'
