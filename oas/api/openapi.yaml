@@ -16964,7 +16964,12 @@ paths:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyOrdersImportPost
       description: |-
-        Create an Order by Import
+        Importing an Order produces the [Order Imported](ctp:api:type:OrderImportedMessage) Message.
+
+        Specific Error Codes:
+
+        - [OutOfStock](ctp:api:type:OutOfStockError)
+        - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
       requestBody:
         content:
           application/json:
@@ -51036,33 +51041,32 @@ components:
       required:
         - money
         - name
-        - priceMode
         - quantity
         - slug
       properties:
         name:
           $ref: '#/components/schemas/LocalizedString'
+        slug:
+          type: "string"
         quantity:
           type: "integer"
           format: "int64"
         money:
           $ref: '#/components/schemas/Money'
-        slug:
-          type: "string"
-        state:
-          type: "array"
-          items:
-            $ref: '#/components/schemas/ItemState'
         taxRate:
           $ref: '#/components/schemas/TaxRate'
         taxCategory:
           $ref: '#/components/schemas/TaxCategoryResourceIdentifier'
-        custom:
-          $ref: '#/components/schemas/CustomFieldsDraft'
-        shippingDetails:
-          $ref: '#/components/schemas/ItemShippingDetailsDraft'
         priceMode:
           $ref: '#/components/schemas/CustomLineItemPriceMode'
+        shippingDetails:
+          $ref: '#/components/schemas/ItemShippingDetailsDraft'
+        state:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ItemState'
+        custom:
+          $ref: '#/components/schemas/CustomFieldsDraft'
     CustomLineItemReturnItem:
       allOf:
         - $ref: '#/components/schemas/ReturnItem'
@@ -51180,33 +51184,33 @@ components:
         - quantity
         - variant
       properties:
-        productId:
-          type: "string"
         name:
           $ref: '#/components/schemas/LocalizedString'
         variant:
           $ref: '#/components/schemas/ProductVariantImportDraft'
-        price:
-          $ref: '#/components/schemas/PriceDraft'
+        productId:
+          type: "string"
         quantity:
           type: "integer"
           format: "int64"
-        state:
-          type: "array"
-          items:
-            $ref: '#/components/schemas/ItemState'
-        supplyChannel:
-          $ref: '#/components/schemas/ChannelResourceIdentifier'
-        distributionChannel:
-          $ref: '#/components/schemas/ChannelResourceIdentifier'
+        price:
+          $ref: '#/components/schemas/PriceDraft'
         taxRate:
           $ref: '#/components/schemas/TaxRate'
-        custom:
-          $ref: '#/components/schemas/CustomFieldsDraft'
+        distributionChannel:
+          $ref: '#/components/schemas/ChannelResourceIdentifier'
+        supplyChannel:
+          $ref: '#/components/schemas/ChannelResourceIdentifier'
         inventoryMode:
           $ref: '#/components/schemas/InventoryMode'
         shippingDetails:
           $ref: '#/components/schemas/ItemShippingDetailsDraft'
+        state:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ItemState'
+        custom:
+          $ref: '#/components/schemas/CustomFieldsDraft'
     LineItemReturnItem:
       allOf:
         - $ref: '#/components/schemas/ReturnItem'
@@ -51436,10 +51440,18 @@ components:
       properties:
         orderNumber:
           type: "string"
+        purchaseOrderNumber:
+          type: "string"
         customerId:
           type: "string"
         customerEmail:
           type: "string"
+        customerGroup:
+          $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
+        businessUnit:
+          $ref: '#/components/schemas/BusinessUnitResourceIdentifier'
+        store:
+          $ref: '#/components/schemas/StoreResourceIdentifier'
         lineItems:
           type: "array"
           items:
@@ -51452,45 +51464,41 @@ components:
           $ref: '#/components/schemas/Money'
         taxedPrice:
           $ref: '#/components/schemas/TaxedPriceDraft'
-        shippingAddress:
-          $ref: '#/components/schemas/BaseAddress'
+        taxRoundingMode:
+          $ref: '#/components/schemas/RoundingMode'
+        taxCalculationMode:
+          $ref: '#/components/schemas/TaxCalculationMode'
+        inventoryMode:
+          $ref: '#/components/schemas/InventoryMode'
         billingAddress:
           $ref: '#/components/schemas/BaseAddress'
-        customerGroup:
-          $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
-        country:
-          type: "string"
-        orderState:
-          $ref: '#/components/schemas/OrderState'
-        state:
-          $ref: '#/components/schemas/StateReference'
-        shipmentState:
-          $ref: '#/components/schemas/ShipmentState'
-        paymentState:
-          $ref: '#/components/schemas/PaymentState'
+        shippingAddress:
+          $ref: '#/components/schemas/BaseAddress'
+        itemShippingAddresses:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/BaseAddress'
         shippingInfo:
           $ref: '#/components/schemas/ShippingInfoImportDraft'
         paymentInfo:
           $ref: '#/components/schemas/PaymentInfo'
+        paymentState:
+          $ref: '#/components/schemas/PaymentState'
+        shipmentState:
+          $ref: '#/components/schemas/ShipmentState'
+        orderState:
+          $ref: '#/components/schemas/OrderState'
+        state:
+          $ref: '#/components/schemas/StateReference'
+        country:
+          $ref: '#/components/schemas/CountryCode'
+        origin:
+          $ref: '#/components/schemas/CartOrigin'
         completedAt:
           type: "string"
           format: "datetime"
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
-        inventoryMode:
-          $ref: '#/components/schemas/InventoryMode'
-        taxRoundingMode:
-          $ref: '#/components/schemas/RoundingMode'
-        itemShippingAddresses:
-          type: "array"
-          items:
-            $ref: '#/components/schemas/BaseAddress'
-        businessUnit:
-          $ref: '#/components/schemas/BusinessUnitResourceIdentifier'
-        store:
-          $ref: '#/components/schemas/StoreResourceIdentifier'
-        origin:
-          $ref: '#/components/schemas/CartOrigin'
     OrderPagedQueryResponse:
       type: "object"
       required:
