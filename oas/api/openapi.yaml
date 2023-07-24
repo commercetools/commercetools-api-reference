@@ -15125,6 +15125,44 @@ paths:
         required: true
         schema:
           type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "manage_my_quote_requests:{projectKey}"
+      operationId: ByProjectKeyMeQuoteRequestsKeyByKeyGet
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteRequest'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
     post:
       security:
         - oauth_2_0:
@@ -15219,8 +15257,23 @@ paths:
           $ref: '#/components/responses/errorable_502'
         "503":
           $ref: '#/components/responses/errorable_503'
+  /{projectKey}/me/quote-requests/{ID}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: "string"
     get:
-      operationId: ByProjectKeyMeQuoteRequestsKeyByKeyGet
+      security:
+        - oauth_2_0:
+            - "manage_my_quote_requests:{projectKey}"
+      operationId: ByProjectKeyMeQuoteRequestsByIDGet
       parameters:
         - name: expand
           in: query
@@ -15254,18 +15307,6 @@ paths:
           $ref: '#/components/responses/errorable_502'
         "503":
           $ref: '#/components/responses/errorable_503'
-  /{projectKey}/me/quote-requests/{ID}:
-    parameters:
-      - name: projectKey
-        in: path
-        required: true
-        schema:
-          type: "string"
-      - name: ID
-        in: path
-        required: true
-        schema:
-          type: "string"
     post:
       security:
         - oauth_2_0:
@@ -15346,41 +15387,6 @@ paths:
 
         "409":
           $ref: '#/components/responses/conflicting_409'
-        "400":
-          $ref: '#/components/responses/errorable_400'
-        "401":
-          $ref: '#/components/responses/errorable_401'
-        "403":
-          $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
-        "500":
-          $ref: '#/components/responses/errorable_500'
-        "502":
-          $ref: '#/components/responses/errorable_502'
-        "503":
-          $ref: '#/components/responses/errorable_503'
-    get:
-      operationId: ByProjectKeyMeQuoteRequestsByIDGet
-      parameters:
-        - name: expand
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              $ref: '#/components/schemas/Expansion'
-          explode: true
-      responses:
-        "200":
-          description: |-
-            200
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/QuoteRequest'
-
         "400":
           $ref: '#/components/responses/errorable_400'
         "401":
@@ -38513,7 +38519,6 @@ components:
       required:
         - cartId
         - cartVersion
-        - comment
       properties:
         cartId:
           type: "string"
@@ -56909,7 +56914,6 @@ components:
       required:
         - cart
         - cartVersion
-        - comment
       properties:
         cart:
           $ref: '#/components/schemas/CartResourceIdentifier'
