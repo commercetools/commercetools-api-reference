@@ -180,7 +180,6 @@ input AddChannelRoles {
   roles: [ChannelRole!]!
 }
 
-
 input AddCustomerAddress {
   address: AddressInput!
 }
@@ -4151,7 +4150,7 @@ type ImportStagedOrderLineItemStateOutput implements StagedOrderUpdateActionOutp
   state: Set!
 }
 
-type InStore implements CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface {
+type InStore implements CartDiscountQueryInterface & CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface {
   """
   This field can only be used with an access token created with the password flow or with an anonymous session.
 
@@ -4159,6 +4158,13 @@ type InStore implements CartQueryInterface & CustomerActiveCartInterface & Order
   """
   me: InStoreMe!
   shippingMethodsByCart(id: String!): [ShippingMethod!]!
+  cartDiscount(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): CartDiscount
+  cartDiscounts(where: String, sort: [String!], limit: Int, offset: Int): CartDiscountQueryResult!
   product(projectExpandedProducts: Boolean = false, localeProjection: [Locale!],
 
     "Queries for a product with specified SKU"
