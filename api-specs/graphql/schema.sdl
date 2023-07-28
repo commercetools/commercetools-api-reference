@@ -180,7 +180,6 @@ input AddChannelRoles {
   roles: [ChannelRole!]!
 }
 
-
 input AddCustomerAddress {
   address: AddressInput!
 }
@@ -657,7 +656,7 @@ input ApplyStagedChanges {
 }
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-type AsAssociate implements CartQueryInterface & OrderQueryInterface {
+type AsAssociate implements CartQueryInterface & OrderQueryInterface & QuoteQueryInterface & QuoteRequestQueryInterface {
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   cart(id: String!): Cart
 
@@ -1081,17 +1080,6 @@ type AzureServiceBusDestination implements Destination {
 
 input AzureServiceBusDestinationInput {
   connectionString: String!
-}
-
-input CartDiscountValueBaseMoneyInput {
-  centPrecision: MoneyInput
-  highPrecision: HighPrecisionMoneyInput
-
-  "CurrencyCode and centAmount are deprecated. Please use `Money`(centPrecision) or `HighPrecisionMoney`(highPrecision)."
-  currencyCode: Currency
-
-  "CurrencyCode and centAmount are deprecated. Please use `Money`(centPrecision) or `HighPrecisionMoney`(highPrecision)."
-  centAmount: Long
 }
 
 interface BaseMoney {
@@ -1618,6 +1606,17 @@ interface CartDiscountValue {
   type: String!
 }
 
+input CartDiscountValueBaseMoneyInput {
+  centPrecision: MoneyInput
+  highPrecision: HighPrecisionMoneyInput
+
+  "CurrencyCode and centAmount are deprecated. Please use `Money`(centPrecision) or `HighPrecisionMoney`(highPrecision)."
+  currencyCode: Currency
+
+  "CurrencyCode and centAmount are deprecated. Please use `Money`(centPrecision) or `HighPrecisionMoney`(highPrecision)."
+  centAmount: Long
+}
+
 input CartDiscountValueInput {
   relative: RelativeDiscountValueInput
   absolute: AbsoluteDiscountValueInput
@@ -1667,14 +1666,14 @@ type CartLimitsProjection {
 }
 
 enum CartOrigin {
-  "The cart was created by our platform and belongs to a Quote. BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-  Quote
+  "The cart was created by the customer. This is the default value"
+  Customer
 
   "The cart was created by the merchant on behalf of the customer"
   Merchant
 
-  "The cart was created by the customer. This is the default value"
-  Customer
+  "The cart was created by our platform and belongs to a Quote. BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  Quote
 }
 
 "Fields to access carts. Includes direct access to a single cart and searching for carts."
@@ -2942,6 +2941,7 @@ type CustomLineItemReturnItem implements ReturnItem {
   type: String!
   customLineItemId: String!
   id: String!
+  key: String
   quantity: Long!
   comment: String
   shipmentState: ReturnShipmentState!
@@ -3974,8 +3974,8 @@ input FieldTypeSetTypeDraft {
 }
 
 type FixedPriceDiscountValue implements CartDiscountValue {
-  money: [BaseMoney!]!
   type: String!
+  money: [BaseMoney!]!
 }
 
 input FixedPriceDiscountValueInput {
@@ -4150,7 +4150,7 @@ type ImportStagedOrderLineItemStateOutput implements StagedOrderUpdateActionOutp
   state: Set!
 }
 
-type InStore implements CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface {
+type InStore implements CartDiscountQueryInterface & CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface {
   """
   This field can only be used with an access token created with the password flow or with an anonymous session.
 
@@ -4158,6 +4158,13 @@ type InStore implements CartQueryInterface & CustomerActiveCartInterface & Order
   """
   me: InStoreMe!
   shippingMethodsByCart(id: String!): [ShippingMethod!]!
+  cartDiscount(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): CartDiscount
+  cartDiscounts(where: String, sort: [String!], limit: Int, offset: Int): CartDiscountQueryResult!
   product(projectExpandedProducts: Boolean = false, localeProjection: [Locale!],
 
     "Queries for a product with specified SKU"
@@ -4580,6 +4587,7 @@ type LineItemReturnItem implements ReturnItem {
   type: String!
   lineItemId: String!
   id: String!
+  key: String
   quantity: Long!
   comment: String
   shipmentState: ReturnShipmentState!
@@ -6104,6 +6112,33 @@ input OrderCartCommand {
 
 type OrderCreated implements MessagePayload & OrderMessagePayload {
   order: Order!
+  type: String!
+}
+
+type OrderCustomFieldAdded implements MessagePayload & OrderMessagePayload {
+  name: String!
+  value: Json!
+  type: String!
+}
+
+type OrderCustomFieldChanged implements MessagePayload & OrderMessagePayload {
+  name: String!
+  value: Json!
+  previousValue: Json
+  type: String!
+}
+
+type OrderCustomFieldRemoved implements MessagePayload & OrderMessagePayload {
+  name: String!
+  type: String!
+}
+
+type OrderCustomFieldsRemoved implements MessagePayload & OrderMessagePayload {
+  type: String!
+}
+
+type OrderCustomFieldsSet implements MessagePayload & OrderMessagePayload {
+  customField: CustomFieldsType!
   type: String!
 }
 
@@ -7897,6 +7932,7 @@ type ProductVariantAvailabilityWithChannels {
 type ProductVariantDeleted implements MessagePayload {
   removedImageUrls: Set!
   variant: ProductVariant
+  staged: Boolean
   type: String!
 }
 
@@ -7953,6 +7989,7 @@ type ProjectCustomLimitsProjection {
   products: ProductLimitsProjection!
   shoppingLists: ShoppingListLimitsProjection!
   extensions: ExtensionLimitsProjection!
+  subscriptions: SubscriptionsLimitsProjection!
   productDiscounts: ProductDiscountLimitsProjection!
   cartDiscounts: CartDiscountLimitsProjection!
   orderEdits: OrderEditLimitsProjection!
@@ -8377,6 +8414,17 @@ input QuoteDraft {
   state: ReferenceInput
 }
 
+"Fields to access Quotes."
+interface QuoteQueryInterface {
+  quote(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): Quote
+  quotes(where: String, sort: [String!], limit: Int, offset: Int): QuoteQueryResult!
+}
+
 type QuoteQueryResult {
   offset: Int!
   count: Int!
@@ -8437,6 +8485,17 @@ input QuoteRequestDraft {
   custom: CustomFieldsDraft
   state: ReferenceInput
   purchaseOrderNumber: String
+}
+
+"Fields to access QuoteRequests."
+interface QuoteRequestQueryInterface {
+  quoteRequest(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): QuoteRequest
+  quoteRequests(where: String, sort: [String!], limit: Int, offset: Int): QuoteRequestQueryResult!
 }
 
 type QuoteRequestQueryResult {
@@ -9001,6 +9060,7 @@ type ReturnInfoSet implements MessagePayload & OrderMessagePayload {
 interface ReturnItem {
   type: String!
   id: String!
+  key: String
   quantity: Long!
   comment: String
   shipmentState: ReturnShipmentState!
@@ -9011,6 +9071,7 @@ interface ReturnItem {
 }
 
 input ReturnItemDraftType {
+  key: String
   quantity: Long!
   lineItemId: String
   customLineItemId: String
@@ -9020,6 +9081,7 @@ input ReturnItemDraftType {
 }
 
 type ReturnItemDraftTypeOutput {
+  key: String
   quantity: Long!
   lineItemId: String
   customLineItemId: String
@@ -9251,6 +9313,7 @@ input SearchFilterModelInput {
 type SearchIndexingConfiguration {
   products: SearchIndexingConfigurationValues
   orders: OrderSearchConfiguration
+  standalonePrices: SearchIndexingConfigurationValues
 }
 
 type SearchIndexingConfigurationValues {
@@ -9690,10 +9753,12 @@ input SetCartShippingMethod {
 
 input SetCartShippingMethodTaxAmount {
   externalTaxAmount: ExternalTaxAmountDraft
+  shippingKey: String
 }
 
 input SetCartShippingMethodTaxRate {
   externalTaxRate: ExternalTaxRateDraft
+  shippingKey: String
 }
 
 input SetCartShippingRateInput {
@@ -10279,7 +10344,8 @@ input SetOrderReturnInfo {
 input SetOrderReturnItemCustomField {
   name: String!
   value: String
-  returnItemId: String!
+  returnItemId: String
+  returnItemKey: String
 }
 
 input SetOrderReturnItemCustomType {
@@ -10287,16 +10353,19 @@ input SetOrderReturnItemCustomType {
   type: ResourceIdentifierInput
   typeKey: String
   typeId: String
-  returnItemId: String!
+  returnItemId: String
+  returnItemKey: String
 }
 
 input SetOrderReturnPaymentState {
-  returnItemId: String!
+  returnItemId: String
+  returnItemKey: String
   paymentState: ReturnPaymentState!
 }
 
 input SetOrderReturnShipmentState {
-  returnItemId: String!
+  returnItemId: String
+  returnItemKey: String
   shipmentState: ReturnShipmentState!
 }
 
@@ -11356,14 +11425,16 @@ type SetStagedOrderReturnInfoOutput implements StagedOrderUpdateActionOutput {
 input SetStagedOrderReturnItemCustomField {
   name: String!
   value: String
-  returnItemId: String!
+  returnItemId: String
+  returnItemKey: String
 }
 
 type SetStagedOrderReturnItemCustomFieldOutput implements StagedOrderUpdateActionOutput {
   type: String!
   name: String!
   value: Json
-  returnItemId: String!
+  returnItemId: String
+  returnItemKey: String
 }
 
 input SetStagedOrderReturnItemCustomType {
@@ -11371,34 +11442,40 @@ input SetStagedOrderReturnItemCustomType {
   type: ResourceIdentifierInput
   typeKey: String
   typeId: String
-  returnItemId: String!
+  returnItemId: String
+  returnItemKey: String
 }
 
 type SetStagedOrderReturnItemCustomTypeOutput implements StagedOrderUpdateActionOutput {
   type: String!
   custom: CustomFieldsCommand!
-  returnItemId: String!
+  returnItemId: String
+  returnItemKey: String
 }
 
 input SetStagedOrderReturnPaymentState {
-  returnItemId: String!
+  returnItemId: String
+  returnItemKey: String
   paymentState: ReturnPaymentState!
 }
 
 type SetStagedOrderReturnPaymentStateOutput implements StagedOrderUpdateActionOutput {
   type: String!
-  returnItemId: String!
+  returnItemId: String
+  returnItemKey: String
   paymentState: ReturnPaymentState!
 }
 
 input SetStagedOrderReturnShipmentState {
-  returnItemId: String!
+  returnItemId: String
+  returnItemKey: String
   shipmentState: ReturnShipmentState!
 }
 
 type SetStagedOrderReturnShipmentStateOutput implements StagedOrderUpdateActionOutput {
   type: String!
-  returnItemId: String!
+  returnItemId: String
+  returnItemKey: String
   shipmentState: ReturnShipmentState!
 }
 
@@ -12703,6 +12780,10 @@ input SubscriptionUpdateAction {
   setChanges: SetSubscriptionChanges
   setKey: SetSubscriptionKey
   setMessages: SetSubscriptionMessages
+}
+
+type SubscriptionsLimitsProjection {
+  maxSubscriptions: Limit!
 }
 
 type SuggestResult {
