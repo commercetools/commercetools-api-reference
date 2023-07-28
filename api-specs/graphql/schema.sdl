@@ -180,6 +180,7 @@ input AddChannelRoles {
   roles: [ChannelRole!]!
 }
 
+
 input AddCustomerAddress {
   address: AddressInput!
 }
@@ -656,7 +657,7 @@ input ApplyStagedChanges {
 }
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-type AsAssociate implements CartQueryInterface & OrderQueryInterface & QuoteQueryInterface & QuoteRequestQueryInterface {
+type AsAssociate implements CartQueryInterface & OrderQueryInterface {
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   cart(id: String!): Cart
 
@@ -1080,6 +1081,17 @@ type AzureServiceBusDestination implements Destination {
 
 input AzureServiceBusDestinationInput {
   connectionString: String!
+}
+
+input CartDiscountValueBaseMoneyInput {
+  centPrecision: MoneyInput
+  highPrecision: HighPrecisionMoneyInput
+
+  "CurrencyCode and centAmount are deprecated. Please use `Money`(centPrecision) or `HighPrecisionMoney`(highPrecision)."
+  currencyCode: Currency
+
+  "CurrencyCode and centAmount are deprecated. Please use `Money`(centPrecision) or `HighPrecisionMoney`(highPrecision)."
+  centAmount: Long
 }
 
 interface BaseMoney {
@@ -1606,17 +1618,6 @@ interface CartDiscountValue {
   type: String!
 }
 
-input CartDiscountValueBaseMoneyInput {
-  centPrecision: MoneyInput
-  highPrecision: HighPrecisionMoneyInput
-
-  "CurrencyCode and centAmount are deprecated. Please use `Money`(centPrecision) or `HighPrecisionMoney`(highPrecision)."
-  currencyCode: Currency
-
-  "CurrencyCode and centAmount are deprecated. Please use `Money`(centPrecision) or `HighPrecisionMoney`(highPrecision)."
-  centAmount: Long
-}
-
 input CartDiscountValueInput {
   relative: RelativeDiscountValueInput
   absolute: AbsoluteDiscountValueInput
@@ -1666,14 +1667,14 @@ type CartLimitsProjection {
 }
 
 enum CartOrigin {
-  "The cart was created by the customer. This is the default value"
-  Customer
+  "The cart was created by our platform and belongs to a Quote. BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  Quote
 
   "The cart was created by the merchant on behalf of the customer"
   Merchant
 
-  "The cart was created by our platform and belongs to a Quote. BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-  Quote
+  "The cart was created by the customer. This is the default value"
+  Customer
 }
 
 "Fields to access carts. Includes direct access to a single cart and searching for carts."
@@ -3974,8 +3975,8 @@ input FieldTypeSetTypeDraft {
 }
 
 type FixedPriceDiscountValue implements CartDiscountValue {
-  type: String!
   money: [BaseMoney!]!
+  type: String!
 }
 
 input FixedPriceDiscountValueInput {
@@ -4150,7 +4151,7 @@ type ImportStagedOrderLineItemStateOutput implements StagedOrderUpdateActionOutp
   state: Set!
 }
 
-type InStore implements CartDiscountQueryInterface & CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface {
+type InStore implements CartQueryInterface & CustomerActiveCartInterface & OrderQueryInterface & CustomerQueryInterface & ShippingMethodsByCartInterface & MeFieldInterface {
   """
   This field can only be used with an access token created with the password flow or with an anonymous session.
 
@@ -4158,13 +4159,6 @@ type InStore implements CartDiscountQueryInterface & CartQueryInterface & Custom
   """
   me: InStoreMe!
   shippingMethodsByCart(id: String!): [ShippingMethod!]!
-  cartDiscount(
-    "Queries with specified ID"
-    id: String,
-
-    "Queries with specified key"
-    key: String): CartDiscount
-  cartDiscounts(where: String, sort: [String!], limit: Int, offset: Int): CartDiscountQueryResult!
   product(projectExpandedProducts: Boolean = false, localeProjection: [Locale!],
 
     "Queries for a product with specified SKU"
@@ -6115,33 +6109,6 @@ type OrderCreated implements MessagePayload & OrderMessagePayload {
   type: String!
 }
 
-type OrderCustomFieldAdded implements MessagePayload & OrderMessagePayload {
-  name: String!
-  value: Json!
-  type: String!
-}
-
-type OrderCustomFieldChanged implements MessagePayload & OrderMessagePayload {
-  name: String!
-  value: Json!
-  previousValue: Json
-  type: String!
-}
-
-type OrderCustomFieldRemoved implements MessagePayload & OrderMessagePayload {
-  name: String!
-  type: String!
-}
-
-type OrderCustomFieldsRemoved implements MessagePayload & OrderMessagePayload {
-  type: String!
-}
-
-type OrderCustomFieldsSet implements MessagePayload & OrderMessagePayload {
-  customField: CustomFieldsType!
-  type: String!
-}
-
 type OrderCustomLineItemAdded implements MessagePayload & OrderMessagePayload {
   customLineItem: CustomLineItem!
   type: String!
@@ -7932,7 +7899,6 @@ type ProductVariantAvailabilityWithChannels {
 type ProductVariantDeleted implements MessagePayload {
   removedImageUrls: Set!
   variant: ProductVariant
-  staged: Boolean
   type: String!
 }
 
@@ -7989,7 +7955,6 @@ type ProjectCustomLimitsProjection {
   products: ProductLimitsProjection!
   shoppingLists: ShoppingListLimitsProjection!
   extensions: ExtensionLimitsProjection!
-  subscriptions: SubscriptionsLimitsProjection!
   productDiscounts: ProductDiscountLimitsProjection!
   cartDiscounts: CartDiscountLimitsProjection!
   orderEdits: OrderEditLimitsProjection!
@@ -8414,17 +8379,6 @@ input QuoteDraft {
   state: ReferenceInput
 }
 
-"Fields to access Quotes."
-interface QuoteQueryInterface {
-  quote(
-    "Queries with specified ID"
-    id: String,
-
-    "Queries with specified key"
-    key: String): Quote
-  quotes(where: String, sort: [String!], limit: Int, offset: Int): QuoteQueryResult!
-}
-
 type QuoteQueryResult {
   offset: Int!
   count: Int!
@@ -8485,17 +8439,6 @@ input QuoteRequestDraft {
   custom: CustomFieldsDraft
   state: ReferenceInput
   purchaseOrderNumber: String
-}
-
-"Fields to access QuoteRequests."
-interface QuoteRequestQueryInterface {
-  quoteRequest(
-    "Queries with specified ID"
-    id: String,
-
-    "Queries with specified key"
-    key: String): QuoteRequest
-  quoteRequests(where: String, sort: [String!], limit: Int, offset: Int): QuoteRequestQueryResult!
 }
 
 type QuoteRequestQueryResult {
@@ -9313,7 +9256,6 @@ input SearchFilterModelInput {
 type SearchIndexingConfiguration {
   products: SearchIndexingConfigurationValues
   orders: OrderSearchConfiguration
-  standalonePrices: SearchIndexingConfigurationValues
 }
 
 type SearchIndexingConfigurationValues {
@@ -12780,10 +12722,6 @@ input SubscriptionUpdateAction {
   setChanges: SetSubscriptionChanges
   setKey: SetSubscriptionKey
   setMessages: SetSubscriptionMessages
-}
-
-type SubscriptionsLimitsProjection {
-  maxSubscriptions: Limit!
 }
 
 type SuggestResult {
