@@ -1,90 +1,120 @@
-type:
-  baseDomain:
-    resourceType: Extension
-    resourceQueryType: ExtensionPagedQueryResponse
-    resourceDraft: ExtensionDraft
-    whereExample: 'key = "product-extension"'
-    sortExample: createdAt asc
-(updateable): Extension
-(deleteable): Extension
-(createable): ExtensionDraft
+type: base
 description: Extend the behavior of an API with your business logic
 get:
+  displayName: Query Extensions
   securedBy: [oauth_2_0: { scopes: ['manage_extensions:{projectKey}'] }]
+  is:
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+    - query:
+        whereExample: 'key = "customer-extension"'
   responses:
     200:
       body:
         application/json:
+          type: ExtensionPagedQueryResponse
           example: !include ../examples/extensions.example.json
 post:
+  displayName: Create Extension
   securedBy: [oauth_2_0: { scopes: ['manage_extensions:{projectKey}'] }]
+  is:
+    - deprecatable201
   body:
     application/json:
+      type: ExtensionDraft
       example: !include ../examples/extension-create.example.json
   responses:
     201:
       body:
         application/json:
+          type: Extension
           example: !include ../examples/extension.example.json
 /key={key}:
   (methodName): withKey
-  type:
-    baseResource:
-      uriParameterName: key
-      resourceType: Extension
-      resourceUpdateType: ExtensionUpdate
+  type: base
+  uriParameters:
+    key:
+      type: string
+      description: '`key` of the [Extension](ctp:api:type:Extension).'
   get:
+    displayName: Get Extension by key
     securedBy: [oauth_2_0: { scopes: ['manage_extensions:{projectKey}'] }]
     responses:
       200:
         body:
           application/json:
+            type: Extension
             example: !include ../examples/extension.example.json
   post:
+    displayName: Update Extension by key
     securedBy: [oauth_2_0: { scopes: ['manage_extensions:{projectKey}'] }]
+    is:
+      - conflicting
+      - deprecatable200
     body:
       application/json:
+        type: ExtensionUpdate
         example: !include ../examples/extension-update.example.json
     responses:
       200:
         body:
           application/json:
+            type: Extension
             example: !include ../examples/extension.example.json
   delete:
+    displayName: Delete Extension by key
     securedBy: [oauth_2_0: { scopes: ['manage_extensions:{projectKey}'] }]
+    is:
+      - versioned
+      - conflicting
     responses:
       200:
         body:
           application/json:
+            type: Extension
             example: !include ../examples/extension.example.json
 /{ID}:
   (methodName): withId
-  type:
-    baseResource:
-      uriParameterName: ID
-      resourceType: Extension
-      resourceUpdateType: ExtensionUpdate
+  type: base
+  uriParameters:
+    ID:
+      type: string
+      description: '`id` of the [Extension](ctp:api:type:Extension).'
   get:
+    displayName: Get Extension by ID
     securedBy: [oauth_2_0: { scopes: ['manage_extensions:{projectKey}'] }]
     responses:
       200:
         body:
           application/json:
+            type: Extension
             example: !include ../examples/extension.example.json
   post:
+    displayName: Update Extension by ID
     securedBy: [oauth_2_0: { scopes: ['manage_extensions:{projectKey}'] }]
+    is:
+      - conflicting
+      - deprecatable200
     body:
       application/json:
+        type: ExtensionUpdate
         example: !include ../examples/extension-update.example.json
     responses:
       200:
         body:
           application/json:
+            type: Extension
             example: !include ../examples/extension.example.json
   delete:
+    displayName: Delete Extension by ID
     securedBy: [oauth_2_0: { scopes: ['manage_extensions:{projectKey}'] }]
+    is:
+      - versioned
+      - conflicting
     responses:
       200:
         body:
           application/json:
+            type: Extension
             example: !include ../examples/extension.example.json

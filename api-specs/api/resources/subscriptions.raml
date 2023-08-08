@@ -1,96 +1,126 @@
-type:
-  baseDomain:
-    resourceType: Subscription
-    resourceQueryType: SubscriptionPagedQueryResponse
-    resourceDraft: SubscriptionDraft
-    whereExample: 'key = "product-subscription"'
-    sortExample: createdAt asc
-(updateable): Subscription
-(deleteable): Subscription
-(createable): SubscriptionDraft
+type: base
 description:
   Subscriptions allow you to be notified of new messages or changes via a
   Message Queue of your choice
 get:
+  displayName: Query Subscriptions
   securedBy: [oauth_2_0: { scopes: ['manage_subscriptions:{projectKey}'] }]
+  is:
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+    - query:
+        whereExample: 'key = "product-subscription"'
   responses:
     200:
       body:
         application/json:
+          type: SubscriptionPagedQueryResponse
           example: !include ../examples/subscriptions.example.json
 post:
+  displayName: Create Subscription
   securedBy: [oauth_2_0: { scopes: ['manage_subscriptions:{projectKey}'] }]
+  is:
+    - deprecatable201
   description: |
     A test message is sent to ensure the correct configuration of the Destination. If the message cannot be delivered, the Subscription will not be created. The payload of the test message is a notification of type [ResourceCreated](/../api/projects/subscriptions#resourcecreateddeliverypayload) for the `resourceTypeId` `subscription`.
   body:
     application/json:
+      type: SubscriptionDraft
       example: !include ../examples/subscription-create.example.json
   responses:
     201:
       body:
         application/json:
+          type: Subscription
           example: !include ../examples/subscription.example.json
 /key={key}:
   (methodName): withKey
-  type:
-    baseResource:
-      uriParameterName: key
-      resourceType: Subscription
-      resourceUpdateType: SubscriptionUpdate
+  type: base
+  uriParameters:
+    key:
+      type: string
+      description: '`key` of the [Subscription](ctp:api:type:Subscription).'
   get:
+    displayName: Get Subscription by key
     securedBy: [oauth_2_0: { scopes: ['manage_subscriptions:{projectKey}'] }]
     responses:
       200:
         body:
           application/json:
+            type: Subscription
             example: !include ../examples/subscription.example.json
   post:
+    displayName: Update Subscription by key
     securedBy: [oauth_2_0: { scopes: ['manage_subscriptions:{projectKey}'] }]
+    is:
+      - conflicting
+      - deprecatable200
     body:
       application/json:
+        type: SubscriptionUpdate
         example: !include ../examples/subscription-update.example.json
     responses:
       200:
         body:
           application/json:
+            type: Subscription
             example: !include ../examples/subscription.example.json
   delete:
+    displayName: Delete Subscription by key
     securedBy: [oauth_2_0: { scopes: ['manage_subscriptions:{projectKey}'] }]
+    is:
+      - versioned
+      - conflicting
     responses:
       200:
         body:
           application/json:
+            type: Subscription
             example: !include ../examples/subscription.example.json
 /{ID}:
   (methodName): withId
-  type:
-    baseResource:
-      uriParameterName: ID
-      resourceType: Subscription
-      resourceUpdateType: SubscriptionUpdate
+  type: base
+  uriParameters:
+    ID:
+      type: string
+      description: '`id` of the [Subscription](ctp:api:type:Subscription).'
   get:
+    displayName: Get Subscription by ID
     securedBy: [oauth_2_0: { scopes: ['manage_subscriptions:{projectKey}'] }]
     responses:
       200:
         body:
           application/json:
+            type: Subscription
             example: !include ../examples/subscription.example.json
   post:
+    displayName: Update Subscription by ID
     securedBy: [oauth_2_0: { scopes: ['manage_subscriptions:{projectKey}'] }]
+    is:
+      - conflicting
+      - deprecatable200
     body:
       application/json:
+        type: SubscriptionUpdate
         example: !include ../examples/subscription-update.example.json
     responses:
       200:
         body:
           application/json:
+            type: Subscription
             example: !include ../examples/subscription.example.json
   delete:
+    displayName: Update Subscription by ID
     securedBy: [oauth_2_0: { scopes: ['manage_subscriptions:{projectKey}'] }]
+    is:
+      - versioned
+      - conflicting
     responses:
       200:
         body:
           application/json:
+            type: Subscription
             example: !include ../examples/subscription.example.json
   /health:
     (methodName): withIdHealth
