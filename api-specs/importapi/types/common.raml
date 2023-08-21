@@ -341,16 +341,15 @@ types:
       - key-value-document
   ProcessingState:
     description: |
-      Every [Import Operation](/import-operation) is assigned with one of the following states.
+      Every [Import Operation](/import-operation) is assigned one of the following states.
     (annotations.enumDescriptions):
-      processing: Initial state assigned if the format (JSON structure and fields) meets the Import API's specification. The resource import is in progress.
-      imported: Resource was successfully imported.
-      unresolved: Import Request contains key references to resources that are currently not present in commercetools Composable Commerce.
-      validationFailed: Either the request payload is missing the data as per the Import API's specification or even though the references were resolved, the data does not meet the validation constraints.
-      waitForMasterVariant:
-        Waiting for a master variant to arrive. The Product Import has required
-        attributes and thus a master variant that provides those is required.
-      rejected: Resource could not be imported. References were resolved, but the system could not import the data due to an internal server error and the limit of retry has been reached.
+      processing: The initial state assigned if the request payload (JSON structure and fields) meets Import API specifications. The resource import is in progress.
+      imported: The resource was successfully imported.
+      unresolved: The import request contains [KeyReferences](ctp:import:type:KeyReference) to resources that do not exist in your Composable Commerce Project.
+      validationFailed: Either the request payload is missing the data as per Import API specifications, or even though the references were resolved, the data does not meet validation constraints.
+      waitForMasterVariant: Products must have at least one Product Variant, also known as the Master Variant. If you import a Product without a Master Variant, the import request will have this status until another import request includes Master Variant data for the Product.
+      rejected: The resource could not be imported. References were resolved, but the system could not import the data due to an internal server error and the retry limit was reached.
+      canceled: The import request was canceled and the resource was not imported.
     type: string
     enum:
       - processing
@@ -359,6 +358,7 @@ types:
       - waitForMasterVariant
       - imported
       - rejected
+      - canceled
   Address:
     properties:
       id?: string
