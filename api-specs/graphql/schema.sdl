@@ -8287,6 +8287,8 @@ type QueryLimitsProjection {
 type Quote implements Versioned {
   customerRef: Reference
   customer: Customer
+  customerGroupRef: Reference
+  customerGroup: CustomerGroup
   lineItems(
     "Queries with specified ID"
     id: String): [LineItem!]!
@@ -8332,6 +8334,23 @@ type Quote implements Versioned {
   lastModifiedBy: Initiator
 }
 
+type QuoteCreated implements MessagePayload {
+  quote: Quote!
+  type: String!
+}
+
+type QuoteCustomerChanged implements MessagePayload {
+  customerRef: Reference!
+  previousCustomerRef: Reference!
+  customer: Customer
+  previousCustomer: Customer
+  type: String!
+}
+
+type QuoteDeleted implements MessagePayload {
+  type: String!
+}
+
 input QuoteDraft {
   key: String
   stagedQuote: ResourceIdentifierInput
@@ -8362,9 +8381,16 @@ type QuoteQueryResult {
   results: [Quote!]!
 }
 
+type QuoteRenegotiationRequested implements MessagePayload {
+  buyerComment: String
+  type: String!
+}
+
 type QuoteRequest implements Versioned {
   customerRef: Reference
   customer: Customer
+  customerGroupRef: Reference
+  customerGroup: CustomerGroup
   lineItems(
     "Queries with specified ID"
     id: String): [LineItem!]!
@@ -8403,6 +8429,23 @@ type QuoteRequest implements Versioned {
   lastModifiedAt: DateTime!
   createdBy: Initiator
   lastModifiedBy: Initiator
+}
+
+type QuoteRequestCreated implements MessagePayload {
+  quoteRequest: QuoteRequest!
+  type: String!
+}
+
+type QuoteRequestCustomerChanged implements MessagePayload {
+  customerRef: Reference!
+  previousCustomerRef: Reference!
+  customer: Customer
+  previousCustomer: Customer
+  type: String!
+}
+
+type QuoteRequestDeleted implements MessagePayload {
+  type: String!
 }
 
 input QuoteRequestDraft {
@@ -8445,6 +8488,21 @@ enum QuoteRequestState {
   UnderReview
 }
 
+type QuoteRequestStateChanged implements MessagePayload {
+  quoteRequestState: QuoteRequestState!
+  oldQuoteRequestState: QuoteRequestState!
+  type: String!
+}
+
+type QuoteRequestStateTransition implements MessagePayload {
+  stateRef: Reference!
+  oldStateRef: Reference
+  force: Boolean!
+  state: State
+  oldState: State
+  type: String!
+}
+
 input QuoteRequestUpdateAction {
   changeCustomer: ChangeQuoteRequestCustomer
   changeQuoteRequestState: ChangeQuoteRequestState
@@ -8461,6 +8519,21 @@ enum QuoteState {
   Pending
   RenegotiationAddressed
   Withdrawn
+}
+
+type QuoteStateChanged implements MessagePayload {
+  quoteState: QuoteState!
+  oldQuoteState: QuoteState!
+  type: String!
+}
+
+type QuoteStateTransition implements MessagePayload {
+  stateRef: Reference!
+  oldStateRef: Reference
+  force: Boolean!
+  state: State
+  oldState: State
+  type: String!
 }
 
 input QuoteUpdateAction {
@@ -12268,6 +12341,15 @@ type StagedQuote implements Versioned {
   lastModifiedBy: Initiator
 }
 
+type StagedQuoteCreated implements MessagePayload {
+  stagedQuote: StagedQuote!
+  type: String!
+}
+
+type StagedQuoteDeleted implements MessagePayload {
+  type: String!
+}
+
 input StagedQuoteDraft {
   key: String
   quoteRequest: ResourceIdentifierInput
@@ -12287,10 +12369,30 @@ type StagedQuoteQueryResult {
   results: [StagedQuote!]!
 }
 
+type StagedQuoteSellerCommentSet implements MessagePayload {
+  sellerComment: String
+  type: String!
+}
+
 enum StagedQuoteState {
   Closed
   InProgress
   Sent
+}
+
+type StagedQuoteStateChanged implements MessagePayload {
+  stagedQuoteState: StagedQuoteState!
+  oldStagedQuoteState: StagedQuoteState!
+  type: String!
+}
+
+type StagedQuoteStateTransition implements MessagePayload {
+  stateRef: Reference!
+  oldStateRef: Reference
+  force: Boolean!
+  state: State
+  oldState: State
+  type: String!
 }
 
 input StagedQuoteUpdateAction {
@@ -12300,6 +12402,11 @@ input StagedQuoteUpdateAction {
   setCustomType: SetStagedQuoteCustomType
   setValidTo: SetStagedQuoteValidTo
   transitionState: TransitionStagedQuoteState
+}
+
+type StagedQuoteValidToSet implements MessagePayload {
+  validTo: DateTime
+  type: String!
 }
 
 type StagedStandalonePrice {
