@@ -41941,6 +41941,7 @@ components:
               StandalonePriceExternalDiscountSet: '#/components/schemas/StandalonePriceExternalDiscountSetMessage'
               StandalonePriceKeySet: '#/components/schemas/StandalonePriceKeySetMessage'
               StandalonePriceStagedChangesApplied: '#/components/schemas/StandalonePriceStagedChangesAppliedMessage'
+              StandalonePriceStagedChangesRemoved: '#/components/schemas/StandalonePriceStagedChangesRemovedMessage'
               StandalonePriceTierAdded: '#/components/schemas/StandalonePriceTierAddedMessage'
               StandalonePriceTierRemoved: '#/components/schemas/StandalonePriceTierRemovedMessage'
               StandalonePriceTiersSet: '#/components/schemas/StandalonePriceTiersSetMessage'
@@ -46062,6 +46063,42 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             stagedChanges:
               $ref: '#/components/schemas/StagedStandalonePrice'
+    StandalonePriceStagedChangesRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - stagedChanges
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            stagedChanges:
+              $ref: '#/components/schemas/StagedStandalonePrice'
     StandalonePriceTierAddedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -47484,6 +47521,7 @@ components:
           StandalonePriceExternalDiscountSet: '#/components/schemas/StandalonePriceExternalDiscountSetMessagePayload'
           StandalonePriceKeySet: '#/components/schemas/StandalonePriceKeySetMessagePayload'
           StandalonePriceStagedChangesApplied: '#/components/schemas/StandalonePriceStagedChangesAppliedMessagePayload'
+          StandalonePriceStagedChangesRemoved: '#/components/schemas/StandalonePriceStagedChangesRemovedMessagePayload'
           StandalonePriceTierAdded: '#/components/schemas/StandalonePriceTierAddedMessagePayload'
           StandalonePriceTierRemoved: '#/components/schemas/StandalonePriceTierRemovedMessagePayload'
           StandalonePriceTiersSet: '#/components/schemas/StandalonePriceTiersSetMessagePayload'
@@ -48934,6 +48972,17 @@ components:
             oldKey:
               type: "string"
     StandalonePriceStagedChangesAppliedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - stagedChanges
+          properties:
+            type:
+              type: "string"
+            stagedChanges:
+              $ref: '#/components/schemas/StagedStandalonePrice'
+    StandalonePriceStagedChangesRemovedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
         - type: "object"
@@ -59179,6 +59228,13 @@ components:
               $ref: '#/components/schemas/StateResourceIdentifier'
             force:
               type: "boolean"
+    StagedPriceDraft:
+      type: "object"
+      required:
+        - value
+      properties:
+        value:
+          $ref: '#/components/schemas/TypedMoneyDraft'
     StagedStandalonePrice:
       type: "object"
       required:
@@ -59278,6 +59334,8 @@ components:
           $ref: '#/components/schemas/DiscountedPriceDraft'
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
+        staged:
+          $ref: '#/components/schemas/StagedPriceDraft'
         active:
           type: "boolean"
     StandalonePricePagedQueryResponse:
@@ -59349,6 +59407,7 @@ components:
           changeActive: '#/components/schemas/StandalonePriceChangeActiveAction'
           changeValue: '#/components/schemas/StandalonePriceChangeValueAction'
           removePriceTier: '#/components/schemas/StandalonePriceRemovePriceTierAction'
+          removeStagedChanges: '#/components/schemas/StandalonePriceRemoveStagedChangesAction'
           setCustomField: '#/components/schemas/StandalonePriceSetCustomFieldAction'
           setCustomType: '#/components/schemas/StandalonePriceSetCustomTypeAction'
           setDiscountedPrice: '#/components/schemas/StandalonePriceSetDiscountedPriceAction'
@@ -59416,6 +59475,13 @@ components:
             tierMinimumQuantity:
               type: "integer"
               format: "int64"
+    StandalonePriceRemoveStagedChangesAction:
+      allOf:
+        - $ref: '#/components/schemas/StandalonePriceUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
     StandalonePriceSetCustomFieldAction:
       allOf:
         - $ref: '#/components/schemas/StandalonePriceUpdateAction'
