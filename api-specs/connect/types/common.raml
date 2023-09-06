@@ -52,17 +52,24 @@ types:
   ConnectorConfigurationApplication:
     example: !include ../examples/connector/ConnectorConfigurationApplication.json
     description: |
-      Describes the required configuration for a Connector.
+      The configuration of a Connect application. These values are automatically obtained from the connect.yaml file in the GitHub repository.
     properties:
       applicationName:
         type: string
-        description: Name of the application. Should match the value of `name` within the connect.yaml file of the Connect application.
+        description: Name of the Connect application.
+      applicationType:
+        type: string
+        description: The Connect application type.
+        enum:
+          - service
+          - event
+          - job
       standardConfiguration:
         type: ConfigurationKey[]
-        description: Contains the name and description of keys saved as plain text.
+        description: Contains the name and description of standard environment variables.
       securedConfiguration:
         type: ConfigurationKey[]
-        description: Contains the name and description of secret keys.
+        description: Contains the name and description of secret environment variables.
   DeploymentConfigurationApplication:
     description: |
       Describes the configuration set of a given application.
@@ -102,22 +109,58 @@ types:
       schedule?:
         type: string
         description: Cron schedule for job applications.
+  ConnectorReportEntryType:
+    type: string
+    description: |
+      The type of message being reported.
+    (annotations.enumDescriptions):
+      Information: Indicates information returned during the publish/preview task.
+      Warning: Indicates an issue that arose during the publish/preview task.
+      Error: Indicates a crash or failure to complete the publish/preview task.
+    enum:
+      - Information
+      - Warning
+      - Error
+  ConnectorReportEntry:
+    description: Describes an information, error, or warning notice.
+    example: !include ../examples/connector/ConnectorReportEntry.json
+    properties:
+      type:
+        type: ConnectorReportEntryType
+        description: The report entry type.
+      title:
+        type: string
+        description: The title of the report entry.
+      message?:
+        type: string
+        description: The message related to the report entry.
+      createdAt:
+        type: datetime
+        description: When the report entry was created.
+  ConnectorReport:
+    description: Contains report entries for publish/preview requests.
+    properties:
+      entries:
+        type: ConnectorReportEntry[]
+        description: Contains information, error, and warning notices.
   ConnectorStatus:
     type: string
     description: |
       Indicates the current status of the ConnectorStaged.
     (annotations.enumDescriptions):
       Draft: The ConnectorStaged is currently a draft.
+      Processing: The ConnectorStaged publish request is being processed.
       ReadyForCertification: The ConnectorStaged is ready to be certified.
       InCertification: The ConnectorStaged is in the certification process.
-      FeedbackRequired: The ConnectorStaged requires action from the creator to continue with the certification process.
-      Certified: The ConnectorStaged is certified.
+      Published: The ConnectorStaged was published.
+      Failed: The ConnectorStaged was not published.
     enum:
       - Draft
+      - Processing
       - ReadyForCertification
       - InCertification
-      - FeedbackRequired
-      - Certified
+      - Published
+      - Failed
   ConnectorReference:
     description: Reference to a Connector. Either `id` or `key` is required.
     example: !include ../examples/connector/ConnectorReference.json
@@ -139,7 +182,7 @@ types:
   Creator:
     example: !include ../examples/connector/Creator.json
     description: |
-      Details of the individual or organization who developed the Connector. This information is used to facilitate communication during the certification process.
+      Details of the individual or organization who developed the Connector.
     properties:
       name?:
         type: string
@@ -149,13 +192,19 @@ types:
         description: Title of the person who owns the Connector.
       email:
         type: string
-        description: Contact email address of the Creator.
+        description: Contact email address of the creator.
       company?:
         type: string
         description: Name of the company that owns the Connector.
-      noOfDevelopers?:
+      logoUrl?:
+        type: string
+        description: URL to a logo image used to represent the creator.
+      noOfContributors?:
         type: integer
-        description: Number of developers currently working for the company.
+        description: Number of contributors currently working for the company.
+      supportUrl?:
+        type: string
+        description: URL to the support website of the Connector.
   DeploymentConnector:
     example: !include ../examples/deployment/DeploymentConnector.json
     description: The details of the deployed [Connector](ctp:connect:type:Connector).
@@ -178,19 +227,81 @@ types:
         type: string
         description: Description of the Connector.
       creator:
-        type: Creator
+        type: DeploymentCreator
         description: Owner of the Connector.
       repository:
         type: Repository
-        description: Details of the GitHub repository that contains the Connect application.
+        description: Details of the GitHub repository that contains the Connect applications.
+      certified:
+        type: boolean
+        description: If `true`, the Connector is certified.
+  DeploymentCreator:
+    example: !include ../examples/deployment/DeploymentCreator.json
+    description: The details of the deployed [DeploymentConnector](ctp:connect:type:DeploymentConnector) creator.
+    type: object
+    properties:
+      name?:
+        type: string
+        description: Name of the person who owns the Connector.
+      title?:
+        type: string
+        description: Title of the person who owns the Connector.
+      email:
+        type: string
+        description: Contact email address of the creator.
+      company?:
+        type: string
+        description: Name of the company that owns the Connector.
+      noOfContributors?:
+        type: integer
+        description: Number of contributors currently working for the company.
+  DeploymentReportEntryType:
+    type: string
+    description: |
+      The type of message being reported.
+    (annotations.enumDescriptions):
+      Information: Indicates information returned during the deployment process.
+      Warning: Indicates an issue that arose during the deployment process.
+      Error: Indicates a crash or failure to complete the deployment process.
+    enum:
+      - Information
+      - Warning
+      - Error
+  DeploymentReportEntry:
+    description: Describes an information, error, or warning in the deployment report.
+    properties:
+      type:
+        type: DeploymentReportEntryType
+        description: The report entry type.
+      title:
+        type: string
+        description: The title of the report entry.
+      message?:
+        type: string
+        description: The message related to the report entry.
+      application?:
+        type: string
+        description: The name of the Connect application related to the entry.
+      createdAt:
+        type: datetime
+        description: When the report entry was created.
+  DeploymentReport:
+    description: Describes a report of the Connector deployment process.
+    properties:
+      entries:
+        type: DeploymentReportEntry[]
+        description: Contains informations, errors and warnings about the Connector deployment.
   DeploymentDetailsBuild:
     example: !include ../examples/deployment/DeploymentDetailsBuild.json
     properties:
       id:
         type: string
         description: The build execution id of the deployed application.
+      report?:
+        type: DeploymentReport
+        description: The build report of the deployed Connector.
   DeploymentDetails:
-    description: The build and runtime details of deployed applications.
+    description: Additional details about the deployed Connector.
     type: object
     properties:
       build:
@@ -217,7 +328,7 @@ types:
       - UndeployFailed
   DeploymentLogSeverity:
     type: string
-    description: Indicates the severity of the log message.
+    description: The severity of the log message.
     (annotations.enumDescriptions):
       DEFAULT: The log entry has no assigned severity level.
       DEBUG: Debug or trace information.
@@ -248,7 +359,7 @@ types:
   Repository:
     example: !include ../examples/connector/Repository.json
     description: |
-      Details of the GitHub repository that contains the Connect application.
+      Details of the GitHub repository that contains the Connect applications.
     properties:
       url:
         type: string
