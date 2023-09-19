@@ -91,6 +91,112 @@ type: base
       businessUnitKey:
         type: string
         description: '`key` of the [BusinessUnit](ctp:api:type:BusinessUnit).'
+    /approval-rules:
+      type:
+        baseDomain:
+          resourceType: ApprovalRule
+          resourceDraft: ApprovalRuleDraft
+      (createable): ApprovalRuleDraft
+      (updateable): ApprovalRule
+      description: 'An Approval Rule describes the conditions determining whether an Order that matches the predicate needs approval by an approver before it can be ordered by an requester within a Business Unit.'
+      post:
+        securedBy:
+          [oauth_2_0: { scopes: ['manage_approval_rules:{projectKey}'] }]
+        body:
+          application/json:
+            example: !include ../examples/approval-rule-create.example.json
+        responses:
+          201:
+            body:
+              application/json:
+                example: !include ../examples/approval-rule.example.json
+      /{ID}:
+        (methodName): withId
+        type:
+          baseResource:
+            uriParameterName: ID
+            resourceType: ApprovalRule
+            resourceUpdateType: ApprovalRuleUpdate
+        get:
+          securedBy:
+            [oauth_2_0: { scopes: ['view_approval_rules:{projectKey}'] }]
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/approval-rule.example.json
+        post:
+          securedBy:
+            [oauth_2_0: { scopes: ['manage_approval_rules:{projectKey}'] }]
+          body:
+            application/json:
+              example: !include ../examples/approval-rule-update.example.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/approval-rule.example.json
+      /key={key}:
+        (methodName): withKey
+        type:
+          baseResource:
+            uriParameterName: key
+            resourceType: ApprovalRule
+            resourceUpdateType: ApprovalRuleUpdate
+        get:
+          securedBy:
+            [oauth_2_0: { scopes: ['view_approval_rules:{projectKey}'] }]
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/approval-rule.example.json
+        post:
+          securedBy:
+            [oauth_2_0: { scopes: ['manage_approval_rules:{projectKey}'] }]
+          body:
+            application/json:
+              example: !include ../examples/approval-rule-update.example.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/approval-rule.example.json
+    /approval-flows:
+      type:
+        baseDomain:
+          resourceType: ApprovalFlow
+          resourceDraft: ApprovalFlowDraft
+      (updateable): ApprovalFlow
+      description: |
+        Approval Flows connect Orders that require approval with the Approval Rules that initiate the approval requirement.
+        They represent the approval process by including information about approvals, rejections, and all involved parties.
+      /{ID}:
+        (methodName): withId
+        type:
+          baseResource:
+            uriParameterName: ID
+            resourceType: ApprovalFlow
+            resourceUpdateType: ApprovalFlowUpdate
+        get:
+          securedBy:
+            [oauth_2_0: { scopes: ['view_approval_flows:{projectKey}'] }]
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/approval-flow.example.json
+        post:
+          securedBy:
+            [oauth_2_0: { scopes: ['manage_approval_flows:{projectKey}'] }]
+          body:
+            application/json:
+              example: !include ../examples/approval-flow-update.example.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/approval-flow-update-response.example.json
     /carts:
       type:
         baseDomain:

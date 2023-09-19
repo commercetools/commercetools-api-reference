@@ -1,0 +1,73 @@
+#%RAML 1.0 DataType
+(package): ApprovalFlow
+(docs-uri): https://docs.commercetools.com/api/projects/approvalflows#approvalflow
+(beta): true
+type: BaseResource
+displayName: ApprovalFlow
+properties:
+  id:
+    (identifier): true
+    type: string
+    description: |
+      Unique identifier of the Approval Flow.
+  version:
+    type: number
+    format: int64
+    description: |
+      Current version of the Approval Flow.
+  createdAt:
+    type: datetime
+    description: |
+      Date and time (UTC) the Approval Flow was initially created.
+  createdBy?:
+    type: CreatedBy
+    (beta): true
+    description: |
+      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
+  lastModifiedAt:
+    type: datetime
+    description: |
+      Date and time (UTC) the Approval Flow was last updated.
+  lastModifiedBy?:
+    type: LastModifiedBy
+    (beta): true
+    description: |
+      Present on resources created after 1 February 2019 except for [events not tracked](/client-logging#events-tracked).
+  order:
+    type: OrderReference
+    description: |
+      [Order](ctp:api:type:Order) that needs to be approved.
+  businessUnit:
+    type: BusinessUnitKeyReference
+    description: |
+      [Business Unit](ctp:api:type:BusinessUnit) the Approval Flow belongs to.
+  rules:
+    type: ApprovalRule[]
+    description: |
+      Approval Rules that matched the [Order](ctp:api:type:Order).
+  status:
+    type: ApprovalFlowStatus
+    default: Pending
+    description: |
+      Indicates whether the Approval Flow is under review, approved, or rejected.
+  rejection?:
+    type: ApprovalFlowRejection
+    description: |
+      Present when the [status](ctp:api:type:ApprovalFlowStatus) of the Approval Flow is `Rejected`.
+  approvals:
+    type: ApprovalFlowApproval[]
+    description: |
+      Existing approvals in the Approval Flow.
+  eligibleApprovers:
+    type: RuleApprover[]
+    description: |
+      Associate Roles that can approve according to the approver hierarchy tiers defined in `rules`.
+      Associates are allowed to reject even after they have given approval, as long as the current approver hierarchy tier still contains their role.
+  pendingApprovers:
+    type: RuleApprover[]
+    description: |
+      Associate Roles required for approval based on the approver hierarchy tiers defined in `rules` across all remaining tiers.
+  currentTierPendingApprovers:
+    type: RuleApprover[]
+    description: |
+      Associate Roles required for approval based on the approver hierarchy tiers defined in `rules` only for the currently active tier(s).
