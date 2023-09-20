@@ -1,0 +1,64 @@
+@startuml
+
+hide methods
+enum ApprovalRuleStatus {
+    ACTIVE
+    INACTIVE
+}
+interface ApprovalRule [[ApprovalRule.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    key: String
+    name: String
+    description: String
+    status: [[ApprovalRuleStatus.svg ApprovalRuleStatus]]
+    predicate: String
+    approvers: [[ApproverHierarchy.svg ApproverHierarchy]]
+    requesters: [[RuleRequester.svg List<RuleRequester>]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+}
+interface ApprovalRuleDraft [[ApprovalRuleDraft.svg]]  {
+    key: String
+    name: String
+    description: String
+    status: [[ApprovalRuleStatus.svg ApprovalRuleStatus]]
+    predicate: String
+    approvers: [[ApproverHierarchyDraft.svg ApproverHierarchyDraft]]
+    requesters: [[RuleRequesterDraft.svg List<RuleRequesterDraft>]]
+}
+interface ApprovalRuleSetStatusAction [[ApprovalRuleSetStatusAction.svg]]  {
+    action: String
+    status: [[ApprovalRuleStatus.svg ApprovalRuleStatus]]
+}
+interface ApprovalRuleStatusSetMessage [[ApprovalRuleStatusSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    status: [[ApprovalRuleStatus.svg ApprovalRuleStatus]]
+    oldStatus: [[ApprovalRuleStatus.svg ApprovalRuleStatus]]
+}
+interface ApprovalRuleStatusSetMessagePayload [[ApprovalRuleStatusSetMessagePayload.svg]]  {
+    type: String
+    status: [[ApprovalRuleStatus.svg ApprovalRuleStatus]]
+    oldStatus: [[ApprovalRuleStatus.svg ApprovalRuleStatus]]
+}
+ApprovalRuleStatus --> ApprovalRule #green;text:green : "status"
+ApprovalRuleStatus --> ApprovalRuleDraft #green;text:green : "status"
+ApprovalRuleStatus --> ApprovalRuleSetStatusAction #green;text:green : "status"
+ApprovalRuleStatus --> ApprovalRuleStatusSetMessage #green;text:green : "status"
+ApprovalRuleStatus --> ApprovalRuleStatusSetMessage #green;text:green : "oldStatus"
+ApprovalRuleStatus --> ApprovalRuleStatusSetMessagePayload #green;text:green : "status"
+ApprovalRuleStatus --> ApprovalRuleStatusSetMessagePayload #green;text:green : "oldStatus"
+@enduml

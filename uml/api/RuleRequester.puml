@@ -1,0 +1,59 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface RuleRequester [[RuleRequester.svg]]  {
+    associateRole: [[AssociateRoleKeyReference.svg AssociateRoleKeyReference]]
+}
+
+
+
+interface ApprovalRuleRequestersSetMessage [[ApprovalRuleRequestersSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    requesters: [[RuleRequester.svg List<RuleRequester>]]
+    oldRequesters: [[RuleRequester.svg List<RuleRequester>]]
+}
+interface ApprovalRuleRequestersSetMessagePayload [[ApprovalRuleRequestersSetMessagePayload.svg]]  {
+    type: String
+    requesters: [[RuleRequester.svg List<RuleRequester>]]
+    oldRequesters: [[RuleRequester.svg List<RuleRequester>]]
+}
+interface ApprovalRule [[ApprovalRule.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    key: String
+    name: String
+    description: String
+    status: [[ApprovalRuleStatus.svg ApprovalRuleStatus]]
+    predicate: String
+    approvers: [[ApproverHierarchy.svg ApproverHierarchy]]
+    requesters: [[RuleRequester.svg List<RuleRequester>]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+}
+
+RuleRequester --> ApprovalRuleRequestersSetMessage #green;text:green : "requesters"
+RuleRequester --> ApprovalRuleRequestersSetMessage #green;text:green : "oldRequesters"
+RuleRequester --> ApprovalRuleRequestersSetMessagePayload #green;text:green : "requesters"
+RuleRequester --> ApprovalRuleRequestersSetMessagePayload #green;text:green : "oldRequesters"
+RuleRequester --> ApprovalRule #green;text:green : "requesters"
+@enduml

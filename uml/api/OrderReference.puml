@@ -26,6 +26,85 @@ interface ReplicaCartDraft [[ReplicaCartDraft.svg]]  {
 interface ReplicaMyCartDraft [[ReplicaMyCartDraft.svg]]  {
     reference: [[Object.svg Object]]
 }
+interface ApprovalFlow [[ApprovalFlow.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    order: [[OrderReference.svg OrderReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    rules: [[ApprovalRule.svg List<ApprovalRule>]]
+    status: [[ApprovalFlowStatus.svg ApprovalFlowStatus]]
+    rejection: [[ApprovalFlowRejection.svg ApprovalFlowRejection]]
+    approvals: [[ApprovalFlowApproval.svg List<ApprovalFlowApproval>]]
+    eligibleApprovers: [[RuleApprover.svg List<RuleApprover>]]
+    pendingApprovers: [[RuleApprover.svg List<RuleApprover>]]
+    currentTierPendingApprovers: [[RuleApprover.svg List<RuleApprover>]]
+}
+interface ApprovalFlowApprovedMessage [[ApprovalFlowApprovedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    associate: [[CustomerReference.svg CustomerReference]]
+    order: [[OrderReference.svg OrderReference]]
+}
+interface ApprovalFlowCompletedMessage [[ApprovalFlowCompletedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    status: [[ApprovalFlowStatus.svg ApprovalFlowStatus]]
+    order: [[OrderReference.svg OrderReference]]
+}
+interface ApprovalFlowRejectedMessage [[ApprovalFlowRejectedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    associate: [[CustomerReference.svg CustomerReference]]
+    rejectionReason: String
+    order: [[OrderReference.svg OrderReference]]
+}
+interface ApprovalFlowApprovedMessagePayload [[ApprovalFlowApprovedMessagePayload.svg]]  {
+    type: String
+    associate: [[CustomerReference.svg CustomerReference]]
+    order: [[OrderReference.svg OrderReference]]
+}
+interface ApprovalFlowCompletedMessagePayload [[ApprovalFlowCompletedMessagePayload.svg]]  {
+    type: String
+    status: [[ApprovalFlowStatus.svg ApprovalFlowStatus]]
+    order: [[OrderReference.svg OrderReference]]
+}
+interface ApprovalFlowRejectedMessagePayload [[ApprovalFlowRejectedMessagePayload.svg]]  {
+    type: String
+    associate: [[CustomerReference.svg CustomerReference]]
+    rejectionReason: String
+    order: [[OrderReference.svg OrderReference]]
+}
 interface OrderEdit [[OrderEdit.svg]]  {
     id: String
     version: Long
@@ -51,6 +130,13 @@ interface OrderEditDraft [[OrderEditDraft.svg]]  {
 
 OrderReference --> ReplicaCartDraft #green;text:green : "reference"
 OrderReference --> ReplicaMyCartDraft #green;text:green : "reference"
+OrderReference --> ApprovalFlow #green;text:green : "order"
+OrderReference --> ApprovalFlowApprovedMessage #green;text:green : "order"
+OrderReference --> ApprovalFlowCompletedMessage #green;text:green : "order"
+OrderReference --> ApprovalFlowRejectedMessage #green;text:green : "order"
+OrderReference --> ApprovalFlowApprovedMessagePayload #green;text:green : "order"
+OrderReference --> ApprovalFlowCompletedMessagePayload #green;text:green : "order"
+OrderReference --> ApprovalFlowRejectedMessagePayload #green;text:green : "order"
 OrderReference --> OrderEdit #green;text:green : "resource"
 OrderReference --> OrderEditDraft #green;text:green : "resource"
 @enduml

@@ -1,0 +1,42 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface RuleApprover [[RuleApprover.svg]]  {
+    associateRole: [[AssociateRoleKeyReference.svg AssociateRoleKeyReference]]
+}
+
+
+
+interface ApprovalFlow [[ApprovalFlow.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    order: [[OrderReference.svg OrderReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    rules: [[ApprovalRule.svg List<ApprovalRule>]]
+    status: [[ApprovalFlowStatus.svg ApprovalFlowStatus]]
+    rejection: [[ApprovalFlowRejection.svg ApprovalFlowRejection]]
+    approvals: [[ApprovalFlowApproval.svg List<ApprovalFlowApproval>]]
+    eligibleApprovers: [[RuleApprover.svg List<RuleApprover>]]
+    pendingApprovers: [[RuleApprover.svg List<RuleApprover>]]
+    currentTierPendingApprovers: [[RuleApprover.svg List<RuleApprover>]]
+}
+interface ApproverDisjunction [[ApproverDisjunction.svg]]  {
+    or: [[RuleApprover.svg List<RuleApprover>]]
+}
+
+RuleApprover --> ApprovalFlow #green;text:green : "eligibleApprovers"
+RuleApprover --> ApprovalFlow #green;text:green : "pendingApprovers"
+RuleApprover --> ApprovalFlow #green;text:green : "currentTierPendingApprovers"
+RuleApprover --> ApproverDisjunction #green;text:green : "or"
+@enduml

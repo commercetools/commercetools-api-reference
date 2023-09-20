@@ -59,6 +59,37 @@ interface MyPayment [[MyPayment.svg]]  {
     transactions: [[Transaction.svg List<Transaction>]]
     custom: [[CustomFields.svg CustomFields]]
 }
+interface ApprovalFlowApprovedMessage [[ApprovalFlowApprovedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    associate: [[CustomerReference.svg CustomerReference]]
+    order: [[OrderReference.svg OrderReference]]
+}
+interface ApprovalFlowRejectedMessage [[ApprovalFlowRejectedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    associate: [[CustomerReference.svg CustomerReference]]
+    rejectionReason: String
+    order: [[OrderReference.svg OrderReference]]
+}
 interface OrderCustomerSetMessage [[OrderCustomerSetMessage.svg]]  {
     id: String
     version: Long
@@ -105,6 +136,17 @@ interface QuoteRequestCustomerChangedMessage [[QuoteRequestCustomerChangedMessag
     resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
     customer: [[CustomerReference.svg CustomerReference]]
     previousCustomer: [[CustomerReference.svg CustomerReference]]
+}
+interface ApprovalFlowApprovedMessagePayload [[ApprovalFlowApprovedMessagePayload.svg]]  {
+    type: String
+    associate: [[CustomerReference.svg CustomerReference]]
+    order: [[OrderReference.svg OrderReference]]
+}
+interface ApprovalFlowRejectedMessagePayload [[ApprovalFlowRejectedMessagePayload.svg]]  {
+    type: String
+    associate: [[CustomerReference.svg CustomerReference]]
+    rejectionReason: String
+    order: [[OrderReference.svg OrderReference]]
 }
 interface OrderCustomerSetMessagePayload [[OrderCustomerSetMessagePayload.svg]]  {
     type: String
@@ -287,12 +329,16 @@ CustomerReference --> CreatedBy #green;text:green : "associate"
 CustomerReference --> LastModifiedBy #green;text:green : "customer"
 CustomerReference --> LastModifiedBy #green;text:green : "associate"
 CustomerReference --> MyPayment #green;text:green : "customer"
+CustomerReference --> ApprovalFlowApprovedMessage #green;text:green : "associate"
+CustomerReference --> ApprovalFlowRejectedMessage #green;text:green : "associate"
 CustomerReference --> OrderCustomerSetMessage #green;text:green : "customer"
 CustomerReference --> OrderCustomerSetMessage #green;text:green : "oldCustomer"
 CustomerReference --> QuoteCustomerChangedMessage #green;text:green : "customer"
 CustomerReference --> QuoteCustomerChangedMessage #green;text:green : "previousCustomer"
 CustomerReference --> QuoteRequestCustomerChangedMessage #green;text:green : "customer"
 CustomerReference --> QuoteRequestCustomerChangedMessage #green;text:green : "previousCustomer"
+CustomerReference --> ApprovalFlowApprovedMessagePayload #green;text:green : "associate"
+CustomerReference --> ApprovalFlowRejectedMessagePayload #green;text:green : "associate"
 CustomerReference --> OrderCustomerSetMessagePayload #green;text:green : "customer"
 CustomerReference --> OrderCustomerSetMessagePayload #green;text:green : "oldCustomer"
 CustomerReference --> QuoteCustomerChangedMessagePayload #green;text:green : "customer"

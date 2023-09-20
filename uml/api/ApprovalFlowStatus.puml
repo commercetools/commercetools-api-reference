@@ -1,0 +1,49 @@
+@startuml
+
+hide methods
+enum ApprovalFlowStatus {
+    PENDING
+    APPROVED
+    REJECTED
+}
+interface ApprovalFlow [[ApprovalFlow.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    order: [[OrderReference.svg OrderReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    rules: [[ApprovalRule.svg List<ApprovalRule>]]
+    status: [[ApprovalFlowStatus.svg ApprovalFlowStatus]]
+    rejection: [[ApprovalFlowRejection.svg ApprovalFlowRejection]]
+    approvals: [[ApprovalFlowApproval.svg List<ApprovalFlowApproval>]]
+    eligibleApprovers: [[RuleApprover.svg List<RuleApprover>]]
+    pendingApprovers: [[RuleApprover.svg List<RuleApprover>]]
+    currentTierPendingApprovers: [[RuleApprover.svg List<RuleApprover>]]
+}
+interface ApprovalFlowCompletedMessage [[ApprovalFlowCompletedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    status: [[ApprovalFlowStatus.svg ApprovalFlowStatus]]
+    order: [[OrderReference.svg OrderReference]]
+}
+interface ApprovalFlowCompletedMessagePayload [[ApprovalFlowCompletedMessagePayload.svg]]  {
+    type: String
+    status: [[ApprovalFlowStatus.svg ApprovalFlowStatus]]
+    order: [[OrderReference.svg OrderReference]]
+}
+ApprovalFlowStatus --> ApprovalFlow #green;text:green : "status"
+ApprovalFlowStatus --> ApprovalFlowCompletedMessage #green;text:green : "status"
+ApprovalFlowStatus --> ApprovalFlowCompletedMessagePayload #green;text:green : "status"
+@enduml
