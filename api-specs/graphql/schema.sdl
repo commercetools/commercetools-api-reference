@@ -1699,6 +1699,8 @@ type Cart implements Versioned & ReferenceExpandable {
   customLineItems: [CustomLineItem!]!
   totalPrice: Money!
   taxedPrice: TaxedPrice
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  discountOnTotalPrice: DiscountOnTotalPrice
   shippingAddress: Address
   billingAddress: Address
   inventoryMode: InventoryMode!
@@ -1857,8 +1859,18 @@ input CartDiscountTargetInput {
   shipping: ShippingTargetInput
   multiBuyLineItems: MultiBuyLineItemsTargetInput
   multiBuyCustomLineItems: MultiBuyCustomLineItemsTargetInput
-  }
+  totalPrice: CartDiscountTotalPriceTargetInput
+}
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type CartDiscountTotalPriceTarget implements CartDiscountTarget {
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input CartDiscountTotalPriceTargetInput {
+  dummy: String
+}
 input CartDiscountUpdateAction {
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   setStores: SetCartDiscountStores
@@ -4066,6 +4078,13 @@ type DiscountedProductSearchPriceValue {
   value: BaseMoney!
   discountRef: Reference!
   discount: ProductDiscount
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type DiscountedTotalPricePortion {
+  discount: CartDiscount
+  discountRef: Reference!
+  discountedAmount: BaseMoney!
 }
 
 type EnumAttribute implements Attribute {
@@ -6420,6 +6439,8 @@ type Order implements Versioned & ReferenceExpandable {
   customLineItems: [CustomLineItem!]!
   totalPrice: Money!
   taxedPrice: TaxedPrice
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  discountOnTotalPrice: DiscountOnTotalPrice
   shippingAddress: Address
   billingAddress: Address
   inventoryMode: InventoryMode!
@@ -13650,6 +13671,14 @@ type TimeField implements CustomField {
 
 type TimeType implements FieldType {
   name: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type DiscountOnTotalPrice {
+  discountedAmount: BaseMoney!
+  includedDiscounts: [DiscountedTotalPricePortion!]!
+  discountedNetAmount: BaseMoney
+  discountedGrossAmount: BaseMoney
 }
 
 type TrackingData {
