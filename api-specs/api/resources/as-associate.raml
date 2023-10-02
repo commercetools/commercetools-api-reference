@@ -95,10 +95,18 @@ type: base
       type:
         baseDomain:
           resourceType: ApprovalRule
+          resourceQueryType: ApprovalRulePagedQueryResponse
           resourceDraft: ApprovalRuleDraft
       (createable): ApprovalRuleDraft
       (updateable): ApprovalRule
       description: 'An Approval Rule describes the conditions determining whether an Order that matches the predicate needs approval by an approver before it can be ordered by an requester within a Business Unit.'
+      get:
+        securedBy: [oauth_2_0: { scopes: ['view_approval_rules:{projectKey}'] }]
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/approval-rules.example.json
       post:
         securedBy:
           [oauth_2_0: { scopes: ['manage_approval_rules:{projectKey}'] }]
@@ -166,11 +174,19 @@ type: base
       type:
         baseDomain:
           resourceType: ApprovalFlow
+          resourceQueryType: ApprovalFlowPagedQueryResponse
           resourceDraft: ApprovalFlowDraft
       (updateable): ApprovalFlow
       description: |
         Approval Flows connect Orders that require approval with the Approval Rules that initiate the approval requirement.
         They represent the approval process by including information about approvals, rejections, and all involved parties.
+      get:
+        securedBy: [oauth_2_0: { scopes: ['view_approval_flows:{projectKey}'] }]
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/approval-flows.example.json
       /{ID}:
         (methodName): withId
         type:
