@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  title: commercetools Composable Commerce
+  title: commercetools Composable Commerce API
   version: "v1"
 
 servers:
@@ -659,6 +659,9 @@ paths:
         schema:
           type: "string"
     get:
+      security:
+        - oauth_2_0:
+            - "view_approval_flows:{projectKey}"
       operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyApprovalFlowsGet
       parameters:
         - name: expand
@@ -728,7 +731,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/resourceQueryType'
+                $ref: '#/components/schemas/ApprovalFlowPagedQueryResponse'
 
         "400":
           $ref: '#/components/responses/errorable_400'
@@ -869,51 +872,10 @@ paths:
         required: true
         schema:
           type: "string"
-    post:
+    get:
       security:
         - oauth_2_0:
-            - "manage_approval_rules:{projectKey}"
-      operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyApprovalRulesPost
-      parameters:
-        - name: expand
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              $ref: '#/components/schemas/Expansion'
-          explode: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ApprovalRuleDraft'
-
-      responses:
-        "201":
-          description: |-
-            201
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApprovalRule'
-
-        "400":
-          $ref: '#/components/responses/errorable_400'
-        "401":
-          $ref: '#/components/responses/errorable_401'
-        "403":
-          $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
-        "500":
-          $ref: '#/components/responses/errorable_500'
-        "502":
-          $ref: '#/components/responses/errorable_502'
-        "503":
-          $ref: '#/components/responses/errorable_503'
-    get:
+            - "view_approval_rules:{projectKey}"
       operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyApprovalRulesGet
       parameters:
         - name: expand
@@ -983,7 +945,51 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/resourceQueryType'
+                $ref: '#/components/schemas/ApprovalRulePagedQueryResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_approval_rules:{projectKey}"
+      operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyApprovalRulesPost
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApprovalRuleDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApprovalRule'
 
         "400":
           $ref: '#/components/responses/errorable_400'
@@ -23345,7 +23351,7 @@ paths:
           required: true
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: state
           in: query
@@ -23421,7 +23427,7 @@ paths:
           required: true
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: state
           in: query
@@ -23510,7 +23516,7 @@ paths:
           required: true
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/CountryCode'
           explode: true
         - name: state
           in: query
@@ -27821,6 +27827,30 @@ components:
           properties:
             action:
               type: "string"
+    ApprovalFlowPagedQueryResponse:
+      type: "object"
+      required:
+        - count
+        - limit
+        - offset
+        - results
+      properties:
+        limit:
+          type: "integer"
+          format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
+        count:
+          type: "integer"
+          format: "int64"
+        total:
+          type: "integer"
+          format: "int64"
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ApprovalFlow'
     ApprovalFlowRejectAction:
       allOf:
         - $ref: '#/components/schemas/ApprovalFlowUpdateAction'
@@ -27958,6 +27988,30 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/RuleRequesterDraft'
+    ApprovalRulePagedQueryResponse:
+      type: "object"
+      required:
+        - count
+        - limit
+        - offset
+        - results
+      properties:
+        limit:
+          type: "integer"
+          format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
+        count:
+          type: "integer"
+          format: "int64"
+        total:
+          type: "integer"
+          format: "int64"
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ApprovalRule'
     ApprovalRuleSetApproversAction:
       allOf:
         - $ref: '#/components/schemas/ApprovalRuleUpdateAction'
@@ -29853,6 +29907,7 @@ components:
           customLineItems: '#/components/schemas/CartDiscountCustomLineItemsTarget'
           lineItems: '#/components/schemas/CartDiscountLineItemsTarget'
           shipping: '#/components/schemas/CartDiscountShippingCostTarget'
+          totalPrice: '#/components/schemas/CartDiscountTotalPriceTarget'
           multiBuyCustomLineItems: '#/components/schemas/MultiBuyCustomLineItemsTarget'
           multiBuyLineItems: '#/components/schemas/MultiBuyLineItemsTarget'
       required:
@@ -29860,6 +29915,13 @@ components:
       properties:
         type:
           type: "string"
+    CartDiscountTotalPriceTarget:
+      allOf:
+        - $ref: '#/components/schemas/CartDiscountTarget'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
     CartDiscountUpdate:
       type: "object"
       required:
@@ -30375,6 +30437,8 @@ components:
               $ref: '#/components/schemas/TaxedPrice'
             taxedShippingPrice:
               $ref: '#/components/schemas/TaxedPrice'
+            discountOnTotalPrice:
+              $ref: '#/components/schemas/DiscountOnTotalPrice'
             taxMode:
               $ref: '#/components/schemas/TaxMode'
             taxRoundingMode:
@@ -30912,6 +30976,22 @@ components:
         ApplicationStoppedByPreviousDiscount: "The Discount Code is active and no discounts
          are applied after a discount with `StopAfterThisDiscount` [StackingMode](ctp:api:type:StackingMode)
          is defined.n"
+    DiscountOnTotalPrice:
+      type: "object"
+      required:
+        - discountedAmount
+        - includedDiscounts
+      properties:
+        discountedAmount:
+          $ref: '#/components/schemas/TypedMoney'
+        includedDiscounts:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/DiscountedTotalPricePortion'
+        discountedNetAmount:
+          $ref: '#/components/schemas/TypedMoney'
+        discountedGrossAmount:
+          $ref: '#/components/schemas/TypedMoney'
     DiscountedLineItemPortion:
       type: "object"
       required:
@@ -30945,6 +31025,16 @@ components:
           format: "int64"
         discountedPrice:
           $ref: '#/components/schemas/DiscountedLineItemPrice'
+    DiscountedTotalPricePortion:
+      type: "object"
+      required:
+        - discount
+        - discountedAmount
+      properties:
+        discount:
+          $ref: '#/components/schemas/CartDiscountReference'
+        discountedAmount:
+          $ref: '#/components/schemas/TypedMoney'
     ExternalLineItemTotalPrice:
       type: "object"
       required:
@@ -52315,6 +52405,8 @@ components:
               $ref: '#/components/schemas/TaxedPrice'
             taxedShippingPrice:
               $ref: '#/components/schemas/TaxedPrice'
+            discountOnTotalPrice:
+              $ref: '#/components/schemas/DiscountOnTotalPrice'
             taxMode:
               $ref: '#/components/schemas/TaxMode'
             taxRoundingMode:
@@ -52697,6 +52789,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/DeliveryItem'
+            custom:
+              $ref: '#/components/schemas/CustomFieldsDraft'
     StagedOrderAddPaymentAction:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
@@ -54393,6 +54487,8 @@ components:
               $ref: '#/components/schemas/TaxedPrice'
             taxedShippingPrice:
               $ref: '#/components/schemas/TaxedPrice'
+            discountOnTotalPrice:
+              $ref: '#/components/schemas/DiscountOnTotalPrice'
             taxMode:
               $ref: '#/components/schemas/TaxMode'
             taxRoundingMode:
@@ -55113,6 +55209,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/DeliveryItem'
+            custom:
+              $ref: '#/components/schemas/CustomFieldsDraft'
     OrderAddPaymentAction:
       allOf:
         - $ref: '#/components/schemas/OrderUpdateAction'

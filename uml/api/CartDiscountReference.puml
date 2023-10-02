@@ -18,7 +18,11 @@ interface Reference [[Reference.svg]]  {
     id: String
 }
 
-
+interface CartDiscountReference [[CartDiscountReference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[CartDiscount.svg CartDiscount]]
+}
 interface Cart [[Cart.svg]]  {
     id: String
     version: Long
@@ -37,6 +41,7 @@ interface Cart [[Cart.svg]]  {
     totalPrice: [[CentPrecisionMoney.svg CentPrecisionMoney]]
     taxedPrice: [[TaxedPrice.svg TaxedPrice]]
     taxedShippingPrice: [[TaxedPrice.svg TaxedPrice]]
+    discountOnTotalPrice: [[DiscountOnTotalPrice.svg DiscountOnTotalPrice]]
     taxMode: [[TaxMode.svg TaxMode]]
     taxRoundingMode: [[RoundingMode.svg RoundingMode]]
     taxCalculationMode: [[TaxCalculationMode.svg TaxCalculationMode]]
@@ -103,6 +108,7 @@ interface Order [[Order.svg]]  {
     totalPrice: [[TypedMoney.svg TypedMoney]]
     taxedPrice: [[TaxedPrice.svg TaxedPrice]]
     taxedShippingPrice: [[TaxedPrice.svg TaxedPrice]]
+    discountOnTotalPrice: [[DiscountOnTotalPrice.svg DiscountOnTotalPrice]]
     taxMode: [[TaxMode.svg TaxMode]]
     taxRoundingMode: [[RoundingMode.svg RoundingMode]]
     taxCalculationMode: [[TaxCalculationMode.svg TaxCalculationMode]]
@@ -137,8 +143,13 @@ interface Order [[Order.svg]]  {
     lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
     createdBy: [[CreatedBy.svg CreatedBy]]
 }
-
+interface DiscountedTotalPricePortion [[DiscountedTotalPricePortion.svg]]  {
+    discount: [[CartDiscountReference.svg CartDiscountReference]]
+    discountedAmount: [[TypedMoney.svg TypedMoney]]
+}
+CartDiscountReference --> CartDiscountReference #blue;text:blue : "typeId : cart-discount"
 CartDiscountReference --> Cart #green;text:green : "refusedGifts"
 CartDiscountReference --> DiscountCode #green;text:green : "cartDiscounts"
 CartDiscountReference --> Order #green;text:green : "refusedGifts"
+CartDiscountReference --> DiscountedTotalPricePortion #green;text:green : "discount"
 @enduml
