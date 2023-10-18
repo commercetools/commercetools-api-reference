@@ -27,6 +27,23 @@ get:
       body:
         application/json:
           example: !include ../examples/shipping-methods.example.json
+head:
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'view_orders:{projectKey}',
+              'view_shipping_methods:{projectKey}',
+              'manage_my_orders:{projectKey}',
+            ],
+        },
+    ]
+  description: Checks if a ShippingMethod exists for a given Query Predicate. Returns a `200 OK` status if any ShippingMethods match the Query Predicate or a `404 Not Found` otherwise.
+  queryParameters:
+    where?:
+      type: QueryPredicate[]
 post:
   securedBy:
     [
@@ -72,6 +89,20 @@ post:
         body:
           application/json:
             example: !include ../examples/shipping-method.example.json
+  head:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_shipping_methods:{projectKey}',
+                'manage_my_orders:{projectKey}',
+              ],
+          },
+      ]
+    description: Checks if a ShippingMethod exists for a given `key`. Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
   post:
     securedBy:
       [
@@ -143,6 +174,25 @@ post:
           application/json:
             type: ShippingMethodPagedQueryResponse
             example: !include ../examples/shipping-methods.example.json
+  head:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_shipping_methods:{projectKey}',
+                'manage_my_orders:{projectKey}',
+              ],
+          },
+      ]
+    queryParameters:
+      cartId:
+        type: string
+        description: |
+          ID of the Cart with a shipping address set.
+    description: Checks if a ShippingMethod exists for the given Cart. Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
 /matching-cart-location:
   type: base
   description: Get ShippingMethods for a cart and location
@@ -186,6 +236,33 @@ post:
           application/json:
             type: ShippingMethodPagedQueryResponse
             example: !include ../examples/shipping-methods.example.json
+  head:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_shipping_methods:{projectKey}',
+                'manage_my_orders:{projectKey}',
+              ],
+          },
+      ]
+    queryParameters:
+      country:
+        type: CountryCode
+        description: |
+          A two-digit country code as per [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
+      state?:
+        type: string
+        description: |
+          Name of the state, for example, Colorado.
+      cartId:
+        type: string
+        description: |
+          ID of the Cart.
+    description: Checks if a ShippingMethod that can ship to the given [Location](ctp:api:type:Location) exists for the given Cart. Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
 /matching-orderedit:
   type: base
   description: Get ShippingMethods for an order edit
@@ -224,6 +301,31 @@ post:
           application/json:
             type: ShippingMethodPagedQueryResponse
             example: !include ../examples/shipping-methods.example.json
+  head:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_shipping_methods:{projectKey}',
+              ],
+          },
+      ]
+    queryParameters:
+      orderEditId:
+        type: string
+        description: The ID of the [OrderEdit](/projects/order-edits).
+      country:
+        type: CountryCode
+        description: |
+          A two-digit country code as per [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
+      state?:
+        type: string
+        description: |
+          Name of the state, for example, Colorado.
+    description: Checks if a ShippingMethod that can ship to the given [Location](ctp:api:type:Location) exists for the given [OrderEdit](ctp:api:type:OrderEdit). Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
 /matching-location:
   type: base
   description: Get ShippingMethods for a location
@@ -269,6 +371,33 @@ post:
           application/json:
             type: ShippingMethodPagedQueryResponse
             example: !include ../examples/shipping-methods.example.json
+  head:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_shipping_methods:{projectKey}',
+                'manage_my_orders:{projectKey}',
+              ],
+          },
+      ]
+    queryParameters:
+      country:
+        type: CountryCode
+        description: |
+          A two-digit country code as per [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
+      state?:
+        type: string
+        description: |
+          Name of the state, for example, Colorado.
+      currency?:
+        type: string
+        description: |
+          The currency code compliant to [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
+    description: Checks if a ShippingMethod that can ship to the given [Location](ctp:api:type:Location) exists. Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
 /{ID}:
   (methodName): withId
   type:
@@ -294,6 +423,20 @@ post:
         body:
           application/json:
             example: !include ../examples/shipping-method.example.json
+  head:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_shipping_methods:{projectKey}',
+                'manage_my_orders:{projectKey}',
+              ],
+          },
+      ]
+    description: Checks if a ShippingMethod exists for a given `id`. Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
   post:
     securedBy:
       [
