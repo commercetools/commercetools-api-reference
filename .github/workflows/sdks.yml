@@ -47,3 +47,99 @@ jobs:
           repository: ${{ matrix.repository }}
           path: commercetools-sdk
           ssh-key: ${{ secrets[matrix.sshKey] }}
+
+      - name: 'Setup Java'
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '16'
+
+      - name: "Install Csharp"
+        if: matrix.language == "csharp"
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: |
+            3.1.x
+            7.0.x
+
+      - name: "Install PHP with extensions"
+        if: matrix.language == "php"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+          coverage: pcov
+          extensions: json, mbstring, intl
+          tools: composer
+          ini-values: assert.exception=1, zend.assertions=1
+
+      - name: Setup Node (uses version in .nvmrc)
+        if: matrix.language == "typescript"
+        uses: actions/setup-node@v2
+        with:
+          node-version-file: 'commercetools-sdk/.nvmrc'
+
+      - name: "Switch SDK to update branch"
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git fetch --depth=1 origin gen-sdk-updates || true
+          git checkout -B gen-sdk-updates origin/gen-sdk-updates || true
+          git checkout -B gen-sdk-updates
+          git log -1
+        working-directory: commercetools-sdk
+
+      - name: "Switch SDK to update branch"
+        if: github.ref != 'refs/heads/main'
+        run: |
+          git fetch --depth=1 origin ${{ github.ref_name }} || true
+          git checkout -B gen-sdk-updates origin/${{ github.ref_name }} || true
+          git checkout -B ${{ github.ref_name }}
+          git log -1
+        working-directory: commercetools-sdk
+
+      - name: "Apply dotnet SDK mixin"
+        if: matrix.language == "csharp"
+        run: |
+          cp commercetools-sdk/api-csharp-mixin.raml commercetools-api-reference/api-specs/api/api-mixin.raml
+
+      - name: "Apply Java SDK mixin"
+        if: matrix.language == "java"
+        run: |
+          cp commercetools-sdk/api-java-mixin.raml commercetools-api-reference/api-specs/api/api-mixin.raml
+
+      - name: "Apply PHP SDK mixin"
+        if: matrix.language == "php"
+        run: |
+          cp commercetools-sdk/api-php-mixin.raml commercetools-api-reference/api-specs/api/api-mixin.raml
+
+      - name: "Update GraphQL schema (CSharp)"
+        if: matrix.language == "csharp"
+        run: |
+          cp commercetools-api-reference/api-specs/graphql/schema.sdl commercetools-sdk/commercetools.Sdk/commercetools.Sdk.GraphQL.Api/schema.graphqls
+          sed -i 's/^type Query implements.*/type Query {/' commercetools-sdk/commercetools.Sdk/commercetools.Sdk.GraphQL.Api/schema.graphqls
+
+      - name: "Update GraphQL schema (Java)"
+        run: |
+          cp commercetools-api-reference/api-specs/graphql/schema.sdl commercetools-sdk/commercetools/commercetools-graphql-api/src/main/resources/graphql/schema.graphqls
+          sed -i 's/^type Query implements.*/type Query {/' commercetools-sdk/commercetools/commercetools-graphql-api/src/main/resources/graphql/schema.graphqls
+
+      - name: "Generate SDK"
+        if: matrix.language != "php"
+        run: sudo chmod 777 /usr/local/bin && make build
+        working-directory: commercetools-sdk
+        env:
+          RAML_FILE: "../commercetools-api-reference/api-specs/api/api.raml"
+          API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
+          IMPORT_RAML: "../commercetools-api-reference/api-specs/importapi/api.raml"
+          ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
+          HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
+
+      - name: "Generate SDK"
+        if: matrix.language == "php"
+        run: sudo chmod 777 /usr/local/bin && make -j2 build
+        working-directory: commercetools-sdk
+        env:
+          RAML_FILE: "../commercetools-api-reference/api-specs/api/api.raml"
+          API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
+          IMPORT_RAML: "../commercetools-api-reference/api-specs/importapi/api.raml"
+          ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
+          HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
