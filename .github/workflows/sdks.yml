@@ -24,15 +24,23 @@ jobs:
           - language: java
             repository: 'commercetools/commercetools-sdk-java-v2'
             sshKey: JAVA_SDK_DEPLOY_KEY
+            apiMixin: true
+            API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
           - language: csharp
             repository: 'commercetools/commercetools-dotnet-core-sdk-v2'
             sshKey: CSHARP_SDK_DEPLOY_KEY
+            apiMixin: true
+            API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
           - language: typescript
             repository: 'commercetools/commercetools-sdk-typescript'
             sshKey: TS_SDK_DEPLOY_KEY
+            API_RAML: "../commercetools-api-reference/api-specs/api/api.raml"
           - language: php
             repository: 'commercetools/commercetools-sdk-php-v2'
             sshKey: SDK_DEPLOY_KEY
+            apiMixin: true
+            makeParams: "-j2"
+            API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
 #          - language: postman
 #            repository: 'commercetools/commercetools-postman-collection'
 #            sshKey: ${{ secrets.POSTMAN_DEPLOY_KEY }}
@@ -97,20 +105,10 @@ jobs:
           git log -1
         working-directory: commercetools-sdk
 
-      - name: "Apply dotnet SDK mixin"
-        if: ${{ matrix.language == 'csharp' }}
+      - name: "Apply SDK mixin"
+        if: ${{ matrix.apiMixin }}
         run: |
-          cp commercetools-sdk/api-csharp-mixin.raml commercetools-api-reference/api-specs/api/api-mixin.raml
-
-      - name: "Apply Java SDK mixin"
-        if: ${{ matrix.language == 'java' }}
-        run: |
-          cp commercetools-sdk/api-java-mixin.raml commercetools-api-reference/api-specs/api/api-mixin.raml
-
-      - name: "Apply PHP SDK mixin"
-        if: ${{ matrix.language == 'php' }}
-        run: |
-          cp commercetools-sdk/api-php-mixin.raml commercetools-api-reference/api-specs/api/api-mixin.raml
+          cp commercetools-sdk/api-${{ matrix.language }}-mixin.raml commercetools-api-reference/api-specs/api/api-mixin.raml
 
       - name: "Update GraphQL schema (CSharp)"
         if: ${{ matrix.language == 'csharp' }}
@@ -125,23 +123,11 @@ jobs:
           sed -i 's/^type Query implements.*/type Query {/' commercetools-sdk/commercetools/commercetools-graphql-api/src/main/resources/graphql/schema.graphqls
 
       - name: "Generate SDK"
-        if: ${{ matrix.language != 'php' }}
-        run: sudo chmod 777 /usr/local/bin && make build
+        run: sudo chmod 777 /usr/local/bin && make ${{ matrix.makeParams }} build
         working-directory: commercetools-sdk
         env:
           RAML_FILE: "../commercetools-api-reference/api-specs/api/api.raml"
-          API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
-          IMPORT_RAML: "../commercetools-api-reference/api-specs/importapi/api.raml"
-          ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
-          HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
-
-      - name: "Generate SDK"
-        if: ${{ matrix.language == 'php' }}
-        run: sudo chmod 777 /usr/local/bin && make -j2 build
-        working-directory: commercetools-sdk
-        env:
-          RAML_FILE: "../commercetools-api-reference/api-specs/api/api.raml"
-          API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
+          API_RAML: ${{ matrix.API_RAML }}
           IMPORT_RAML: "../commercetools-api-reference/api-specs/importapi/api.raml"
           ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
           HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
