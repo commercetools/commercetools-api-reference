@@ -1,7 +1,7 @@
 on:
-#  push:
-#    paths:
-#      - 'api-specs/**'
+  push:
+    paths:
+      - 'api-specs/**'
   workflow_dispatch:
 
 name: "SDK Generator"
@@ -12,6 +12,7 @@ jobs:
   sdk:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         language:
           - java
@@ -22,16 +23,28 @@ jobs:
         include:
           - language: java
             repository: 'commercetools/commercetools-sdk-java-v2'
-            sshKey: ${{ secrets.JAVA_SDK_DEPLOY_KEY }}
+            sshKey: JAVA_SDK_DEPLOY_KEY
+            apiMixin: true
+            API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
+            diffFormat: JAVA_MARKDOWN
           - language: csharp
             repository: 'commercetools/commercetools-dotnet-core-sdk-v2'
-            sshKey: ${{ secrets.CSHARP_SDK_DEPLOY_KEY }}
+            sshKey: CSHARP_SDK_DEPLOY_KEY
+            apiMixin: true
+            API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
+            diffFormat: DOTNET_MARKDOWN
           - language: typescript
             repository: 'commercetools/commercetools-sdk-typescript'
-            sshKey: ${{ secrets.TS_SDK_DEPLOY_KEY }}
+            sshKey: TS_SDK_DEPLOY_KEY
+            API_RAML: "../commercetools-api-reference/api-specs/api/api.raml"
+            diffFormat: TS_MARKDOWN
           - language: php
             repository: 'commercetools/commercetools-sdk-php-v2'
-            sshKey: ${{ secrets.SDK_DEPLOY_KEY }}
+            sshKey: SDK_DEPLOY_KEY
+            apiMixin: true
+            makeParams: "-j2"
+            API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
+            diffFormat: PHP_MARKDOWN
 #          - language: postman
 #            repository: 'commercetools/commercetools-postman-collection'
 #            sshKey: ${{ secrets.POSTMAN_DEPLOY_KEY }}
@@ -46,4 +59,165 @@ jobs:
         with:
           repository: ${{ matrix.repository }}
           path: commercetools-sdk
-          ssh-key: ${{ matrix.sshKey }}
+          ssh-key: ${{ secrets[matrix.sshKey] }}
+
+      - name: 'Setup Java'
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '16'
+
+      - name: "Install Csharp"
+        if: ${{ matrix.language == 'csharp' }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: |
+            3.1.x
+            7.0.x
+
+      - name: "Install PHP with extensions"
+        if: ${{ matrix.language == 'php' }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+          coverage: pcov
+          extensions: json, mbstring, intl
+          tools: composer
+          ini-values: assert.exception=1, zend.assertions=1
+
+      - name: Setup Node (uses version in .nvmrc)
+        if: ${{ matrix.language == 'typescript' }}
+        uses: actions/setup-node@v2
+        with:
+          node-version-file: 'commercetools-sdk/.nvmrc'
+
+      - name: "Switch SDK to update branch"
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git fetch --depth=1 origin gen-sdk-updates || true
+          git checkout -B gen-sdk-updates origin/gen-sdk-updates || true
+          git checkout -B gen-sdk-updates
+          git log -1
+        working-directory: commercetools-sdk
+
+      - name: "Switch SDK to update branch"
+        if: github.ref != 'refs/heads/main'
+        run: |
+          git fetch --depth=1 origin ${{ github.ref_name }} || true
+          git checkout -B gen-sdk-updates origin/${{ github.ref_name }} || true
+          git checkout -B ${{ github.ref_name }}
+          git log -1
+        working-directory: commercetools-sdk
+
+      - name: "Apply SDK mixin"
+        if: ${{ matrix.apiMixin }}
+        run: |
+          cp commercetools-sdk/api-${{ matrix.language }}-mixin.raml commercetools-api-reference/api-specs/api/api-mixin.raml
+
+      - name: "Update GraphQL schema (CSharp)"
+        if: ${{ matrix.language == 'csharp' }}
+        run: |
+          cp commercetools-api-reference/api-specs/graphql/schema.sdl commercetools-sdk/commercetools.Sdk/commercetools.Sdk.GraphQL.Api/schema.graphqls
+          sed -i 's/^type Query implements.*/type Query {/' commercetools-sdk/commercetools.Sdk/commercetools.Sdk.GraphQL.Api/schema.graphqls
+
+      - name: "Update GraphQL schema (Java)"
+        if: ${{ matrix.language == 'java' }}
+        run: |
+          cp commercetools-api-reference/api-specs/graphql/schema.sdl commercetools-sdk/commercetools/commercetools-graphql-api/src/main/resources/graphql/schema.graphqls
+          sed -i 's/^type Query implements.*/type Query {/' commercetools-sdk/commercetools/commercetools-graphql-api/src/main/resources/graphql/schema.graphqls
+
+      - name: "Generate SDK"
+        run: sudo chmod 777 /usr/local/bin && make ${{ matrix.makeParams }} build
+        working-directory: commercetools-sdk
+        env:
+          RAML_FILE: "../commercetools-api-reference/api-specs/api/api.raml"
+          API_RAML: ${{ matrix.API_RAML }}
+          IMPORT_RAML: "../commercetools-api-reference/api-specs/importapi/api.raml"
+          ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
+          HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
+
+      - name: "Checkout previous api reference"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: commercetools-api-reference-previous
+
+      - name: "Store api reference version"
+        run: |
+          if [ ! -f ../commercetools-sdk/reference.txt ]; then
+            git log --format='%H' --no-merges -n 1 --skip 1 > ../commercetools-sdk/reference.txt
+          fi
+          echo "${{ github.sha}}" >> ../commercetools-sdk/references.txt
+          echo "previous=$(cat ../commercetools-sdk/reference.txt | head -n 1)" >> $GITHUB_ENV
+        working-directory: commercetools-api-reference-previous
+
+      - name: "Switch to previous commit"
+        run: git checkout ${{ env.previous }}
+        working-directory: commercetools-api-reference-previous
+
+      - name: "Calculate diff (API)"
+        run: rmf-codegen diff -f ${{ matrix.diffFormat }} -o ./changes_api.md commercetools-api-reference-previous/api-specs/api/api.raml commercetools-api-reference/api-specs/api/api.raml
+
+      - name: "Calculate diff (Import API)"
+        run: rmf-codegen diff -f ${{ matrix.diffFormat }} -o ./changes_import.md commercetools-api-reference-previous/api-specs/importapi/api.raml commercetools-api-reference/api-specs/importapi/api.raml
+
+      - name: "Calculate diff (History)"
+        run: rmf-codegen diff -f ${{ matrix.diffFormat }} -o ./changes_history.md commercetools-api-reference-previous/api-specs/history/api.raml commercetools-api-reference/api-specs/history/api.raml
+
+      - name: "Calculate diff (ML)"
+        run: rmf-codegen diff -f ${{ matrix.diffFormat }} -o ./changes_ml.md commercetools-api-reference-previous/api-specs/ml/api.raml commercetools-api-reference/api-specs/ml/api.raml
+
+      - name: 'Create change file'
+        run: |
+          if [ -f ./changes_api.md ]; then
+            echo "**Api changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_api.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_import.md ]; then
+            echo "**Import changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_import.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_history.md ]; then
+            echo "**History changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_history.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_ml.md ]; then
+            echo "**ML changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_ml.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes.md ]; then
+            cat ./changes.md
+            cp ./changes.md ./commercetools-sdk/changes.md
+          fi
+
+      - name: "check pending changes"
+        run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
+        working-directory: commercetools-sdk
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/main'
+        with:
+          repository: commercetools-sdk
+          branch: gen-sdk-updates
+          commit_message: "build(codegen): updating SDK"
+          commit_user_name: Auto Mation
+          commit_user_email: automation@commercetools.com
+          commit_author: Auto Mation <automation@commercetools.com>
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
+        with:
+          repository: commercetools-sdk
+          branch: ${{ github.ref_name }}
+          commit_message: "build(codegen): updating SDK"
+          commit_user_name: Auto Mation
+          commit_user_email: automation@commercetools.com
+          commit_author: Auto Mation <automation@commercetools.com>
