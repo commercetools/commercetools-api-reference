@@ -9770,6 +9770,67 @@ paths:
             - "manage_cart_discounts:{projectKey}"
             - "manage_cart_discounts:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsGet
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+        - name: sort
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Sort'
+          explode: true
+        - name: limit
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: offset
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: withTotal
+          x-annotation-default: true
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+        - name: /^var[.][a-zA-Z0-9]+$/
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
       responses:
         "200":
           description: |-
@@ -9777,8 +9838,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CartDiscount'
+                $ref: '#/components/schemas/CartDiscountPagedQueryResponse'
 
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
     head:
       security:
         - oauth_2_0:
@@ -9800,6 +9875,24 @@ paths:
               $ref: '#/components/schemas/QueryPredicate'
           explode: true
       responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
     post:
       security:
         - oauth_2_0:
@@ -9810,6 +9903,16 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsPost
       description: |-
         When using the endpoint, the Store specified in the path and the Stores specified in the payload's `stores` field are added to the CartDiscount.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
       requestBody:
         content:
           application/json:
@@ -9825,6 +9928,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/CartDiscount'
 
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
   /{projectKey}/in-store/key={storeKey}/cart-discounts/key={key}:
     parameters:
       - name: projectKey
@@ -38894,6 +39011,8 @@ components:
     ReferenceTypeId:
       type: "string"
       enum:
+        - approval-flow
+        - approval-rule
         - associate-role
         - attribute-group
         - business-unit
@@ -38933,6 +39052,8 @@ components:
         - zone
       x-annotation-package: "Common"
       x-annotation-enumDescriptions:
+        approval-flow: "References an [ApprovalFlow](ctp:api:type:ApprovalFlow).n"
+        approval-rule: "References an [ApprovalRule](ctp:api:type:ApprovalRule).n"
         associate-role: "References an [AssociateRole](ctp:api:type:AssociateRole).n"
         attribute-group: "References an [AttributeGroup](ctp:api:type:AttributeGroup).n"
         business-unit: "References a [BusinessUnit](ctp:api:type:BusinessUnit).n"
@@ -68291,6 +68412,8 @@ components:
     ChangeSubscriptionResourceTypeId:
       type: "string"
       enum:
+        - approval-flow
+        - approval-rule
         - associate-role
         - business-unit
         - cart
@@ -68328,6 +68451,8 @@ components:
         - zone
       x-annotation-package: "Subscription"
       x-annotation-enumDescriptions:
+        approval-flow: "Changes related to [ApprovalFlows](ctp:api:type:ApprovalFlow).n"
+        approval-rule: "Changes related to [ApprovalRules](ctp:api:type:ApprovalRule).n"
         associate-role: "Changes related to [AssociateRoles](ctp:api:type:AssociateRole).n"
         business-unit: "Changes to [BusinessUnits](ctp:api:type:BusinessUnit).n"
         cart: "Changes to [Carts](ctp:api:type:Cart).n"
@@ -68577,6 +68702,8 @@ components:
     MessageSubscriptionResourceTypeId:
       type: "string"
       enum:
+        - approval-flow
+        - approval-rule
         - associate-role
         - business-unit
         - category
@@ -68597,6 +68724,8 @@ components:
         - store
       x-annotation-package: "Subscription"
       x-annotation-enumDescriptions:
+        approval-flow: "Messages related to [ApprovalFlows](ctp:api:type:ApprovalFlow).n"
+        approval-rule: "Messages related to [ApprovalRules](ctp:api:type:ApprovalRule).n"
         associate-role: "Messages related to [AssociateRoles](ctp:api:type:AssociateRole).n"
         business-unit: "Messages related to [BusinessUnits](ctp:api:type:BusinessUnit).n"
         category: "Messages related to [Categories](ctp:api:type:Category).n"
