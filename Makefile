@@ -13,7 +13,6 @@ validate_oas:
 	npx autorest --v3 --azure-validator --input-file=oas/api/openapi.yaml
 	npx autorest --v3 --azure-validator --input-file=oas/history/openapi.yaml
 	npx autorest --v3 --azure-validator --input-file=oas/import/openapi.yaml
-	npx autorest --v3 --azure-validator --input-file=oas/ml/openapi.yaml
 
 codegen_install:
 	curl -o- -s https://raw.githubusercontent.com/vrapio/rmf-codegen/master/scripts/install.sh | bash
@@ -21,7 +20,7 @@ codegen_install:
 validate_raml: codegen_install
 	rmf-codegen verify api-specs/api/api.raml
 
-generate_oas: generate_oas_api generate_oas_import generate_oas_history generate_oas_ml
+generate_oas: generate_oas_api generate_oas_import generate_oas_history
 
 generate_oas_api: codegen_install
 	rmf-codegen generate -o oas/api -t OAS api-specs/api/api.raml
