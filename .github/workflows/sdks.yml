@@ -56,13 +56,13 @@ jobs:
         with:
           app-id: ${{ secrets.SDK_APP_ID }}
           private-key: ${{ secrets.SDK_APP_PEM }}
-      - name: Set GH user
+      - name: Get App user
+        id: get_app_user
         env:
            GITHUB_TOKEN: ${{ steps.generate_github_token.outputs.token }}
         run: |
           export GH_APP_USER=`gh api /users/ct-sdks%5Bbot%5D | jq .id`
-          git config --global user.name "ct-sdks[bot]"
-          git config --global user.email ${GH_APP_USER}+ct-sdks[bot]@users.noreply.github.com
+          echo "email=${GH_APP_USER}+ct-sdks[bot]@users.noreply.github.com" >> "$GITHUB_OUTPUT"
 
       - name: "Checkout api reference"
         uses: actions/checkout@v4
@@ -221,7 +221,9 @@ jobs:
           repository: commercetools-sdk
           branch: gen-sdk-updates
           commit_message: "build(codegen): updating SDK"
-          commit_author: ct-sdks[bot] <automation@commercetools.com>
+          commit_author: ct-sdks[bot] <${{ steps.get_app_user.outputs.email }}>
+          commit_user_name: ct-sdks[bot]
+          commit_user_email: ${{ steps.get_app_user.outputs.email }}
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
@@ -231,4 +233,6 @@ jobs:
           repository: commercetools-sdk
           branch: ${{ github.ref_name }}
           commit_message: "build(codegen): updating SDK"
-          commit_author: ct-sdks[bot] <automation@commercetools.com>
+          commit_author: ct-sdks[bot] <${{ steps.get_app_user.outputs.email }}>
+          commit_user_name: ct-sdks[bot]
+          commit_user_email: ${{ steps.get_app_user.outputs.email }}
