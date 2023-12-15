@@ -52,10 +52,16 @@ jobs:
         # Get GitHub token via the CT SDKs App
       - name: Generate GitHub token (via CT SDKs App)
         id: generate_github_token
-        uses: tibdex/github-app-token@v2.1.0
+        uses: actions/create-github-app-token@v1
         with:
-          app_id: ${{ secrets.SDK_APP_ID }}
-          private_key: ${{ secrets.SDK_APP_PEM }}
+          app-id: ${{ secrets.SDK_APP_ID }}
+          private-key: ${{ secrets.SDK_APP_PEM }}
+      - name: Set GH user
+        run: |
+          export GH_APP_USER=`gh api /users/ct-sdks%5Bbot%5D | jq .id`
+          git config --global user.name "ct-sdks[bot]"
+          git config --global user.email ${GH_APP_USER}+ct-sdks[bot]@users.noreply.github.com
+
       - name: "Checkout api reference"
         uses: actions/checkout@v4
         with:
