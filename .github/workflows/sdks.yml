@@ -49,17 +49,28 @@ jobs:
 #            repository: 'commercetools/commercetools-postman-collection'
 #            sshKey: ${{ secrets.POSTMAN_DEPLOY_KEY }}
     steps:
+        # Get GitHub token via the CT SDKs App
+      - name: Generate GitHub token (via CT SDKs App)
+        id: generate_github_token
+        uses: tibdex/github-app-token@v2.1.0
+        with:
+          app_id: ${{ secrets.SDK_APP_ID }}
+          private_key: ${{ secrets.SDK_APP_PEM }}
       - name: "Checkout api reference"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: commercetools-api-reference
-
+          # Pass a personal access token (using our CT SDKs App) to be able to trigger other workflows
+          # https://help.github.com/en/actions/reference/events-that-trigger-workflows#triggering-new-workflows-using-a-personal-access-token
+          # https://github.community/t/action-does-not-trigger-another-on-push-tag-action/17148/8
+          token: ${{ steps.generate_github_token.outputs.token }}
+          
       - name: "Checkout SDK"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ matrix.repository }}
           path: commercetools-sdk
-          ssh-key: ${{ secrets[matrix.sshKey] }}
+          token: ${{ steps.generate_github_token.outputs.token }}
 
       - name: 'Setup Java'
         uses: actions/setup-java@v3
@@ -137,10 +148,11 @@ jobs:
           HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
 
       - name: "Checkout previous api reference"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           path: commercetools-api-reference-previous
+          token: ${{ steps.generate_github_token.outputs.token }}
 
       - name: "Store api reference version"
         run: |
@@ -195,20 +207,20 @@ jobs:
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/main'
+        env:
+           GITHUB_TOKEN: ${{ steps.generate_github_token.outputs.token }}
         with:
           repository: commercetools-sdk
           branch: gen-sdk-updates
           commit_message: "build(codegen): updating SDK"
-          commit_user_name: Auto Mation
-          commit_user_email: automation@commercetools.com
-          commit_author: Auto Mation <automation@commercetools.com>
+          commit_author: ct-sdks[bot] <automation@commercetools.com>
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
+        env:
+           GITHUB_TOKEN: ${{ steps.generate_github_token.outputs.token }}
         with:
           repository: commercetools-sdk
           branch: ${{ github.ref_name }}
           commit_message: "build(codegen): updating SDK"
-          commit_user_name: Auto Mation
-          commit_user_email: automation@commercetools.com
-          commit_author: Auto Mation <automation@commercetools.com>
+          commit_author: ct-sdks[bot] <automation@commercetools.com>
