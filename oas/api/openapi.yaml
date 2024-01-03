@@ -9770,6 +9770,67 @@ paths:
             - "manage_cart_discounts:{projectKey}"
             - "manage_cart_discounts:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsGet
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+        - name: sort
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Sort'
+          explode: true
+        - name: limit
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: offset
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: withTotal
+          x-annotation-default: true
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+        - name: /^var[.][a-zA-Z0-9]+$/
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
       responses:
         "200":
           description: |-
@@ -9777,8 +9838,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CartDiscount'
+                $ref: '#/components/schemas/CartDiscountPagedQueryResponse'
 
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
     head:
       security:
         - oauth_2_0:
@@ -9800,6 +9875,24 @@ paths:
               $ref: '#/components/schemas/QueryPredicate'
           explode: true
       responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
     post:
       security:
         - oauth_2_0:
@@ -9810,6 +9903,16 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsPost
       description: |-
         When using the endpoint, the Store specified in the path and the Stores specified in the payload's `stores` field are added to the CartDiscount.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
       requestBody:
         content:
           application/json:
@@ -9825,6 +9928,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/CartDiscount'
 
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
   /{projectKey}/in-store/key={storeKey}/cart-discounts/key={key}:
     parameters:
       - name: projectKey
@@ -14257,9 +14374,11 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyProductProjectionsKeyByKeyGet
       description: |-
         Gets the current or staged representation of a [Product](ctp:api:type:Product) by its key from the specified [Store](ctp:api:type:Store).
-        If the Store has defined some languages, countries, distribution or supply Channels,
+        If the Store has defined some languages, countries, distribution, supply Channels, and/or Product Selection,
         they are used for projections based on [locale](ctp:api:type:ProductProjectionLocales), [price](ctp:api:type:ProductProjectionPrices)
         and [inventory](ctp:api:type:ProductProjectionInventoryEntries).
+
+        If [ProductSelection](ctp:api:type:ProductSelection) is used, it affects the [availability of the Product](/projects/stores#products-available-in-store) in the specified Store.
 
         When used with an API Client that has the `view_published_products:{projectKey}` scope, this endpoint only returns published (current) Product Projections.
       parameters:
@@ -14392,9 +14511,11 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyProductProjectionsByIDGet
       description: |-
         Gets the current or staged representation of a [Product](ctp:api:type:Product) by its ID from the specified [Store](ctp:api:type:Store).
-        If the Store has defined some languages, countries, distribution or supply Channels,
+        If the Store has defined some languages, countries, distribution, supply Channels, and/or Product Selection,
         they are used for projections based on [locale](ctp:api:type:ProductProjectionLocales), [price](ctp:api:type:ProductProjectionPrices)
         and [inventory](ctp:api:type:ProductProjectionInventoryEntries).
+
+        If [ProductSelection](ctp:api:type:ProductSelection) is used, it affects the [availability of the Product](/projects/stores#products-available-in-store) in the specified Store.
 
         When used with an API Client that has the `view_published_products:{projectKey}` scope, this endpoint only returns published (current) Product Projections.
       parameters:
@@ -24305,7 +24426,7 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductsPost
       description: |-
-        To create a new Product, send a representation that is going to become the initial _staged_ representation of the new Product in the master catalog.
+        To create a new Product, send a representation that is going to become the initial _staged_ and _current_ representation of the new Product in the catalog.
         If [Price Selection](ctp:api:type:ProductPriceSelection) query parameters are provided, selected Prices will be added to the response.
         Produces the [ProductCreated](/projects/messages#product-created) Message.
       parameters:
@@ -33992,7 +34113,7 @@ components:
         Active: "The Business Unit can be used in Carts, Orders, Quote Requests, and Quotes
          and can be edited.n"
         Inactive: "The Business Unit cannot be used in Carts, Orders, Quote Requests, and
-         Quotes and can only be edited using the [general endpoint](ctp:api:endpoint:/{projectKey}/me/business-units:POST).n
+         Quotes and can only be edited using the [general endpoint](/../api/associates-overview#through-the-general-endpoints).n
         Status doesn't affect inheritance. Even if a parent unit is inactive, its children
          remain active and can inherit role assignments.n"
     BusinessUnitStoreMode:
@@ -38894,6 +39015,8 @@ components:
     ReferenceTypeId:
       type: "string"
       enum:
+        - approval-flow
+        - approval-rule
         - associate-role
         - attribute-group
         - business-unit
@@ -38933,6 +39056,8 @@ components:
         - zone
       x-annotation-package: "Common"
       x-annotation-enumDescriptions:
+        approval-flow: "References an [ApprovalFlow](ctp:api:type:ApprovalFlow).n"
+        approval-rule: "References an [ApprovalRule](ctp:api:type:ApprovalRule).n"
         associate-role: "References an [AssociateRole](ctp:api:type:AssociateRole).n"
         attribute-group: "References an [AttributeGroup](ctp:api:type:AttributeGroup).n"
         business-unit: "References a [BusinessUnit](ctp:api:type:BusinessUnit).n"
@@ -41032,7 +41157,6 @@ components:
           MissingTaxRateForCountry: '#/components/schemas/MissingTaxRateForCountryError'
           MoneyOverflow: '#/components/schemas/MoneyOverflowError'
           NoMatchingProductDiscountFound: '#/components/schemas/NoMatchingProductDiscountFoundError'
-          NotEnabled: '#/components/schemas/NotEnabledError'
           ObjectNotFound: '#/components/schemas/ObjectNotFoundError'
           OutOfStock: '#/components/schemas/OutOfStockError'
           OverCapacity: '#/components/schemas/OverCapacityError'
@@ -41542,20 +41666,6 @@ components:
           additionalProperties:
             type: "string"
     NoMatchingProductDiscountFoundError:
-      allOf:
-        - $ref: '#/components/schemas/ErrorObject'
-        - type: "object"
-          required:
-            - code
-            - message
-          properties:
-            code:
-              type: "string"
-            message:
-              type: "string"
-          additionalProperties:
-            type: "string"
-    NotEnabledError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
@@ -42449,7 +42559,6 @@ components:
           MissingTaxRateForCountry: '#/components/schemas/GraphQLMissingTaxRateForCountryError'
           MoneyOverflow: '#/components/schemas/GraphQLMoneyOverflowError'
           NoMatchingProductDiscountFound: '#/components/schemas/GraphQLNoMatchingProductDiscountFoundError'
-          NotEnabled: '#/components/schemas/GraphQLNotEnabledError'
           ObjectNotFound: '#/components/schemas/GraphQLObjectNotFoundError'
           OutOfStock: '#/components/schemas/GraphQLOutOfStockError'
           OverCapacity: '#/components/schemas/GraphQLOverCapacityError'
@@ -42848,17 +42957,6 @@ components:
           additionalProperties:
             type: "string"
     GraphQLNoMatchingProductDiscountFoundError:
-      allOf:
-        - $ref: '#/components/schemas/GraphQLErrorObject'
-        - type: "object"
-          required:
-            - code
-          properties:
-            code:
-              type: "string"
-          additionalProperties:
-            type: "string"
-    GraphQLNotEnabledError:
       allOf:
         - $ref: '#/components/schemas/GraphQLErrorObject'
         - type: "object"
@@ -62658,7 +62756,10 @@ components:
     AttributeReferenceTypeId:
       type: "string"
       enum:
+        - associate-role
+        - business-unit
         - cart
+        - cart-discount
         - category
         - channel
         - customer
@@ -62673,7 +62774,10 @@ components:
       x-annotation-package: "ProductType"
       x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/productTypes#attributereferencetypeid"
       x-annotation-enumDescriptions:
+        associate-role: "References a [AssociateRole](ctp:api:type:AssociateRole).n"
+        business-unit: "References a [BusinessUnit](ctp:api:type:BusinessUnit).n"
         cart: "References a [Cart](ctp:api:type:Cart).n"
+        cart-discount: "References a [CartDiscount](ctp:api:type:CartDiscount).n"
         category: "References a [Category](ctp:api:type:Category).n"
         channel: "References a [Channel](ctp:api:type:Channel).n"
         customer: "References a [Customer](ctp:api:type:Customer).n"
@@ -68291,6 +68395,8 @@ components:
     ChangeSubscriptionResourceTypeId:
       type: "string"
       enum:
+        - approval-flow
+        - approval-rule
         - associate-role
         - business-unit
         - cart
@@ -68328,6 +68434,8 @@ components:
         - zone
       x-annotation-package: "Subscription"
       x-annotation-enumDescriptions:
+        approval-flow: "Changes related to [ApprovalFlows](ctp:api:type:ApprovalFlow).n"
+        approval-rule: "Changes related to [ApprovalRules](ctp:api:type:ApprovalRule).n"
         associate-role: "Changes related to [AssociateRoles](ctp:api:type:AssociateRole).n"
         business-unit: "Changes to [BusinessUnits](ctp:api:type:BusinessUnit).n"
         cart: "Changes to [Carts](ctp:api:type:Cart).n"
@@ -68577,6 +68685,8 @@ components:
     MessageSubscriptionResourceTypeId:
       type: "string"
       enum:
+        - approval-flow
+        - approval-rule
         - associate-role
         - business-unit
         - category
@@ -68597,6 +68707,8 @@ components:
         - store
       x-annotation-package: "Subscription"
       x-annotation-enumDescriptions:
+        approval-flow: "Messages related to [ApprovalFlows](ctp:api:type:ApprovalFlow).n"
+        approval-rule: "Messages related to [ApprovalRules](ctp:api:type:ApprovalRule).n"
         associate-role: "Messages related to [AssociateRoles](ctp:api:type:AssociateRole).n"
         business-unit: "Messages related to [BusinessUnits](ctp:api:type:BusinessUnit).n"
         category: "Messages related to [Categories](ctp:api:type:Category).n"

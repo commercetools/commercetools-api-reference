@@ -23,24 +23,20 @@ jobs:
         include:
           - language: java
             repository: 'commercetools/commercetools-sdk-java-v2'
-            sshKey: JAVA_SDK_DEPLOY_KEY
             apiMixin: true
             API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
             diffFormat: JAVA_MARKDOWN
           - language: csharp
             repository: 'commercetools/commercetools-dotnet-core-sdk-v2'
-            sshKey: CSHARP_SDK_DEPLOY_KEY
             apiMixin: true
             API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
             diffFormat: DOTNET_MARKDOWN
           - language: typescript
             repository: 'commercetools/commercetools-sdk-typescript'
-            sshKey: TS_SDK_DEPLOY_KEY
             API_RAML: "../commercetools-api-reference/api-specs/api/api.raml"
             diffFormat: TS_MARKDOWN
           - language: php
             repository: 'commercetools/commercetools-sdk-php-v2'
-            sshKey: SDK_DEPLOY_KEY
             apiMixin: true
             makeParams: "-j2"
             API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
@@ -49,17 +45,38 @@ jobs:
 #            repository: 'commercetools/commercetools-postman-collection'
 #            sshKey: ${{ secrets.POSTMAN_DEPLOY_KEY }}
     steps:
+        # Get GitHub token via the CT SDKs App
+      - name: Generate GitHub token (via CT SDKs App)
+        id: generate_github_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.SDK_APP_ID }}
+          private-key: ${{ secrets.SDK_APP_PEM }}
+          owner: ${{ github.repository_owner }}
+
+      - name: Get App user
+        id: get_app_user
+        env:
+           GITHUB_TOKEN: ${{ steps.generate_github_token.outputs.token }}
+        run: |
+          export GH_APP_USER=`gh api /users/ct-sdks%5Bbot%5D | jq .id`
+          echo "email=${GH_APP_USER}+ct-sdks[bot]@users.noreply.github.com" >> "$GITHUB_OUTPUT"
+
       - name: "Checkout api reference"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: commercetools-api-reference
-
+          # Pass a personal access token (using our CT SDKs App) to be able to trigger other workflows
+          # https://help.github.com/en/actions/reference/events-that-trigger-workflows#triggering-new-workflows-using-a-personal-access-token
+          # https://github.community/t/action-does-not-trigger-another-on-push-tag-action/17148/8
+          token: ${{ steps.generate_github_token.outputs.token }}
+          
       - name: "Checkout SDK"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ matrix.repository }}
           path: commercetools-sdk
-          ssh-key: ${{ secrets[matrix.sshKey] }}
+          token: ${{ steps.generate_github_token.outputs.token }}
 
       - name: 'Setup Java'
         uses: actions/setup-java@v3
@@ -137,10 +154,11 @@ jobs:
           HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
 
       - name: "Checkout previous api reference"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           path: commercetools-api-reference-previous
+          token: ${{ steps.generate_github_token.outputs.token }}
 
       - name: "Store api reference version"
         run: |
@@ -164,9 +182,6 @@ jobs:
       - name: "Calculate diff (History)"
         run: rmf-codegen diff -f ${{ matrix.diffFormat }} -o ./changes_history.md commercetools-api-reference-previous/api-specs/history/api.raml commercetools-api-reference/api-specs/history/api.raml
 
-      - name: "Calculate diff (ML)"
-        run: rmf-codegen diff -f ${{ matrix.diffFormat }} -o ./changes_ml.md commercetools-api-reference-previous/api-specs/ml/api.raml commercetools-api-reference/api-specs/ml/api.raml
-
       - name: 'Create change file'
         run: |
           if [ -f ./changes_api.md ]; then
@@ -187,12 +202,6 @@ jobs:
             cat ./changes_history.md >> ./changes.md
             echo "" >> ./changes.md
           fi
-          if [ -f ./changes_ml.md ]; then
-            echo "**ML changes**" >> ./changes.md
-            echo "" >> ./changes.md
-            cat ./changes_ml.md >> ./changes.md
-            echo "" >> ./changes.md
-          fi
           if [ -f ./changes.md ]; then
             cat ./changes.md
             cp ./changes.md ./commercetools-sdk/changes.md
@@ -208,9 +217,9 @@ jobs:
           repository: commercetools-sdk
           branch: gen-sdk-updates
           commit_message: "build(codegen): updating SDK"
-          commit_user_name: Auto Mation
-          commit_user_email: automation@commercetools.com
-          commit_author: Auto Mation <automation@commercetools.com>
+          commit_author: ct-sdks[bot] <${{ steps.get_app_user.outputs.email }}>
+          commit_user_name: ct-sdks[bot]
+          commit_user_email: ${{ steps.get_app_user.outputs.email }}
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
@@ -218,6 +227,6 @@ jobs:
           repository: commercetools-sdk
           branch: ${{ github.ref_name }}
           commit_message: "build(codegen): updating SDK"
-          commit_user_name: Auto Mation
-          commit_user_email: automation@commercetools.com
-          commit_author: Auto Mation <automation@commercetools.com>
+          commit_author: ct-sdks[bot] <${{ steps.get_app_user.outputs.email }}>
+          commit_user_name: ct-sdks[bot]
+          commit_user_email: ${{ steps.get_app_user.outputs.email }}

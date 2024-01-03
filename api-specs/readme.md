@@ -550,7 +550,7 @@ or
   (markDeprecated): true
 ```
 
-In the RAMl spec for other libraries (such as the Machine Learning API in `api-specs/ml`) use the following format:
+In the RAMl spec for other libraries (such as the Connect API in `api-specs/connect`) use the following format:
 
 ```raml
 uses:
