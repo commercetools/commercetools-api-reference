@@ -3,6 +3,7 @@
 title: commercetools Checkout API
 uses:
   annotations: types/annotations.raml
+  common: types/common.raml
 (annotations.products):
   - Checkout
 version: v1
@@ -15,9 +16,8 @@ baseUriParameters:
     enum:
       - europe-west1.gcp
       - us-central1.gcp
-      - australia-southeast1
     description: |
-      Region
+      [Region](ctp:checkout:type:Region) in which the Checkout application is [hosted](/installing-checkout#regions-and-hosts).
 (annotations.serviceRegions):
   - uri: https://checkout.us-central1.gcp.commercetools.com/
     region: us-central1
@@ -27,9 +27,48 @@ baseUriParameters:
     region: europe-west1
     provider: gcp
     name: Europe (Google Cloud, Belgium)
-  - uri: https://checkout.australia-southeast1.gcp.commercetools.com
-    region: australia-southeast1
-    provider: gcp
-    name: Australia (Google Cloud, Sydney)
 
 types: !include types/types.raml
+
+securitySchemes:
+  oauth_2_0: !include security-schemes/oauth2.raml
+securedBy: [oauth_2_0]
+
+traits:
+  secured_by_manage_payments:
+    securedBy:
+      [oauth_2_0: { scopes: ['manage_checkout_payment_intents:{projectKey}'] }]
+
+/{projectKey}:
+  (annotations.methodName): withProjectKey
+  uriParameters:
+    projectKey:
+      type: string
+      description: Identifier of your Checkout entity and `key` of your [Project](/../api/projects/project#project).
+  /payment-intents:
+    /{paymentId}:
+      (annotations.methodName): withPaymentId
+      uriParameters:
+        paymentId:
+          type: string
+          description: |
+            `id` of the [Payment](/../api/projects/payments).
+      post:
+        is:
+          - secured_by_manage_payments
+        body:
+          type: Payment
+          example: !include ./examples/payments/capturePayment.json
+        description: |
+          Specific Error Codes:
+          - [MultipleActionsNotAllowed](ctp:checkout:type:MultipleActionsNotAllowedError)
+          - [RequiredField](ctp:checkout:type:RequiredFieldError)
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+        responses:
+          200:
+            body:
+              example: !include ../checkout/examples/payments/capturePaymentResponse.json
+          400:
+            description: The request was invalid.
+            body:
+              type: ErrorResponse
