@@ -726,10 +726,10 @@ type ApprovalFlowRejection {
 }
 
 input ApprovalFlowUpdateAction {
-  approve: ApproveApprovalFlow
   reject: RejectApprovalFlow
   setCustomField: SetApprovalFlowCustomField
   setCustomType: SetApprovalFlowCustomType
+  approve: ApproveApprovalFlow
 }
 
 type ApprovalRule implements Versioned {
@@ -821,13 +821,13 @@ type ApprovalRuleStatusSet implements MessagePayload {
 }
 
 input ApprovalRuleUpdateAction {
-  setApprovers: SetApprovalRuleApprovers
   setKey: SetApprovalRuleKey
   setName: SetApprovalRuleName
   setDescription: SetApprovalRuleDescription
   setPredicate: SetApprovalRulePredicate
   setRequesters: SetApprovalRuleRequesters
   setStatus: SetApprovalRuleStatus
+  setApprovers: SetApprovalRuleApprovers
 }
 
 input ApproveApprovalFlow {
@@ -1213,7 +1213,7 @@ input AttributeTypeDraft {
   ltext: SimpleAttributeTypeDraft
 }
 
-"AuthenticationMode values. BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+"AuthenticationMode values."
 enum AuthenticationMode {
   ExternalAuth
   Password
@@ -1249,17 +1249,6 @@ type AzureServiceBusDestination implements Destination {
 
 input AzureServiceBusDestinationInput {
   connectionString: String!
-}
-
-input CartDiscountValueBaseMoneyInput {
-  centPrecision: MoneyInput
-  highPrecision: HighPrecisionMoneyInput
-
-  "CurrencyCode and centAmount are deprecated. Please use `Money`(centPrecision) or `HighPrecisionMoney`(highPrecision)."
-  currencyCode: Currency
-
-  "CurrencyCode and centAmount are deprecated. Please use `Money`(centPrecision) or `HighPrecisionMoney`(highPrecision)."
-  centAmount: Long
 }
 
 interface BaseMoney {
@@ -1825,6 +1814,17 @@ interface CartDiscountValue {
   type: String!
 }
 
+input CartDiscountValueBaseMoneyInput {
+  centPrecision: MoneyInput
+  highPrecision: HighPrecisionMoneyInput
+
+  "CurrencyCode and centAmount are deprecated. Please use `Money`(centPrecision) or `HighPrecisionMoney`(highPrecision)."
+  currencyCode: Currency
+
+  "CurrencyCode and centAmount are deprecated. Please use `Money`(centPrecision) or `HighPrecisionMoney`(highPrecision)."
+  centAmount: Long
+}
+
 input CartDiscountValueInput {
   relative: RelativeDiscountValueInput
   absolute: AbsoluteDiscountValueInput
@@ -1874,14 +1874,14 @@ type CartLimitsProjection {
 }
 
 enum CartOrigin {
-  "The cart was created by our platform and belongs to a Quote."
-  Quote
+  "The cart was created by the customer. This is the default value"
+  Customer
 
   "The cart was created by the merchant on behalf of the customer"
   Merchant
 
-  "The cart was created by the customer. This is the default value"
-  Customer
+  "The cart was created by our platform and belongs to a Quote."
+  Quote
 }
 
 "Fields to access carts. Includes direct access to a single cart and searching for carts."
@@ -3665,8 +3665,6 @@ input CustomerSignUpDraft {
   customerGroup: ResourceIdentifierInput
   isEmailVerified: Boolean
   anonymousId: String
-
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   authenticationMode: AuthenticationMode
 }
 
@@ -3955,6 +3953,13 @@ input DiscountCodeUpdateAction {
   setValidFrom: SetDiscountCodeValidFrom
   setValidFromAndUntil: SetDiscountCodeValidFromAndUntil
   setValidUntil: SetDiscountCodeValidUntil
+}
+
+type DiscountOnTotalPrice {
+  discountedAmount: BaseMoney!
+  includedDiscounts: [DiscountedTotalPricePortion!]!
+  discountedNetAmount: BaseMoney
+  discountedGrossAmount: BaseMoney
 }
 
 type DiscountedLineItemPortion {
@@ -4273,8 +4278,8 @@ input FieldTypeSetTypeDraft {
 }
 
 type FixedPriceDiscountValue implements CartDiscountValue {
-  money: [BaseMoney!]!
   type: String!
+  money: [BaseMoney!]!
 }
 
 input FixedPriceDiscountValueInput {
@@ -5395,8 +5400,14 @@ type Mutation {
   createDiscountCode(draft: DiscountCodeDraft!): DiscountCode
   updateDiscountCode(id: String!, version: Long!, actions: [DiscountCodeUpdateAction!]!): DiscountCode
   deleteDiscountCode(id: String!, version: Long!): DiscountCode
-  createCartDiscount(draft: CartDiscountDraft!): CartDiscount
+  createCartDiscount(draft: CartDiscountDraft!,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput): CartDiscount
   updateCartDiscount(version: Long!, actions: [CartDiscountUpdateAction!]!,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
 
     "Queries with specified ID"
     id: String,
@@ -5404,6 +5415,9 @@ type Mutation {
     "Queries with specified key"
     key: String): CartDiscount
   deleteCartDiscount(version: Long!,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
 
     "Queries with specified ID"
     id: String,
@@ -6439,17 +6453,6 @@ type OrderCustomFieldRemoved implements MessagePayload & OrderMessagePayload {
   type: String!
 }
 
-type OrderCustomTypeRemoved implements MessagePayload & OrderMessagePayload {
-  previousTypeId: String
-  type: String!
-}
-
-type OrderCustomTypeSet implements MessagePayload & OrderMessagePayload {
-  customFields: CustomFieldsType!
-  previousTypeId: String
-  type: String!
-}
-
 type OrderCustomLineItemAdded implements MessagePayload & OrderMessagePayload {
   customLineItem: CustomLineItem!
   type: String!
@@ -6475,6 +6478,17 @@ type OrderCustomLineItemRemoved implements MessagePayload & OrderMessagePayload 
   customLineItemId: String!
   customLineItemKey: String
   customLineItem: CustomLineItem
+  type: String!
+}
+
+type OrderCustomTypeRemoved implements MessagePayload & OrderMessagePayload {
+  previousTypeId: String
+  type: String!
+}
+
+type OrderCustomTypeSet implements MessagePayload & OrderMessagePayload {
+  customFields: CustomFieldsType!
+  previousTypeId: String
   type: String!
 }
 
@@ -7218,8 +7232,6 @@ type ProductAssignment {
   productSelectionRef: Reference!
   productSelection: ProductSelection
   variantSelection: ProductVariantSelection
-
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   variantExclusion: ProductVariantExclusion
 }
 
@@ -7487,8 +7499,6 @@ type ProductOfSelection {
   productRef: Reference!
   product: Product
   variantSelection: ProductVariantSelection
-
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   variantExclusion: ProductVariantExclusion
 }
 
@@ -7904,7 +7914,7 @@ enum ProductSelectionMode {
   "Mode of Product Selection used to include a specific list of individual Products"
   Individual
 
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta. Mode of Product Selection used to exclude a specific list of individual Products"
+  "Mode of Product Selection used to exclude a specific list of individual Products"
   IndividualExclusion
 }
 
@@ -7915,7 +7925,6 @@ type ProductSelectionProductAdded implements MessagePayload {
   type: String!
 }
 
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 type ProductSelectionProductExcluded implements MessagePayload {
   variantExclusion: ProductVariantExclusion
   product: Product
@@ -7961,20 +7970,15 @@ input ProductSelectionSettingInActionInput {
 input ProductSelectionUpdateAction {
   addProduct: AddProductSelectionProduct
   changeName: ChangeProductSelectionName
-
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   excludeProduct: ExcludeProductSelectionProduct
   removeProduct: RemoveProductSelectionProduct
   setCustomField: SetProductSelectionCustomField
   setCustomType: SetProductSelectionCustomType
   setKey: SetProductSelectionKey
-
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   setVariantExclusion: SetProductSelectionVariantExclusion
   setVariantSelection: SetProductSelectionVariantSelection
 }
 
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 type ProductSelectionVariantExclusionChanged implements MessagePayload {
   oldVariantExclusion: ProductVariantExclusion
   newVariantExclusion: ProductVariantExclusion
@@ -8227,12 +8231,10 @@ type ProductVariantDeleted implements MessagePayload {
   type: String!
 }
 
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 type ProductVariantExclusion {
   skus: [String!]!
 }
 
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 input ProductVariantExclusionDraft {
   skus: [String!]
 }
@@ -8280,6 +8282,7 @@ type ProjectCustomLimitsProjection {
   products: ProductLimitsProjection!
   shoppingLists: ShoppingListLimitsProjection!
   extensions: ExtensionLimitsProjection!
+  subscriptions: SubscriptionsLimitsProjection!
   productDiscounts: ProductDiscountLimitsProjection!
   cartDiscounts: CartDiscountLimitsProjection!
   orderEdits: OrderEditLimitsProjection!
@@ -9662,7 +9665,6 @@ type ScoreShippingRateInputDraftOutput implements ShippingRateInputDraftOutput {
 }
 
 input SearchFacetInput {
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   model: SearchFacetModelInput
   string: String
 }
@@ -9673,7 +9675,6 @@ input SearchFacetModelInput {
 }
 
 input SearchFilterInput {
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   model: SearchFilterModelInput
   string: String
 }
@@ -9752,7 +9753,6 @@ type SelectionOfProduct {
   productSelectionRef: Reference!
   productSelection: ProductSelection
   variantSelection: ProductVariantSelection
-  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   variantExclusion: ProductVariantExclusion
   createdAt: DateTime!
 }
@@ -13231,6 +13231,10 @@ input SubscriptionUpdateAction {
   setMessages: SetSubscriptionMessages
 }
 
+type SubscriptionsLimitsProjection {
+  maxSubscriptions: Limit!
+}
+
 type SuggestResult {
   searchKeywords: [SuggestResultEntry!]!
 }
@@ -13526,13 +13530,6 @@ type TimeField implements CustomField {
 
 type TimeType implements FieldType {
   name: String!
-}
-
-type DiscountOnTotalPrice {
-  discountedAmount: BaseMoney!
-  includedDiscounts: [DiscountedTotalPricePortion!]!
-  discountedNetAmount: BaseMoney
-  discountedGrossAmount: BaseMoney
 }
 
 type TrackingData {
