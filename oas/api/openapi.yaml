@@ -5107,8 +5107,6 @@ paths:
             - "manage_orders:{projectKey}"
             - "manage_cart_discounts:{projectKey}"
       operationId: ByProjectKeyCartDiscountsPost
-      description: |-
-        Creating a Cart Discount produces the [CartDiscountCreated](ctp:api:type:CartDiscountCreatedMessage) Message.
       parameters:
         - name: expand
           in: query
@@ -5279,8 +5277,6 @@ paths:
             - "manage_orders:{projectKey}"
             - "manage_cart_discounts:{projectKey}"
       operationId: ByProjectKeyCartDiscountsKeyByKeyDelete
-      description: |-
-        Deleting a Cart Discount produces the [CartDiscountDeleted](ctp:api:type:CartDiscountDeletedMessage) Message.
       parameters:
         - name: version
           in: query
@@ -5455,8 +5451,6 @@ paths:
             - "manage_orders:{projectKey}"
             - "manage_cart_discounts:{projectKey}"
       operationId: ByProjectKeyCartDiscountsByIDDelete
-      description: |-
-        Deleting a Cart Discount produces the [CartDiscountDeleted](ctp:api:type:CartDiscountDeletedMessage) Message.
       parameters:
         - name: version
           in: query
@@ -9909,8 +9903,6 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsPost
       description: |-
         When using the endpoint, the Store specified in the path and the Stores specified in the payload's `stores` field are added to the CartDiscount.
-
-        Creating a Cart Discount produces the [CartDiscountCreated](ctp:api:type:CartDiscountCreatedMessage) Message.
       parameters:
         - name: expand
           in: query
@@ -10098,8 +10090,6 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsKeyByKeyDelete
       description: |-
         To delete a CartDiscount, specify the `manage_cart_discounts:{projectKey}:{storeKey}` scope for all Stores associated with the CartDiscount.
-
-        Deleting a Cart Discount produces the [CartDiscountDeleted](ctp:api:type:CartDiscountDeletedMessage) Message.
       parameters:
         - name: version
           in: query
@@ -10292,8 +10282,6 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartDiscountsByIDDelete
       description: |-
         To delete a CartDiscount, specify the `manage_cart_discounts:{projectKey}:{storeKey}` scope for all Stores associated with the CartDiscount.
-
-        Deleting a Cart Discount produces the [CartDiscountDeleted](ctp:api:type:CartDiscountDeletedMessage) Message.
       parameters:
         - name: version
           in: query
@@ -14386,11 +14374,9 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyProductProjectionsKeyByKeyGet
       description: |-
         Gets the current or staged representation of a [Product](ctp:api:type:Product) by its key from the specified [Store](ctp:api:type:Store).
-        If the Store has defined some languages, countries, distribution, supply Channels, and/or Product Selection,
+        If the Store has defined some languages, countries, distribution or supply Channels,
         they are used for projections based on [locale](ctp:api:type:ProductProjectionLocales), [price](ctp:api:type:ProductProjectionPrices)
         and [inventory](ctp:api:type:ProductProjectionInventoryEntries).
-
-        If [ProductSelection](ctp:api:type:ProductSelection) is used, it affects the [availability of the Product](/projects/stores#products-available-in-store) in the specified Store.
 
         When used with an API Client that has the `view_published_products:{projectKey}` scope, this endpoint only returns published (current) Product Projections.
       parameters:
@@ -14523,11 +14509,9 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyProductProjectionsByIDGet
       description: |-
         Gets the current or staged representation of a [Product](ctp:api:type:Product) by its ID from the specified [Store](ctp:api:type:Store).
-        If the Store has defined some languages, countries, distribution, supply Channels, and/or Product Selection,
+        If the Store has defined some languages, countries, distribution or supply Channels,
         they are used for projections based on [locale](ctp:api:type:ProductProjectionLocales), [price](ctp:api:type:ProductProjectionPrices)
         and [inventory](ctp:api:type:ProductProjectionInventoryEntries).
-
-        If [ProductSelection](ctp:api:type:ProductSelection) is used, it affects the [availability of the Product](/projects/stores#products-available-in-store) in the specified Store.
 
         When used with an API Client that has the `view_published_products:{projectKey}` scope, this endpoint only returns published (current) Product Projections.
       parameters:
@@ -15960,7 +15944,7 @@ paths:
       description: |-
         Authenticates a global Customer not associated with a Store.
         For more information, see [Global versus Store-specific Customers](/../api/customers-overview#global-versus-store-specific-customers).
-        If the Customer is registered in a Store, use the [Authenticate (sign in) Customer in Store](ctp:api:endpoint:/{projectKey}/in-store/key={storeKey}/login:POST) method.
+        If the Customer is registered in a Store, use the [Authenticate (sign in) Customer in Store](/../api/projects/customers#authenticate-sign-in-customer-in-store) method.
 
         If an account with the given credentials is not found, an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error is returned.
       requestBody:
@@ -23358,7 +23342,7 @@ paths:
             - "manage_product_selections:{projectKey}"
       operationId: ByProjectKeyProductSelectionsKeyByKeyDelete
       description: |-
-        Deletion will only succeed if the Product Selection is not assigned to any [Store](ctp:api:type:Store).
+        Deletion will only succeed if the Product Selection is not assigned to any [Store](/../api/projects/stores#store).
       parameters:
         - name: version
           in: query
@@ -23614,7 +23598,7 @@ paths:
             - "manage_product_selections:{projectKey}"
       operationId: ByProjectKeyProductSelectionsByIDDelete
       description: |-
-        Deletion will only succeed if the Product Selection is not assigned to any [Store](ctp:api:type:Store).
+        Deletion will only succeed if the Product Selection is not assigned to any [Store](/../api/projects/stores#store).
       parameters:
         - name: version
           in: query
@@ -24272,6 +24256,7 @@ paths:
       security:
         - oauth_2_0:
             - "view_products:{projectKey}"
+            - "view_published_products:{projectKey}"
       operationId: ByProjectKeyProductsGet
       description: |-
         If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
@@ -24900,6 +24885,75 @@ paths:
           $ref: '#/components/responses/errorable_403'
         "404":
           $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/products/search:
+    description: |-
+      This endpoint provides high-performance search queries over Products. Product Search allows searching through all products with a current projection in your Project.
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "view_published_products:{projectKey}"
+      operationId: ByProjectKeyProductsSearchPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductSearchRequest'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductPagedSearchResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "project_settings:{projectKey}"
+      operationId: ByProjectKeyProductsSearchHead
+      description: |-
+        Checks whether a search index for the Project's Products exists.
+      responses:
+        "200":
+          description: |-
+            The index exists and the Search Products endpoint can be used.
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -27428,7 +27482,7 @@ paths:
             - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingCartLocationGet
       description: |-
-        Retrieves all the ShippingMethods that can ship to the given [Location](ctp:api:type:Location)
+        Retrieves all the ShippingMethods that can ship to the given [Location](/projects/zones#location)
         with a `predicate` that matches the given Cart.
         Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
         This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
@@ -27687,7 +27741,7 @@ paths:
             - "view_shipping_methods:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingOrdereditGet
       description: |-
-        Retrieves all the ShippingMethods that can ship to the given [Location](ctp:api:type:Location) for an [OrderEdit](ctp:api:type:OrderEdit).
+        Retrieves all the ShippingMethods that can ship to the given [Location](/../api/projects/zones#location) for an [OrderEdit](/../api/projects/order-edits).
 
         If the OrderEdit preview cannot be generated, an [EditPreviewFailed](ctp:api:type:EditPreviewFailedError) error is returned.
       parameters:
@@ -32868,8 +32922,6 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/RuleApprover'
-            custom:
-              $ref: '#/components/schemas/CustomFields'
     ApprovalFlowApproval:
       type: "object"
       required:
@@ -32934,30 +32986,6 @@ components:
           format: "datetime"
         reason:
           type: "string"
-    ApprovalFlowSetCustomFieldAction:
-      allOf:
-        - $ref: '#/components/schemas/ApprovalFlowUpdateAction'
-        - type: "object"
-          required:
-            - name
-          properties:
-            action:
-              type: "string"
-            name:
-              type: "string"
-            value:
-              {}
-    ApprovalFlowSetCustomTypeAction:
-      allOf:
-        - $ref: '#/components/schemas/ApprovalFlowUpdateAction'
-        - type: "object"
-          properties:
-            action:
-              type: "string"
-            type:
-              $ref: '#/components/schemas/TypeResourceIdentifier'
-            fields:
-              $ref: '#/components/schemas/FieldContainer'
     ApprovalFlowStatus:
       type: "string"
       enum:
@@ -32966,6 +32994,7 @@ components:
         - Rejected
       x-annotation-package: "ApprovalFlow"
       x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/approvalflows#approvalflowstatus"
+      x-beta: true
       x-annotation-enumDescriptions:
         Pending: "Default status of Approval Flows, indicating that the Approval Flow has
          not been fully approved or rejected.n"
@@ -32993,8 +33022,6 @@ components:
         mapping:
           approve: '#/components/schemas/ApprovalFlowApproveAction'
           reject: '#/components/schemas/ApprovalFlowRejectAction'
-          setCustomField: '#/components/schemas/ApprovalFlowSetCustomFieldAction'
-          setCustomType: '#/components/schemas/ApprovalFlowSetCustomTypeAction'
       required:
         - action
       properties:
@@ -33180,6 +33207,7 @@ components:
         - Inactive
       x-annotation-package: "ApprovalRule"
       x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/approvalrules#approvalrulestatus"
+      x-beta: true
       x-annotation-enumDescriptions:
         Active: "The Approval Rule is in effect and will be used in evaluating approval requests
          for [Orders](ctp:api:type:Order).n"
@@ -34151,7 +34179,7 @@ components:
         Active: "The Business Unit can be used in Carts, Orders, Quote Requests, and Quotes
          and can be edited.n"
         Inactive: "The Business Unit cannot be used in Carts, Orders, Quote Requests, and
-         Quotes and can only be edited using the [general endpoint](/../api/associates-overview#through-the-general-endpoints).n
+         Quotes and can only be edited using the [general endpoint](ctp:api:endpoint:/{projectKey}/me/business-units:POST).n
         Status doesn't affect inheritance. Even if a parent unit is inactive, its children
          remain active and can inherit role assignments.n"
     BusinessUnitStoreMode:
@@ -35732,10 +35760,10 @@ components:
       x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#cartstate"
       x-annotation-enumDescriptions:
         Active: "The default state where a Cart can be updated and ordered.n"
-        Merged: "An anonymous Cart was merged into a Customer's Cart on [sign-in](ctp:api:endpoint:/{projectKey}/login:POST),
+        Merged: "An anonymous Cart was merged into a Customer's Cart on [sign-in](/../api/projects/customers#authenticate-sign-in-customer),
          and no further operations are allowed on the Cart.n"
-        Ordered: "A Cart was [ordered](ctp:api:endpoint:/{projectKey}/orders:POST), and no
-         further operations are allowed on the Cart.n"
+        Ordered: "A Cart was [ordered](/../api/projects/orders#create-order-from-cart), and
+         no further operations are allowed on the Cart.n"
         Frozen: "A Cart is [frozen](ctp:api:type:FrozenCarts). Update actions that can change
          the price of (Custom) Line Items are not allowed.nn  - [Add LineItem](ctp:api:type:CartAddLineItemAction)n
           - [Change LineItem Quantity](ctp:api:type:CartChangeLineItemQuantityAction)n
@@ -36174,12 +36202,11 @@ components:
          no inventory checks or modifications.nnThis is the default mode.n"
         TrackOnly: "Orders are tracked on the Inventory, and ordering a [LineItem](ctp:api:type:LineItem)
          deducts the available quantity on the respective [InventoryEntry](ctp:api:type:InventoryEntry).n
-        nAn [Order can be created](ctp:api:endpoint:/{projectKey}/orders:POST) even if
-         the Line Item quantity is zero or negative, but if no matching Inventory Entry
-         exists for the Line Item, an [OutOfStock](ctp:api:type:OutOfStockError) error
-         is returned.n"
+        nAn [Order can be created](/../api/projects/orders#create-order) even if the Line
+         Item quantity is zero or negative, but if no matching Inventory Entry exists for
+         the Line Item, an [OutOfStock](ctp:api:type:OutOfStockError) error is returned.n"
         ReserveOnOrder: "Line Items in a Cart are only reserved for the duration of the ordering
-         transaction.nIf a Line Item is not available when [creating an Order](ctp:api:endpoint:/{projectKey}/orders:POST),
+         transaction.nIf a Line Item is not available when [creating an Order](/../api/projects/orders#create-order),
          an [OutOfStock](ctp:api:type:OutOfStockError) error is returned.nThis is because
          the [InventoryEntry](ctp:api:type:InventoryEntry) `availableQuantity` is insufficient
          (but is still updated) for the ordered Line Item quantity.nnHowever, an Order
@@ -36346,7 +36373,7 @@ components:
       x-annotation-package: "Cart"
       x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/carts#lineitemmode"
       x-annotation-enumDescriptions:
-        Standard: "The Line Item is added during [Cart creation](ctp:api:endpoint:/{projectKey}/carts:POST)
+        Standard: "The Line Item is added during [Cart creation](/../api/projects/carts#create-cart)
          or using the [Add LineItem](ctp:api:type:CartAddLineItemAction) update action.n
         The Line Item quantity can be changed without restriction.n"
         GiftLineItem: "The Line Item is added automatically by a Cart Discount with [CartDiscountValueGiftLineItem](ctp:api:type:CartDiscountValueGiftLineItem).n
@@ -39526,6 +39553,7 @@ components:
         - Password
         - ExternalAuth
       x-annotation-package: "Customer"
+      x-beta: true
       x-annotation-enumDescriptions:
         Password: "This is the default value. If set, the `password` field is required on
          [CustomerDraft](ctp:api:type:CustomerDraft) and is present on [Customer](ctp:api:type:Customer)."
@@ -41195,6 +41223,7 @@ components:
           MissingTaxRateForCountry: '#/components/schemas/MissingTaxRateForCountryError'
           MoneyOverflow: '#/components/schemas/MoneyOverflowError'
           NoMatchingProductDiscountFound: '#/components/schemas/NoMatchingProductDiscountFoundError'
+          NotEnabled: '#/components/schemas/NotEnabledError'
           ObjectNotFound: '#/components/schemas/ObjectNotFoundError'
           OutOfStock: '#/components/schemas/OutOfStockError'
           OverCapacity: '#/components/schemas/OverCapacityError'
@@ -41704,6 +41733,20 @@ components:
           additionalProperties:
             type: "string"
     NoMatchingProductDiscountFoundError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    NotEnabledError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
@@ -42597,6 +42640,7 @@ components:
           MissingTaxRateForCountry: '#/components/schemas/GraphQLMissingTaxRateForCountryError'
           MoneyOverflow: '#/components/schemas/GraphQLMoneyOverflowError'
           NoMatchingProductDiscountFound: '#/components/schemas/GraphQLNoMatchingProductDiscountFoundError'
+          NotEnabled: '#/components/schemas/GraphQLNotEnabledError'
           ObjectNotFound: '#/components/schemas/GraphQLObjectNotFoundError'
           OutOfStock: '#/components/schemas/GraphQLOutOfStockError'
           OverCapacity: '#/components/schemas/GraphQLOverCapacityError'
@@ -42995,6 +43039,17 @@ components:
           additionalProperties:
             type: "string"
     GraphQLNoMatchingProductDiscountFoundError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLNotEnabledError:
       allOf:
         - $ref: '#/components/schemas/GraphQLErrorObject'
         - type: "object"
@@ -47731,184 +47786,6 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/StoreKeyReference'
-    CartDiscountCreatedMessage:
-      allOf:
-        - $ref: '#/components/schemas/Message'
-        - type: "object"
-          required:
-            - cartDiscount
-          properties:
-            id:
-              type: "string"
-            version:
-              type: "integer"
-              format: "int64"
-            createdAt:
-              type: "string"
-              format: "datetime"
-            lastModifiedAt:
-              type: "string"
-              format: "datetime"
-            lastModifiedBy:
-              $ref: '#/components/schemas/LastModifiedBy'
-            createdBy:
-              $ref: '#/components/schemas/CreatedBy'
-            sequenceNumber:
-              type: "integer"
-              format: "int64"
-            resource:
-              $ref: '#/components/schemas/Reference'
-            resourceVersion:
-              type: "integer"
-              format: "int64"
-            type:
-              type: "string"
-            resourceUserProvidedIdentifiers:
-              $ref: '#/components/schemas/UserProvidedIdentifiers'
-            cartDiscount:
-              $ref: '#/components/schemas/CartDiscount'
-    CartDiscountDeletedMessage:
-      allOf:
-        - $ref: '#/components/schemas/Message'
-        - type: "object"
-          properties:
-            id:
-              type: "string"
-            version:
-              type: "integer"
-              format: "int64"
-            createdAt:
-              type: "string"
-              format: "datetime"
-            lastModifiedAt:
-              type: "string"
-              format: "datetime"
-            lastModifiedBy:
-              $ref: '#/components/schemas/LastModifiedBy'
-            createdBy:
-              $ref: '#/components/schemas/CreatedBy'
-            sequenceNumber:
-              type: "integer"
-              format: "int64"
-            resource:
-              $ref: '#/components/schemas/Reference'
-            resourceVersion:
-              type: "integer"
-              format: "int64"
-            type:
-              type: "string"
-            resourceUserProvidedIdentifiers:
-              $ref: '#/components/schemas/UserProvidedIdentifiers'
-    CartDiscountStoreAddedMessage:
-      allOf:
-        - $ref: '#/components/schemas/Message'
-        - type: "object"
-          required:
-            - store
-          properties:
-            id:
-              type: "string"
-            version:
-              type: "integer"
-              format: "int64"
-            createdAt:
-              type: "string"
-              format: "datetime"
-            lastModifiedAt:
-              type: "string"
-              format: "datetime"
-            lastModifiedBy:
-              $ref: '#/components/schemas/LastModifiedBy'
-            createdBy:
-              $ref: '#/components/schemas/CreatedBy'
-            sequenceNumber:
-              type: "integer"
-              format: "int64"
-            resource:
-              $ref: '#/components/schemas/Reference'
-            resourceVersion:
-              type: "integer"
-              format: "int64"
-            type:
-              type: "string"
-            resourceUserProvidedIdentifiers:
-              $ref: '#/components/schemas/UserProvidedIdentifiers'
-            store:
-              $ref: '#/components/schemas/StoreKeyReference'
-    CartDiscountStoreRemovedMessage:
-      allOf:
-        - $ref: '#/components/schemas/Message'
-        - type: "object"
-          required:
-            - store
-          properties:
-            id:
-              type: "string"
-            version:
-              type: "integer"
-              format: "int64"
-            createdAt:
-              type: "string"
-              format: "datetime"
-            lastModifiedAt:
-              type: "string"
-              format: "datetime"
-            lastModifiedBy:
-              $ref: '#/components/schemas/LastModifiedBy'
-            createdBy:
-              $ref: '#/components/schemas/CreatedBy'
-            sequenceNumber:
-              type: "integer"
-              format: "int64"
-            resource:
-              $ref: '#/components/schemas/Reference'
-            resourceVersion:
-              type: "integer"
-              format: "int64"
-            type:
-              type: "string"
-            resourceUserProvidedIdentifiers:
-              $ref: '#/components/schemas/UserProvidedIdentifiers'
-            store:
-              $ref: '#/components/schemas/StoreKeyReference'
-    CartDiscountStoresSetMessage:
-      allOf:
-        - $ref: '#/components/schemas/Message'
-        - type: "object"
-          required:
-            - stores
-          properties:
-            id:
-              type: "string"
-            version:
-              type: "integer"
-              format: "int64"
-            createdAt:
-              type: "string"
-              format: "datetime"
-            lastModifiedAt:
-              type: "string"
-              format: "datetime"
-            lastModifiedBy:
-              $ref: '#/components/schemas/LastModifiedBy'
-            createdBy:
-              $ref: '#/components/schemas/CreatedBy'
-            sequenceNumber:
-              type: "integer"
-              format: "int64"
-            resource:
-              $ref: '#/components/schemas/Reference'
-            resourceVersion:
-              type: "integer"
-              format: "int64"
-            type:
-              type: "string"
-            resourceUserProvidedIdentifiers:
-              $ref: '#/components/schemas/UserProvidedIdentifiers'
-            stores:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/StoreKeyReference'
     CategoryCreatedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -49577,11 +49454,6 @@ components:
               BusinessUnitStoreModeChanged: '#/components/schemas/BusinessUnitStoreModeChangedMessage'
               BusinessUnitStoreRemoved: '#/components/schemas/BusinessUnitStoreRemovedMessage'
               BusinessUnitStoresSet: '#/components/schemas/BusinessUnitStoresSetMessage'
-              CartDiscountCreated: '#/components/schemas/CartDiscountCreatedMessage'
-              CartDiscountDeleted: '#/components/schemas/CartDiscountDeletedMessage'
-              CartDiscountStoreAdded: '#/components/schemas/CartDiscountStoreAddedMessage'
-              CartDiscountStoreRemoved: '#/components/schemas/CartDiscountStoreRemovedMessage'
-              CartDiscountStoresSet: '#/components/schemas/CartDiscountStoresSetMessage'
               CategoryCreated: '#/components/schemas/CategoryCreatedMessage'
               CategorySlugChanged: '#/components/schemas/CategorySlugChangedMessage'
               CustomerAddressAdded: '#/components/schemas/CustomerAddressAddedMessage'
@@ -55101,59 +54973,6 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/StoreKeyReference'
-    CartDiscountCreatedMessagePayload:
-      allOf:
-        - $ref: '#/components/schemas/MessagePayload'
-        - type: "object"
-          required:
-            - cartDiscount
-          properties:
-            type:
-              type: "string"
-            cartDiscount:
-              $ref: '#/components/schemas/CartDiscount'
-    CartDiscountDeletedMessagePayload:
-      allOf:
-        - $ref: '#/components/schemas/MessagePayload'
-        - type: "object"
-          properties:
-            type:
-              type: "string"
-    CartDiscountStoreAddedMessagePayload:
-      allOf:
-        - $ref: '#/components/schemas/MessagePayload'
-        - type: "object"
-          required:
-            - store
-          properties:
-            type:
-              type: "string"
-            store:
-              $ref: '#/components/schemas/StoreKeyReference'
-    CartDiscountStoreRemovedMessagePayload:
-      allOf:
-        - $ref: '#/components/schemas/MessagePayload'
-        - type: "object"
-          required:
-            - store
-          properties:
-            type:
-              type: "string"
-            store:
-              $ref: '#/components/schemas/StoreKeyReference'
-    CartDiscountStoresSetMessagePayload:
-      allOf:
-        - $ref: '#/components/schemas/MessagePayload'
-        - type: "object"
-          required:
-            - stores
-          properties:
-            type:
-              type: "string"
-            stores:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/StoreKeyReference'
     CategoryCreatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -55760,11 +55579,6 @@ components:
           BusinessUnitStoreModeChanged: '#/components/schemas/BusinessUnitStoreModeChangedMessagePayload'
           BusinessUnitStoreRemoved: '#/components/schemas/BusinessUnitStoreRemovedMessagePayload'
           BusinessUnitStoresSet: '#/components/schemas/BusinessUnitStoresSetMessagePayload'
-          CartDiscountCreated: '#/components/schemas/CartDiscountCreatedMessagePayload'
-          CartDiscountDeleted: '#/components/schemas/CartDiscountDeletedMessagePayload'
-          CartDiscountStoreAdded: '#/components/schemas/CartDiscountStoreAddedMessagePayload'
-          CartDiscountStoreRemoved: '#/components/schemas/CartDiscountStoreRemovedMessagePayload'
-          CartDiscountStoresSet: '#/components/schemas/CartDiscountStoresSetMessagePayload'
           CategoryCreated: '#/components/schemas/CategoryCreatedMessagePayload'
           CategorySlugChanged: '#/components/schemas/CategorySlugChangedMessagePayload'
           CustomerAddressAdded: '#/components/schemas/CustomerAddressAddedMessagePayload'
@@ -62345,6 +62159,754 @@ components:
             validUntil:
               type: "string"
               format: "datetime"
+    ProductPagedSearchResponse:
+      type: "object"
+      required:
+        - hits
+        - total
+      properties:
+        total:
+          type: "integer"
+          format: "int64"
+        offset:
+          type: "integer"
+          format: "int32"
+        limit:
+          type: "integer"
+          format: "int32"
+        facets:
+          $ref: '#/components/schemas/ProductSearchFacetResult'
+        hits:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductSearchHit'
+    ProductSearchAndExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchCompoundExpression'
+        - type: "object"
+          required:
+            - and
+          properties:
+            and:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductSearchQuery'
+    ProductSearchAnyValue:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpressionValue'
+        - type: "object"
+          required:
+            - value
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            attributeType:
+              $ref: '#/components/schemas/ProductSearchAttributeType'
+            value:
+              {}
+            language:
+              $ref: '#/components/schemas/Locale'
+            caseInsensitive:
+              type: "boolean"
+    ProductSearchAttributeType:
+      type: "string"
+      enum:
+        - boolean
+        - text
+        - ltext
+        - enum
+        - lenum
+        - number
+        - money
+        - date
+        - datetime
+        - time
+        - reference
+        - set_boolean
+        - set_text
+        - set_ltext
+        - set_enum
+        - set_lenum
+        - set_number
+        - set_money
+        - set_date
+        - set_datetime
+        - set_time
+        - set_reference
+      x-annotation-package: "ProductSearch"
+    ProductSearchCompoundExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQuery'
+        - type: "object"
+    ProductSearchDateRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/ProductSearchDateRangeValue'
+    ProductSearchDateRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            attributeType:
+              $ref: '#/components/schemas/ProductSearchAttributeType'
+            gte:
+              type: "string"
+              format: "date-only"
+            gt:
+              type: "string"
+              format: "date-only"
+            lte:
+              type: "string"
+              format: "date-only"
+            lt:
+              type: "string"
+              format: "date-only"
+    ProductSearchDateTimeRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/ProductSearchDateTimeRangeValue'
+    ProductSearchDateTimeRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            attributeType:
+              $ref: '#/components/schemas/ProductSearchAttributeType'
+            gte:
+              type: "string"
+              format: "datetime"
+            gt:
+              type: "string"
+              format: "datetime"
+            lte:
+              type: "string"
+              format: "datetime"
+            lt:
+              type: "string"
+              format: "datetime"
+    ProductSearchErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: "object"
+          required:
+            - message
+            - statusCode
+          properties:
+            statusCode:
+              type: "integer"
+              format: "int32"
+            message:
+              type: "string"
+            errors:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ErrorObject'
+    ProductSearchExactExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpression'
+        - type: "object"
+          required:
+            - exact
+          properties:
+            exact:
+              $ref: '#/components/schemas/ProductSearchAnyValue'
+    ProductSearchExistsExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpression'
+        - type: "object"
+          required:
+            - exists
+          properties:
+            exists:
+              $ref: '#/components/schemas/ProductSearchExistsValue'
+    ProductSearchExistsValue:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            attributeType:
+              $ref: '#/components/schemas/ProductSearchAttributeType'
+            language:
+              $ref: '#/components/schemas/Locale'
+    ProductSearchFilterExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchCompoundExpression'
+        - type: "object"
+          required:
+            - filter
+          properties:
+            filter:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductSearchQueryExpression'
+    ProductSearchFullTextExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpression'
+        - type: "object"
+          required:
+            - fullText
+          properties:
+            fullText:
+              $ref: '#/components/schemas/ProductSearchFullTextValue'
+    ProductSearchFullTextValue:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpressionValue'
+        - type: "object"
+          required:
+            - value
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            attributeType:
+              $ref: '#/components/schemas/ProductSearchAttributeType'
+            value:
+              {}
+            language:
+              $ref: '#/components/schemas/Locale'
+            mustMatch:
+              $ref: '#/components/schemas/ProductSearchMatchType'
+    ProductSearchHit:
+      type: "object"
+      required:
+        - id
+      properties:
+        id:
+          type: "string"
+        productProjection:
+          $ref: '#/components/schemas/ProductProjection'
+        matchingVariants:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductSearchMatchingVariant'
+    ProductSearchLongRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/ProductSearchLongRangeValue'
+    ProductSearchLongRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            attributeType:
+              $ref: '#/components/schemas/ProductSearchAttributeType'
+            gte:
+              type: "integer"
+              format: "int64"
+            gt:
+              type: "integer"
+              format: "int64"
+            lte:
+              type: "integer"
+              format: "int64"
+            lt:
+              type: "integer"
+              format: "int64"
+    ProductSearchMatchType:
+      type: "string"
+      enum:
+        - any
+        - all
+      x-annotation-package: "ProductSearch"
+    ProductSearchMatchingVariant:
+      type: "object"
+      required:
+        - id
+      properties:
+        id:
+          type: "integer"
+          format: "int32"
+        sku:
+          type: "string"
+    ProductSearchNotExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchCompoundExpression'
+        - type: "object"
+          required:
+            - not
+          properties:
+            not:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductSearchQuery'
+    ProductSearchNumberRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/ProductSearchNumberRangeValue'
+    ProductSearchNumberRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            attributeType:
+              $ref: '#/components/schemas/ProductSearchAttributeType'
+            gte:
+              type: "number"
+              format: "double"
+            gt:
+              type: "number"
+              format: "double"
+            lte:
+              type: "number"
+              format: "double"
+            lt:
+              type: "number"
+              format: "double"
+    ProductSearchOrExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchCompoundExpression'
+        - type: "object"
+          required:
+            - or
+          properties:
+            or:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductSearchQuery'
+    ProductSearchPrefixExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpression'
+        - type: "object"
+          required:
+            - prefix
+          properties:
+            prefix:
+              $ref: '#/components/schemas/ProductSearchAnyValue'
+    ProductSearchProjectionParams:
+      type: "object"
+      properties:
+        expand:
+          $ref: '#/components/schemas/Expansion'
+        staged:
+          type: "boolean"
+        priceCurrency:
+          $ref: '#/components/schemas/CurrencyCode'
+        priceCountry:
+          $ref: '#/components/schemas/CountryCode'
+        priceCustomerGroup:
+          type: "string"
+        priceChannel:
+          type: "string"
+        localeProjection:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Locale'
+        storeProjection:
+          type: "string"
+    ProductSearchQuery:
+      type: "object"
+    ProductSearchQueryExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQuery'
+        - type: "object"
+    ProductSearchQueryExpressionValue:
+      type: "object"
+      required:
+        - field
+      properties:
+        field:
+          type: "string"
+        boost:
+          type: "number"
+          format: "double"
+        attributeType:
+          $ref: '#/components/schemas/ProductSearchAttributeType'
+    ProductSearchRequest:
+      type: "object"
+      properties:
+        query:
+          $ref: '#/components/schemas/ProductSearchQuery'
+        postFilter:
+          $ref: '#/components/schemas/ProductSearchQuery'
+        sort:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductSearchSorting'
+        limit:
+          type: "integer"
+          format: "int32"
+        offset:
+          type: "integer"
+          format: "int32"
+        markMatchingVariants:
+          type: "boolean"
+        projection:
+          $ref: '#/components/schemas/ProductSearchProjectionParams'
+        facets:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductSearchFacetExpression'
+    ProductSearchSortMode:
+      type: "string"
+      enum:
+        - min
+        - max
+        - avg
+        - sum
+      x-annotation-package: "ProductSearch"
+    ProductSearchSortOrder:
+      type: "string"
+      enum:
+        - asc
+        - desc
+      x-annotation-package: "ProductSearch"
+      x-annotation-enumDescriptions:
+        asc: "Sort results in ascending order."
+        desc: "Sort results in descending order."
+    ProductSearchSorting:
+      type: "object"
+      required:
+        - field
+        - order
+      properties:
+        field:
+          type: "string"
+        language:
+          $ref: '#/components/schemas/Locale'
+        order:
+          $ref: '#/components/schemas/ProductSearchSortOrder'
+        mode:
+          $ref: '#/components/schemas/ProductSearchSortMode'
+        attributeType:
+          $ref: '#/components/schemas/ProductSearchAttributeType'
+        filter:
+          $ref: '#/components/schemas/ProductSearchQueryExpression'
+        internal:
+          type: "boolean"
+    ProductSearchSuggestionCompletionExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchSuggestionExpression'
+        - type: "object"
+          required:
+            - completion
+          properties:
+            completion:
+              $ref: '#/components/schemas/ProductSearchSuggestionCompletionExpressionValue'
+    ProductSearchSuggestionCompletionExpressionValue:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchSuggestionExpressionValue'
+        - type: "object"
+          required:
+            - field
+            - name
+            - prefix
+          properties:
+            name:
+              type: "string"
+            field:
+              type: "string"
+            prefix:
+              type: "string"
+    ProductSearchSuggestionExpression:
+      type: "object"
+    ProductSearchSuggestionExpressionValue:
+      type: "object"
+    ProductSearchTimeRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/ProductSearchTimeRangeValue'
+    ProductSearchTimeRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            attributeType:
+              $ref: '#/components/schemas/ProductSearchAttributeType'
+            gte:
+              type: "string"
+              format: "time-only"
+            gt:
+              type: "string"
+              format: "time-only"
+            lte:
+              type: "string"
+              format: "time-only"
+            lt:
+              type: "string"
+              format: "time-only"
+    ProductSearchWildCardExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchQueryExpression'
+        - type: "object"
+          required:
+            - wildcard
+          properties:
+            wildcard:
+              $ref: '#/components/schemas/ProductSearchAnyValue'
+    ProductSearchFacetBucketResult:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchFacetResultExpression'
+        - type: "object"
+          required:
+            - buckets
+          properties:
+            name:
+              type: "string"
+            buckets:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductSearchFacetResultBucket'
+    ProductSearchFacetCountExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchFacetExpression'
+        - type: "object"
+          required:
+            - count
+          properties:
+            count:
+              $ref: '#/components/schemas/ProductSearchFacetCountValue'
+    ProductSearchFacetCountValue:
+      type: "object"
+      required:
+        - name
+      properties:
+        name:
+          type: "string"
+        scope:
+          $ref: '#/components/schemas/ProductSearchFacetEnumScope'
+        filter:
+          $ref: '#/components/schemas/ProductSearchQuery'
+        level:
+          $ref: '#/components/schemas/ProductSearchFacetEnumCount'
+    ProductSearchFacetDistinctBucketSortBy:
+      type: "string"
+      enum:
+        - count
+        - key
+      x-annotation-package: "ProductSearch"
+      x-annotation-enumDescriptions:
+        count: "Sort buckets by the count value."
+        key: "Sort buckets by the bucket key."
+    ProductSearchFacetDistinctBucketSortExpression:
+      type: "object"
+      required:
+        - by
+        - order
+      properties:
+        by:
+          $ref: '#/components/schemas/ProductSearchFacetDistinctBucketSortBy'
+        order:
+          $ref: '#/components/schemas/ProductSearchSortOrder'
+    ProductSearchFacetDistinctExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchFacetExpression'
+        - type: "object"
+          required:
+            - distinct
+          properties:
+            distinct:
+              $ref: '#/components/schemas/ProductSearchFacetDistinctValue'
+    ProductSearchFacetDistinctStartsWith:
+      type: "object"
+      required:
+        - caseInsensitive
+        - value
+      properties:
+        value:
+          type: "string"
+        caseInsensitive:
+          type: "boolean"
+    ProductSearchFacetDistinctValue:
+      type: "object"
+      required:
+        - field
+        - name
+      properties:
+        name:
+          type: "string"
+        scope:
+          $ref: '#/components/schemas/ProductSearchFacetEnumScope'
+        filter:
+          $ref: '#/components/schemas/ProductSearchQuery'
+        count:
+          $ref: '#/components/schemas/ProductSearchFacetEnumCount'
+        field:
+          type: "string"
+        includes:
+          type: "array"
+          items:
+            type: "string"
+        startsWith:
+          $ref: '#/components/schemas/ProductSearchFacetDistinctStartsWith'
+        sort:
+          $ref: '#/components/schemas/ProductSearchFacetDistinctBucketSortExpression'
+        size:
+          type: "integer"
+          format: "int32"
+        language:
+          $ref: '#/components/schemas/Locale'
+        attributeType:
+          $ref: '#/components/schemas/ProductSearchAttributeType'
+        missing:
+          type: "string"
+    ProductSearchFacetEnumCount:
+      type: "string"
+      enum:
+        - products
+        - variants
+      x-annotation-package: "ProductSearch"
+      x-annotation-enumDescriptions:
+        products: "The query should count Products."
+        variants: "The query should count Product Variants."
+    ProductSearchFacetEnumScope:
+      type: "string"
+      enum:
+        - all
+        - query
+      x-annotation-package: "ProductSearch"
+      x-annotation-enumDescriptions:
+        all: "Count all Products (or Product Variants) without considering the search query."
+        query: "Only count the Products (or Product Variants) that matches the search query."
+    ProductSearchFacetExpression:
+      type: "object"
+    ProductSearchFacetRangesExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchFacetExpression'
+        - type: "object"
+          required:
+            - ranges
+          properties:
+            ranges:
+              $ref: '#/components/schemas/ProductSearchFacetRangesValue'
+    ProductSearchFacetRangesFacetRange:
+      type: "object"
+      properties:
+        from:
+          {}
+        to:
+          {}
+        key:
+          type: "string"
+    ProductSearchFacetRangesValue:
+      type: "object"
+      required:
+        - field
+        - name
+        - ranges
+      properties:
+        name:
+          type: "string"
+        scope:
+          $ref: '#/components/schemas/ProductSearchFacetEnumScope'
+        filter:
+          $ref: '#/components/schemas/ProductSearchQuery'
+        count:
+          $ref: '#/components/schemas/ProductSearchFacetEnumCount'
+        field:
+          type: "string"
+        ranges:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductSearchFacetRangesFacetRange'
+        language:
+          $ref: '#/components/schemas/Locale'
+        attributeType:
+          $ref: '#/components/schemas/ProductSearchAttributeType'
+    ProductSearchFacetResult:
+      type: "object"
+      required:
+        - results
+      properties:
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductSearchFacetResultExpression'
+    ProductSearchFacetResultBucket:
+      type: "object"
+      required:
+        - count
+        - key
+      properties:
+        key:
+          type: "string"
+        count:
+          type: "integer"
+          format: "int32"
+    ProductSearchFacetResultCount:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchFacetResultExpression'
+        - type: "object"
+          required:
+            - value
+          properties:
+            name:
+              type: "string"
+            value:
+              type: "integer"
+              format: "int64"
+    ProductSearchFacetResultExpression:
+      type: "object"
+      required:
+        - name
+      properties:
+        name:
+          type: "string"
+    ProductSearchFacetScope:
+      type: "string"
+      enum:
+        - all
+        - query
+      x-annotation-package: "ProductSearch"
     AssignedProductReference:
       type: "object"
       required:
@@ -63035,10 +63597,7 @@ components:
     AttributeReferenceTypeId:
       type: "string"
       enum:
-        - associate-role
-        - business-unit
         - cart
-        - cart-discount
         - category
         - channel
         - customer
@@ -63053,10 +63612,7 @@ components:
       x-annotation-package: "ProductType"
       x-annotation-docs-uri: "https://docs.commercetools.com/api/projects/productTypes#attributereferencetypeid"
       x-annotation-enumDescriptions:
-        associate-role: "References a [AssociateRole](ctp:api:type:AssociateRole).n"
-        business-unit: "References a [BusinessUnit](ctp:api:type:BusinessUnit).n"
         cart: "References a [Cart](ctp:api:type:Cart).n"
-        cart-discount: "References a [CartDiscount](ctp:api:type:CartDiscount).n"
         category: "References a [Category](ctp:api:type:Category).n"
         channel: "References a [Channel](ctp:api:type:Channel).n"
         customer: "References a [Customer](ctp:api:type:Customer).n"
@@ -65128,10 +65684,22 @@ components:
       x-annotation-package: "Project"
       x-beta: true
       x-annotation-enumDescriptions:
-        Activated: "indicates that the [Search Orders](ctp:api:endpoint:/{projectKey}/orders/search:POST)
+        Activated: "indicates that the [Search Orders](/../api/projects/order-search#search-orders)
          endpoint is fully operational."
         Deactivated: "indicates that the Order Search feature is currently not active, but
          can be activated by [update action](#change-order-search-status)."
+    ProductSearchStatus:
+      type: "string"
+      enum:
+        - Activated
+        - Deactivated
+      x-annotation-package: "Project"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Activated: "indicates that the [Search Products](/../api/projects/product-search#search-products)
+         endpoint is fully operational."
+        Deactivated: "indicates that the Product Search feature is currently not active, but
+         can be activated by [update action](#change-product-search-status)."
     Project:
       type: "object"
       required:
@@ -65212,6 +65780,7 @@ components:
           changeName: '#/components/schemas/ProjectChangeNameAction'
           changeOrderSearchStatus: '#/components/schemas/ProjectChangeOrderSearchStatusAction'
           changeProductSearchIndexingEnabled: '#/components/schemas/ProjectChangeProductSearchIndexingEnabledAction'
+          changeProductSearchStatus: '#/components/schemas/ProjectChangeProductSearchStatusAction'
           changeShoppingListsConfiguration: '#/components/schemas/ProjectChangeShoppingListsConfigurationAction'
           setMyBusinessUnitAssociateRoleOnCreation: '#/components/schemas/ProjectSetBusinessUnitAssociateRoleOnCreationAction'
           setExternalOAuth: '#/components/schemas/ProjectSetExternalOAuthAction'
@@ -65225,6 +65794,8 @@ components:
       type: "object"
       properties:
         products:
+          $ref: '#/components/schemas/SearchIndexingConfigurationValues'
+        productsNew:
           $ref: '#/components/schemas/SearchIndexingConfigurationValues'
         orders:
           $ref: '#/components/schemas/SearchIndexingConfigurationValues'
@@ -65398,6 +65969,17 @@ components:
               type: "string"
             enabled:
               type: "boolean"
+    ProjectChangeProductSearchStatusAction:
+      allOf:
+        - $ref: '#/components/schemas/ProjectUpdateAction'
+        - type: "object"
+          required:
+            - status
+          properties:
+            action:
+              type: "string"
+            status:
+              $ref: '#/components/schemas/ProductSearchStatus'
     ProjectChangeShoppingListsConfigurationAction:
       allOf:
         - $ref: '#/components/schemas/ProjectUpdateAction'
@@ -69678,7 +70260,6 @@ components:
     CustomFieldReferenceValue:
       type: "string"
       enum:
-        - approval-flow
         - associate-role
         - business-unit
         - cart
@@ -69695,7 +70276,6 @@ components:
         - zone
       x-annotation-package: "Type"
       x-annotation-enumDescriptions:
-        approval-flow: "[ApprovalFlow](ctp:api:type:ApprovalFlow)n"
         associate-role: "[AssociateRole](ctp:api:type:AssociateRole)n"
         business-unit: "[BusinessUnit](ctp:api:type:BusinessUnit)n"
         cart: "[Cart](ctp:api:type:Cart)n"
@@ -69807,7 +70387,6 @@ components:
       enum:
         - address
         - asset
-        - approval-flow
         - associate-role
         - business-unit
         - cart-discount
@@ -69843,7 +70422,6 @@ components:
          [Cart](ctp:api:type:Cart), [Order](ctp:api:type:Order), [OrderEdit](ctp:api:type:OrderEdit),
          [Customer](ctp:api:type:Customer), and [Channel](ctp:api:type:Channel)n"
         asset: "[Asset](ctp:api:type:Asset) on [Category](ctp:api:type:Category) and [ProductVariant](ctp:api:type:ProductVariant)n"
-        approval-flow: "[ApprovalFlow](ctp:api:type:ApprovalFlow)n"
         associate-role: "[AssociateRole](ctp:api:type:AssociateRole)n"
         business-unit: "[BusinessUnit](ctp:api:type:BusinessUnit)n"
         cart-discount: "[CartDiscount](ctp:api:type:CartDiscount)n"
