@@ -47,5 +47,6 @@ yarn run generate-postman
 - api: HTTP API
 - history: Change History API
 - import: Import API
+- ml: Machine Learning API
 
 4. Choose one of the APIs and import the corresponding `collection.json` and `template.json` files to Postman.
