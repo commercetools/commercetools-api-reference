@@ -58,6 +58,7 @@ Our APIs have to follow our
   - [AsMapRule](#asmaprule)
   - [CamelCaseRule](#camelcaserule)
   - [DatetimeRule](#datetimerule)
+  - [BooleanPropertyNameRule](#booleanpropertynamerule)
   - [DiscriminatorNameRule](#discriminatornamerule)
   - [DiscriminatorParentRule](#discriminatorparentrule)
   - [FilenameRule](#filenamerule)
@@ -966,6 +967,25 @@ If the property type is **DateTime** or **TimeOnly** or **DateOnly**, this rule 
     properties:
       fooFrom: datetime
       fooTo: datetime
+```
+
+
+#### BooleanPropertyNameRule
+
+If the property type is **Boolean**, this rule checks the name of the property does not have **is** as a prefix.
+
+```raml
+  Invalid:
+    type: object
+    properties:
+      isBad: boolean
+  Valid:
+    type: object
+    properties:
+      /a-z/: boolean
+      good: boolean
+      isolated: boolean
+      isFine: string
 ```
 
 #### DiscriminatorNameRule
