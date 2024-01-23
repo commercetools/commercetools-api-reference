@@ -56,6 +56,7 @@ Our APIs have to follow our
   - [api.raml](#apiraml)
 - [Validator Rules](#validator-rules)
   - [AsMapRule](#asmaprule)
+  - [BooleanPropertyNameRule](#booleanpropertynamerule)
   - [CamelCaseRule](#camelcaserule)
   - [DatetimeRule](#datetimerule)
   - [DiscriminatorNameRule](#discriminatornamerule)
@@ -550,7 +551,7 @@ or
   (markDeprecated): true
 ```
 
-In the RAMl spec for other libraries (such as the Machine Learning API in `api-specs/ml`) use the following format:
+In the RAMl spec for other libraries (such as the Connect API in `api-specs/connect`) use the following format:
 
 ```raml
 uses:
@@ -936,6 +937,24 @@ types:
         value: string
     properties:
       /^[a-z]{2}$/: string
+```
+
+#### BooleanPropertyNameRule
+
+If the property type is **Boolean**, this rule checks the name of the property does not have **is** as a prefix.
+
+```raml
+  Invalid:
+    type: object
+    properties:
+      isBad: boolean
+  Valid:
+    type: object
+    properties:
+      /a-z/: boolean
+      good: boolean
+      isolated: boolean
+      isFine: string
 ```
 
 #### CamelCaseRule

@@ -1,0 +1,63 @@
+#%RAML 1.0 Library
+usage: Common data types.
+(annotations.package): common
+(annotations.beta): true
+
+uses:
+  annotations: annotations.raml
+
+types:
+  Region:
+    description: |
+      The Region in which the Checkout application is [hosted](/../checkout/installing-checkout#regions-and-hosts).
+    enum:
+      - europe-west1.gcp
+      - us-central1.gcp
+    (annotations.enumDescriptions):
+      europe-west1.gcp: |
+        for Europe (Google Cloud, Belgium)
+      us-central1.gcp: |
+        for North America (Google Cloud, Iowa)
+  Amount:
+    description: |
+      The amount related to a [payment action](ctp:checkout:type:PaymentAction).
+    properties:
+      centAmount:
+        type: integer
+        description: |
+          Amount in the smallest indivisible unit of a currency, such as:
+
+          * Cents for EUR and USD, pence for GBP, or centime for CHF (5 CHF is specified as `500`).
+          * The value in the major unit for currencies without minor units, like JPY (5 JPY is specified as `5`).
+      currencyCode:
+        type: string
+        description: |
+          Currency code compliant to [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
+        pattern: ^[A-Z]{3}$
+  PaymentOperation:
+    type: string
+    description: |
+      The possible values for a [payment action](ctp:checkout:type:PaymentAction).
+    (annotations.enumDescriptions):
+      capturePayment: |
+        [Captures](ctp:checkout:type:CapturePaymentAction) the given [Payment](/../api/projects/payments#payment) amount.
+      refundPayment: |
+        [Refunds](ctp:checkout:type:RefundPaymentAction) the given Payment amount.
+      cancelPayment: |
+        [Cancels](ctp:checkout:type:CancelPaymentAction) an authorized Payment.
+    enum:
+      - capturePayment
+      - refundPayment
+      - cancelPayment
+  PaymentAction:
+    description: |
+      Depending on the action specified, Checkout requests the [Payment Service Provider](/../checkout/configuring-checkout#supported-payment-service-providers) to capture, refund, or cancel the authorization for the given Payment.
+    properties:
+      action:
+        type: PaymentOperation
+        description: |
+          Action to execute for the given Payment.
+      amount?:
+        type: Amount
+        description: |
+          Amount to be captured or refunded.
