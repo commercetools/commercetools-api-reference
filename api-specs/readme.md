@@ -972,8 +972,8 @@ This means that the hyphens are not allowed on the property name level.
 
 If the property type is **DateTime** or **TimeOnly** or **DateOnly**, this rule checks the name of the property:
 
-- it has to finish with **At** or **From** or **To**.
-- in case of date range, it has to have a property which finishes with **From** and a property which finishes with **To**.
+- it has to finish with **At** or **From** or **To** or **Until**.
+- in case of date range, it has to have a property which finishes with **From** and a property which finishes with **To** or **Until**.
 
 ```raml
   FooAtDateTime:
@@ -985,6 +985,11 @@ If the property type is **DateTime** or **TimeOnly** or **DateOnly**, this rule 
     properties:
       fooFrom: datetime
       fooTo: datetime
+  ValidDateRange:
+    type: object
+    properties:
+      validFrom: date-only
+      validUntil: date-only
 ```
 
 #### DiscriminatorNameRule
