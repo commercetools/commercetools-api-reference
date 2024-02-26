@@ -25,7 +25,6 @@ Our APIs have to follow our
     - [(identifier)](#identifier)
     - [(elementIdentifier)](#elementidentifier)
     - [(placeholderParam)](#placeholderparam)
-    - [(docs-uri)](#docs-uri)
     - [(updateType)](#updatetype)
     - [(updateable)](#updateable)
     - [(deleteable)](#deleteable)
@@ -302,7 +301,6 @@ To create a new Message, follow these steps:
    ```raml
    #%RAML 1.0 DataType
    (package): Message
-   (docs-uri): https://docs.commercetools.com/http-api-projects-messages.html#category-created
    type: Message
    displayName: CategoryCreatedMessage
    discriminatorValue: CategoryCreated
@@ -318,7 +316,6 @@ To create a new Message, follow these steps:
    ```raml
    #%RAML 1.0 DataType
    (package): Message
-   (docs-uri): https://docs.commercetools.com/http-api-projects-messages.html#category-created
    type: MessagePayload
    displayName: CategoryCreatedMessagePayload
    discriminatorValue: CategoryCreated
@@ -398,7 +395,6 @@ To add a new Custom Field to a resource or object:
    ```raml
    #%RAML 1.0 DataType
    (package): <Resource>
-   (docs-uri): <set by Tech Writers>
    type: <Resource>UpdateAction
    displayName: <Resource>Set<embeddedObject>CustomFieldAction
    discriminatorValue: <id for the update action>
@@ -419,7 +415,6 @@ To add a new Custom Field to a resource or object:
    ```raml
    #%RAML 1.0 DataType
    (package): <Resource>
-   (docs-uri): <set by Tech Writers>
    type: <Resource>UpdateAction
    displayName: <Resource>Set<embeddedObject>CustomTypeAction
    discriminatorValue: <id for the update action>
@@ -607,10 +602,6 @@ queryParameters:
       placeholder: locale
 ```
 
-##### (docs-uri)
-
-Use this annotation to link the specification to the documentation.
-
 ##### (updateType)
 
 This annotation has to be mentioned in the definition of the resource itself in the [/types](#types) folder in the resource data, so for instance in [CartDiscount.raml](./api/types/cart-discount/CartDiscount.raml). It's necessary to assign the related `<Resource>Update` to the resource.
@@ -783,7 +774,6 @@ In this folder, there is the detailed data definition of all the resources that 
 In common in each of the file there are:
 
 - **(package)**: the package name matches the folder name and often the domain name, which it lives in
-- **(docs-uri)**: the link of our documentation
 - **displayName**: the name of the resource data
 - **type**: it could be BaseResource, in case of the main resource data, or one of the type found in the common folder
 - **property**: the fields of the resource data
@@ -841,7 +831,6 @@ as well as in each Update actions as **type** which are in the [/updates](#updat
 
 ```raml
 (package): CartDiscount
-(docs-uri): https://docs.commercetools.com/http-api-projects-cartDiscounts.html#change-name
 type: CartDiscountUpdateAction
 displayName: CartDiscountChangeNameAction
 discriminatorValue: changeName
@@ -865,7 +854,6 @@ Here a classic example
 
 ```raml
 (package): Common
-(docs-uri): https://docs.commercetools.com/http-api-types.html#localizedstring
 displayName: LocalizedString
 type: object
 (asMap):
