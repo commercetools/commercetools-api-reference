@@ -127,6 +127,51 @@ resourceTypes:
             ## Not Found
 
             A 404 indicates that the <<resourceType>> was not found / does not exist.
+  baseSubResource:
+    type: base
+    get:
+      is:
+        - expandable
+      displayName: Get <<resourceType>>.
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<resourceType>>
+    post?:
+      is:
+        - conflicting
+        - expandable
+        - deprecatable200
+      displayName: Update <<resourceType>>.
+      body:
+        application/json:
+          type: <<resourceUpdateType>>
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<resourceType>>
+    delete?:
+      is:
+        - versioned
+        - conflicting
+        - expandable
+      displayName: Delete <<resourceType>>.
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<resourceType>>
+    head?:
+      displayName: Check whether <<resourceType>> exists.
+      responses:
+        200:
+        404:
+          description: |
+            ## Not Found
+
+            A 404 indicates that the <<resourceType>> was not found / does not exist.
   base:
     get?:
       is:
@@ -202,6 +247,7 @@ resourceTypes:
   /product-discounts: !include resources/product-discounts.raml
   /product-projections: !include resources/product-projections.raml
   /product-selections: !include resources/product-selections.raml
+  /product-tailoring: !include resources/product-tailoring.raml
   /product-types: !include resources/product-types.raml
   /quotes: !include resources/quotes.raml
   /quote-requests: !include resources/quote-requests.raml

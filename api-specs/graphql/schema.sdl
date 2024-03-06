@@ -2978,6 +2978,19 @@ input CreateProductSelectionDraft {
   custom: CustomFieldsDraft
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input CreateProductTailoringDraft {
+  product: ResourceIdentifierInput!
+  name: [LocalizedStringItemInputType!]
+  key: String
+  description: [LocalizedStringItemInputType!]
+  slug: [LocalizedStringItemInputType!]
+  metaTitle: [LocalizedStringItemInputType!]
+  metaDescription: [LocalizedStringItemInputType!]
+  metaKeywords: [LocalizedStringItemInputType!]
+  publish: Boolean
+}
+
 input CreateStandalonePrice {
   key: String
   sku: String!
@@ -4555,6 +4568,23 @@ type InStore implements CartDiscountQueryInterface & CartQueryInterface & Custom
     key: String): ShoppingList
   shoppingLists(where: String, sort: [String!], limit: Int, offset: Int): ShoppingListQueryResult!
   productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  productTailoring(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String,
+
+    "Queries with specified Product ID"
+    productId: String,
+
+    "Queries with specified Product key"
+    productKey: String): ProductTailoring
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  productTailoringList(where: String, sort: [String!], limit: Int, offset: Int): ProductTailoringQueryResult!
 }
 
 type InStoreMe implements MeQueryInterface & CartQueryInterface & ActiveCartInterface & OrderQueryInterface & ShoppingListQueryInterface {
@@ -5907,6 +5937,47 @@ type Mutation {
 
     "Queries with specified key"
     key: String): ProductSelection
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  createProductTailoring(
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput, draft: CreateProductTailoringDraft!): ProductTailoring
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  updateProductTailoring(
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
+
+    "Queries with specified Product ID"
+    productId: String,
+
+    "Queries with specified Product key"
+    productKey: String,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String,
+
+    actions: [ProductTailoringUpdateAction!]!, version: Long!): ProductTailoring
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  deleteProductTailoring(
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
+
+    "Queries with specified Product ID"
+    productId: String,
+
+    "Queries with specified Product key"
+    productKey: String,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String, version: Long!): ProductTailoring
   updateProject(version: Long!, actions: [ProjectSettingsUpdateAction!]!): ProjectProjection
   createStore(draft: CreateStore!): Store
   updateStore(version: Long!, actions: [StoreUpdateAction!]!,
@@ -8077,6 +8148,208 @@ type ProductStateTransition implements MessagePayload {
   type: String!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductTailoring implements Versioned {
+  key: String
+  productRef: Reference!
+  product: Product
+  storeRef: KeyReference!
+  store: Store
+  current: ProductTailoringData
+  staged: ProductTailoringData
+  published: Boolean!
+  hasStagedChanges: Boolean!
+  id: String!
+  version: Long!
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+type ProductTailoringCreated implements MessagePayload {
+  publish: Boolean!
+  storeRef: KeyReference!
+  productRef: Reference!
+  key: String
+  productKey: String
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  description(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  slug(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  nameAllLocales: [LocalizedString!]
+  slugAllLocales: [LocalizedString!]
+  descriptionAllLocales: [LocalizedString!]
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductTailoringData {
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  nameAllLocales: [LocalizedString!]
+  description(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  descriptionAllLocales: [LocalizedString!]
+  slug(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  slugAllLocales: [LocalizedString!]
+  metaTitle(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  metaTitleAllLocales: [LocalizedString!]
+  metaDescription(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  metaDescriptionAllLocales: [LocalizedString!]
+  metaKeywords(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  metaKeywordsAllLocales: [LocalizedString!]
+}
+
+type ProductTailoringDeleted implements MessagePayload {
+  storeRef: KeyReference!
+  productRef: Reference!
+  productKey: String
+  type: String!
+}
+
+type ProductTailoringDescriptionSet implements MessagePayload {
+  storeRef: KeyReference!
+  productRef: Reference!
+  productKey: String
+  description(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  oldDescription(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  descriptionAllLocales: [LocalizedString!]
+  oldDescriptionAllLocales: [LocalizedString!]
+  type: String!
+}
+
+type ProductTailoringNameSet implements MessagePayload {
+  storeRef: KeyReference!
+  productRef: Reference!
+  productKey: String
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  oldName(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  nameAllLocales: [LocalizedString!]
+  oldNameAllLocales: [LocalizedString!]
+  type: String!
+}
+
+type ProductTailoringPublished implements MessagePayload {
+  storeRef: KeyReference!
+  productRef: Reference!
+  productKey: String
+  type: String!
+}
+
+type ProductTailoringQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  exists: Boolean!
+  results: [ProductTailoring!]!
+}
+
+type ProductTailoringSlugSet implements MessagePayload {
+  storeRef: KeyReference!
+  productRef: Reference!
+  productKey: String
+  slug(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  oldSlug(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  slugAllLocales: [LocalizedString!]
+  oldSlugAllLocales: [LocalizedString!]
+  type: String!
+}
+
+type ProductTailoringUnpublished implements MessagePayload {
+  storeRef: KeyReference!
+  productRef: Reference!
+  productKey: String
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ProductTailoringUpdateAction {
+  publish: PublishTailoring
+  unpublish: UnpublishTailoring
+  setDescription: SetProductTailoringDescription
+  setMetaAttributes: SetProductTailoringMetaAttributes
+  setMetaDescription: SetProductTailoringMetaDescription
+  setMetaKeywords: SetProductTailoringMetaKeywords
+  setMetaTitle: SetProductTailoringMetaTitle
+  setName: SetProductTailoringName
+  setSlug: SetProductTailoringSlug
+}
+
 type ProductTypeDefinition implements Versioned & ReferenceExpandable {
   key: String
   name: String!
@@ -8407,6 +8680,10 @@ enum PublishScope {
   Prices
 }
 
+input PublishTailoring {
+  dummy: String
+}
+
 type PurchaseOrderNumberSet implements MessagePayload & OrderMessagePayload {
   purchaseOrderNumber: String
   oldPurchaseOrderNumber: String
@@ -8608,6 +8885,26 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): ProductSelection
   productSelections(where: String, sort: [String!], limit: Int, offset: Int): ProductSelectionQueryResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  productTailoring(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String,
+
+    "Queries with specified Product ID"
+    productId: String,
+
+    "Queries with specified Product key"
+    productKey: String,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput): ProductTailoring
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  productTailoringList(where: String, sort: [String!], limit: Int, offset: Int): ProductTailoringQueryResult!
   productProjectionsSuggest(searchKeywords: [SearchKeywordArgument!]!, fuzzy: Boolean, limit: Int = 10, staged: Boolean = false): SuggestResult!
   project: ProjectProjection!
   store(
@@ -11163,6 +11460,43 @@ input SetProductSelectionVariantSelection {
 input SetProductSku {
   variantId: Int!
   sku: String
+  staged: Boolean = true
+}
+
+input SetProductTailoringDescription {
+  description: [LocalizedStringItemInputType!]
+  staged: Boolean = true
+}
+
+input SetProductTailoringMetaAttributes {
+  metaDescription: [LocalizedStringItemInputType!]
+  metaKeywords: [LocalizedStringItemInputType!]
+  metaTitle: [LocalizedStringItemInputType!]
+  staged: Boolean = true
+}
+
+input SetProductTailoringMetaDescription {
+  metaDescription: [LocalizedStringItemInputType!]
+  staged: Boolean = true
+}
+
+input SetProductTailoringMetaKeywords {
+  metaKeywords: [LocalizedStringItemInputType!]
+  staged: Boolean = true
+}
+
+input SetProductTailoringMetaTitle {
+  metaTitle: [LocalizedStringItemInputType!]
+  staged: Boolean = true
+}
+
+input SetProductTailoringName {
+  name: [LocalizedStringItemInputType!]
+  staged: Boolean = true
+}
+
+input SetProductTailoringSlug {
+  slug: [LocalizedStringItemInputType!]
   staged: Boolean = true
 }
 
@@ -13846,6 +14180,10 @@ input UnfreezeCart {
 }
 
 input UnpublishProduct {
+  dummy: String
+}
+
+input UnpublishTailoring {
   dummy: String
 }
 
