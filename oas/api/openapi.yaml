@@ -14576,7 +14576,7 @@ paths:
             - "view_published_products:{projectKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyProductProjectionsKeyByKeyGet
       description: |-
-        Gets the current or staged representation of a [Product](ctp:api:type:Product) by its key from the specified [Store](ctp:api:type:Store).
+        Gets the current or staged representation of a [Product](ctp:api:type:Product) by its key in the specified [Store](ctp:api:type:Store).
         If the Store has defined some languages, countries, distribution, supply Channels, and/or Product Selection,
         they are used for projections based on [locale](ctp:api:type:ProductProjectionLocales), [price](ctp:api:type:ProductProjectionPrices)
         and [inventory](ctp:api:type:ProductProjectionInventoryEntries).
@@ -14713,7 +14713,7 @@ paths:
             - "view_published_products:{projectKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyProductProjectionsByIDGet
       description: |-
-        Gets the current or staged representation of a [Product](ctp:api:type:Product) by its ID from the specified [Store](ctp:api:type:Store).
+        Gets the current or staged representation of a [Product](ctp:api:type:Product) by its ID in the specified [Store](ctp:api:type:Store).
         If the Store has defined some languages, countries, distribution, supply Channels, and/or Product Selection,
         they are used for projections based on [locale](ctp:api:type:ProductProjectionLocales), [price](ctp:api:type:ProductProjectionPrices)
         and [inventory](ctp:api:type:ProductProjectionInventoryEntries).
@@ -14911,6 +14911,477 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProductsInStorePagedQueryResponse'
 
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/in-store/key={storeKey}/product-tailoring:
+    description: |-
+      A Product Tailoring holds tailored data of Product in the Store.
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: storeKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_products:{projectKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyProductTailoringGet
+      description: |-
+        Queries Product Tailoring in a specific [Store](ctp:api:type:Store).
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: offset
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: withTotal
+          x-annotation-default: true
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+        - name: /^var[.][a-zA-Z0-9]+$/
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
+        - name: sort
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Sort'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoringPagedQueryResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+            - "manage_products:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyProductTailoringPost
+      description: |-
+        Creates a [ProductTailoring](ctp:api:type:ProductTailoring) in the [Store](ctp:api:type:Store) specified by `storeKey`.
+        When using this endpoint the ProductTailoring's `store` field is always set to the [Store](ctp:api:type:Store) specified in the path parameter.
+
+        Generates the [ProductTailoringCreated](ctp:api:type:ProductTailoringCreatedMessage) Message.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductTailoringInStoreDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/in-store/key={storeKey}/products/key={productKey}/product-tailoring:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: storeKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: productKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_products:{projectKey}"
+            - "view_products:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyProductsKeyByProductKeyProductTailoringGet
+      description: |-
+        Gets the current or staged representation of a [Product Tailoring](ctp:api:type:ProductTailoring) by its Product key in the specified [Store](ctp:api:type:Store).
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+            - "manage_products:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyProductsKeyByProductKeyProductTailoringPost
+      description: |-
+        Updates the current or staged representation of a [Product Tailoring](ctp:api:type:ProductTailoring) by its Product key in the specified [Store](ctp:api:type:Store).
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductTailoringUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+            - "manage_products:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyProductsKeyByProductKeyProductTailoringDelete
+      description: |-
+        Generates the [ProductTailoringDeleted](ctp:api:type:ProductTailoringDeletedMessage) Message.
+      parameters:
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/in-store/key={storeKey}/products/{productID}/product-tailoring:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: storeKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: productID
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_products:{projectKey}"
+            - "view_products:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyProductsByProductIDProductTailoringGet
+      description: |-
+        Gets the current or staged representation of a [Product Tailoring](ctp:api:type:ProductTailoring) by its Product ID in the specified [Store](ctp:api:type:Store).
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+            - "manage_products:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyProductsByProductIDProductTailoringPost
+      description: |-
+        Updates the current or staged representation of a [Product Tailoring](ctp:api:type:ProductTailoring) by its Product ID in the specified [Store](ctp:api:type:Store).
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductTailoringUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+            - "manage_products:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyProductsByProductIDProductTailoringDelete
+      description: |-
+        Generates the [ProductTailoringDeleted](ctp:api:type:ProductTailoringDeletedMessage) Message.
+      parameters:
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
         "400":
           $ref: '#/components/responses/errorable_400'
         "401":
@@ -23921,6 +24392,442 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProductSelectionProductPagedQueryResponse'
 
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/product-tailoring:
+    description: |-
+      Product tailoring are used to contextualize product data for specific stores.
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_products:{projectKey}"
+      operationId: ByProjectKeyProductTailoringGet
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+        - name: sort
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Sort'
+          explode: true
+        - name: limit
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: offset
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: withTotal
+          x-annotation-default: true
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+        - name: /^var[.][a-zA-Z0-9]+$/
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoringPagedQueryResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyProductTailoringPost
+      description: |-
+        Generates the [ProductTailoringCreated](ctp:api:type:ProductTailoringCreatedMessage) Message.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductTailoringDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/product-tailoring/key={key}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_products:{projectKey}"
+      operationId: ByProjectKeyProductTailoringKeyByKeyGet
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyProductTailoringKeyByKeyPost
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductTailoringUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyProductTailoringKeyByKeyDelete
+      description: |-
+        Generates the [ProductTailoringDeleted](ctp:api:type:ProductTailoringDeletedMessage) Message.
+      parameters:
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/product-tailoring/{ID}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_products:{projectKey}"
+      operationId: ByProjectKeyProductTailoringByIDGet
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyProductTailoringByIDPost
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductTailoringUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyProductTailoringByIDDelete
+      description: |-
+        Generates the [ProductTailoringDeleted](ctp:api:type:ProductTailoringDeletedMessage) Message.
+      parameters:
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
         "400":
           $ref: '#/components/responses/errorable_400'
         "401":
@@ -39216,6 +40123,7 @@ components:
           product-discount: '#/components/schemas/ProductDiscountReference'
           product: '#/components/schemas/ProductReference'
           product-selection: '#/components/schemas/ProductSelectionReference'
+          product-tailoring: '#/components/schemas/ProductTailoringReference'
           product-type: '#/components/schemas/ProductTypeReference'
           quote: '#/components/schemas/QuoteReference'
           quote-request: '#/components/schemas/QuoteRequestReference'
@@ -39265,6 +40173,7 @@ components:
         - product-discount
         - product-price
         - product-selection
+        - product-tailoring
         - product-type
         - quote
         - quote-request
@@ -39308,6 +40217,7 @@ components:
         product-discount: "References a [ProductDiscount](ctp:api:type:ProductDiscount).n"
         product-price: "References an [Embedded Price](/projects/products#embedded-price).n"
         product-selection: "References a [ProductSelection](ctp:api:type:ProductSelection).n"
+        product-tailoring: "References a [ProductTailoring](ctp:api:type:ProductTailoring).n"
         product-type: "References a [ProductType](ctp:api:type:ProductType).n"
         quote: "References a [Quote](ctp:api:type:Quote).n"
         quote-request: "References a [QuoteRequest](ctp:api:type:QuoteRequest).n"
@@ -39343,6 +40253,7 @@ components:
           product-discount: '#/components/schemas/ProductDiscountResourceIdentifier'
           product: '#/components/schemas/ProductResourceIdentifier'
           product-selection: '#/components/schemas/ProductSelectionResourceIdentifier'
+          product-tailoring: '#/components/schemas/ProductTailoringResourceIdentifier'
           product-type: '#/components/schemas/ProductTypeResourceIdentifier'
           quote-request: '#/components/schemas/QuoteRequestResourceIdentifier'
           quote: '#/components/schemas/QuoteResourceIdentifier'
@@ -49954,6 +50865,13 @@ components:
               ProductSelectionVariantSelectionChanged: '#/components/schemas/ProductSelectionVariantSelectionChangedMessage'
               ProductSlugChanged: '#/components/schemas/ProductSlugChangedMessage'
               ProductStateTransition: '#/components/schemas/ProductStateTransitionMessage'
+              ProductTailoringCreated: '#/components/schemas/ProductTailoringCreatedMessage'
+              ProductTailoringDeleted: '#/components/schemas/ProductTailoringDeletedMessage'
+              ProductTailoringDescriptionSet: '#/components/schemas/ProductTailoringDescriptionSetMessage'
+              ProductTailoringNameSet: '#/components/schemas/ProductTailoringNameSetMessage'
+              ProductTailoringPublished: '#/components/schemas/ProductTailoringPublishedMessage'
+              ProductTailoringSlugSet: '#/components/schemas/ProductTailoringSlugSetMessage'
+              ProductTailoringUnpublished: '#/components/schemas/ProductTailoringUnpublishedMessage'
               ProductUnpublished: '#/components/schemas/ProductUnpublishedMessage'
               ProductVariantAdded: '#/components/schemas/ProductVariantAddedMessage'
               ProductVariantDeleted: '#/components/schemas/ProductVariantDeletedMessage'
@@ -52912,6 +53830,316 @@ components:
               $ref: '#/components/schemas/StateReference'
             force:
               type: "boolean"
+    ProductTailoringCreatedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - product
+            - published
+            - store
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            key:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            slug:
+              $ref: '#/components/schemas/LocalizedString'
+            published:
+              type: "boolean"
+    ProductTailoringDeletedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - product
+            - store
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+    ProductTailoringDescriptionSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - product
+            - store
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+            oldDescription:
+              $ref: '#/components/schemas/LocalizedString'
+    ProductTailoringNameSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - product
+            - store
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            oldName:
+              $ref: '#/components/schemas/LocalizedString'
+    ProductTailoringPublishedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - product
+            - store
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+    ProductTailoringSlugSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - product
+            - store
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            slug:
+              $ref: '#/components/schemas/LocalizedString'
+            oldSlug:
+              $ref: '#/components/schemas/LocalizedString'
+    ProductTailoringUnpublishedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - product
+            - store
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
     ProductUnpublishedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -56167,6 +57395,13 @@ components:
           ProductSelectionVariantSelectionChanged: '#/components/schemas/ProductSelectionVariantSelectionChangedMessagePayload'
           ProductSlugChanged: '#/components/schemas/ProductSlugChangedMessagePayload'
           ProductStateTransition: '#/components/schemas/ProductStateTransitionMessagePayload'
+          ProductTailoringCreated: '#/components/schemas/ProductTailoringCreatedMessagePayload'
+          ProductTailoringDeleted: '#/components/schemas/ProductTailoringDeletedMessagePayload'
+          ProductTailoringDescriptionSet: '#/components/schemas/ProductTailoringDescriptionSetMessagePayload'
+          ProductTailoringNameSet: '#/components/schemas/ProductTailoringNameSetMessagePayload'
+          ProductTailoringPublished: '#/components/schemas/ProductTailoringPublishedMessagePayload'
+          ProductTailoringSlugSet: '#/components/schemas/ProductTailoringSlugSetMessagePayload'
+          ProductTailoringUnpublished: '#/components/schemas/ProductTailoringUnpublishedMessagePayload'
           ProductUnpublished: '#/components/schemas/ProductUnpublishedMessagePayload'
           ProductVariantAdded: '#/components/schemas/ProductVariantAddedMessagePayload'
           ProductVariantDeleted: '#/components/schemas/ProductVariantDeletedMessagePayload'
@@ -57254,6 +58489,141 @@ components:
               $ref: '#/components/schemas/StateReference'
             force:
               type: "boolean"
+    ProductTailoringCreatedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - product
+            - published
+            - store
+          properties:
+            type:
+              type: "string"
+            key:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            slug:
+              $ref: '#/components/schemas/LocalizedString'
+            published:
+              type: "boolean"
+    ProductTailoringDeletedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - product
+            - store
+          properties:
+            type:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+    ProductTailoringDescriptionSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - product
+            - store
+          properties:
+            type:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+            oldDescription:
+              $ref: '#/components/schemas/LocalizedString'
+    ProductTailoringNameSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - product
+            - store
+          properties:
+            type:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            oldName:
+              $ref: '#/components/schemas/LocalizedString'
+    ProductTailoringPublishedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - product
+            - store
+          properties:
+            type:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+    ProductTailoringSlugSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - product
+            - store
+          properties:
+            type:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            slug:
+              $ref: '#/components/schemas/LocalizedString'
+            oldSlug:
+              $ref: '#/components/schemas/LocalizedString'
+    ProductTailoringUnpublishedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - product
+            - store
+          properties:
+            type:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
     ProductUnpublishedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -63175,6 +64545,290 @@ components:
               $ref: '#/components/schemas/ProductResourceIdentifier'
             variantSelection:
               $ref: '#/components/schemas/ProductVariantSelection'
+    ProductTailoring:
+      allOf:
+        - $ref: '#/components/schemas/BaseResource'
+        - type: "object"
+          required:
+            - createdAt
+            - current
+            - hasStagedChanges
+            - id
+            - lastModifiedAt
+            - product
+            - published
+            - staged
+            - store
+            - version
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            key:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            published:
+              type: "boolean"
+            current:
+              $ref: '#/components/schemas/ProductTailoringData'
+            staged:
+              $ref: '#/components/schemas/ProductTailoringData'
+            hasStagedChanges:
+              type: "boolean"
+    ProductTailoringData:
+      type: "object"
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedString'
+        description:
+          $ref: '#/components/schemas/LocalizedString'
+        metaTitle:
+          $ref: '#/components/schemas/LocalizedString'
+        metaDescription:
+          $ref: '#/components/schemas/LocalizedString'
+        metaKeywords:
+          $ref: '#/components/schemas/LocalizedString'
+        slug:
+          $ref: '#/components/schemas/LocalizedString'
+    ProductTailoringDraft:
+      type: "object"
+      required:
+        - product
+        - store
+      properties:
+        key:
+          type: "string"
+        store:
+          $ref: '#/components/schemas/StoreResourceIdentifier'
+        product:
+          $ref: '#/components/schemas/ProductResourceIdentifier'
+        name:
+          $ref: '#/components/schemas/LocalizedString'
+        description:
+          $ref: '#/components/schemas/LocalizedString'
+        metaTitle:
+          $ref: '#/components/schemas/LocalizedString'
+        metaDescription:
+          $ref: '#/components/schemas/LocalizedString'
+        metaKeywords:
+          $ref: '#/components/schemas/LocalizedString'
+        slug:
+          $ref: '#/components/schemas/LocalizedString'
+        publish:
+          type: "boolean"
+    ProductTailoringInStoreDraft:
+      type: "object"
+      required:
+        - product
+      properties:
+        key:
+          type: "string"
+        product:
+          $ref: '#/components/schemas/ProductResourceIdentifier'
+        name:
+          $ref: '#/components/schemas/LocalizedString'
+        description:
+          $ref: '#/components/schemas/LocalizedString'
+        metaTitle:
+          $ref: '#/components/schemas/LocalizedString'
+        metaDescription:
+          $ref: '#/components/schemas/LocalizedString'
+        metaKeywords:
+          $ref: '#/components/schemas/LocalizedString'
+        slug:
+          $ref: '#/components/schemas/LocalizedString'
+        publish:
+          type: "boolean"
+    ProductTailoringPagedQueryResponse:
+      type: "object"
+      required:
+        - count
+        - limit
+        - offset
+        - results
+      properties:
+        limit:
+          type: "integer"
+          format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
+        count:
+          type: "integer"
+          format: "int64"
+        total:
+          type: "integer"
+          format: "int64"
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductTailoring'
+    ProductTailoringReference:
+      allOf:
+        - $ref: '#/components/schemas/Reference'
+        - type: "object"
+          required:
+            - id
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            obj:
+              $ref: '#/components/schemas/ProductTailoring'
+    ProductTailoringResourceIdentifier:
+      allOf:
+        - $ref: '#/components/schemas/ResourceIdentifier'
+        - type: "object"
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            key:
+              type: "string"
+    ProductTailoringUpdate:
+      type: "object"
+      required:
+        - actions
+        - version
+      properties:
+        version:
+          type: "integer"
+          format: "int64"
+        actions:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductTailoringUpdateAction'
+    ProductTailoringUpdateAction:
+      type: "object"
+      discriminator:
+        propertyName: action
+        mapping:
+          publish: '#/components/schemas/ProductTailoringPublishAction'
+          setDescription: '#/components/schemas/ProductTailoringSetDescriptionAction'
+          setMetaAttributes: '#/components/schemas/ProductTailoringSetMetaAttributesAction'
+          setMetaDescription: '#/components/schemas/ProductTailoringSetMetaDescriptionAction'
+          setMetaKeywords: '#/components/schemas/ProductTailoringSetMetaKeywordsAction'
+          setMetaTitle: '#/components/schemas/ProductTailoringSetMetaTitleAction'
+          setName: '#/components/schemas/ProductTailoringSetNameAction'
+          setSlug: '#/components/schemas/ProductTailoringSetSlugAction'
+          unpublish: '#/components/schemas/ProductTailoringUnpublishAction'
+      required:
+        - action
+      properties:
+        action:
+          type: "string"
+    ProductTailoringPublishAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+    ProductTailoringSetDescriptionAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+            staged:
+              type: "boolean"
+    ProductTailoringSetMetaAttributesAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            metaTitle:
+              $ref: '#/components/schemas/LocalizedString'
+            metaDescription:
+              $ref: '#/components/schemas/LocalizedString'
+            metaKeywords:
+              $ref: '#/components/schemas/LocalizedString'
+            staged:
+              type: "boolean"
+    ProductTailoringSetMetaDescriptionAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            metaDescription:
+              $ref: '#/components/schemas/LocalizedString'
+            staged:
+              type: "boolean"
+    ProductTailoringSetMetaKeywordsAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            metaKeywords:
+              $ref: '#/components/schemas/LocalizedString'
+            staged:
+              type: "boolean"
+    ProductTailoringSetMetaTitleAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            metaTitle:
+              $ref: '#/components/schemas/LocalizedString'
+            staged:
+              type: "boolean"
+    ProductTailoringSetNameAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            staged:
+              type: "boolean"
+    ProductTailoringSetSlugAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            slug:
+              $ref: '#/components/schemas/LocalizedString'
+            staged:
+              type: "boolean"
+    ProductTailoringUnpublishAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
     AttributeBooleanType:
       allOf:
         - $ref: '#/components/schemas/AttributeType'
