@@ -8156,7 +8156,8 @@ paths:
       description: |-
         If the `anonymousCart` field is set on the [CustomerDraft](ctp:api:type:CustomerDraft), then the newly created Customer will be assigned to that [Cart](ctp:api:type:Cart).
         Similarly, if the `anonymousId` field is set, the Customer will be set on all [Carts](ctp:api:type:Cart), [Orders](ctp:api:type:Order), [ShoppingLists](ctp:api:type:ShoppingList) and [Payments](ctp:api:type:Payment) with the same `anonymousId`.
-        Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
+
+        Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message. Simultaneously creating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.
       parameters:
         - name: expand
           in: query
@@ -8413,6 +8414,8 @@ paths:
         - oauth_2_0:
             - "manage_customers:{projectKey}"
       operationId: ByProjectKeyCustomersKeyByKeyPost
+      description: |-
+        Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.
       parameters:
         - name: expand
           in: query
@@ -8771,6 +8774,8 @@ paths:
         - oauth_2_0:
             - "manage_customers:{projectKey}"
       operationId: ByProjectKeyCustomersByIDPost
+      description: |-
+        Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.
       parameters:
         - name: expand
           in: query
@@ -11403,7 +11408,8 @@ paths:
         If the `anonymousCart` field is set on the [CustomerDraft](ctp:api:type:CustomerDraft), then the newly created Customer will be assigned to that [Cart](ctp:api:type:Cart).
         Similarly, if the `anonymousId` field is set, the Customer will be set on all [Carts](ctp:api:type:Cart), [Orders](ctp:api:type:Order), [ShoppingLists](ctp:api:type:ShoppingList) and [Payments](ctp:api:type:Payment) with the same `anonymousId`.
         If a Cart with a `store` field specified, the `store` field must reference the same [Store](ctp:api:type:Store) specified in the `{storeKey}` path parameter.
-        Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
+
+        Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message. Simultaneously creating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.
       parameters:
         - name: expand
           in: query
@@ -11695,6 +11701,8 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersKeyByKeyPost
       description: |-
         If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+        Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.
       parameters:
         - name: expand
           in: query
@@ -12096,6 +12104,8 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyCustomersByIDPost
       description: |-
         If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+        Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.
       parameters:
         - name: expand
           in: query
@@ -42304,6 +42314,7 @@ components:
           InvalidSubject: '#/components/schemas/InvalidSubjectError'
           invalid_token: '#/components/schemas/InvalidTokenError'
           LanguageUsedInStores: '#/components/schemas/LanguageUsedInStoresError'
+          LockedField: '#/components/schemas/LockedFieldError'
           MatchingPriceNotFound: '#/components/schemas/MatchingPriceNotFoundError'
           MaxCartDiscountsReached: '#/components/schemas/MaxCartDiscountsReachedError'
           MaxResourceLimitExceeded: '#/components/schemas/MaxResourceLimitExceededError'
@@ -42689,6 +42700,23 @@ components:
             code:
               type: "string"
             message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    LockedFieldError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - field
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            field:
               type: "string"
           additionalProperties:
             type: "string"
@@ -43706,6 +43734,7 @@ components:
           InvalidSubject: '#/components/schemas/GraphQLInvalidSubjectError'
           invalid_token: '#/components/schemas/GraphQLInvalidTokenError'
           LanguageUsedInStores: '#/components/schemas/GraphQLLanguageUsedInStoresError'
+          LockedField: '#/components/schemas/GraphQLLockedFieldError'
           MatchingPriceNotFound: '#/components/schemas/GraphQLMatchingPriceNotFoundError'
           MaxCartDiscountsReached: '#/components/schemas/GraphQLMaxCartDiscountsReachedError'
           MaxResourceLimitExceeded: '#/components/schemas/GraphQLMaxResourceLimitExceededError'
@@ -44001,6 +44030,20 @@ components:
             - code
           properties:
             code:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLLockedFieldError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+            - field
+          properties:
+            code:
+              type: "string"
+            field:
               type: "string"
           additionalProperties:
             type: "string"
