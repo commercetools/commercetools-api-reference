@@ -25382,6 +25382,7 @@ paths:
       security:
         - oauth_2_0:
             - "view_products:{projectKey}"
+            - "view_published_products:{projectKey}"
       operationId: ByProjectKeyProductsGet
       description: |-
         If [Price selection](ctp:api:type:ProductPriceSelection) query parameters are provided, the selected Prices are added to the response.
@@ -26010,6 +26011,76 @@ paths:
           $ref: '#/components/responses/errorable_403'
         "404":
           $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/products/search:
+    description: |-
+      This endpoint provides high-performance search queries over Products. Product Search allows searching through all products with a current projection in your Project.
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "view_published_products:{projectKey}"
+      operationId: ByProjectKeyProductsSearchPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductSearchRequest'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductPagedSearchResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "project_settings:{projectKey}"
+      operationId: ByProjectKeyProductsSearchHead
+      description: |-
+        Checks whether a search index for the Project's Products exists.
+        Returns a `200 OK` status if the index exists, a `404 Not Found` error otherwise.
+      responses:
+        "200":
+          description: |-
+            The search index exists and the Search Products endpoint is fully operational.
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -64093,6 +64164,325 @@ components:
             validUntil:
               type: "string"
               format: "datetime"
+    ProductPagedSearchResponse:
+      type: "object"
+      required:
+        - facets
+        - limit
+        - offset
+        - results
+        - total
+      properties:
+        total:
+          type: "integer"
+          format: "int64"
+        offset:
+          type: "integer"
+          format: "int32"
+        limit:
+          type: "integer"
+          format: "int32"
+        facets:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductSearchFacetResult'
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductSearchResult'
+    ProductSearchErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: "object"
+          required:
+            - message
+            - statusCode
+          properties:
+            statusCode:
+              type: "integer"
+              format: "int32"
+            message:
+              type: "string"
+            errors:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ErrorObject'
+    ProductSearchMatchingVariantEntry:
+      type: "object"
+      required:
+        - id
+      properties:
+        id:
+          type: "integer"
+          format: "int32"
+        sku:
+          type: "string"
+    ProductSearchMatchingVariants:
+      type: "object"
+      required:
+        - allMatched
+        - matchedVariants
+      properties:
+        allMatched:
+          type: "boolean"
+        matchedVariants:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductSearchMatchingVariantEntry'
+    ProductSearchProjectionParams:
+      type: "object"
+      properties:
+        expand:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Expansion'
+        staged:
+          type: "boolean"
+        priceCurrency:
+          $ref: '#/components/schemas/CurrencyCode'
+        priceCountry:
+          $ref: '#/components/schemas/CountryCode'
+        priceCustomerGroup:
+          type: "string"
+        priceChannel:
+          type: "string"
+        localeProjection:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Locale'
+        storeProjection:
+          type: "string"
+    ProductSearchRequest:
+      type: "object"
+      properties:
+        query:
+          $ref: '#/components/schemas/SearchQuery'
+        sort:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/SearchSorting'
+        limit:
+          type: "integer"
+          format: "int32"
+        offset:
+          type: "integer"
+          format: "int32"
+        markMatchingVariants:
+          type: "boolean"
+        productProjectionParameters:
+          $ref: '#/components/schemas/ProductSearchProjectionParams'
+        facets:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductSearchFacetExpression'
+    ProductSearchResult:
+      type: "object"
+      required:
+        - id
+      properties:
+        id:
+          type: "string"
+        productProjection:
+          $ref: '#/components/schemas/ProductProjection'
+        matchingVariants:
+          $ref: '#/components/schemas/ProductSearchMatchingVariants'
+    ProductSearchFacetCountExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchFacetExpression'
+        - type: "object"
+          required:
+            - count
+          properties:
+            count:
+              $ref: '#/components/schemas/ProductSearchFacetCountValue'
+    ProductSearchFacetCountLevelEnum:
+      type: "string"
+      enum:
+        - products
+        - variants
+      x-annotation-package: "ProductSearch"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        products: "The query should count Products."
+        variants: "The query should count Product Variants."
+    ProductSearchFacetCountValue:
+      type: "object"
+      required:
+        - name
+      properties:
+        name:
+          type: "string"
+        scope:
+          $ref: '#/components/schemas/ProductSearchFacetScopeEnum'
+        filter:
+          $ref: '#/components/schemas/SearchQuery'
+        level:
+          $ref: '#/components/schemas/ProductSearchFacetCountLevelEnum'
+    ProductSearchFacetDistinctBucketSortBy:
+      type: "string"
+      enum:
+        - count
+        - key
+      x-annotation-package: "ProductSearch"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        count: "Sort buckets by the count value."
+        key: "Sort buckets by the bucket key."
+    ProductSearchFacetDistinctBucketSortExpression:
+      type: "object"
+      required:
+        - by
+        - order
+      properties:
+        by:
+          $ref: '#/components/schemas/ProductSearchFacetDistinctBucketSortBy'
+        order:
+          $ref: '#/components/schemas/SearchSortOrder'
+    ProductSearchFacetDistinctExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchFacetExpression'
+        - type: "object"
+          required:
+            - distinct
+          properties:
+            distinct:
+              $ref: '#/components/schemas/ProductSearchFacetDistinctValue'
+    ProductSearchFacetDistinctValue:
+      type: "object"
+      required:
+        - field
+        - name
+      properties:
+        name:
+          type: "string"
+        scope:
+          $ref: '#/components/schemas/ProductSearchFacetScopeEnum'
+        filter:
+          $ref: '#/components/schemas/SearchQuery'
+        level:
+          $ref: '#/components/schemas/ProductSearchFacetCountLevelEnum'
+        field:
+          type: "string"
+        includes:
+          type: "array"
+          items:
+            type: "string"
+        sort:
+          $ref: '#/components/schemas/ProductSearchFacetDistinctBucketSortExpression'
+        limit:
+          type: "integer"
+          format: "int32"
+        language:
+          $ref: '#/components/schemas/Locale'
+        fieldType:
+          $ref: '#/components/schemas/SearchFieldType'
+        missing:
+          type: "string"
+    ProductSearchFacetExpression:
+      type: "object"
+    ProductSearchFacetRangesExpression:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchFacetExpression'
+        - type: "object"
+          required:
+            - ranges
+          properties:
+            ranges:
+              $ref: '#/components/schemas/ProductSearchFacetRangesValue'
+    ProductSearchFacetRangesFacetRange:
+      type: "object"
+      properties:
+        from:
+          {}
+        to:
+          {}
+        key:
+          type: "string"
+    ProductSearchFacetRangesValue:
+      type: "object"
+      required:
+        - field
+        - name
+        - ranges
+      properties:
+        name:
+          type: "string"
+        scope:
+          $ref: '#/components/schemas/ProductSearchFacetScopeEnum'
+        filter:
+          $ref: '#/components/schemas/SearchQuery'
+        level:
+          $ref: '#/components/schemas/ProductSearchFacetCountLevelEnum'
+        field:
+          type: "string"
+        ranges:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductSearchFacetRangesFacetRange'
+        language:
+          $ref: '#/components/schemas/Locale'
+        fieldType:
+          $ref: '#/components/schemas/SearchFieldType'
+    ProductSearchFacetResult:
+      type: "object"
+      required:
+        - name
+      properties:
+        name:
+          type: "string"
+    ProductSearchFacetResultBucket:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchFacetResult'
+        - type: "object"
+          required:
+            - buckets
+          properties:
+            name:
+              type: "string"
+            buckets:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductSearchFacetResultBucketEntry'
+    ProductSearchFacetResultBucketEntry:
+      type: "object"
+      required:
+        - count
+        - key
+      properties:
+        key:
+          type: "string"
+        count:
+          type: "integer"
+          format: "int32"
+    ProductSearchFacetResultCount:
+      allOf:
+        - $ref: '#/components/schemas/ProductSearchFacetResult'
+        - type: "object"
+          required:
+            - value
+          properties:
+            name:
+              type: "string"
+            value:
+              type: "integer"
+              format: "int64"
+    ProductSearchFacetScope:
+      type: "string"
+      enum:
+        - all
+        - query
+      x-annotation-package: "ProductSearch"
+      x-beta: true
+    ProductSearchFacetScopeEnum:
+      type: "string"
+      enum:
+        - all
+        - query
+      x-annotation-package: "ProductSearch"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        all: "Count all Products (or Product Variants) without considering the search query."
+        query: "Only count the Products (or Product Variants) that matches the search query."
     AssignedProductReference:
       type: "object"
       required:
@@ -67165,6 +67555,27 @@ components:
          endpoint is fully operational."
         Deactivated: "indicates that the Order Search feature is currently not active, but
          can be activated by [update action](#change-order-search-status)."
+    ProductSearchIndexingMode:
+      type: "string"
+      enum:
+        - ProductProjectionsSearch
+        - ProductsSearch
+      x-annotation-package: "Project"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        ProductProjectionsSearch: "For [Product Projection Search](/../api/projects/products-search).n"
+        ProductsSearch: "For [Product Search](/../api/projects/product-search).n"
+    ProductSearchStatus:
+      type: "string"
+      enum:
+        - Activated
+        - Deactivated
+      x-annotation-package: "Project"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Activated: "indicates that the [Search Products](/../api/projects/product-search#search-products)
+         endpoint is fully operational."
+        Deactivated: "indicates that the Product Search feature is currently not active."
     Project:
       type: "object"
       required:
@@ -67258,6 +67669,8 @@ components:
       type: "object"
       properties:
         products:
+          $ref: '#/components/schemas/SearchIndexingConfigurationValues'
+        productsSearch:
           $ref: '#/components/schemas/SearchIndexingConfigurationValues'
         orders:
           $ref: '#/components/schemas/SearchIndexingConfigurationValues'
@@ -67431,6 +67844,8 @@ components:
               type: "string"
             enabled:
               type: "boolean"
+            mode:
+              $ref: '#/components/schemas/ProductSearchIndexingMode'
     ProjectChangeShoppingListsConfigurationAction:
       allOf:
         - $ref: '#/components/schemas/ProjectUpdateAction'
@@ -68332,6 +68747,477 @@ components:
               $ref: '#/components/schemas/StateResourceIdentifier'
             force:
               type: "boolean"
+    SearchAndExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchCompoundExpression'
+        - type: "object"
+          required:
+            - and
+          properties:
+            and:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/SearchQuery'
+    SearchAnyValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpressionValue'
+        - type: "object"
+          required:
+            - value
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            fieldType:
+              $ref: '#/components/schemas/SearchFieldType'
+            value:
+              {}
+            language:
+              $ref: '#/components/schemas/Locale'
+            caseInsensitive:
+              type: "boolean"
+    SearchCompoundExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQuery'
+        - type: "object"
+    SearchDateRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/SearchDateRangeValue'
+    SearchDateRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            fieldType:
+              $ref: '#/components/schemas/SearchFieldType'
+            gte:
+              type: "string"
+              format: "date-only"
+            gt:
+              type: "string"
+              format: "date-only"
+            lte:
+              type: "string"
+              format: "date-only"
+            lt:
+              type: "string"
+              format: "date-only"
+    SearchDateTimeRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/SearchDateTimeRangeValue'
+    SearchDateTimeRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            fieldType:
+              $ref: '#/components/schemas/SearchFieldType'
+            gte:
+              type: "string"
+              format: "datetime"
+            gt:
+              type: "string"
+              format: "datetime"
+            lte:
+              type: "string"
+              format: "datetime"
+            lt:
+              type: "string"
+              format: "datetime"
+    SearchExactExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpression'
+        - type: "object"
+          required:
+            - exact
+          properties:
+            exact:
+              $ref: '#/components/schemas/SearchAnyValue'
+    SearchExistsExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpression'
+        - type: "object"
+          required:
+            - exists
+          properties:
+            exists:
+              $ref: '#/components/schemas/SearchExistsValue'
+    SearchExistsValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            fieldType:
+              $ref: '#/components/schemas/SearchFieldType'
+            language:
+              $ref: '#/components/schemas/Locale'
+    SearchFieldType:
+      type: "string"
+      enum:
+        - boolean
+        - text
+        - ltext
+        - enum
+        - lenum
+        - number
+        - money
+        - date
+        - datetime
+        - time
+        - reference
+        - set_boolean
+        - set_text
+        - set_ltext
+        - set_enum
+        - set_lenum
+        - set_number
+        - set_money
+        - set_date
+        - set_datetime
+        - set_time
+        - set_reference
+      x-annotation-package: "Search"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        boolean: "For Boolean fields and Attributes.n"
+        text: "For string fields and Attributes.n"
+        ltext: "For [LocalizedString](types#localizedstring) fields and Attributes.n"
+        enum: "For enum fields and Attributes.n"
+        lenum: "For localized enum fields and Attributes.n"
+        number: "For number fields and Attributes.n"
+        money: "For [Money](types#money) fields and Attributes.n"
+        date: "For [Date](types#date) fields and Attributes.n"
+        datetime: "For [DateTime](types#datetime) fields and Attributes.n"
+        time: "For [Time](types#time) fields and Attributes.n"
+        reference: "For [Reference](types#reference) fields and Attributes.n"
+        set_boolean: "For Set of Boolean fields and Attributes.n"
+        set_text: "For Set of string fields and Attributes.n"
+        set_ltext: "For Set of [LocalizedString](types#localizedstring) fields and Attributes.n"
+        set_enum: "For Set of enum fields and Attributes.n"
+        set_lenum: "For Set of localized enum fields and Attributes.n"
+        set_number: "For Set of number fields and Attributes.n"
+        set_money: "For Set of [Money](types#money) fields and Attributes.n"
+        set_date: "For Set of [Date](types#date) fields and Attributes.n"
+        set_datetime: "For Set of [DateTime](types#datetime) fields and Attributes.n"
+        set_time: "For Set of [Time](types#time) fields and Attributes.n"
+        set_reference: "For Set of [Reference](types#reference) fields and Attributes.n"
+    SearchFilterExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchCompoundExpression'
+        - type: "object"
+          required:
+            - filter
+          properties:
+            filter:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/SearchQueryExpression'
+    SearchFullTextExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpression'
+        - type: "object"
+          required:
+            - fullText
+          properties:
+            fullText:
+              $ref: '#/components/schemas/SearchFullTextValue'
+    SearchFullTextPrefixExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpression'
+        - type: "object"
+          required:
+            - fullTextPrefix
+          properties:
+            fullTextPrefix:
+              $ref: '#/components/schemas/SearchFullTextPrefixValue'
+    SearchFullTextPrefixValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpressionValue'
+        - type: "object"
+          required:
+            - value
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            fieldType:
+              $ref: '#/components/schemas/SearchFieldType'
+            value:
+              {}
+            language:
+              $ref: '#/components/schemas/Locale'
+            mustMatch:
+              $ref: '#/components/schemas/SearchMatchType'
+    SearchFullTextValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpressionValue'
+        - type: "object"
+          required:
+            - value
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            fieldType:
+              $ref: '#/components/schemas/SearchFieldType'
+            value:
+              {}
+            language:
+              $ref: '#/components/schemas/Locale'
+            mustMatch:
+              $ref: '#/components/schemas/SearchMatchType'
+    SearchLongRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/SearchLongRangeValue'
+    SearchLongRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            fieldType:
+              $ref: '#/components/schemas/SearchFieldType'
+            gte:
+              type: "integer"
+              format: "int64"
+            gt:
+              type: "integer"
+              format: "int64"
+            lte:
+              type: "integer"
+              format: "int64"
+            lt:
+              type: "integer"
+              format: "int64"
+    SearchMatchType:
+      type: "string"
+      enum:
+        - any
+        - all
+      x-annotation-package: "Search"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        any: "Returns resources for which at least one of the provided search terms match.n"
+        all: "Returns only those resources for which all the provided search terms match.n"
+    SearchMatchingVariant:
+      type: "object"
+      required:
+        - id
+      properties:
+        id:
+          type: "integer"
+          format: "int32"
+        sku:
+          type: "string"
+    SearchNotExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchCompoundExpression'
+        - type: "object"
+          required:
+            - not
+          properties:
+            not:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/SearchQuery'
+    SearchNumberRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/SearchNumberRangeValue'
+    SearchNumberRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            fieldType:
+              $ref: '#/components/schemas/SearchFieldType'
+            gte:
+              type: "number"
+              format: "double"
+            gt:
+              type: "number"
+              format: "double"
+            lte:
+              type: "number"
+              format: "double"
+            lt:
+              type: "number"
+              format: "double"
+    SearchOrExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchCompoundExpression'
+        - type: "object"
+          required:
+            - or
+          properties:
+            or:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/SearchQuery'
+    SearchPrefixExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpression'
+        - type: "object"
+          required:
+            - prefix
+          properties:
+            prefix:
+              $ref: '#/components/schemas/SearchAnyValue'
+    SearchQuery:
+      type: "object"
+    SearchQueryExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQuery'
+        - type: "object"
+    SearchQueryExpressionValue:
+      type: "object"
+      required:
+        - field
+      properties:
+        field:
+          type: "string"
+        boost:
+          type: "number"
+          format: "double"
+        fieldType:
+          $ref: '#/components/schemas/SearchFieldType'
+    SearchSortMode:
+      type: "string"
+      enum:
+        - min
+        - max
+        - avg
+        - sum
+      x-annotation-package: "Search"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        min: "Use the minimum of all available values.n"
+        max: "Use the maximum of all available values.n"
+        avg: "Use the average of all available values.n"
+        sum: "Use the sum of all available values.n"
+    SearchSortOrder:
+      type: "string"
+      enum:
+        - asc
+        - desc
+      x-annotation-package: "Search"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        asc: "Ascending sort order, the lowest value is listed first.n"
+        desc: "Descending sort order, the highest value listed first.n"
+    SearchSorting:
+      type: "object"
+      required:
+        - field
+        - order
+      properties:
+        field:
+          type: "string"
+        language:
+          $ref: '#/components/schemas/Locale'
+        order:
+          $ref: '#/components/schemas/SearchSortOrder'
+        mode:
+          $ref: '#/components/schemas/SearchSortMode'
+        fieldType:
+          $ref: '#/components/schemas/SearchFieldType'
+        filter:
+          $ref: '#/components/schemas/SearchQueryExpression'
+    SearchTimeRangeExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpression'
+        - type: "object"
+          required:
+            - range
+          properties:
+            range:
+              $ref: '#/components/schemas/SearchTimeRangeValue'
+    SearchTimeRangeValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            fieldType:
+              $ref: '#/components/schemas/SearchFieldType'
+            gte:
+              type: "string"
+              format: "time-only"
+            gt:
+              type: "string"
+              format: "time-only"
+            lte:
+              type: "string"
+              format: "time-only"
+            lt:
+              type: "string"
+              format: "time-only"
+    SearchWildCardExpression:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpression'
+        - type: "object"
+          required:
+            - wildcard
+          properties:
+            wildcard:
+              $ref: '#/components/schemas/SearchAnyValue'
     CartClassificationTier:
       allOf:
         - $ref: '#/components/schemas/ShippingRatePriceTier'
