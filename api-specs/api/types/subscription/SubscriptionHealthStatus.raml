@@ -2,15 +2,18 @@
 (package): Subscription
 displayName: SubscriptionHealthStatus
 description: |
-  The health status of the Subscription that indicates whether messages are being delivered to the Destination.
+  The health status of the Subscription that indicates whether messages are being delivered.
 type: string
 (enumDescriptions):
   Healthy: Delivers messages as expected.
   ConfigurationError: Messages cannot be delivered with the current configuration. Common causes are deleting the Destination queue, deleting access credentials, or removing the necessary permissions. The configuration can be fixed by re-creating the configuration on the Destination side, or by setting a new configuration with the [Change Destination](/../api/projects/subscriptions#change-destination) update action. If the configuration is fixed, undelivered messages will be delivered and the `status` will change to [Healthy](ctp:api:type:SubscriptionHealthStatus). `ConfigurationError` is automatically turned into `ConfigurationErrorDeliveryStopped` after some time. For more information, see [Delivery Guarantees](#delivery-guarantees).
   ConfigurationErrorDeliveryStopped: Does not deliver messages with the current configuration and the delivery of the messages is no longer attempted. If the configuration is fixed, undelivered messages are not retained and will not be delivered. The `status` will change to [Healthy](ctp:api:type:SubscriptionHealthStatus) as soon as new messages can be delivered.
   TemporaryError: Does not deliver messages temporarily due to reasons other than a configuration error. For example, the Destination has a temporary outage.
+  ManuallySuspended: Does not deliver messages with the current configuration and the delivery of the messages is no longer attempted. Undelivered messages are not retained and will not be delivered. The `status` will not automatically change to [Healthy](ctp:api:type:SubscriptionHealthStatus). To return your subscriptions to a [Healthy](ctp:api:type:SubscriptionHealthStatus) status, please contact our [support team](https://commercetools.atlassian.net/servicedesk/customer/portal/22).
+
 enum:
   - Healthy
   - ConfigurationError
   - ConfigurationErrorDeliveryStopped
   - TemporaryError
+  - ManuallySuspended
