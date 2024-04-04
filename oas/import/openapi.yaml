@@ -91,6 +91,49 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /{projectKey}/discount-codes/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_discount_codes:{projectKey}"
+            - "view_discount_codes:{projectKey}"
+      operationId: ByProjectKeyDiscountCodesImportContainersByImportContainerKeyPost
+      description: |-
+        Creates a request for creating new Discount Codes or updating existing ones.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscountCodeImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /{projectKey}/import-containers:
     parameters:
       - name: projectKey
@@ -1437,6 +1480,7 @@ components:
         mapping:
           category: '#/components/schemas/CategoryImportRequest'
           customer: '#/components/schemas/CustomerImportRequest'
+          discount-code: '#/components/schemas/DiscountCodeImportRequest'
           inventory: '#/components/schemas/InventoryImportRequest'
           order: '#/components/schemas/OrderImportRequest'
           order-patch: '#/components/schemas/OrderPatchImportRequest'
@@ -1631,6 +1675,19 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/TypeImport'
+    DiscountCodeImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          required:
+            - resources
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/DiscountCodeImport'
     SubRate:
       type: "object"
       required:
@@ -4523,6 +4580,7 @@ components:
         - product-variant-patch
         - standalone-price
         - type
+        - discount-code
       x-annotation-enumDescriptions:
         category: "The [Category import](ctp:import:type:CategoryImport) resource type."
         customer: "The [Customer import](ctp:import:type:CustomerImport) resource type."
@@ -4543,6 +4601,8 @@ components:
         standalone-price: "The [Standalone Price import](ctp:import:type:StandalonePriceImport)
          resource type."
         type: "The [Type import](ctp:import:type:TypeImport) resource type."
+        discount-code: "The [Discount Code import](ctp:import:type:DiscountCodeImport) resource
+         type."
     ReferenceType:
       type: "string"
       enum:
@@ -4676,3 +4736,47 @@ components:
       enum:
         - Embedded
         - Standalone
+    DiscountCodeImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          required:
+            - cartDiscounts
+            - code
+            - isActive
+            - key
+          properties:
+            key:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+            code:
+              type: "string"
+            cartDiscounts:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CartDiscountKeyReference'
+            cartPredicate:
+              type: "string"
+            isActive:
+              type: "boolean"
+            maxApplications:
+              type: "number"
+              format: "double"
+            maxApplicationsPerCustomer:
+              type: "number"
+              format: "double"
+            groups:
+              type: "array"
+              items:
+                type: "string"
+            validFrom:
+              type: "string"
+              format: "datetime"
+            validUntil:
+              type: "string"
+              format: "datetime"
+            custom:
+              $ref: '#/components/schemas/Custom'
