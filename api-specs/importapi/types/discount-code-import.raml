@@ -1,0 +1,72 @@
+#%RAML 1.0 Library
+usage: Discount Code import types.
+(annotations.package): discount-codes
+
+uses:
+  common: common.raml
+  annotations: ../annotationTypes/annotations.raml
+  custom-field: custom-field.raml
+
+types:
+  DiscountCodeImport:
+    description: |
+      The data representation for a Discount Code to be imported that is persisted as a [Discount Code](/../api/projects/discountCodes#discountcode) in the Project.
+    type: common.ImportResource
+    properties:
+      key:
+        description: |
+          User-defined unique identifier. If a [Discount Code](/../api/projects/discountCodes#discountcode) with this `key` exists, it will be updated with the imported data.
+        type: string
+        pattern: ^[A-Za-z0-9_-]+$
+        minLength: 2
+        maxLength: 256
+      name?:
+        description: |
+          Maps to `DiscountCode.name`.
+        type: common.LocalizedString
+      description?:
+        description: |
+          Maps to `DiscountCode.description`.
+        type: common.LocalizedString
+      code:
+        description: |
+          User-defined unique identifier of the DiscountCode that is used by the customer to apply the discount.
+        type: string
+      cartDiscounts:
+        description: |
+          Reference to CartDiscounts that can be applied to the Cart once the DiscountCode is applied.
+        type: common.CartDiscountKeyReference[]
+      cartPredicate?:
+        description: |
+          DiscountCode can only be applied to Carts that match this predicate.
+        type: string
+      isActive:
+        description: |
+          Indicates if the DiscountCode is active and can be applied to the Cart.
+        type: boolean
+      maxApplications?:
+        type: number
+        format: int64
+        description: |
+          Number of times the DiscountCode can be applied. DiscountCode application is counted at the time of Order creation or update. However, Order cancellation or deletion does not decrement the count.
+      maxApplicationsPerCustomer?:
+        type: number
+        format: int64
+        description: |
+          Number of times the DiscountCode can be applied per Customer (anonymous Carts are not supported). DiscountCode application is counted at the time of Order creation or update. However, Order cancellation or deletion does not decrement the count.
+      groups?:
+        description: |
+          Groups to which the DiscountCode belongs.
+        type: string[]
+      validFrom?:
+        description: |
+          Date and time (UTC) from which the DiscountCode is effective.
+        type: datetime
+      validUntil?:
+        description: |
+          Date and time (UTC) until which the DiscountCode is effective.
+        type: datetime
+      custom?:
+        description: |
+          Custom Fields of the DiscountCode.
+        type: custom-field.Custom

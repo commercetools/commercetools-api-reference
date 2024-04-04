@@ -52,6 +52,7 @@ uses:
   type-import: types/type-import.raml
   custom-field: types/custom-field.raml
   common: types/common.raml
+  discount-code-import: types/discount-code-import.raml
 
 resourceTypes:
   base:
@@ -139,6 +140,12 @@ traits:
           scopes:
             - manage_project:{projectKey}
             - manage_types:{projectKey}
+  secured_by_manage_discount_codes:
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - manage_discount_codes:{projectKey}
+            - view_discount_codes:{projectKey}
 
 /{projectKey}:
   displayName: Project
@@ -633,6 +640,32 @@ traits:
           body:
             type: import-request.TypeImportRequest
             example: !include examples/type-import-request.json
+          responses:
+            201:
+              body:
+                type: import-request.ImportResponse
+            400:
+              description: The request was invalid.
+              body:
+                type: error.ErrorResponse
+  /discount-codes:
+    /import-containers:
+      /{importContainerKey}:
+        type: base
+        uriParameters:
+          importContainerKey:
+            (postman.paramName): import-container-key
+            description: The ImportContainer used to create the new resource
+            type: string
+        post:
+          description:
+            Creates a request for creating new Discount Codes or updating existing
+            ones.
+          is:
+            - secured_by_manage_discount_codes
+          body:
+            type: import-request.DiscountCodeImportRequest
+            example: !include examples/discount-code-import-request.json
           responses:
             201:
               body:
