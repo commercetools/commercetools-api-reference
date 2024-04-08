@@ -26,7 +26,7 @@ generate_oas_api: codegen_install
 	rmf-codegen generate -o oas/api -t OAS api-specs/api/api.raml
 
 generate_oas_import: codegen_install
-	rmf-codegen generate -o oas/import -t OAS api-specs/importapi/api.raml
+	rmf-codegen generate -o oas/import -t OAS api-specs/import/api.raml
 
 generate_oas_history: codegen_install
 	rmf-codegen generate -o oas/history -t OAS api-specs/history/api.raml
