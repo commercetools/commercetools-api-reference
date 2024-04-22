@@ -700,6 +700,10 @@ This annotation is declared on the API settings level, so in the [api-specs/api/
 
 Use this annotation to add descriptions to an enum property, like here [ChannelRoleEnum.raml](./api/types/channel/ChannelRoleEnum.raml).
 
+##### (ignoreValidators)
+
+Use this annotation to ignore the rules in this list for the specific type, resource or module.
+
 ### Composable Commerce API folder structure
 
 #### /examples
@@ -1312,6 +1316,32 @@ resourceTypes:
             <<uriParameterName>>:
                 type: string
         get:
+```
+
+#### PolymorphicSubtypesRule
+
+The rule verifies that a type defines a discriminator if it has subtypes to avoid issues with deserialization of read models.
+
+```raml
+types:
+  Foo:
+    type: object
+    discriminator: type
+    properties:
+      type: string
+  SubFoo:
+    discriminatorValue: sub
+    type: Foo
+  InvalidBar:
+    type: object
+    description: InvalidBar
+    properties:
+      name: string
+  SubBar:
+    description: SubBar
+    type: InvalidBar
+  SubBar2:
+    type: InvalidBar
 ```
 
 # Generate a Postman Collection
