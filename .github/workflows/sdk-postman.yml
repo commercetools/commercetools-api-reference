@@ -52,6 +52,22 @@ jobs:
     continue-on-error: true
 
     steps:
+      # Get GitHub token via the CT SDKs App
+      - name: Generate GitHub token (via CT SDKs App)
+        id: generate_github_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.SDK_APP_ID }}
+          private-key: ${{ secrets.SDK_APP_PEM }}
+          owner: ${{ github.repository_owner }}
+
+      - name: Get App user
+        id: get_app_user
+        env:
+          GITHUB_TOKEN: ${{ steps.generate_github_token.outputs.token }}
+        run: |
+          export GH_APP_USER=`gh api /users/ct-sdks%5Bbot%5D | jq .id`
+          echo "email=${GH_APP_USER}+ct-sdks[bot]@users.noreply.github.com" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Java'
         uses: actions/setup-java@v3
@@ -69,7 +85,10 @@ jobs:
         with:
           repository: 'commercetools/commercetools-postman-collection'
           path: postman
-          ssh-key: ${{ secrets.POSTMAN_DEPLOY_KEY }}
+          # Pass a personal access token (using our CT SDKs App) to be able to trigger other workflows
+          # https://help.github.com/en/actions/reference/events-that-trigger-workflows#triggering-new-workflows-using-a-personal-access-token
+          # https://github.community/t/action-does-not-trigger-another-on-push-tag-action/17148/8
+          token: ${{ steps.generate_github_token.outputs.token }}
 
       - name: "Generate api postman collection"
         run: sudo chmod 777 /usr/local/bin && make build
@@ -102,6 +121,6 @@ jobs:
           repository: postman
           branch: master
           commit_message: "TASK: Updating Postman collection"
-          commit_user_name: Auto Mation
-          commit_user_email: automation@commercetools.com
-          commit_author: Auto Mation <automation@commercetools.com>
+          commit_author: ct-sdks[bot] <${{ steps.get_app_user.outputs.email }}>
+          commit_user_name: ct-sdks[bot]
+          commit_user_email: ${{ steps.get_app_user.outputs.email }}
