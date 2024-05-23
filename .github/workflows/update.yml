@@ -53,6 +53,10 @@ jobs:
       - run: sudo chmod 777 /usr/local/bin && make build
         if: github.ref == 'refs/heads/main'
 
+      - run: sudo chmod 777 /usr/local/bin && make generate_bruno
+        if: github.ref == 'refs/heads/main'
+        continue-on-error: true
+
       - name: "check pending changes"
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*gen.properties' | grep -c ^`" >> $GITHUB_ENV
 
@@ -60,7 +64,7 @@ jobs:
         if: env.CHANGES_PENDING != '0'
         with:
           commit_message: "TASK: Updating RAML types, Postman and OAS definition"
-          file_pattern: oas uml
+          file_pattern: oas uml bruno
           commit_author: ct-sdks[bot] <${{ steps.get_app_user.outputs.email }}>
           commit_user_name: ct-sdks[bot]
           commit_user_email: ${{ steps.get_app_user.outputs.email }}

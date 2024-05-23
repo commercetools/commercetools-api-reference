@@ -31,8 +31,17 @@ generate_oas_import: codegen_install
 generate_oas_history: codegen_install
 	rmf-codegen generate -o oas/history -t OAS api-specs/history/api.raml
 
-generate_oas_ml: codegen_install
-	rmf-codegen generate -o oas/ml -t OAS api-specs/ml/api.raml
+generate_bruno: generate_bruno_api generate_bruno_import generate_bruno_history
+
+generate_bruno_api: codegen_install
+	rmf-codegen generate -o bruno/api -t BRUNO api-specs/api/api.raml
+
+generate_bruno_import: codegen_install
+	rmf-codegen generate -o bruno/import -t BRUNO api-specs/import/api.raml
+
+generate_bruno_history: codegen_install
+	rmf-codegen generate -o bruno/history -t BRUNO api-specs/history/api.raml
+
 
 generate_plantuml: codegen_install
 	rmf-codegen generate -o uml/api -t PLANTUML api-specs/api/api.raml
