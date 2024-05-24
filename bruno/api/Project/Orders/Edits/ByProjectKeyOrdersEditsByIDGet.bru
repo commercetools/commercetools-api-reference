@@ -1,0 +1,43 @@
+meta {
+  name: Get OrderEdit by id
+  type: http
+  seq: 281
+}
+
+get {
+  url: {{apiUrl}}/{{project-key}}/orders/edits/{{edit-id}}
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("edit-id", data.results[0].id); 
+          bru.setEnvVar("edit-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("edit-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("edit-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("edit-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("edit-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

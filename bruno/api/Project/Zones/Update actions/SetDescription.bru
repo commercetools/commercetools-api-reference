@@ -1,0 +1,54 @@
+meta {
+  name: SetDescription
+  type: http
+  seq: 669
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/zones/{{zone-id}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "version": {{zone-version}},
+      "actions": [
+          {
+              "action" : "setDescription",
+              "description" : "new ZoneDescription"
+            }
+      ]
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("zone-id", data.results[0].id); 
+          bru.setEnvVar("zone-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("zone-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("zone-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("zone-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("zone-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

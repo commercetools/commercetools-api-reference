@@ -1,0 +1,52 @@
+meta {
+  name: Authenticate my Customer (Sign In) in a store
+  type: http
+  seq: 590
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/in-store/key={{store-key}}/me/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email" : "johndoe@example.com",
+    "password" : "secret123",
+    "anonymousCart" : {
+      "id" : "{{cart-id}}",
+      "typeId" : "cart"
+    }
+  }
+}    
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("login-id", data.results[0].id); 
+          bru.setEnvVar("login-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("login-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("login-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("login-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("login-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

@@ -1,0 +1,49 @@
+meta {
+  name: Get my customer details
+  type: http
+  seq: 96
+}
+
+get {
+  url: {{apiUrl}}/{{project-key}}/me
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~sort: 
+  ~limit: 
+  ~offset: 
+  ~withTotal: 
+  ~expand: 
+  ~where: 
+  ~/^var[.][a-zA-Z0-9]+$/: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("me-id", data.results[0].id); 
+          bru.setEnvVar("me-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("me-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("me-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("me-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("me-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

@@ -1,0 +1,54 @@
+meta {
+  name: ChangeName
+  type: http
+  seq: 679
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/product-types/{{product-type-id}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "version": {{product-type-version}},
+      "actions": [
+          {
+              "action" : "changeName",
+              "name" : "New Product Type name"
+            }
+      ]
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("product-type-id", data.results[0].id); 
+          bru.setEnvVar("product-type-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("product-type-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("product-type-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("product-type-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("product-type-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

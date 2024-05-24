@@ -1,0 +1,68 @@
+meta {
+  name: SetPriceTiers
+  type: http
+  seq: 676
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/standalone-prices/{{standalone-price-id}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "version": {{standalone-price-version}},
+      "actions": [
+          {
+              "action" : "setPriceTiers",
+              "tiers" : [ {
+                "minimumQuantity" : 100,
+                "value" : {
+                  "centAmount" : 4200,
+                  "currencyCode" : "EUR",
+                  "type" : "centPrecision"
+                }
+              }, {
+                "minimumQuantity" : 1000,
+                "value" : {
+                  "centAmount" : 4000,
+                  "currencyCode" : "EUR",
+                  "type" : "centPrecision"
+                }
+              } ]
+            }
+      ]
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("standalone-price-id", data.results[0].id); 
+          bru.setEnvVar("standalone-price-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("standalone-price-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("standalone-price-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("standalone-price-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("standalone-price-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

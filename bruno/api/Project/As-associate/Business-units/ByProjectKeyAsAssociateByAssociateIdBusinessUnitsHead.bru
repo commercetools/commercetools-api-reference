@@ -1,0 +1,43 @@
+meta {
+  name: Check business-units are existing
+  type: http
+  seq: 115
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/as-associate/{{associate-id}}/business-units
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~where: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("business-unit-id", data.results[0].id); 
+          bru.setEnvVar("business-unit-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("business-unit-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("business-unit-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("business-unit-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("business-unit-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

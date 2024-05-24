@@ -1,0 +1,57 @@
+meta {
+  name: Create DiscountCode
+  type: http
+  seq: 33
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/discount-codes
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "code" : "SAVE10",
+    "name" : {
+      "en" : "Save10"
+    },
+    "cartDiscounts" : [ {
+      "typeId" : "cart-discount",
+      "id" : "fdbaf4ea-fbc9-4fea-bac4-1d7e6c1995b3"
+    } ],
+    "isActive" : true,
+    "cartPredicate" : "1=1"
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("discount-code-id", data.results[0].id); 
+          bru.setEnvVar("discount-code-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("discount-code-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("discount-code-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("discount-code-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("discount-code-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

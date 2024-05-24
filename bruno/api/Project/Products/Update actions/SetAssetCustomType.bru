@@ -1,0 +1,67 @@
+meta {
+  name: SetAssetCustomType
+  type: http
+  seq: 688
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/products/{{product-id}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "version": {{product-version}},
+      "actions": [
+          {
+              "action" : "setAssetCustomType",
+              "variantId" : 1,
+              "assetId" : "{{assetId}}",
+              "type" : {
+                "id" : "{{type-id}}",
+                "typeId" : "type"
+              },
+              "fields" : {
+                "exampleStringTypeField" : "TextString"
+              }
+            }
+      ]
+  }
+}    
+
+query {
+  ~priceCurrency: 
+  ~priceCountry: 
+  ~priceCustomerGroup: 
+  ~priceChannel: 
+  ~localeProjection: 
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("product-id", data.results[0].id); 
+          bru.setEnvVar("product-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("product-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("product-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("product-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("product-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

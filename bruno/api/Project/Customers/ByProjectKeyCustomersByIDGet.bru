@@ -1,0 +1,43 @@
+meta {
+  name: Get Customer by id
+  type: http
+  seq: 229
+}
+
+get {
+  url: {{apiUrl}}/{{project-key}}/customers/{{customer-id}}
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("customer-id", data.results[0].id); 
+          bru.setEnvVar("customer-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("customer-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("customer-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("customer-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("customer-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

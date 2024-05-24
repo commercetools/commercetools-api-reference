@@ -1,0 +1,48 @@
+meta {
+  name: Create a Token for verifying the Customer's Email
+  type: http
+  seq: 220
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/customers/email-token
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id" : "58ae9ffc-7e7b-414c-b060-357749d80c55",
+    "ttlMinutes" : 4320
+  }
+}    
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("email-token-id", data.results[0].id); 
+          bru.setEnvVar("email-token-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("email-token-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("email-token-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("email-token-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("email-token-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

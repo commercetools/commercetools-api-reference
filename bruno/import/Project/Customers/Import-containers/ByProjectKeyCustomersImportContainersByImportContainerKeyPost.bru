@@ -1,0 +1,98 @@
+meta {
+  name: Import import-container
+  type: http
+  seq: 19
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/customers/import-containers/{{import-container-key}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "type" : "customer",
+    "resources" : [ {
+      "customerNumber" : "12345",
+      "email" : "alice@example.com",
+      "password" : "secret",
+      "firstName" : "Alice",
+      "lastName" : "Doe",
+      "middleName" : "Ruth",
+      "title" : "Ms.",
+      "dateOfBirth" : "1980-01-01",
+      "companyName" : "commercetools GmbH",
+      "vatId" : "123456789",
+      "addresses" : [ {
+        "key" : "wCVKP6iU",
+        "firstName" : "Alice",
+        "country" : "DE"
+      }, {
+        "key" : "en-wcvK6",
+        "firstName" : "Alice",
+        "country" : "US"
+      } ],
+      "defaultShippingAddress" : 0,
+      "shippingAddresses" : [ 0, 1 ],
+      "defaultBillingAddress" : 0,
+      "billingAddresses" : [ 0, 1 ],
+      "isEmailVerified" : false,
+      "externalId" : "external-id-123",
+      "customerGroup" : {
+        "typeId" : "customer-group",
+        "key" : "customer-group-key"
+      },
+      "custom" : {
+        "type" : {
+          "key" : "custom-type",
+          "typeId" : "type"
+        },
+        "fields" : {
+          "boolean-field" : {
+            "type" : "Boolean",
+            "value" : true
+          }
+        }
+      },
+      "locale" : "DE",
+      "salutation" : "Dr.",
+      "key" : "customer-import-resource-key",
+      "stores" : [ {
+        "typeId" : "store",
+        "key" : "store-key"
+      } ],
+      "authenticationMode" : "Password"
+    } ]
+  }
+}    
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("import-container-id", data.results[0].id); 
+          bru.setEnvVar("import-container-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("import-container-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("import-container-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("import-container-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("import-container-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

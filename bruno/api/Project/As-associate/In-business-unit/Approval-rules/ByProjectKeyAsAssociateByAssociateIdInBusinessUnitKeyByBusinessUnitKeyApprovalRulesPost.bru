@@ -1,0 +1,73 @@
+meta {
+  name: Create ApprovalRule
+  type: http
+  seq: 124
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/as-associate/{{associate-id}}/in-business-unit/key={{business-unit-key}}/approval-rules
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name" : "my approval rule",
+    "status" : "Inactive",
+    "predicate" : "totalPrice.centAmount >= 100000",
+    "approvers" : {
+      "tiers" : [ {
+        "and" : [ {
+          "or" : [ {
+            "associateRole" : {
+              "typeId" : "associate-role",
+              "key" : "project-team-lead"
+            }
+          }, {
+            "associateRole" : {
+              "typeId" : "associate-role",
+              "key" : "project-team-lead-substitute"
+            }
+          } ]
+        } ]
+      } ]
+    },
+    "requesters" : [ {
+      "associateRole" : {
+        "typeId" : "associate-role",
+        "key" : "project-manager"
+      }
+    } ]
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("approval-rule-id", data.results[0].id); 
+          bru.setEnvVar("approval-rule-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("approval-rule-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("approval-rule-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("approval-rule-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("approval-rule-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

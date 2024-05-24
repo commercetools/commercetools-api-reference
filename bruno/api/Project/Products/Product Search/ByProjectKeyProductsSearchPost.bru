@@ -1,0 +1,70 @@
+meta {
+  name: Search Products
+  type: http
+  seq: 302
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/products/search
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "query" : {
+      "and" : [ {
+        "fullText" : {
+          "field" : "name",
+          "language" : "en",
+          "value" : "banana"
+        }
+      }, {
+        "filter" : [ {
+          "exact" : {
+            "field" : "variants.attributes.farming",
+            "fieldType" : "text",
+            "value" : "organic"
+          }
+        } ]
+      } ]
+    },
+    "sort" : [ {
+      "field" : "name",
+      "language" : "en",
+      "order" : "desc"
+    } ],
+    "limit" : 10,
+    "offset" : 0
+  }
+}    
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("search-id", data.results[0].id); 
+          bru.setEnvVar("search-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("search-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("search-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("search-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("search-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

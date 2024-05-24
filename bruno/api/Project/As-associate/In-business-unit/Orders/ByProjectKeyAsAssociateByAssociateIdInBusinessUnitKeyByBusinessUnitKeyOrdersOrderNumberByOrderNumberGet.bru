@@ -1,0 +1,43 @@
+meta {
+  name: Get order by order number in business unit
+  type: http
+  seq: 153
+}
+
+get {
+  url: {{apiUrl}}/{{project-key}}/as-associate/{{associate-id}}/in-business-unit/key={{business-unit-key}}/orders/order-number={{order-number}}
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("order-id", data.results[0].id); 
+          bru.setEnvVar("order-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("order-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("order-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("order-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("order-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

@@ -1,0 +1,51 @@
+meta {
+  name: Create an Order from a Quote
+  type: http
+  seq: 263
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/orders/quotes
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "quote" : {
+      "id" : "40d04a85-34d3-4769-a1b6-ecd00db2a587",
+      "typeId" : "quote"
+    },
+    "version" : 1
+  }
+}    
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("quote-id", data.results[0].id); 
+          bru.setEnvVar("quote-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("quote-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("quote-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("quote-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("quote-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

@@ -1,0 +1,79 @@
+meta {
+  name: Create ShippingMethod
+  type: http
+  seq: 77
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/shipping-methods
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name" : "DHL",
+    "localizedDescription" : {
+      "en" : "Standard delivery"
+    },
+    "taxCategory" : {
+      "typeId" : "tax-category",
+      "id" : "5a21f15b-34f8-4b7f-9407-d1eb82a73eba"
+    },
+    "zoneRates" : [ {
+      "zone" : {
+        "typeId" : "zone",
+        "id" : "5cb532be-c680-43ab-ba14-b664bb03dc35"
+      },
+      "shippingRates" : [ {
+        "price" : {
+          "currencyCode" : "EUR",
+          "centAmount" : 570
+        }
+      } ]
+    }, {
+      "zone" : {
+        "typeId" : "zone",
+        "id" : "ebe01381-82be-4e63-9993-d1eb8f8e588b"
+      },
+      "shippingRates" : [ {
+        "price" : {
+          "currencyCode" : "USD",
+          "centAmount" : 990
+        }
+      } ]
+    } ],
+    "isDefault" : false
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("shipping-method-id", data.results[0].id); 
+          bru.setEnvVar("shipping-method-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("shipping-method-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("shipping-method-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("shipping-method-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("shipping-method-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

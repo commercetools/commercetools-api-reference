@@ -1,0 +1,55 @@
+meta {
+  name: Create Review
+  type: http
+  seq: 74
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/reviews
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "authorName" : "John Doe",
+    "title" : "Incredible",
+    "text" : "Best product ever",
+    "rating" : 5,
+    "target" : {
+      "typeId" : "product",
+      "id" : "8fddacac-6ef5-4e66-af6e-124452123456"
+    }
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("review-id", data.results[0].id); 
+          bru.setEnvVar("review-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("review-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("review-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("review-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("review-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

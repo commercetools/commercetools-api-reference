@@ -1,0 +1,60 @@
+meta {
+  name: AddTransaction
+  type: http
+  seq: 667
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/payments/{{payment-id}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "version": {{payment-version}},
+      "actions": [
+          {
+              "action" : "addTransaction",
+              "transaction" : {
+                "type" : "Authorization",
+                "amount" : {
+                  "centAmount" : 4000,
+                  "currencyCode" : "EUR"
+                }
+              }
+            }
+      ]
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("payment-id", data.results[0].id); 
+          bru.setEnvVar("payment-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("payment-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("payment-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("payment-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("payment-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

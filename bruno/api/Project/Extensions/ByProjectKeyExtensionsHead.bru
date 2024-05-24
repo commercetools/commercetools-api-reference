@@ -1,0 +1,43 @@
+meta {
+  name: head ByProjectKeyExtensions
+  type: http
+  seq: 100
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/extensions
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~where: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("extension-id", data.results[0].id); 
+          bru.setEnvVar("extension-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("extension-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("extension-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("extension-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("extension-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

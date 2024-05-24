@@ -1,0 +1,54 @@
+meta {
+  name: Reject
+  type: http
+  seq: 667
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/as-associate/{{associate-id}}/in-business-unit/key={{business-unit-key}}/approval-flows/{{approval-flow-id}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "version": {{approval-flow-version}},
+      "actions": [
+          {
+              "action" : "reject",
+              "reason" : "Out of policy"
+            }
+      ]
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("approval-flow-id", data.results[0].id); 
+          bru.setEnvVar("approval-flow-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("approval-flow-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("approval-flow-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("approval-flow-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("approval-flow-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

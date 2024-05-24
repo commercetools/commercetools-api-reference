@@ -1,0 +1,54 @@
+meta {
+  name: SetAssetTags
+  type: http
+  seq: 679
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/categories/{{category-id}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "version": {{category-version}},
+      "actions": [
+          {
+              "action" : "setAssetTags",
+              "assetId" : "{{assetId}}"
+            }
+      ]
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("category-id", data.results[0].id); 
+          bru.setEnvVar("category-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("category-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("category-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("category-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("category-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

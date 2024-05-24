@@ -1,0 +1,49 @@
+meta {
+  name: Query product-types
+  type: http
+  seq: 60
+}
+
+get {
+  url: {{apiUrl}}/{{project-key}}/product-types
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~expand: 
+  ~sort: 
+  ~limit: 
+  ~offset: 
+  ~withTotal: 
+  ~where: 
+  ~/^var[.][a-zA-Z0-9]+$/: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("product-type-id", data.results[0].id); 
+          bru.setEnvVar("product-type-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("product-type-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("product-type-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("product-type-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("product-type-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

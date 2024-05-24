@@ -1,0 +1,65 @@
+meta {
+  name: Create CartDiscount
+  type: http
+  seq: 554
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/in-store/key={{store-key}}/cart-discounts
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name" : {
+      "en" : "Summer Sale"
+    },
+    "value" : {
+      "type" : "relative",
+      "permyriad" : 1000
+    },
+    "cartPredicate" : "1=1",
+    "target" : {
+      "type" : "lineItems",
+      "predicate" : "1=1"
+    },
+    "sortOrder" : "0.1",
+    "stores" : [ {
+      "key" : "{{store-key}}"
+    } ],
+    "isActive" : true,
+    "requiresDiscountCode" : false
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("cart-discount-id", data.results[0].id); 
+          bru.setEnvVar("cart-discount-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("cart-discount-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("cart-discount-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("cart-discount-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("cart-discount-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

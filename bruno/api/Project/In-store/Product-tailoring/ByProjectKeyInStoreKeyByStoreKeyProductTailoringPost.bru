@@ -1,0 +1,70 @@
+meta {
+  name: Create Product Tailoring in store
+  type: http
+  seq: 556
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/in-store/key={{store-key}}/product-tailoring
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "product" : {
+      "typeId" : "product",
+      "id" : "daf720e5-9e8e-4300-98db-3a3219327db9"
+    },
+    "name" : {
+      "en" : "tailored name"
+    },
+    "metaTitle" : {
+      "en" : "tailored meta title"
+    },
+    "metaDescription" : {
+      "en" : "tailored meta description"
+    },
+    "metaKeywords" : {
+      "en" : "tailored meta keywords"
+    },
+    "slug" : {
+      "en" : "tailored-slug"
+    },
+    "description" : {
+      "en" : "tailored description"
+    },
+    "publish" : false
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("product-tailoring-id", data.results[0].id); 
+          bru.setEnvVar("product-tailoring-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("product-tailoring-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("product-tailoring-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("product-tailoring-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("product-tailoring-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

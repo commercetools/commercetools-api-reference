@@ -1,0 +1,43 @@
+meta {
+  name: Check discount-codes are existing
+  type: http
+  seq: 32
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/discount-codes
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~where: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("discount-code-id", data.results[0].id); 
+          bru.setEnvVar("discount-code-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("discount-code-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("discount-code-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("discount-code-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("discount-code-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

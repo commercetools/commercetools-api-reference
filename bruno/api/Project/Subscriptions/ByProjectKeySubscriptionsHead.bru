@@ -1,0 +1,43 @@
+meta {
+  name: head ByProjectKeySubscriptions
+  type: http
+  seq: 85
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/subscriptions
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~where: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("subscription-id", data.results[0].id); 
+          bru.setEnvVar("subscription-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("subscription-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("subscription-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("subscription-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("subscription-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

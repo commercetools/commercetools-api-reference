@@ -1,0 +1,49 @@
+meta {
+  name: Query discount-codes
+  type: http
+  seq: 31
+}
+
+get {
+  url: {{apiUrl}}/{{project-key}}/discount-codes
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~expand: 
+  ~sort: 
+  ~limit: 
+  ~offset: 
+  ~withTotal: 
+  ~where: 
+  ~/^var[.][a-zA-Z0-9]+$/: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("discount-code-id", data.results[0].id); 
+          bru.setEnvVar("discount-code-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("discount-code-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("discount-code-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("discount-code-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("discount-code-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

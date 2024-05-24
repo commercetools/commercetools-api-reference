@@ -1,0 +1,80 @@
+meta {
+  name: AddAddress
+  type: http
+  seq: 666
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/as-associate/{{associate-id}}/business-units/{{business-unit-id}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "version": {{business-unit-version}},
+      "actions": [
+          {
+              "action" : "addAddress",
+              "address" : {
+                "id" : "exampleAddress",
+                "key" : "exampleKey",
+                "title" : "My Address",
+                "salutation" : "Mr.",
+                "firstName" : "Example",
+                "lastName" : "Person",
+                "streetName" : "Example Street",
+                "streetNumber" : "4711",
+                "additionalStreetInfo" : "Backhouse",
+                "postalCode" : "80933",
+                "city" : "Exemplary City",
+                "region" : "Exemplary Region",
+                "state" : "Exemplary State",
+                "country" : "DE",
+                "company" : "My Company Name",
+                "department" : "Sales",
+                "building" : "Hightower 1",
+                "apartment" : "247",
+                "pOBox" : "2471",
+                "phone" : "+49 89 12345678",
+                "mobile" : "+49 171 2345678",
+                "email" : "mail@example.com",
+                "fax" : "+49 89 12345679",
+                "additionalAddressInfo" : "no additional Info",
+                "externalId" : "Information not needed"
+              }
+            }
+      ]
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("business-unit-id", data.results[0].id); 
+          bru.setEnvVar("business-unit-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("business-unit-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("business-unit-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("business-unit-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("business-unit-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

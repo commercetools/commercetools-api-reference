@@ -1,0 +1,43 @@
+meta {
+  name: Check attribute-groups are existing
+  type: http
+  seq: 112
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/attribute-groups
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~where: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("attribute-group-id", data.results[0].id); 
+          bru.setEnvVar("attribute-group-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("attribute-group-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("attribute-group-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("attribute-group-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("attribute-group-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

@@ -1,0 +1,127 @@
+meta {
+  name: Import import-container
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/categories/import-containers/{{import-container-key}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "type" : "category",
+    "resources" : [ {
+      "key" : "greatTestCat",
+      "name" : {
+        "en" : "greatTestCat"
+      },
+      "slug" : {
+        "en" : "great-slug"
+      },
+      "description" : {
+        "de" : "Beschreibung der Kategorie",
+        "en" : "category's description"
+      },
+      "parent" : {
+        "typeId" : "category",
+        "key" : "category-key"
+      },
+      "orderHint" : "category's order hint",
+      "externalId" : "external-id",
+      "metaTitle" : {
+        "de" : "der Metatitel der Katze",
+        "en" : "the cat's meta title"
+      },
+      "metaDescription" : {
+        "de" : "die Meta-Beschreibung der Katze",
+        "en" : "the cat's meta description"
+      },
+      "metaKeywords" : {
+        "de" : "die Schlüsselwörter der Katze",
+        "en" : "the cat's key words"
+      },
+      "assets" : [ {
+        "key" : "asset-key",
+        "sources" : [ {
+          "uri" : "https://google.com",
+          "key" : "asset-source-key",
+          "dimensions" : {
+            "w" : 12,
+            "h" : 10
+          },
+          "contentType" : "dummy content type"
+        } ],
+        "name" : {
+          "de" : "Asset-Name",
+          "en" : "asset name"
+        },
+        "description" : {
+          "de" : "Asset-Beschreibung",
+          "en" : "asset description"
+        },
+        "tags" : [ "tag 1" ],
+        "custom" : {
+          "type" : {
+            "key" : "custom-type",
+            "typeId" : "type"
+          },
+          "fields" : {
+            "boolean-field" : {
+              "type" : "Boolean",
+              "value" : false
+            }
+          }
+        }
+      } ],
+      "custom" : {
+        "type" : {
+          "typeId" : "type",
+          "key" : "custom-type"
+        },
+        "fields" : {
+          "boolean-field" : {
+            "type" : "Boolean",
+            "value" : true
+          },
+          "string-field" : {
+            "type" : "String",
+            "value" : "a string"
+          }
+        }
+      }
+    } ]
+  }
+}    
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("import-container-id", data.results[0].id); 
+          bru.setEnvVar("import-container-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("import-container-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("import-container-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("import-container-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("import-container-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

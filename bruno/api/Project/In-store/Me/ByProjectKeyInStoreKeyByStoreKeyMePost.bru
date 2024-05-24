@@ -1,0 +1,57 @@
+meta {
+  name: Update my customer in a store
+  type: http
+  seq: 542
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/in-store/key={{store-key}}/me
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "version" : 3,
+    "actions" : [ {
+      "action" : "addAddress",
+      "address" : {
+        "streetName" : "Any Street",
+        "streetNumber" : "1337",
+        "postalCode" : "11111",
+        "city" : "Any City",
+        "country" : "US"
+      }
+    } ]
+  }
+}    
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("me-id", data.results[0].id); 
+          bru.setEnvVar("me-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("me-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("me-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("me-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("me-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

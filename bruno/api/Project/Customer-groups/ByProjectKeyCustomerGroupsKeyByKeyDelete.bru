@@ -1,0 +1,44 @@
+meta {
+  name: Delete CustomerGroup by key
+  type: http
+  seq: 236
+}
+
+delete {
+  url: {{apiUrl}}/{{project-key}}/customer-groups/key={{customer-group-key}}?version={{customer-group-version}}
+  body: none
+  auth: inherit
+}
+
+
+query {
+  version: {{customer-group-version}}
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("customer-group-id", data.results[0].id); 
+          bru.setEnvVar("customer-group-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("customer-group-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("customer-group-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("customer-group-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("customer-group-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

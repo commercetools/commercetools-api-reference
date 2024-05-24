@@ -1,0 +1,45 @@
+meta {
+  name: Get ShippingMethods for an order edit
+  type: http
+  seq: 386
+}
+
+get {
+  url: {{apiUrl}}/{{project-key}}/shipping-methods/matching-orderedit?orderEditId=&country=
+  body: none
+  auth: inherit
+}
+
+
+query {
+  orderEditId: 
+  country: 
+  ~state: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("matching-orderedit-id", data.results[0].id); 
+          bru.setEnvVar("matching-orderedit-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("matching-orderedit-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("matching-orderedit-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("matching-orderedit-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("matching-orderedit-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

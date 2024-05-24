@@ -1,0 +1,43 @@
+meta {
+  name: Check product-projections are existing
+  type: http
+  seq: 54
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/product-projections
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~where: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("product-projection-id", data.results[0].id); 
+          bru.setEnvVar("product-projection-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("product-projection-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("product-projection-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("product-projection-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("product-projection-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

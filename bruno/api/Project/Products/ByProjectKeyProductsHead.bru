@@ -1,0 +1,43 @@
+meta {
+  name: Check products are existing
+  type: http
+  seq: 48
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/products
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~where: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("product-id", data.results[0].id); 
+          bru.setEnvVar("product-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("product-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("product-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("product-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("product-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

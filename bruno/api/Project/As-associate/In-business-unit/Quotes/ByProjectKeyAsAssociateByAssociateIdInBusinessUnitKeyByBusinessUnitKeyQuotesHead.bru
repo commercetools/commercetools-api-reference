@@ -1,0 +1,43 @@
+meta {
+  name: Check quotes are existing
+  type: http
+  seq: 133
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/as-associate/{{associate-id}}/in-business-unit/key={{business-unit-key}}/quotes
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~where: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("quote-id", data.results[0].id); 
+          bru.setEnvVar("quote-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("quote-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("quote-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("quote-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("quote-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

@@ -1,0 +1,43 @@
+meta {
+  name: Check tax-categories are existing
+  type: http
+  seq: 88
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/tax-categories
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~where: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("tax-category-id", data.results[0].id); 
+          bru.setEnvVar("tax-category-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("tax-category-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("tax-category-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("tax-category-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("tax-category-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

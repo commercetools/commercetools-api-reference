@@ -1,0 +1,63 @@
+meta {
+  name: Create ProductDiscount
+  type: http
+  seq: 52
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/product-discounts
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "value" : {
+      "type" : "absolute",
+      "money" : [ {
+        "currencyCode" : "EUR",
+        "centAmount" : 100
+      } ]
+    },
+    "predicate" : "1=1",
+    "name" : {
+      "en" : "test-discount1"
+    },
+    "description" : {
+      "en" : "test-discount1"
+    },
+    "isActive" : false,
+    "sortOrder" : "0.9534"
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("product-discount-id", data.results[0].id); 
+          bru.setEnvVar("product-discount-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("product-discount-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("product-discount-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("product-discount-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("product-discount-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

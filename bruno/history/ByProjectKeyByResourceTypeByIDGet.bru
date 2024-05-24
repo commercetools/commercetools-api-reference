@@ -1,0 +1,57 @@
+meta {
+  name: Query Records by a resource ID
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}/{{project-key}}/{{resource-type}}/{{-id}}
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~date.from: 
+  ~date.to: 
+  ~limit: 
+  ~offset: 
+  ~userId: 
+  ~clientId: 
+  ~customerId: 
+  ~associateId: 
+  ~businessUnit: 
+  ~type: 
+  ~source: 
+  ~changes: 
+  ~stores: 
+  ~excludePlatformInitiatedChanges: 
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("-id", data.results[0].id); 
+          bru.setEnvVar("-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

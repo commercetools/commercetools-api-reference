@@ -1,0 +1,57 @@
+meta {
+  name: Create OrderEdit
+  type: http
+  seq: 270
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/orders/edits
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "key" : "order-edit-key",
+    "resource" : {
+      "typeId" : "order",
+      "id" : "ed454f4e-c43a-485f-a86f-046c691b1363"
+    },
+    "stagedActions" : [ {
+      "action" : "setCustomerEmail",
+      "email" : "user@localhost"
+    } ],
+    "comment" : "sample-comment"
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("edit-id", data.results[0].id); 
+          bru.setEnvVar("edit-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("edit-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("edit-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("edit-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("edit-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

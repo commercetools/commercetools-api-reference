@@ -1,0 +1,56 @@
+meta {
+  name: Query product-projections
+  type: http
+  seq: 53
+}
+
+get {
+  url: {{apiUrl}}/{{project-key}}/product-projections
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~staged: 
+  ~priceCurrency: 
+  ~priceCountry: 
+  ~priceCustomerGroup: 
+  ~priceChannel: 
+  ~localeProjection: 
+  ~storeProjection: 
+  ~expand: 
+  ~sort: 
+  ~limit: 
+  ~offset: 
+  ~withTotal: 
+  ~where: 
+  ~/^var[.][a-zA-Z0-9]+$/: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("product-projection-id", data.results[0].id); 
+          bru.setEnvVar("product-projection-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("product-projection-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("product-projection-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("product-projection-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("product-projection-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

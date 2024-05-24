@@ -1,0 +1,73 @@
+meta {
+  name: Import import-container
+  type: http
+  seq: 20
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/inventories/import-containers/{{import-container-key}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "type" : "inventory",
+    "resources" : [ {
+      "key" : "inventory-import-key",
+      "sku" : "product-variant-sku",
+      "quantityOnStock" : 15,
+      "restockableInDays" : 2,
+      "expectedDelivery" : "2022-06-30T14:00:00.000Z",
+      "supplyChannel" : {
+        "typeId" : "channel",
+        "key" : "channel-key"
+      },
+      "custom" : {
+        "type" : {
+          "typeId" : "type",
+          "key" : "custom-field-key"
+        },
+        "fields" : {
+          "theNameofTheInventoryCustomField" : {
+            "type" : "LocalizedString",
+            "value" : {
+              "en" : "English text",
+              "de" : "German text"
+            }
+          }
+        }
+      }
+    } ]
+  }
+}    
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("import-container-id", data.results[0].id); 
+          bru.setEnvVar("import-container-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("import-container-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("import-container-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("import-container-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("import-container-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

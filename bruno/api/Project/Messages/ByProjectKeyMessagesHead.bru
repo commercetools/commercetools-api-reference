@@ -1,0 +1,43 @@
+meta {
+  name: Check messages are existing
+  type: http
+  seq: 40
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/messages
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~where: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("message-id", data.results[0].id); 
+          bru.setEnvVar("message-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("message-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("message-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("message-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("message-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

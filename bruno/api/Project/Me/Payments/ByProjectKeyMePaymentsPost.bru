@@ -1,0 +1,66 @@
+meta {
+  name: Create my payment
+  type: http
+  seq: 460
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/me/payments
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "amountPlanned" : {
+      "currencyCode" : "USD",
+      "centAmount" : 1000
+    },
+    "paymentMethodInfo" : {
+      "paymentInterface" : "STRIPE",
+      "method" : "CREDIT_CARD",
+      "name" : {
+        "en" : "Credit Card"
+      }
+    },
+    "transaction" : {
+      "timestamp" : "2015-10-20T08:54:24.000Z",
+      "type" : "Charge",
+      "amount" : {
+        "currencyCode" : "USD",
+        "centAmount" : 1000
+      }
+    }
+  }
+}    
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("payment-id", data.results[0].id); 
+          bru.setEnvVar("payment-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("payment-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("payment-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("payment-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("payment-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

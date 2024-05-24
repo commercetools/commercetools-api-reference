@@ -1,0 +1,49 @@
+meta {
+  name: Gets the current or staged representation of a product by its key from a specific Store
+  type: http
+  seq: 631
+}
+
+get {
+  url: {{apiUrl}}/{{project-key}}/in-store/key={{store-key}}/product-projections/key={{product-projection-key}}
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~staged: 
+  ~priceCurrency: 
+  ~priceCountry: 
+  ~priceCustomerGroup: 
+  ~priceChannel: 
+  ~localeProjection: 
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("product-projection-id", data.results[0].id); 
+          bru.setEnvVar("product-projection-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("product-projection-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("product-projection-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("product-projection-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("product-projection-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

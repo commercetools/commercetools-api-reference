@@ -1,0 +1,50 @@
+meta {
+  name: Replicate cart for store
+  type: http
+  seq: 563
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/in-store/key={{store-key}}/carts/replicate
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "reference" : {
+      "id" : "74dcac8b-0c67-4f37-b693-3acd33e3c457",
+      "typeId" : "cart"
+    }
+  }
+}    
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("replicate-id", data.results[0].id); 
+          bru.setEnvVar("replicate-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("replicate-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("replicate-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("replicate-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("replicate-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

@@ -1,0 +1,43 @@
+meta {
+  name: Check states are existing
+  type: http
+  seq: 82
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/states
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~where: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("state-id", data.results[0].id); 
+          bru.setEnvVar("state-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("state-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("state-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("state-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("state-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
