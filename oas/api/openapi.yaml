@@ -37748,27 +37748,37 @@ components:
         - Disabled
       x-annotation-package: "Cart"
       x-annotation-enumDescriptions:
-        Platform: "Tax Rates are selected automatically from the [TaxCategories](ctp:api:type:TaxCategory)
+        Platform: "- Tax Rates are selected automatically from the [TaxCategories](ctp:api:type:TaxCategory)
          based on the [Cart](ctp:api:type:Cart) `shippingAddress`.nThis is the default
-         tax mode for a new Cart.nn`totalNet`, `totalGross`, and `taxPortions` fields
-         are calculated based on the `taxRoundingMode`.n"
-        External: "Tax Rates are set externally per [ExternalTaxRateDraft](ctp:api:type:ExternalTaxRateDraft).n
-        A Cart can be ordered only if all Line Items, Custom Line Items, and the Shipping
-         Method have an external Tax Rate set.nn`totalNet`, `totalGross`, and `taxPortions`
+         tax mode for a new Cart.nn- The `totalNet`, `totalGross`, and `taxPortions`
          fields are calculated based on the `taxRoundingMode`.n"
-        ExternalAmount: "Tax amounts, Tax Rates, and tax portions are set externally per [ExternalTaxAmountDraft](ctp:api:type:ExternalTaxAmountDraft).n
-        A Cart can be ordered only if the Cart and all Line Items, Custom Line Items, and
-         the Shipping Method have an external tax amount and rate set.nnPrice-specific
-         update actions on Carts require external recalculation of the total gross price.n
-        Hence, the `externalTaxAmount` is removed in these cases and must be reset with
+        External: "- Tax Rates are set externally with [ExternalTaxRateDraft](ctp:api:type:ExternalTaxRateDraft).n
+        A Cart can be ordered only if all Line Items, Custom Line Items, and the Shipping
+         Method have an external Tax Rate set.nn- The `totalNet`, `totalGross`, and `taxPortions`
+         fields are calculated based on the `taxRoundingMode`.n"
+        ExternalAmount: "- Tax amounts, Tax Rates, and tax portions are set externally with
+         [ExternalTaxAmountDraft](ctp:api:type:ExternalTaxAmountDraft).nA Cart can be
+         ordered only if the Cart and all Line Items, Custom Line Items, and the Shipping
+         Method have an external tax amount and rate set.nn- The Cart `taxedPrice` field
+         must be set using [Set Cart Total Tax](ctp:api:type:CartSetCartTotalTaxAction).
+         The Cart `taxedShippingPrice` field is always empty in this tax mode.nn- Price-affecting
+         update actions on Carts require external recalculation of the total gross price.
+         In these cases, `taxedPrice` and `taxRate` are removed and must be set again.
+         The order in which the individual update actions are issued is important:n  1.
+         Issue the price-affecting update action(s).n  2. Update the tax amounts using
          [Set LineItem TaxAmount](ctp:api:type:CartSetLineItemTaxAmountAction), [Set CustomLineItem
          TaxAmount](ctp:api:type:CartSetCustomLineItemTaxAmountAction), or [Set ShippingMethod
-         TaxAmount](ctp:api:type:CartSetShippingMethodTaxAmountAction) update actions.n
-        Also the Cart `taxedPrice` field must be explicitly set via [Set Cart Total Tax](ctp:api:type:CartSetCartTotalTaxAction).n
-        Since the API currently does not offer an update action for setting the `taxedShippingPrice`
-         field of a Cart with `ExternalAmount` tax mode, it will always be empty.n"
-        Disabled: "No taxes are added to the Cart.nnNote that this tax mode cannot be set
-         on the [My Carts](/../api/projects/me-carts) API.n"
+         TaxAmount](ctp:api:type:CartSetShippingMethodTaxAmountAction).nn      - If the
+         update action changes the Line Item price, for Line Items with `Platform` [LineItemPriceMode](ctp:type:LineItemPriceMode),
+         you must issue [Set LineItem TaxAmount](ctp:api:type:CartSetLineItemTaxAmountAction)
+         in a _separate_ request.nn      - If the update action removes the externally
+         set tax amount for the Shipping Method, you must issue [Set ShippingMethod TaxAmount](ctp:api:type:CartSetShippingMethodTaxAmountAction)
+         in a _separate_ request.nn  3. Update the `taxedPrice` on Cart using [Set Cart
+         Total Tax](ctp:api:type:CartSetCartTotalTaxAction).nn- Tax-inclusive pricing
+         should be avoided when using TaxMode `ExternalAmount` because `taxedItemPrice.totalNet`
+         is automatically set by the platform to the Line Item's `totalPrice`.n"
+        Disabled: "- No taxes are added to the Cart.n- This tax mode cannot be set on the
+         [My Carts](/../api/projects/me-carts) API.n"
     TaxPortion:
       type: "object"
       required:
