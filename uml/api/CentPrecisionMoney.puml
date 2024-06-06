@@ -161,6 +161,25 @@ interface MyPayment [[MyPayment.svg]]  {
     transactions: [[Transaction.svg List<Transaction>]]
     custom: [[CustomFields.svg CustomFields]]
 }
+interface OrderLineItemDiscountSetMessage [[OrderLineItemDiscountSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    lineItemId: String
+    lineItemKey: String
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    totalPrice: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxedPricePortions: [[MethodTaxedPrice.svg List<MethodTaxedPrice>]]
+}
 interface OrderLineItemRemovedMessage [[OrderLineItemRemovedMessage.svg]]  {
     id: String
     version: Long
@@ -182,6 +201,15 @@ interface OrderLineItemRemovedMessage [[OrderLineItemRemovedMessage.svg]]  {
     newTaxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
     newPrice: [[Price.svg Price]]
     newShippingDetail: [[ItemShippingDetails.svg ItemShippingDetails]]
+}
+interface OrderLineItemDiscountSetMessagePayload [[OrderLineItemDiscountSetMessagePayload.svg]]  {
+    type: String
+    lineItemId: String
+    lineItemKey: String
+    discountedPricePerQuantity: [[DiscountedLineItemPriceForQuantity.svg List<DiscountedLineItemPriceForQuantity>]]
+    totalPrice: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    taxedPrice: [[TaxedItemPrice.svg TaxedItemPrice]]
+    taxedPricePortions: [[MethodTaxedPrice.svg List<MethodTaxedPrice>]]
 }
 interface OrderLineItemRemovedMessagePayload [[OrderLineItemRemovedMessagePayload.svg]]  {
     type: String
@@ -227,6 +255,12 @@ interface Transaction [[Transaction.svg]]  {
     state: [[TransactionState.svg TransactionState]]
     custom: [[CustomFields.svg CustomFields]]
 }
+interface ShippingRate [[ShippingRate.svg]]  {
+    price: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    freeAbove: [[CentPrecisionMoney.svg CentPrecisionMoney]]
+    isMatching: Boolean
+    tiers: [[ShippingRatePriceTier.svg List<ShippingRatePriceTier>]]
+}
 
 CentPrecisionMoney --> CartDiscountValueAbsolute #green;text:green : "money"
 CentPrecisionMoney --> ProductDiscountValueAbsolute #green;text:green : "money"
@@ -242,8 +276,12 @@ CentPrecisionMoney --> TaxedPrice #green;text:green : "totalNet"
 CentPrecisionMoney --> TaxedPrice #green;text:green : "totalGross"
 CentPrecisionMoney --> TaxedPrice #green;text:green : "totalTax"
 CentPrecisionMoney --> MyPayment #green;text:green : "amountPlanned"
+CentPrecisionMoney --> OrderLineItemDiscountSetMessage #green;text:green : "totalPrice"
 CentPrecisionMoney --> OrderLineItemRemovedMessage #green;text:green : "newTotalPrice"
+CentPrecisionMoney --> OrderLineItemDiscountSetMessagePayload #green;text:green : "totalPrice"
 CentPrecisionMoney --> OrderLineItemRemovedMessagePayload #green;text:green : "newTotalPrice"
 CentPrecisionMoney --> Payment #green;text:green : "amountPlanned"
 CentPrecisionMoney --> Transaction #green;text:green : "amount"
+CentPrecisionMoney --> ShippingRate #green;text:green : "price"
+CentPrecisionMoney --> ShippingRate #green;text:green : "freeAbove"
 @enduml
