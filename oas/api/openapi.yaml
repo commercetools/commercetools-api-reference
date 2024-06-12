@@ -10554,7 +10554,7 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyCartsGet
       description: |-
-        Queries carts in a specific [Store](ctp:api:type:Store).
+        Queries Carts in a specific [Store](ctp:api:type:Store).
       parameters:
         - name: expand
           in: query
@@ -12502,7 +12502,11 @@ paths:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
             - "manage_my_orders:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeCartsGet
+      description: |-
+        Returns all Carts that match a given Query Predicate and contain either a matching `customerId` or `anonymousId` in a Store.
       parameters:
         - name: expand
           in: query
@@ -12592,9 +12596,11 @@ paths:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
             - "manage_my_orders:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeCartsHead
       description: |-
-        Checks if a Cart exists for a given Query Predicate. Returns a `200 OK` status if any Carts match the Query Predicate or a `404 Not Found` otherwise.
+        Checks if a Cart exists for a Store that matches the given Query Predicate, and contains a matching `customerId` or `anonymousId`. Returns a `200 OK` status if any Carts match these conditions, or a `404 Not Found` otherwise.
       parameters:
         - name: where
           in: query
@@ -12629,8 +12635,12 @@ paths:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
             - "manage_my_orders:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeCartsPost
       description: |-
+        Creates a Cart in the specified Store for a given `customerId` or `anonymousId`.
+
         The `store` field in the created [Cart](ctp:api:type:Cart) is set to the Store specified by the `storeKey` path parameter.
 
         Specific Error Codes: [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
@@ -12695,7 +12705,15 @@ paths:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
             - "manage_my_orders:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeCartsByIDGet
+      description: |-
+        Returns a Cart for a given `id` in a Store. Returns a `200 OK` status if the Cart exists, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+
+        If the Cart exists in the Project but does not belong to a Store, or the Cart's `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+        If the Cart exists in the Project but does not have a matching `customerId` or `anonymousId`, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError)  error.
       parameters:
         - name: expand
           in: query
@@ -12734,9 +12752,9 @@ paths:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
             - "manage_my_orders:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeCartsByIDHead
-      description: |-
-        Checks ifa My Cart exists for a given `id`. Returns a `200 OK` status if the My Cart exists or a `404 Not Found` otherwise.
       responses:
         "200":
           description: |-
@@ -12761,9 +12779,15 @@ paths:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
             - "manage_my_orders:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeCartsByIDPost
       description: |-
-        If the Cart exists in the Project but does not have the `store` field, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        Updates the Cart for a given `id` in a Store. Returns a `200 OK` status if the Cart exists, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+
+        If the Cart exists in the Project but does not belong to a Store, or the Cart's `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+        If the Cart exists in the Project but does not have a matching `customerId` or `anonymousId`, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError)  error.
       parameters:
         - name: expand
           in: query
@@ -12810,7 +12834,15 @@ paths:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
             - "manage_my_orders:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeCartsByIDDelete
+      description: |-
+        Deletes the Cart for a given `id` in a Store. Returns a `200 OK` status if the Cart exists, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+
+        If the Cart exists in the Project but does not belong to a Store, or the Cart's `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+        If the Cart exists in the Project but does not have a matching `customerId` or `anonymousId`, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError)  error.
       parameters:
         - name: version
           in: query
@@ -17449,7 +17481,11 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyMeCartsGet
+      description: |-
+        Returns all Carts that match a given Query Predicate and contain either a matching `customerId` or `anonymousId`.
       parameters:
         - name: expand
           in: query
@@ -17538,9 +17574,11 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyMeCartsHead
       description: |-
-        Checks if a Cart exists for a given Query Predicate. Returns a `200 OK` status if any Carts match the Query Predicate or a `404 Not Found` otherwise.
+        Checks if a Cart exists that matches a given Query Predicate and contains either a matching `customerId` or `anonymousId`. Returns a `200 OK` status if the Cart exists, or a `404 Not Found` otherwise.
       parameters:
         - name: where
           in: query
@@ -17574,7 +17612,11 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyMeCartsPost
+      description: |-
+        Creates a Cart for a given `customerId` or `anonymousId`.
       parameters:
         - name: expand
           in: query
@@ -17795,6 +17837,8 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyMeCartsReplicatePost
       description: |-
         Creates a new Cart by replicating an existing Cart or Order of the authenticated Customer.
@@ -17807,7 +17851,7 @@ paths:
 
         The new Cart does not contain Payments or Deliveries. The [State](ctp:api:type:ItemState) of Line Items and Custom Line Items is reset to `initial`.
 
-        In case the Cart or Order to be replicated does not belong to the authenticaed Customer, the API returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error
+        If the Cart or Order to be replicated does not belong to the authenticated Customer, the API returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error
       requestBody:
         content:
           application/json:
@@ -17853,7 +17897,13 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyMeCartsByIDGet
+      description: |-
+        Returns a Cart for a given `id`. Returns a `200 OK` status if the Cart exists, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+
+        If the Cart exists in the Project but does not have a matching `customerId` or `anonymousId`, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -17891,9 +17941,13 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyMeCartsByIDHead
       description: |-
-        Checks if a Cart exists for a given `id`. Returns a `200 OK` status if the Cart exists or a `404 Not Found` otherwise.
+        Checks if a Cart exists for a given `id`. Returns a `200 OK` status if the Cart exists, or a `404 Not Found` otherwise.
+
+        If the Cart exists in the Project but does not have a matching `customerId` or `anonymousId`, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       responses:
         "200":
           description: |-
@@ -17917,7 +17971,13 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyMeCartsByIDPost
+      description: |-
+        Updates the Cart for a given `id`. Returns a `200 OK` status if the Cart exists, or a `404 Not Found` otherwise.
+
+        If the Cart exists in the Project but does not have a matching `customerId` or `anonymousId`, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
           in: query
@@ -17963,7 +18023,13 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_orders:{projectKey}"
+            - "customer_id:{id}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyMeCartsByIDDelete
+      description: |-
+        Deletes the Cart for a given `id`. Returns a `200 OK` status if the Cart exists, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+
+        If the Cart exists in the Project but does not have a matching `customerId` or `anonymousId`, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: version
           in: query
