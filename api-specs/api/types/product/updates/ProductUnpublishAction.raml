@@ -7,4 +7,7 @@ example: !include ../../../examples/Product/ProductUnpublishAction.json
 description: |
   Removes the current [projection](/../api/projects/productProjections#current--staged) of the Product. The staged projection is unaffected. To retrieve unpublished Products, the `staged` parameter must be set to `false` when [querying](ctp:api:endpoint:/{projectKey}/product-projections:GET)/[searching](/projects/products-search#product-projection-search) Product Projections. Produces the [ProductUnpublished](ctp:api:type:ProductUnpublishedMessage) Message.
 
-  Unpublished Products cannot be added to a Cart. However, if a Cart contains Line Items for Products that were added before the Product was unpublished, the Cart is unaffected and can still be used to create an Order. To prevent this, in addition to unpublishing the Product you should remove the Prices from the Product using [Remove Price](ctp:api:type:ProductRemovePriceAction) for Embedded Prices or [Delete StandalonePrice](/projects/standalone-prices#delete-standaloneprice) for Standalone Prices.
+  When a Product is unpublished, any associated Line Items already present in a Cart remain unaffected and can still be ordered. To prevent this, do the following:
+
+  - If the Product uses Embedded Prices, [remove the Embedded Prices](ctp:api:type:ProductRemovePriceAction) from the unpublished Product.
+  - If the Product uses Standalone Prices, [inactivate](ctp:api:type:StandalonePriceChangeActiveAction) or [delete](/projects/standalone-prices#delete-standaloneprice) the Standalone Prices.
