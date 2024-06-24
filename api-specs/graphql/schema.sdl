@@ -4624,6 +4624,27 @@ type InStore implements CartDiscountQueryInterface & CartQueryInterface & Custom
     "Queries with specified Product key"
     productKey: String): ProductTailoring
   productTailoringList(where: String, sort: [String!], limit: Int, offset: Int): ProductTailoringQueryResult!
+  quoteRequest(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): QuoteRequest
+  quoteRequests(where: String, sort: [String!], limit: Int, offset: Int): QuoteRequestQueryResult!
+  stagedQuote(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): StagedQuote
+  stagedQuotes(where: String, sort: [String!], limit: Int, offset: Int): StagedQuoteQueryResult!
+  quote(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): Quote
+  quotes(where: String, sort: [String!], limit: Int, offset: Int): QuoteQueryResult!
 }
 
 type InStoreMe implements MeQueryInterface & CartQueryInterface & ActiveCartInterface & OrderQueryInterface & ShoppingListQueryInterface {
@@ -5867,6 +5888,9 @@ type Mutation {
     storeKey: KeyReferenceInput): Order
   createOrderFromQuote(draft: OrderQuoteCommand!,
 
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
+
     "Create/modify entity as an associate in business-unit."
     asAssociate: AsAssociateArgument): Order
 
@@ -6091,11 +6115,17 @@ type Mutation {
   createQuoteRequest(draft: QuoteRequestDraft!,
 
     "Create/modify entity as an associate in business-unit."
-    asAssociate: AsAssociateArgument): QuoteRequest
+    asAssociate: AsAssociateArgument,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput): QuoteRequest
   updateQuoteRequest(version: Long!,
 
     "Create/modify entity as an associate in business-unit."
     asAssociate: AsAssociateArgument, actions: [QuoteRequestUpdateAction!]!,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
 
     "Queries with specified ID"
     id: String,
@@ -6103,6 +6133,9 @@ type Mutation {
     "Queries with specified key"
     key: String): QuoteRequest
   deleteQuoteRequest(version: Long!, personalDataErasure: Boolean = false,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
 
     "Queries with specified ID"
     id: String,
@@ -6117,8 +6150,14 @@ type Mutation {
 
     "Queries with specified key"
     key: String): QuoteRequest
-  createStagedQuote(draft: StagedQuoteDraft!): StagedQuote
+  createStagedQuote(draft: StagedQuoteDraft!,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput): StagedQuote
   updateStagedQuote(version: Long!, actions: [StagedQuoteUpdateAction!]!,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
 
     "Queries with specified ID"
     id: String,
@@ -6127,16 +6166,25 @@ type Mutation {
     key: String): StagedQuote
   deleteStagedQuote(version: Long!, personalDataErasure: Boolean = false,
 
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
+
     "Queries with specified ID"
     id: String,
 
     "Queries with specified key"
     key: String): StagedQuote
-  createQuote(draft: QuoteDraft!): Quote
+  createQuote(draft: QuoteDraft!,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput): Quote
   updateQuote(version: Long!, actions: [QuoteUpdateAction!]!,
 
     "Create/modify entity as an associate in business-unit."
     asAssociate: AsAssociateArgument,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
 
     "Queries with specified ID"
     id: String,
@@ -6144,6 +6192,9 @@ type Mutation {
     "Queries with specified key"
     key: String): Quote
   deleteQuote(version: Long!, personalDataErasure: Boolean = false,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
 
     "Queries with specified ID"
     id: String,
@@ -13195,6 +13246,8 @@ type StagedQuote implements Versioned {
   businessUnit: BusinessUnit
   businessUnitRef: KeyReference
   purchaseOrderNumber: String
+  storeRef: KeyReference
+  store: Store
   id: String!
   version: Long!
   createdAt: DateTime!
