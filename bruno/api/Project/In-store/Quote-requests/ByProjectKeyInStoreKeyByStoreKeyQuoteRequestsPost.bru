@@ -1,0 +1,53 @@
+meta {
+  name: Create QuoteRequest
+  type: http
+  seq: 559
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/in-store/key={{store-key}}/quote-requests
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "cart" : {
+      "typeId" : "cart",
+      "id" : "168e5783-73c8-4f2d-91f4-3c90b872c708"
+    },
+    "cartVersion" : 1,
+    "comment" : "Give me 10% discount"
+  }
+}  
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("quote-request-id", data.results[0].id); 
+          bru.setEnvVar("quote-request-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("quote-request-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("quote-request-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("quote-request-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("quote-request-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
