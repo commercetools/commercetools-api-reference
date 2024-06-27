@@ -1,0 +1,46 @@
+meta {
+  name: Upload a Product Tailoring image
+  type: http
+  seq: 656
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/in-store/key={{store-key}}/products/{{product-id}}/product-tailoring/images
+  body: json
+  auth: inherit
+}
+
+
+query {
+  ~filename: 
+  ~variant: 
+  ~sku: 
+  ~staged: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("image-id", data.results[0].id); 
+          bru.setEnvVar("image-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("image-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("image-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("image-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("image-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

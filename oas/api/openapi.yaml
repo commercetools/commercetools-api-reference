@@ -15342,6 +15342,74 @@ paths:
           $ref: '#/components/responses/errorable_502'
         "503":
           $ref: '#/components/responses/errorable_503'
+  /{projectKey}/in-store/key={storeKey}/products/key={productKey}/product-tailoring/images:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: storeKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: productKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyProductsKeyByProductKeyProductTailoringImagesPost
+      description: |-
+        Upload a JPEG, PNG and GIF file to a [ProductTailoringVariant](ctp:api:type:ProductTailoringVariant). The maximum file size of the image is 10MB. `variant` or `sku` is required to update a specific ProductVariant. Produces the [ProductTailoringImageAdded](/projects/messages#product-tailoring-image-added) Message when the `Small` version of the image has been uploaded to the CDN.
+      parameters:
+        - name: filename
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
+        - name: variant
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: sku
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
+        - name: staged
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: string
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
   /{projectKey}/in-store/key={storeKey}/products/{productID}/product-tailoring:
     parameters:
       - name: projectKey
@@ -15500,6 +15568,74 @@ paths:
           $ref: '#/components/responses/errorable_502'
         "503":
           $ref: '#/components/responses/errorable_503'
+  /{projectKey}/in-store/key={storeKey}/products/{productID}/product-tailoring/images:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: storeKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: productID
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyProductsByProductIDProductTailoringImagesPost
+      description: |-
+        Upload a JPEG, PNG and GIF file to a [ProductTailoringVariant](ctp:api:type:ProductTailoringVariant). The maximum file size of the image is 10MB. `variant` or `sku` is required to update a specific ProductVariant. Produces the [ProductTailoringImageAdded](/projects/messages#product-tailoring-image-added) Message when the `Small` version of the image has been uploaded to the CDN.
+      parameters:
+        - name: filename
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
+        - name: variant
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: sku
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
+        - name: staged
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: string
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
   /{projectKey}/in-store/key={storeKey}/quote-requests:
     description: |-
       A request for a Quote holds product variants and can be ordered.
@@ -52745,6 +52881,8 @@ components:
               ProductTailoringCreated: '#/components/schemas/ProductTailoringCreatedMessage'
               ProductTailoringDeleted: '#/components/schemas/ProductTailoringDeletedMessage'
               ProductTailoringDescriptionSet: '#/components/schemas/ProductTailoringDescriptionSetMessage'
+              ProductTailoringImageAdded: '#/components/schemas/ProductTailoringImageAddedMessage'
+              ProductTailoringImagesSet: '#/components/schemas/ProductTailoringImagesSetMessage'
               ProductTailoringNameSet: '#/components/schemas/ProductTailoringNameSetMessage'
               ProductTailoringPublished: '#/components/schemas/ProductTailoringPublishedMessage'
               ProductTailoringSlugSet: '#/components/schemas/ProductTailoringSlugSetMessage'
@@ -52752,6 +52890,8 @@ components:
               ProductUnpublished: '#/components/schemas/ProductUnpublishedMessage'
               ProductVariantAdded: '#/components/schemas/ProductVariantAddedMessage'
               ProductVariantDeleted: '#/components/schemas/ProductVariantDeletedMessage'
+              ProductVariantTailoringAdded: '#/components/schemas/ProductVariantTailoringAddedMessage'
+              ProductVariantTailoringRemoved: '#/components/schemas/ProductVariantTailoringRemovedMessage'
               QuoteCreated: '#/components/schemas/QuoteCreatedMessage'
               QuoteCustomerChanged: '#/components/schemas/QuoteCustomerChangedMessage'
               QuoteDeleted: '#/components/schemas/QuoteDeletedMessage'
@@ -55757,6 +55897,16 @@ components:
               $ref: '#/components/schemas/LocalizedString'
             slug:
               $ref: '#/components/schemas/LocalizedString'
+            metaTitle:
+              $ref: '#/components/schemas/LocalizedString'
+            metaDescription:
+              $ref: '#/components/schemas/LocalizedString'
+            metaKeywords:
+              $ref: '#/components/schemas/LocalizedString'
+            variants:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductVariantTailoring'
             published:
               type: "boolean"
     ProductTailoringDeletedMessage:
@@ -55845,6 +55995,107 @@ components:
               $ref: '#/components/schemas/LocalizedString'
             oldDescription:
               $ref: '#/components/schemas/LocalizedString'
+    ProductTailoringImageAddedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - image
+            - product
+            - store
+            - variantId
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            variantId:
+              type: "integer"
+              format: "int64"
+            image:
+              $ref: '#/components/schemas/Image'
+    ProductTailoringImagesSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - product
+            - store
+            - variantId
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            variantId:
+              type: "integer"
+              format: "int64"
+            oldImages:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Image'
+            images:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Image'
     ProductTailoringNameSetMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -56128,6 +56379,102 @@ components:
               type: "array"
               items:
                 type: "string"
+    ProductVariantTailoringAddedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - product
+            - store
+            - variant
+            - variantId
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            variantId:
+              type: "integer"
+              format: "int64"
+            variant:
+              $ref: '#/components/schemas/ProductVariantTailoring'
+    ProductVariantTailoringRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - product
+            - store
+            - variant
+            - variantId
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            variantId:
+              type: "integer"
+              format: "int64"
+            variant:
+              $ref: '#/components/schemas/ProductVariantTailoring'
     QuoteCreatedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -59275,6 +59622,8 @@ components:
           ProductTailoringCreated: '#/components/schemas/ProductTailoringCreatedMessagePayload'
           ProductTailoringDeleted: '#/components/schemas/ProductTailoringDeletedMessagePayload'
           ProductTailoringDescriptionSet: '#/components/schemas/ProductTailoringDescriptionSetMessagePayload'
+          ProductTailoringImageAdded: '#/components/schemas/ProductTailoringImageAddedMessagePayload'
+          ProductTailoringImagesSet: '#/components/schemas/ProductTailoringImagesSetMessagePayload'
           ProductTailoringNameSet: '#/components/schemas/ProductTailoringNameSetMessagePayload'
           ProductTailoringPublished: '#/components/schemas/ProductTailoringPublishedMessagePayload'
           ProductTailoringSlugSet: '#/components/schemas/ProductTailoringSlugSetMessagePayload'
@@ -59282,6 +59631,8 @@ components:
           ProductUnpublished: '#/components/schemas/ProductUnpublishedMessagePayload'
           ProductVariantAdded: '#/components/schemas/ProductVariantAddedMessagePayload'
           ProductVariantDeleted: '#/components/schemas/ProductVariantDeletedMessagePayload'
+          ProductVariantTailoringAdded: '#/components/schemas/ProductVariantTailoringAddedMessagePayload'
+          ProductVariantTailoringRemoved: '#/components/schemas/ProductVariantTailoringRemovedMessagePayload'
           QuoteCreated: '#/components/schemas/QuoteCreatedMessagePayload'
           QuoteCustomerChanged: '#/components/schemas/QuoteCustomerChangedMessagePayload'
           QuoteDeleted: '#/components/schemas/QuoteDeletedMessagePayload'
@@ -60391,6 +60742,16 @@ components:
               $ref: '#/components/schemas/LocalizedString'
             slug:
               $ref: '#/components/schemas/LocalizedString'
+            metaTitle:
+              $ref: '#/components/schemas/LocalizedString'
+            metaDescription:
+              $ref: '#/components/schemas/LocalizedString'
+            metaKeywords:
+              $ref: '#/components/schemas/LocalizedString'
+            variants:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductVariantTailoring'
             published:
               type: "boolean"
     ProductTailoringDeletedMessagePayload:
@@ -60429,6 +60790,57 @@ components:
               $ref: '#/components/schemas/LocalizedString'
             oldDescription:
               $ref: '#/components/schemas/LocalizedString'
+    ProductTailoringImageAddedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - image
+            - product
+            - store
+            - variantId
+          properties:
+            type:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            variantId:
+              type: "integer"
+              format: "int64"
+            image:
+              $ref: '#/components/schemas/Image'
+    ProductTailoringImagesSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - product
+            - store
+            - variantId
+          properties:
+            type:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            variantId:
+              type: "integer"
+              format: "int64"
+            oldImages:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Image'
+            images:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Image'
     ProductTailoringNameSetMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -60537,6 +60949,52 @@ components:
               type: "array"
               items:
                 type: "string"
+    ProductVariantTailoringAddedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - product
+            - store
+            - variant
+            - variantId
+          properties:
+            type:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            variantId:
+              type: "integer"
+              format: "int64"
+            variant:
+              $ref: '#/components/schemas/ProductVariantTailoring'
+    ProductVariantTailoringRemovedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - product
+            - store
+            - variant
+            - variantId
+          properties:
+            type:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            productKey:
+              type: "string"
+            product:
+              $ref: '#/components/schemas/ProductReference'
+            variantId:
+              type: "integer"
+              format: "int64"
+            variant:
+              $ref: '#/components/schemas/ProductVariantTailoring'
     QuoteCreatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -66863,6 +67321,10 @@ components:
           $ref: '#/components/schemas/LocalizedString'
         slug:
           $ref: '#/components/schemas/LocalizedString'
+        variants:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductVariantTailoring'
     ProductTailoringDraft:
       type: "object"
       required:
@@ -66889,6 +67351,10 @@ components:
           $ref: '#/components/schemas/LocalizedString'
         publish:
           type: "boolean"
+        variants:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductVariantTailoringDraft'
     ProductTailoringInStoreDraft:
       type: "object"
       required:
@@ -66912,6 +67378,10 @@ components:
           $ref: '#/components/schemas/LocalizedString'
         publish:
           type: "boolean"
+        variants:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductVariantTailoringDraft'
     ProductTailoringPagedQueryResponse:
       type: "object"
       required:
@@ -66978,8 +67448,25 @@ components:
       discriminator:
         propertyName: action
         mapping:
+          addAsset: '#/components/schemas/ProductTailoringAddAssetAction'
+          addExternalImage: '#/components/schemas/ProductTailoringAddExternalImageAction'
+          addVariant: '#/components/schemas/ProductTailoringAddVariantAction'
+          changeAssetName: '#/components/schemas/ProductTailoringChangeAssetNameAction'
+          changeAssetOrder: '#/components/schemas/ProductTailoringChangeAssetOrderAction'
+          moveImageToPosition: '#/components/schemas/ProductTailoringMoveImageToPositionAction'
           publish: '#/components/schemas/ProductTailoringPublishAction'
+          removeAsset: '#/components/schemas/ProductTailoringRemoveAssetAction'
+          removeImage: '#/components/schemas/ProductTailoringRemoveImageAction'
+          removeVariant: '#/components/schemas/ProductTailoringRemoveVariantAction'
+          setAssetCustomField: '#/components/schemas/ProductTailoringSetAssetCustomFieldAction'
+          setAssetCustomType: '#/components/schemas/ProductTailoringSetAssetCustomTypeAction'
+          setAssetDescription: '#/components/schemas/ProductTailoringSetAssetDescriptionAction'
+          setAssetKey: '#/components/schemas/ProductTailoringSetAssetKeyAction'
+          setAssetSources: '#/components/schemas/ProductTailoringSetAssetSourcesAction'
+          setAssetTags: '#/components/schemas/ProductTailoringSetAssetTagsAction'
           setDescription: '#/components/schemas/ProductTailoringSetDescriptionAction'
+          setImages: '#/components/schemas/ProductTailoringSetExternalImagesAction'
+          setImageLabel: '#/components/schemas/ProductTailoringSetImageLabelAction'
           setMetaAttributes: '#/components/schemas/ProductTailoringSetMetaAttributesAction'
           setMetaDescription: '#/components/schemas/ProductTailoringSetMetaDescriptionAction'
           setMetaKeywords: '#/components/schemas/ProductTailoringSetMetaKeywordsAction'
@@ -66992,6 +67479,163 @@ components:
       properties:
         action:
           type: "string"
+    ProductVariantTailoring:
+      type: "object"
+      required:
+        - id
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        images:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Image'
+        assets:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Asset'
+    ProductVariantTailoringDraft:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        sku:
+          type: "string"
+        images:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Image'
+        assets:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Asset'
+    ProductTailoringAddAssetAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - asset
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            staged:
+              type: "boolean"
+            asset:
+              $ref: '#/components/schemas/AssetDraft'
+            position:
+              type: "integer"
+              format: "int32"
+    ProductTailoringAddExternalImageAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - image
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            image:
+              $ref: '#/components/schemas/Image'
+            staged:
+              type: "boolean"
+    ProductTailoringAddVariantAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            id:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            images:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Image'
+            assets:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AssetDraft'
+            staged:
+              type: "boolean"
+    ProductTailoringChangeAssetNameAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - name
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            staged:
+              type: "boolean"
+            assetId:
+              type: "string"
+            assetKey:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+    ProductTailoringChangeAssetOrderAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - assetOrder
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            staged:
+              type: "boolean"
+            assetOrder:
+              type: "array"
+              items:
+                type: "string"
+    ProductTailoringMoveImageToPositionAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - imageUrl
+            - position
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            imageUrl:
+              type: "string"
+            position:
+              type: "integer"
+              format: "int64"
+            staged:
+              type: "boolean"
     ProductTailoringPublishAction:
       allOf:
         - $ref: '#/components/schemas/ProductTailoringUpdateAction'
@@ -66999,6 +67643,188 @@ components:
           properties:
             action:
               type: "string"
+    ProductTailoringRemoveAssetAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            staged:
+              type: "boolean"
+            assetId:
+              type: "string"
+            assetKey:
+              type: "string"
+    ProductTailoringRemoveImageAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - imageUrl
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            imageUrl:
+              type: "string"
+            staged:
+              type: "boolean"
+    ProductTailoringRemoveVariantAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            id:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            staged:
+              type: "boolean"
+    ProductTailoringSetAssetCustomFieldAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - name
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            staged:
+              type: "boolean"
+            assetId:
+              type: "string"
+            assetKey:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+    ProductTailoringSetAssetCustomTypeAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            staged:
+              type: "boolean"
+            assetId:
+              type: "string"
+            assetKey:
+              type: "string"
+            type:
+              $ref: '#/components/schemas/TypeResourceIdentifier'
+            fields:
+              $ref: '#/components/schemas/FieldContainer'
+    ProductTailoringSetAssetDescriptionAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            staged:
+              type: "boolean"
+            assetId:
+              type: "string"
+            assetKey:
+              type: "string"
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+    ProductTailoringSetAssetKeyAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - assetId
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            staged:
+              type: "boolean"
+            assetId:
+              type: "string"
+            assetKey:
+              type: "string"
+    ProductTailoringSetAssetSourcesAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - sources
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            staged:
+              type: "boolean"
+            assetId:
+              type: "string"
+            assetKey:
+              type: "string"
+            sources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AssetSource'
+    ProductTailoringSetAssetTagsAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            staged:
+              type: "boolean"
+            assetId:
+              type: "string"
+            assetKey:
+              type: "string"
+            tags:
+              type: "array"
+              items:
+                type: "string"
     ProductTailoringSetDescriptionAction:
       allOf:
         - $ref: '#/components/schemas/ProductTailoringUpdateAction'
@@ -67008,6 +67834,46 @@ components:
               type: "string"
             description:
               $ref: '#/components/schemas/LocalizedString'
+            staged:
+              type: "boolean"
+    ProductTailoringSetExternalImagesAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - images
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            images:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Image'
+            staged:
+              type: "boolean"
+    ProductTailoringSetImageLabelAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - imageUrl
+          properties:
+            action:
+              type: "string"
+            sku:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            imageUrl:
+              type: "string"
+            label:
+              type: "string"
             staged:
               type: "boolean"
     ProductTailoringSetMetaAttributesAction:
