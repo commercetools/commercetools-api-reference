@@ -230,3 +230,42 @@ post:
         body:
           application/json:
             example: !include ../examples/customer.example.json
+/search:
+  type: base
+  displayName: Customer Search
+  description: |
+    This endpoint provides high-performance search queries over Customers.
+  post:
+    displayName: Search Customers
+    securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
+    body:
+      application/json:
+        type: CustomerSearchRequest
+    responses:
+      200:
+        body:
+          application/json:
+            type: CustomerPagedSearchResponse
+  head:
+    securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
+    description: |
+      Checks whether a search index for the Project's Customers exists.
+      Returns a `200 OK` status if the index exists or `404 Not Found` otherwise.
+    responses:
+      200:
+        description: The search index exists and the Search Customers endpoint is fully operational.
+      404:
+        description: The search index does not exist and the Search Customers endpoint returns Error 404 only.
+/search/indexing-status:
+  type: base
+  displayName: Customer Search Status
+  description: |
+    This endpoint provides information on the status of a Customer search for a project
+  get:
+    displayName: Customer Search Status
+    securedBy: [oauth_2_0: { scopes: ['view_project_settings:{projectKey}'] }]
+    responses:
+      200:
+        body:
+          application/json:
+            type: CustomerSearchIndexingStatusResponse
