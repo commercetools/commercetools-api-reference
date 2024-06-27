@@ -1,0 +1,43 @@
+#%RAML 1.0 DataType
+(package): ProductTailoring
+type: ProductTailoringUpdateAction
+(beta): true
+displayName: ProductTailoringSetAssetCustomFieldAction
+discriminatorValue: setAssetCustomField
+description: |
+  Either `variantId` or `sku` is required to reference a [ProductVariant](ctp:api:type:ProductVariant) that exists.
+  The [Asset](ctp:api:type:Asset) to update must be specified using either `assetId` or `assetKey`.
+example: !include ../../../examples/ProductTailoring/ProductTailoringSetAssetCustomFieldAction.json
+properties:
+  variantId?:
+    type: number
+    format: int64
+    description: |
+      The `id` of the tailored ProductVariant to update.
+  sku?:
+    type: string
+    description: |
+      The `sku` of the tailored ProductVariant to update.
+  staged?:
+    type: boolean
+    description: |
+      If `true`, only the staged Asset is updated. If `false`, both the current and staged Asset is updated.
+    default: true
+  assetId?:
+    type: string
+    description: |
+      The `id` of the Asset to update.
+  assetKey?:
+    type: string
+    description: |
+      The `key` of the Asset to update.
+  name:
+    type: string
+    description: |
+      Name of the [Custom Field](/../api/projects/custom-fields).
+  value?:
+    type: CustomFieldValue
+    description: |
+      If `value` is absent or `null`, this field will be removed if it exists.
+      Removing a field that does not exist returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+      If `value` is provided, it is set for the field defined by `name`.

@@ -428,7 +428,17 @@ uriParameters:
         - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
         - [InvalidOperation](ctp:api:type:InvalidOperationError)
         - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
-      securedBy: [oauth_2_0: { scopes: ['manage_quotes:{projectKey}', 'manage_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_quotes:{projectKey}',
+                  'manage_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       body:
         application/json:
           example: !include ../examples/order-from-quote.example.json
@@ -2721,6 +2731,37 @@ uriParameters:
               application/json:
                 type: ProductTailoring
                 example: !include ../examples/product-tailoring.example.json
+      /images:
+        post:
+          displayName: Upload a Product Tailoring image
+          queryParameters:
+            filename?:
+              type: string
+              description: Base filename of the image when stored in the Content Delivery Network. The filename will be modified when uploaded to prevent filename conflicts. If not included a random filename will be allocated.
+            variant?:
+              type: number
+              format: int64
+              description: The `id` of the [ProductTailoringVariant](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to. It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
+            sku?:
+              type: string
+              description: The `sku` of the [ProductTailoringVariant](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to. It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
+            staged?:
+              type: boolean
+              description: If `true`, only the staged ProductTailoringVariant is updated. If `false`, both the current and staged ProductTailoringVariant are updated.
+          description: |
+            Upload a JPEG, PNG and GIF file to a [ProductTailoringVariant](ctp:api:type:ProductTailoringVariant). The maximum file size of the image is 10MB. `variant` or `sku` is required to update a specific ProductVariant. Produces the [ProductTailoringImageAdded](/projects/messages#product-tailoring-image-added) Message when the `Small` version of the image has been uploaded to the CDN.
+          securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
+          body:
+            type: file
+            fileTypes: ['image/jpeg', 'image/png', 'image/gif']
+          headers:
+            Content-Type:
+              enum: ['image/jpeg', 'image/png', 'image/gif']
+          responses:
+            200:
+              body:
+                type: ProductTailoring
+                example: !include ../examples/product-tailoring.example.json
   /key={productKey}:
     (methodName): withProductKey
     uriParameters:
@@ -2799,6 +2840,37 @@ uriParameters:
               application/json:
                 type: ProductTailoring
                 example: !include ../examples/product-tailoring.example.json
+      /images:
+        post:
+          displayName: Upload a Product Tailoring image
+          queryParameters:
+            filename?:
+              type: string
+              description: Base filename of the image when stored in the Content Delivery Network. The filename will be modified when uploaded to prevent filename conflicts. If not included a random filename will be allocated.
+            variant?:
+              type: number
+              format: int64
+              description: The `id` of the [ProductTailoringVariant](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to. It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
+            sku?:
+              type: string
+              description: The `sku` of the [ProductTailoringVariant](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to. It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
+            staged?:
+              type: boolean
+              description: If `true`, only the staged ProductTailoringVariant is updated. If `false`, both the current and staged ProductTailoringVariant are updated.
+          description: |
+            Upload a JPEG, PNG and GIF file to a [ProductTailoringVariant](ctp:api:type:ProductTailoringVariant). The maximum file size of the image is 10MB. `variant` or `sku` is required to update a specific ProductVariant. Produces the [ProductTailoringImageAdded](/projects/messages#product-tailoring-image-added) Message when the `Small` version of the image has been uploaded to the CDN.
+          securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
+          body:
+            type: file
+            fileTypes: ['image/jpeg', 'image/png', 'image/gif']
+          headers:
+            Content-Type:
+              enum: ['image/jpeg', 'image/png', 'image/gif']
+          responses:
+            200:
+              body:
+                type: ProductTailoring
+                example: !include ../examples/product-tailoring.example.json
 /quote-requests:
   type:
     baseDomain:
@@ -2812,20 +2884,50 @@ uriParameters:
   (createable): QuoteRequestDraft
   description: A request for a Quote holds product variants and can be ordered.
   get:
-    securedBy: [oauth_2_0: { scopes: ['view_quote_requests:{projectKey}', 'view_quote_requests:{projectKey}:{storeKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_quote_requests:{projectKey}',
+                'view_quote_requests:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
     responses:
       200:
         body:
           application/json:
             example: !include ../examples/quote-requests.example.json
   head:
-    securedBy: [oauth_2_0: { scopes: ['view_quote_requests:{projectKey}', 'view_quote_requests:{projectKey}:{storeKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_quote_requests:{projectKey}',
+                'view_quote_requests:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
     description: Checks if a QuoteRequest exists for a given Query Predicate. Returns a `200 OK` status if any QuoteRequests match the Query Predicate or a `404 Not Found` otherwise.
     queryParameters:
       where?:
         type: QueryPredicate[]
   post:
-    securedBy: [oauth_2_0: { scopes: ['manage_quote_requests:{projectKey}', 'manage_quote_requests:{projectKey}:{storeKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_quote_requests:{projectKey}',
+                'manage_quote_requests:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
     body:
       application/json:
         example: !include ../examples/quote-request-create.example.json
@@ -2842,17 +2944,47 @@ uriParameters:
         resourceType: QuoteRequest
         resourceUpdateType: QuoteRequestUpdate
     get:
-      securedBy: [oauth_2_0: { scopes: ['view_quote_requests:{projectKey}', 'view_quote_requests:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_quote_requests:{projectKey}',
+                  'view_quote_requests:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/quote-request.example.json
     head:
-      securedBy: [oauth_2_0: { scopes: ['view_quote_requests:{projectKey}', 'view_quote_requests:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_quote_requests:{projectKey}',
+                  'view_quote_requests:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       description: Checks if a QuoteRequest exists for a given `key`. Returns a `200 OK` status if the QuoteRequest exists or a `404 Not Found` otherwise.
     post:
-      securedBy: [oauth_2_0: { scopes: ['manage_quote_requests:{projectKey}', 'manage_quote_requests:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_quote_requests:{projectKey}',
+                  'manage_quote_requests:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       body:
         application/json:
           example: !include ../examples/quote-request-update.example.json
@@ -2864,7 +2996,17 @@ uriParameters:
     delete:
       is:
         - dataErasure
-      securedBy: [oauth_2_0: { scopes: ['manage_quote_requests:{projectKey}', 'manage_quote_requests:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_quote_requests:{projectKey}',
+                  'manage_quote_requests:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       responses:
         200:
           body:
@@ -2878,17 +3020,47 @@ uriParameters:
         resourceType: QuoteRequest
         resourceUpdateType: QuoteRequestUpdate
     get:
-      securedBy: [oauth_2_0: { scopes: ['view_quote_requests:{projectKey}', 'view_quote_requests:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_quote_requests:{projectKey}',
+                  'view_quote_requests:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/quote-request.example.json
     head:
-      securedBy: [oauth_2_0: { scopes: ['view_quote_requests:{projectKey}', 'view_quote_requests:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_quote_requests:{projectKey}',
+                  'view_quote_requests:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       description: Checks if a QuoteRequest exists for a given `id`. Returns a `200 OK` status if the QuoteRequest exists or a `404 Not Found` otherwise.
     post:
-      securedBy: [oauth_2_0: { scopes: ['manage_quote_requests:{projectKey}', 'manage_quote_requests:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_quote_requests:{projectKey}',
+                  'manage_quote_requests:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       body:
         application/json:
           example: !include ../examples/quote-request-update.example.json
@@ -2900,7 +3072,17 @@ uriParameters:
     delete:
       is:
         - dataErasure
-      securedBy: [oauth_2_0: { scopes: ['manage_quote_requests:{projectKey}', 'manage_quote_requests:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_quote_requests:{projectKey}',
+                  'manage_quote_requests:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       responses:
         200:
           body:
@@ -2919,20 +3101,50 @@ uriParameters:
   (createable): StagedQuoteDraft
   description: A staged quote holds the negotiation between the [Buyer](/../api/quotes-overview#buyer) and the [Seller](/../api/quotes-overview#seller).
   get:
-    securedBy: [oauth_2_0: { scopes: ['view_staged_quotes:{projectKey}', 'view_staged_quotes:{projectKey}:{storeKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_staged_quotes:{projectKey}',
+                'view_staged_quotes:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
     responses:
       200:
         body:
           application/json:
             example: !include ../examples/staged-quotes.example.json
   head:
-    securedBy: [oauth_2_0: { scopes: ['view_staged_quotes:{projectKey}', 'view_staged_quotes:{projectKey}:{storeKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_staged_quotes:{projectKey}',
+                'view_staged_quotes:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
     description: Checks if a StagedQuote exists for a given Query Predicate. Returns a `200 OK` status if any StagedQuotes match the Query Predicate or a `404 Not Found` otherwise.
     queryParameters:
       where?:
         type: QueryPredicate[]
   post:
-    securedBy: [oauth_2_0: { scopes: ['manage_staged_quotes:{projectKey}', 'manage_staged_quotes:{projectKey}:{storeKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_staged_quotes:{projectKey}',
+                'manage_staged_quotes:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
     body:
       application/json:
         example: !include ../examples/staged-quote-create.example.json
@@ -2949,17 +3161,47 @@ uriParameters:
         resourceType: StagedQuote
         resourceUpdateType: StagedQuoteUpdate
     get:
-      securedBy: [oauth_2_0: { scopes: ['view_staged_quotes:{projectKey}', 'view_staged_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_staged_quotes:{projectKey}',
+                  'view_staged_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/staged-quote.example.json
     head:
-      securedBy: [oauth_2_0: { scopes: ['view_staged_quotes:{projectKey}', 'view_staged_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_staged_quotes:{projectKey}',
+                  'view_staged_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       description: Checks if a StagedQuote exists for a given `key`. Returns a `200 OK` status if the StagedQuote exists or a `404 Not Found` otherwise.
     post:
-      securedBy: [oauth_2_0: { scopes: ['manage_staged_quotes:{projectKey}', 'manage_staged_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_staged_quotes:{projectKey}',
+                  'manage_staged_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       body:
         application/json:
           example: !include ../examples/staged-quote-update.example.json
@@ -2971,7 +3213,17 @@ uriParameters:
     delete:
       is:
         - dataErasure
-      securedBy: [oauth_2_0: { scopes: ['manage_staged_quotes:{projectKey}', 'manage_staged_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_staged_quotes:{projectKey}',
+                  'manage_staged_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       responses:
         200:
           body:
@@ -2985,17 +3237,47 @@ uriParameters:
         resourceType: StagedQuote
         resourceUpdateType: StagedQuoteUpdate
     get:
-      securedBy: [oauth_2_0: { scopes: ['view_staged_quotes:{projectKey}', 'view_staged_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_staged_quotes:{projectKey}',
+                  'view_staged_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/staged-quote.example.json
     head:
-      securedBy: [oauth_2_0: { scopes: ['view_staged_quotes:{projectKey}', 'view_staged_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_staged_quotes:{projectKey}',
+                  'view_staged_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       description: Checks if a StagedQuote exists for a given `id`. Returns a `200 OK` status if the StagedQuote exists or a `404 Not Found` otherwise.
     post:
-      securedBy: [oauth_2_0: { scopes: ['manage_staged_quotes:{projectKey}', 'manage_staged_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_staged_quotes:{projectKey}',
+                  'manage_staged_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       body:
         application/json:
           example: !include ../examples/staged-quote-update.example.json
@@ -3007,7 +3289,17 @@ uriParameters:
     delete:
       is:
         - dataErasure
-      securedBy: [oauth_2_0: { scopes: ['manage_staged_quotes:{projectKey}', 'manage_staged_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_staged_quotes:{projectKey}',
+                  'manage_staged_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       responses:
         200:
           body:
@@ -3026,20 +3318,50 @@ uriParameters:
   (createable): QuoteDraft
   description: A quote holds the negotiated offer.
   get:
-    securedBy: [oauth_2_0: { scopes: ['view_quotes:{projectKey}', 'view_quotes:{projectKey}:{storeKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_quotes:{projectKey}',
+                'view_quotes:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
     responses:
       200:
         body:
           application/json:
             example: !include ../examples/quotes.example.json
   head:
-    securedBy: [oauth_2_0: { scopes: ['view_quotes:{projectKey}', 'view_quotes:{projectKey}:{storeKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_quotes:{projectKey}',
+                'view_quotes:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
     description: Checks if a Quote exists for a given Query Predicate. Returns a `200 OK` status if any Quotes match the Query Predicate or a `404 Not Found` otherwise.
     queryParameters:
       where?:
         type: QueryPredicate[]
   post:
-    securedBy: [oauth_2_0: { scopes: ['manage_quotes:{projectKey}', 'manage_quotes:{projectKey}:{storeKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_quotes:{projectKey}',
+                'manage_quotes:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
     body:
       application/json:
         example: !include ../examples/quote-create.example.json
@@ -3056,17 +3378,47 @@ uriParameters:
         resourceType: Quote
         resourceUpdateType: QuoteUpdate
     get:
-      securedBy: [oauth_2_0: { scopes: ['view_quotes:{projectKey}', 'view_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_quotes:{projectKey}',
+                  'view_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/quote.example.json
     head:
-      securedBy: [oauth_2_0: { scopes: ['view_quotes:{projectKey}', 'view_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_quotes:{projectKey}',
+                  'view_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       description: Checks if a Quote exists for a given `key`. Returns a `200 OK` status if the Quote exists or a `404 Not Found` otherwise.
     post:
-      securedBy: [oauth_2_0: { scopes: ['manage_quotes:{projectKey}', 'manage_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_quotes:{projectKey}',
+                  'manage_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       body:
         application/json:
           example: !include ../examples/quote-update.example.json
@@ -3078,7 +3430,17 @@ uriParameters:
     delete:
       is:
         - dataErasure
-      securedBy: [oauth_2_0: { scopes: ['manage_quotes:{projectKey}', 'manage_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_quotes:{projectKey}',
+                  'manage_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       responses:
         200:
           body:
@@ -3092,17 +3454,47 @@ uriParameters:
         resourceType: Quote
         resourceUpdateType: QuoteUpdate
     get:
-      securedBy: [oauth_2_0: { scopes: ['view_quotes:{projectKey}', 'view_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_quotes:{projectKey}',
+                  'view_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/quote.example.json
     head:
-      securedBy: [oauth_2_0: { scopes: ['view_quotes:{projectKey}', 'view_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_quotes:{projectKey}',
+                  'view_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       description: Checks if a Quote exists for a given `id`. Returns a `200 OK` status if the Quote exists or a `404 Not Found` otherwise.
     post:
-      securedBy: [oauth_2_0: { scopes: ['manage_quotes:{projectKey}', 'manage_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_quotes:{projectKey}',
+                  'manage_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       body:
         application/json:
           example: !include ../examples/quote-update.example.json
@@ -3114,7 +3506,17 @@ uriParameters:
     delete:
       is:
         - dataErasure
-      securedBy: [oauth_2_0: { scopes: ['manage_quotes:{projectKey}', 'manage_quotes:{projectKey}:{storeKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_quotes:{projectKey}',
+                  'manage_quotes:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
       responses:
         200:
           body:

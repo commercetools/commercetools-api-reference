@@ -306,6 +306,23 @@ input AddProductSelectionProduct {
   variantSelection: ProductVariantSelectionDraft
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input AddProductTailoringAsset {
+  variantId: Int
+  sku: String
+  staged: Boolean = true
+  position: Int
+  asset: AssetDraftInput!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input AddProductTailoringExternalImage {
+  variantId: Int
+  sku: String
+  image: ImageInput!
+  staged: Boolean = true
+}
+
 input AddProductToCategory {
   category: ResourceIdentifierInput!
   orderHint: String
@@ -319,6 +336,15 @@ input AddProductVariant {
   prices: [ProductPriceDataInput!] = []
   key: String
   sku: String
+  staged: Boolean = true
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input AddProductVariantTailoring {
+  id: Int
+  sku: String
+  images: [ImageInput!] = []
+  assets: [AssetDraftInput!] = []
   staged: Boolean = true
 }
 
@@ -2521,6 +2547,24 @@ input ChangeProductSlug {
   staged: Boolean = true
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ChangeProductTailoringAssetName {
+  variantId: Int
+  sku: String
+  staged: Boolean = true
+  name: [LocalizedStringItemInputType!]!
+  assetKey: String
+  assetId: String
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ChangeProductTailoringAssetOrder {
+  variantId: Int
+  sku: String
+  staged: Boolean = true
+  assetOrder: [String!]!
+}
+
 input ChangeProjectSettingsCartsConfiguration {
   cartsConfiguration: CartsConfigurationInput!
 }
@@ -4433,6 +4477,9 @@ interface HasProductTailoringData {
     "List of languages the client is able to understand, and which locale variant is preferred."
     acceptLanguage: [Locale!]): String
   metaKeywordsAllLocales: [LocalizedString!]
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  variants: [ProductVariantTailoring!]!
 }
 
 type HighPrecisionMoney implements BaseMoney {
@@ -5380,6 +5427,15 @@ input MoveProductImageToPosition {
   imageUrl: String!
   position: Int!
   staged: Boolean
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input MoveProductTailoringImageToPosition {
+  variantId: Int
+  sku: String
+  imageUrl: String!
+  position: Int!
+  staged: Boolean = true
 }
 
 type MultiBuyCustomLineItemsTarget implements CartDiscountTarget {
@@ -8299,6 +8355,9 @@ type ProductTailoringCreated implements MessagePayload & HasProductTailoringData
     "List of languages the client is able to understand, and which locale variant is preferred."
     acceptLanguage: [Locale!]): String
   metaKeywordsAllLocales: [LocalizedString!]
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  variants: [ProductVariantTailoring!]!
 }
 
 type ProductTailoringData implements HasProductTailoringData {
@@ -8344,6 +8403,9 @@ type ProductTailoringData implements HasProductTailoringData {
     "List of languages the client is able to understand, and which locale variant is preferred."
     acceptLanguage: [Locale!]): String
   metaKeywordsAllLocales: [LocalizedString!]
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  variants: [ProductVariantTailoring!]!
 }
 
 type ProductTailoringDeleted implements MessagePayload {
@@ -8374,6 +8436,27 @@ type ProductTailoringDescriptionSet implements MessagePayload {
   type: String!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductTailoringImageAdded implements MessagePayload {
+  variantId: Int!
+  storeRef: KeyReference!
+  productRef: Reference!
+  productKey: String
+  image: Image!
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductTailoringImagesSet implements MessagePayload {
+  variantId: Int!
+  storeRef: KeyReference!
+  productRef: Reference!
+  productKey: String
+  oldImages: [Image!]!
+  images: [Image!]!
+  type: String!
+}
+
 input ProductTailoringDraft {
   product: ResourceIdentifierInput!
   name: [LocalizedStringItemInputType!]
@@ -8384,6 +8467,9 @@ input ProductTailoringDraft {
   metaDescription: [LocalizedStringItemInputType!]
   metaKeywords: [LocalizedStringItemInputType!]
   publish: Boolean
+
+ "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  variants: [ProductVariantTailoringInput!] = []
 }
 
 type ProductTailoringNameSet implements MessagePayload {
@@ -8451,9 +8537,26 @@ type ProductTailoringUnpublished implements MessagePayload {
 }
 
 input ProductTailoringUpdateAction {
+  moveImageToPosition: MoveProductTailoringImageToPosition
+  addVariant: AddProductVariantTailoring
+  removeVariant: RemoveProductVariantTailoring
   publish: PublishTailoring
   unpublish: UnpublishTailoring
+  addAsset: AddProductTailoringAsset
+  addExternalImage: AddProductTailoringExternalImage
+  changeAssetName: ChangeProductTailoringAssetName
+  changeAssetOrder: ChangeProductTailoringAssetOrder
+  removeAsset: RemoveProductTailoringAsset
+  removeImage: RemoveProductTailoringImage
+  setAssetCustomField: SetProductTailoringAssetCustomField
+  setAssetCustomType: SetProductTailoringAssetCustomType
+  setAssetDescription: SetProductTailoringAssetDescription
+  setAssetKey: SetProductTailoringAssetKey
+  setAssetSources: SetProductTailoringAssetSources
+  setAssetTags: SetProductTailoringAssetTags
+  setImages: SetProductTailoringImages
   setDescription: SetProductTailoringDescription
+  setImageLabel: SetProductTailoringImageLabel
   setMetaAttributes: SetProductTailoringMetaAttributes
   setMetaDescription: SetProductTailoringMetaDescription
   setMetaKeywords: SetProductTailoringMetaKeywords
@@ -8716,6 +8819,41 @@ type ProductVariantSelectionIncludeAllExcept implements ProductVariantSelection 
 type ProductVariantSelectionIncludeOnly implements ProductVariantSelection {
   type: String!
   skus: [String!]!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductVariantTailoring {
+  id: Int!
+  images: [Image!]!
+  assets: [Asset!]!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductVariantTailoringAdded implements MessagePayload {
+  variantId: Int!
+  variant: VariantTailoring!
+  storeRef: KeyReference!
+  productRef: Reference!
+  productKey: String
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ProductVariantTailoringInput {
+  id: Int
+  sku: String
+  images: [ImageInput!]! = []
+  assets: [AssetDraftInput!] = []
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductVariantTailoringRemoved implements MessagePayload {
+  variantId: Int!
+  variant: VariantTailoring!
+  storeRef: KeyReference!
+  productRef: Reference!
+  productKey: String
+  type: String!
 }
 
 "Contains information about the limits of your project."
@@ -9690,7 +9828,31 @@ input RemoveProductSelectionProduct {
   product: ResourceIdentifierInput!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input RemoveProductTailoringAsset {
+  variantId: Int
+  sku: String
+  staged: Boolean = true
+  assetKey: String
+  assetId: String
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input RemoveProductTailoringImage {
+  variantId: Int
+  sku: String
+  imageUrl: String!
+  staged: Boolean = true
+}
+
 input RemoveProductVariant {
+  id: Int
+  sku: String
+  staged: Boolean = true
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input RemoveProductVariantTailoring {
   id: Int
   sku: String
   staged: Boolean = true
@@ -11564,8 +11726,88 @@ input SetProductSku {
   staged: Boolean = true
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetProductTailoringAssetCustomField {
+  variantId: Int
+  sku: String
+  staged: Boolean = true
+  value: String
+  name: String!
+  assetKey: String
+  assetId: String
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetProductTailoringAssetCustomType {
+  variantId: Int
+  sku: String
+  staged: Boolean = true
+  typeId: String
+  typeKey: String
+  type: ResourceIdentifierInput
+  fields: [CustomFieldInput!]
+  assetKey: String
+  assetId: String
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetProductTailoringAssetDescription {
+  variantId: Int
+  sku: String
+  staged: Boolean = true
+  description: [LocalizedStringItemInputType!]
+  assetKey: String
+  assetId: String
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetProductTailoringAssetKey {
+  variantId: Int
+  sku: String
+  staged: Boolean = true
+  assetKey: String
+  assetId: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetProductTailoringAssetSources {
+  variantId: Int
+  sku: String
+  staged: Boolean = true
+  sources: [AssetSourceInput!] = []
+  assetKey: String
+  assetId: String
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetProductTailoringAssetTags {
+  variantId: Int
+  sku: String
+  staged: Boolean = true
+  tags: [String!] = []
+  assetKey: String
+  assetId: String
+}
+
 input SetProductTailoringDescription {
   description: [LocalizedStringItemInputType!]
+  staged: Boolean = true
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetProductTailoringImageLabel {
+  variantId: Int
+  sku: String
+  imageUrl: String!
+  label: String
+  staged: Boolean = true
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetProductTailoringImages {
+  variantId: Int
+  sku: String
+  images: [ImageInput!]!
   staged: Boolean = true
 }
 
@@ -14355,6 +14597,12 @@ type ValueFacetResult implements FacetResult {
 input ValueFilterInput {
   path: String!
   values: [String!]!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type VariantTailoring {
+  images: [Image!]!
+  assets: [Asset!]!
 }
 
 "Versioned object have an ID and version and modification. Every update of this object changes it's version."
