@@ -8695,6 +8695,113 @@ paths:
           $ref: '#/components/responses/errorable_502'
         "503":
           $ref: '#/components/responses/errorable_503'
+  /{projectKey}/customers/search:
+    description: |-
+      This endpoint provides high-performance search queries over Customers.
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "view_customers:{projectKey}"
+      operationId: ByProjectKeyCustomersSearchPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerSearchRequest'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerPagedSearchResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_customers:{projectKey}"
+      operationId: ByProjectKeyCustomersSearchHead
+      description: |-
+        Checks whether a search index for the Project's Customers exists.
+        Returns a `200 OK` status if the index exists or `404 Not Found` otherwise.
+      responses:
+        "200":
+          description: |-
+            The search index exists and the Search Customers endpoint is fully operational.
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/customers/search/indexing-status:
+    description: |-
+      This endpoint provides information on the status of a Customer search for a project
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_project_settings:{projectKey}"
+      operationId: ByProjectKeyCustomersSearchIndexingStatusGet
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSearchIndexingStatusResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
   /{projectKey}/customers/{ID}:
     parameters:
       - name: projectKey
@@ -42578,6 +42685,102 @@ components:
               type: "string"
             key:
               type: "string"
+    CustomerIndexingProgress:
+      type: "object"
+      required:
+        - estimatedTotal
+        - failed
+        - indexed
+      properties:
+        indexed:
+          type: "integer"
+          format: "int32"
+        failed:
+          type: "integer"
+          format: "int32"
+        estimatedTotal:
+          type: "integer"
+          format: "int32"
+    CustomerIndexingStatus:
+      type: "string"
+      enum:
+        - Scheduled
+        - Indexing
+        - Ready
+        - Failed
+      x-annotation-package: "Project"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Scheduled: "Indexing is scheduled."
+        Indexing: "Indexing is in progress."
+        Ready: "Indexing is complete and the [Search Customers](/../api/projects/customer-search#search-customers)
+         endpoint returns up-to-date results."
+        Failed: "Indexing failed due to an internal error."
+    CustomerPagedSearchResponse:
+      type: "object"
+      required:
+        - limit
+        - offset
+        - results
+        - total
+      properties:
+        total:
+          type: "integer"
+          format: "int64"
+        limit:
+          type: "integer"
+          format: "int32"
+        offset:
+          type: "integer"
+          format: "int32"
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/CustomerSearchResult'
+    CustomerSearchIndexingStatusResponse:
+      type: "object"
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/CustomerIndexingStatus'
+        states:
+          $ref: '#/components/schemas/CustomerIndexingProgress'
+        startedAt:
+          type: "string"
+          format: "datetime"
+        lastModifiedAt:
+          type: "string"
+          format: "datetime"
+        retryCount:
+          type: "integer"
+          format: "int32"
+    CustomerSearchRequest:
+      type: "object"
+      properties:
+        query:
+          $ref: '#/components/schemas/SearchQuery'
+        sort:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/SearchSorting'
+        limit:
+          type: "integer"
+          format: "int32"
+        offset:
+          type: "integer"
+          format: "int32"
+    CustomerSearchResult:
+      type: "object"
+      required:
+        - id
+        - relevance
+      properties:
+        id:
+          type: "string"
+        relevance:
+          type: "number"
+          format: "double"
     AnonymousCartSignInMode:
       type: "string"
       enum:
@@ -43918,6 +44121,20 @@ components:
                 $ref: '#/components/schemas/CountryCode'
             country:
               $ref: '#/components/schemas/CountryCode'
+          additionalProperties:
+            type: "string"
+    CustomerSearchProjectNotIndexedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
           additionalProperties:
             type: "string"
     DiscountCodeNonApplicableError:
@@ -45392,6 +45609,17 @@ components:
                 $ref: '#/components/schemas/CountryCode'
             country:
               $ref: '#/components/schemas/CountryCode'
+          additionalProperties:
+            type: "string"
+    GraphQLCustomerSearchProjectNotIndexedError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
           additionalProperties:
             type: "string"
     GraphQLDiscountCodeNonApplicableError:
@@ -70213,6 +70441,17 @@ components:
           format: "int64"
         countryTaxRateFallbackEnabled:
           type: "boolean"
+    CustomerSearchStatus:
+      type: "string"
+      enum:
+        - Activated
+        - Deactivated
+      x-annotation-package: "Project"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Activated: "indicates that the [Customer Search](/../api/projects/customer-search#search-customers)
+         endpoint is fully operational."
+        Deactivated: "indicates that the Customer Search enpoint is currently not active."
     ExternalOAuth:
       type: "object"
       required:
@@ -70330,6 +70569,7 @@ components:
           changeCountries: '#/components/schemas/ProjectChangeCountriesAction'
           changeCountryTaxRateFallbackEnabled: '#/components/schemas/ProjectChangeCountryTaxRateFallbackEnabledAction'
           changeCurrencies: '#/components/schemas/ProjectChangeCurrenciesAction'
+          changeCustomerSearchStatus: '#/components/schemas/ProjectChangeCustomerSearchStatusAction'
           changeLanguages: '#/components/schemas/ProjectChangeLanguagesAction'
           changeMessagesConfiguration: '#/components/schemas/ProjectChangeMessagesConfigurationAction'
           changeMessagesEnabled: '#/components/schemas/ProjectChangeMessagesEnabledAction'
@@ -70456,6 +70696,17 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/CurrencyCode'
+    ProjectChangeCustomerSearchStatusAction:
+      allOf:
+        - $ref: '#/components/schemas/ProjectUpdateAction'
+        - type: "object"
+          required:
+            - status
+          properties:
+            action:
+              type: "string"
+            status:
+              $ref: '#/components/schemas/CustomerSearchStatus'
     ProjectChangeLanguagesAction:
       allOf:
         - $ref: '#/components/schemas/ProjectUpdateAction'

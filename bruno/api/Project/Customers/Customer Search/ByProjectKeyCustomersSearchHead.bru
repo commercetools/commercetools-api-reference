@@ -1,0 +1,42 @@
+meta {
+  name: head ByProjectKeyCustomersSearch
+  type: http
+  seq: 234
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/customers/search
+  body: none
+  auth: inherit
+}
+
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("search-id", data.results[0].id); 
+          bru.setEnvVar("search-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("search-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("search-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("search-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("search-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
