@@ -1358,6 +1358,7 @@ type BusinessUnit implements Versioned & ReferenceExpandable {
   inheritedStores: [InheritedStore!]
   topLevelUnitRef: KeyReference
   topLevelUnit: BusinessUnit!
+  approvalRuleMode: BusinessUnitApprovalRuleMode!
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -1407,6 +1408,17 @@ type BusinessUnitAddressCustomTypeSet implements MessagePayload {
 
 type BusinessUnitAddressRemoved implements MessagePayload {
   address: Address!
+  type: String!
+}
+
+enum BusinessUnitApprovalRuleMode {
+  Explicit
+  ExplicitAndFromParent
+}
+
+type BusinessUnitApprovalRuleModeChanged implements MessagePayload {
+  approvalRuleMode: BusinessUnitApprovalRuleMode!
+  oldApprovalRuleMode: BusinessUnitApprovalRuleMode
   type: String!
 }
 
@@ -1543,6 +1555,7 @@ input BusinessUnitDraft {
   stores: [ResourceIdentifierInput!]
   associates: [AssociateDraft!]
   associateMode: BusinessUnitAssociateMode
+  approvalRuleMode: BusinessUnitApprovalRuleMode
 }
 
 type BusinessUnitNameChanged implements MessagePayload {
@@ -1646,6 +1659,7 @@ input BusinessUnitUpdateAction {
   setStores: SetBusinessUnitStores
   setStoreMode: SetBusinessUnitStoreMode
   changeAssociateMode: ChangeBusinessUnitAssociateMode
+  changeApprovalRuleMode: ChangeBusinessUnitApprovalRuleMode
 }
 
 input CancelQuoteRequest {
@@ -2246,6 +2260,10 @@ input ChangeBusinessUnitAddress {
   addressId: String
   addressKey: String
   address: AddressInput!
+}
+
+input ChangeBusinessUnitApprovalRuleMode {
+  approvalRuleMode: BusinessUnitApprovalRuleMode!
 }
 
 input ChangeBusinessUnitAssociate {
