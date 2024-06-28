@@ -37070,6 +37070,7 @@ components:
               Division: '#/components/schemas/Division'
           required:
             - addresses
+            - approvalRuleMode
             - associateMode
             - associates
             - createdAt
@@ -37146,6 +37147,19 @@ components:
               $ref: '#/components/schemas/BusinessUnitKeyReference'
             topLevelUnit:
               $ref: '#/components/schemas/BusinessUnitKeyReference'
+            approvalRuleMode:
+              $ref: '#/components/schemas/BusinessUnitApprovalRuleMode'
+    BusinessUnitApprovalRuleMode:
+      type: "string"
+      enum:
+        - Explicit
+        - ExplicitAndFromParent
+      x-annotation-package: "BusinessUnit"
+      x-annotation-enumDescriptions:
+        Explicit: "Approval Rules of a Business Unit must be explicitly assigned. The Business
+         Unit cannot inherit Approval Rules from a parent.n"
+        ExplicitAndFromParent: "Approval Rules of a Business Unit are inherited from a parent
+         and can also be explicitly assigned.n"
     BusinessUnitAssociateMode:
       type: "string"
       enum:
@@ -37191,6 +37205,8 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/AssociateDraft'
+        approvalRuleMode:
+          $ref: '#/components/schemas/BusinessUnitApprovalRuleMode'
         addresses:
           type: "array"
           items:
@@ -37329,6 +37345,7 @@ components:
           addShippingAddressId: '#/components/schemas/BusinessUnitAddShippingAddressIdAction'
           addStore: '#/components/schemas/BusinessUnitAddStoreAction'
           changeAddress: '#/components/schemas/BusinessUnitChangeAddressAction'
+          changeApprovalRuleMode: '#/components/schemas/BusinessUnitChangeApprovalRuleModeAction'
           changeAssociate: '#/components/schemas/BusinessUnitChangeAssociateAction'
           changeAssociateMode: '#/components/schemas/BusinessUnitChangeAssociateModeAction'
           changeName: '#/components/schemas/BusinessUnitChangeNameAction'
@@ -37359,6 +37376,7 @@ components:
         - $ref: '#/components/schemas/BusinessUnit'
         - type: "object"
           required:
+            - approvalRuleMode
             - associateMode
             - storeMode
           properties:
@@ -37425,6 +37443,8 @@ components:
               $ref: '#/components/schemas/BusinessUnitKeyReference'
             topLevelUnit:
               $ref: '#/components/schemas/BusinessUnitKeyReference'
+            approvalRuleMode:
+              $ref: '#/components/schemas/BusinessUnitApprovalRuleMode'
     CompanyDraft:
       allOf:
         - $ref: '#/components/schemas/BusinessUnitDraft'
@@ -37452,6 +37472,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/AssociateDraft'
+            approvalRuleMode:
+              $ref: '#/components/schemas/BusinessUnitApprovalRuleMode'
             addresses:
               type: "array"
               items:
@@ -37479,6 +37501,7 @@ components:
         - $ref: '#/components/schemas/BusinessUnit'
         - type: "object"
           required:
+            - approvalRuleMode
             - associateMode
             - parentUnit
             - storeMode
@@ -37546,6 +37569,8 @@ components:
               $ref: '#/components/schemas/BusinessUnitKeyReference'
             topLevelUnit:
               $ref: '#/components/schemas/BusinessUnitKeyReference'
+            approvalRuleMode:
+              $ref: '#/components/schemas/BusinessUnitApprovalRuleMode'
     DivisionDraft:
       allOf:
         - $ref: '#/components/schemas/BusinessUnitDraft'
@@ -37575,6 +37600,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/AssociateDraft'
+            approvalRuleMode:
+              $ref: '#/components/schemas/BusinessUnitApprovalRuleMode'
             addresses:
               type: "array"
               items:
@@ -37691,6 +37718,17 @@ components:
               type: "string"
             address:
               $ref: '#/components/schemas/BaseAddress'
+    BusinessUnitChangeApprovalRuleModeAction:
+      allOf:
+        - $ref: '#/components/schemas/BusinessUnitUpdateAction'
+        - type: "object"
+          required:
+            - approvalRuleMode
+          properties:
+            action:
+              type: "string"
+            approvalRuleMode:
+              $ref: '#/components/schemas/BusinessUnitApprovalRuleMode'
     BusinessUnitChangeAssociateAction:
       allOf:
         - $ref: '#/components/schemas/BusinessUnitUpdateAction'
@@ -50102,6 +50140,44 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             address:
               $ref: '#/components/schemas/Address'
+    BusinessUnitApprovalRuleModeChangedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - approvalRuleMode
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            approvalRuleMode:
+              $ref: '#/components/schemas/BusinessUnitApprovalRuleMode'
+            oldApprovalRuleMode:
+              $ref: '#/components/schemas/BusinessUnitApprovalRuleMode'
     BusinessUnitAssociateAddedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -52980,6 +53056,7 @@ components:
               BusinessUnitAddressCustomTypeRemoved: '#/components/schemas/BusinessUnitAddressCustomTypeRemovedMessage'
               BusinessUnitAddressCustomTypeSet: '#/components/schemas/BusinessUnitAddressCustomTypeSetMessage'
               BusinessUnitAddressRemoved: '#/components/schemas/BusinessUnitAddressRemovedMessage'
+              BusinessUnitApprovalRuleModeChanged: '#/components/schemas/BusinessUnitApprovalRuleModeChangedMessage'
               BusinessUnitAssociateAdded: '#/components/schemas/BusinessUnitAssociateAddedMessage'
               BusinessUnitAssociateChanged: '#/components/schemas/BusinessUnitAssociateChangedMessage'
               BusinessUnitAssociateModeChanged: '#/components/schemas/BusinessUnitAssociateModeChangedMessage'
@@ -58755,6 +58832,19 @@ components:
               type: "string"
             address:
               $ref: '#/components/schemas/Address'
+    BusinessUnitApprovalRuleModeChangedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - approvalRuleMode
+          properties:
+            type:
+              type: "string"
+            approvalRuleMode:
+              $ref: '#/components/schemas/BusinessUnitApprovalRuleMode'
+            oldApprovalRuleMode:
+              $ref: '#/components/schemas/BusinessUnitApprovalRuleMode'
     BusinessUnitAssociateAddedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -59721,6 +59811,7 @@ components:
           BusinessUnitAddressCustomTypeRemoved: '#/components/schemas/BusinessUnitAddressCustomTypeRemovedMessagePayload'
           BusinessUnitAddressCustomTypeSet: '#/components/schemas/BusinessUnitAddressCustomTypeSetMessagePayload'
           BusinessUnitAddressRemoved: '#/components/schemas/BusinessUnitAddressRemovedMessagePayload'
+          BusinessUnitApprovalRuleModeChanged: '#/components/schemas/BusinessUnitApprovalRuleModeChangedMessagePayload'
           BusinessUnitAssociateAdded: '#/components/schemas/BusinessUnitAssociateAddedMessagePayload'
           BusinessUnitAssociateChanged: '#/components/schemas/BusinessUnitAssociateChangedMessagePayload'
           BusinessUnitAssociateModeChanged: '#/components/schemas/BusinessUnitAssociateModeChangedMessagePayload'
