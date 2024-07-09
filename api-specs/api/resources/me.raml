@@ -128,9 +128,10 @@ delete:
       - If the Customer does not have a Cart yet, the most recently modified anonymous cart becomes the Customer's Cart.
       - If the Customer already has a Cart, the most recently modified anonymous cart is handled in accordance with [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
 
-      A Cart returned as part of the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) is [recalculated](ctp:api:type:MyCartRecalculateAction) with up-to-date prices, taxes, discounts, and invalid line items removed.
+      A Cart returned in the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) has any invalid Line Items removed and is [updated](/api/carts-orders-overview#cart-updates) with the latest prices, taxes, and discounts. During these updates, the following errors can be returned: [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError) and [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError).
 
       If an account with the given credentials is not found, an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error is returned.
+
     securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
     body:
       application/json:
@@ -353,6 +354,14 @@ delete:
       ]
     description: |
       Creates a Cart for a given `customerId` or `anonymousId`.
+
+      Specific Error Codes:
+
+      - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
+      - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+      - [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)
+      - [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)
+
     body:
       application/json:
         example: !include ../examples/cart-create.example.json
@@ -510,6 +519,12 @@ delete:
         The new Cart does not contain Payments or Deliveries. The [State](ctp:api:type:ItemState) of Line Items and Custom Line Items is reset to `initial`.
 
         If the Cart or Order to be replicated does not belong to the authenticated Customer, the API returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error
+
+        Specific Error Codes:
+
+        - [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)
+        - [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)
+
       body:
         application/json:
           type: ReplicaMyCartDraft
@@ -570,10 +585,14 @@ delete:
 
       Specific Error Codes:
 
+      - [AssociateMissingPermission](ctp:api:type:AssociateMissingPermissionError)
+      - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
+      - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
       - [OutOfStock](ctp:api:type:OutOfStockError)
       - [PriceChanged](ctp:api:type:PriceChangedError)
-      - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
-      - [AssociateMissingPermission](ctp:api:type:AssociateMissingPermissionError)
+      - [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)
+      - [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)
+      - [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)
     securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
     body:
       application/json:
