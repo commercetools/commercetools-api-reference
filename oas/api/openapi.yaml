@@ -5667,9 +5667,7 @@ paths:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyCartsPost
       description: |-
-        Creating a Cart fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error if the
-        [ShippingMethod](ctp:api:type:ShippingMethod) referenced in the CartDraft
-        has a `predicate` that does not match the Cart.
+        If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, or if the Shipping Method is not active, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
 
         Specific Error Codes:
 
@@ -10831,7 +10829,7 @@ paths:
       description: |-
         Creates a [Cart](ctp:api:type:Cart) in the [Store](ctp:api:type:Store) specified by `storeKey`.
         When using this endpoint the Cart's `store` field is always set to the [Store](ctp:api:type:Store) specified in the path parameter.
-        If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
+        If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, or if the Shipping Method is not active, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
 
         Specific Error Codes:
 
@@ -14341,6 +14339,7 @@ paths:
         - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
         - [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)
         - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+        - [InvalidOperation](ctp:api:type:InvalidOperationError)
         - [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)
         - [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)
         - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
@@ -16949,7 +16948,7 @@ paths:
             - "manage_my_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShippingMethodsMatchingCartGet
       description: |-
-        Retrieves all the ShippingMethods that can ship to the shipping address of the given Cart in a given [Store](ctp:api:type:Store).
+        Retrieves all the active ShippingMethods that can ship to the shipping address of the given Cart in a given [Store](ctp:api:type:Store).
         Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
         This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
       parameters:
@@ -17003,7 +17002,7 @@ paths:
             - "manage_my_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyShippingMethodsMatchingCartHead
       description: |-
-        Checks if a ShippingMethod that can ship to the shipping address of the given Cart exists in the given [Store](ctp:api:type:Store). Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
+        Checks if an active ShippingMethod that can ship to the shipping address of the given Cart exists in the given [Store](ctp:api:type:Store). Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
       parameters:
         - name: cartId
           in: query
@@ -22822,6 +22821,7 @@ paths:
         - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
         - [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)
         - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+        - [InvalidOperation](ctp:api:type:InvalidOperationError)
         - [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)
         - [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)
       parameters:
@@ -30550,7 +30550,7 @@ paths:
             - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingCartGet
       description: |-
-        Retrieves all the ShippingMethods that can ship to the shipping address of the given Cart.
+        Retrieves all the active ShippingMethods that can ship to the shipping address of the given Cart.
         Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
         This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
       parameters:
@@ -30601,7 +30601,7 @@ paths:
             - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingCartHead
       description: |-
-        Checks if a ShippingMethod exists for the given Cart. Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
+        Checks if an active ShippingMethod exists for the given Cart. Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
       parameters:
         - name: cartId
           in: query
@@ -30646,7 +30646,7 @@ paths:
             - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingCartLocationGet
       description: |-
-        Retrieves all the ShippingMethods that can ship to the given [Location](ctp:api:type:Location)
+        Retrieves all the active ShippingMethods that can ship to the given [Location](ctp:api:type:Location)
         with a `predicate` that matches the given Cart.
         Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
         This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
@@ -30712,7 +30712,7 @@ paths:
             - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingCartLocationHead
       description: |-
-        Checks if a ShippingMethod that can ship to the given [Location](ctp:api:type:Location) exists for the given Cart. Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
+        Checks if an active ShippingMethod that can ship to the given [Location](ctp:api:type:Location) exists for the given Cart. Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
       parameters:
         - name: country
           in: query
@@ -30771,7 +30771,7 @@ paths:
             - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingLocationGet
       description: |-
-        Retrieves all the ShippingMethods that can ship to the given [Location](/projects/zones#location).
+        Retrieves all the active ShippingMethods that can ship to the given [Location](/projects/zones#location).
         ShippingMethods that have a `predicate` defined are automatically disqualified.
         If the `currency` parameter is given, then the ShippingMethods must also have a rate defined in the specified currency.
         Each ShippingMethod contains at least one ShippingRate with the flag `isMatching` set to `true`.
@@ -30847,7 +30847,7 @@ paths:
             - "manage_my_orders:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingLocationHead
       description: |-
-        Checks if a ShippingMethod that can ship to the given [Location](ctp:api:type:Location) exists. Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
+        Checks if an active ShippingMethod that can ship to the given [Location](ctp:api:type:Location) exists. Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
       parameters:
         - name: country
           in: query
@@ -30905,7 +30905,7 @@ paths:
             - "view_shipping_methods:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingOrdereditGet
       description: |-
-        Retrieves all the ShippingMethods that can ship to the given [Location](ctp:api:type:Location) for an [OrderEdit](ctp:api:type:OrderEdit).
+        Retrieves all the active ShippingMethods that can ship to the given [Location](ctp:api:type:Location) for an [OrderEdit](ctp:api:type:OrderEdit).
 
         If the OrderEdit preview cannot be generated, an [EditPreviewFailed](ctp:api:type:EditPreviewFailedError) error is returned.
       parameters:
@@ -30960,7 +30960,7 @@ paths:
             - "view_shipping_methods:{projectKey}"
       operationId: ByProjectKeyShippingMethodsMatchingOrdereditHead
       description: |-
-        Checks if a ShippingMethod that can ship to the given [Location](ctp:api:type:Location) exists for the given [OrderEdit](ctp:api:type:OrderEdit). Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
+        Checks if an active ShippingMethod that can ship to the given [Location](ctp:api:type:Location) exists for the given [OrderEdit](ctp:api:type:OrderEdit). Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
       parameters:
         - name: orderEditId
           in: query
@@ -72778,6 +72778,7 @@ components:
         - $ref: '#/components/schemas/BaseResource'
         - type: "object"
           required:
+            - active
             - createdAt
             - id
             - isDefault
@@ -72818,6 +72819,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ZoneRate'
+            active:
+              type: "boolean"
             isDefault:
               type: "boolean"
             predicate:
@@ -72848,6 +72851,8 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/ZoneRateDraft'
+        active:
+          type: "boolean"
         isDefault:
           type: "boolean"
         predicate:
@@ -72920,6 +72925,7 @@ components:
         mapping:
           addShippingRate: '#/components/schemas/ShippingMethodAddShippingRateAction'
           addZone: '#/components/schemas/ShippingMethodAddZoneAction'
+          changeActive: '#/components/schemas/ShippingMethodChangeActiveAction'
           changeIsDefault: '#/components/schemas/ShippingMethodChangeIsDefaultAction'
           changeName: '#/components/schemas/ShippingMethodChangeNameAction'
           changeTaxCategory: '#/components/schemas/ShippingMethodChangeTaxCategoryAction'
@@ -73035,6 +73041,17 @@ components:
               type: "string"
             zone:
               $ref: '#/components/schemas/ZoneResourceIdentifier'
+    ShippingMethodChangeActiveAction:
+      allOf:
+        - $ref: '#/components/schemas/ShippingMethodUpdateAction'
+        - type: "object"
+          required:
+            - active
+          properties:
+            action:
+              type: "string"
+            active:
+              type: "boolean"
     ShippingMethodChangeIsDefaultAction:
       allOf:
         - $ref: '#/components/schemas/ShippingMethodUpdateAction'
