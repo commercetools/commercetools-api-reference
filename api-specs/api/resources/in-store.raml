@@ -66,7 +66,7 @@ uriParameters:
     description: |
       Creates a [Cart](ctp:api:type:Cart) in the [Store](ctp:api:type:Store) specified by `storeKey`.
       When using this endpoint the Cart's `store` field is always set to the [Store](ctp:api:type:Store) specified in the path parameter.
-      If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
+      If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, or if the Shipping Method is not active, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
 
       Specific Error Codes:
 
@@ -414,6 +414,7 @@ uriParameters:
       - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
       - [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)
       - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+      - [InvalidOperation](ctp:api:type:InvalidOperationError)
       - [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)
       - [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)
       - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
@@ -1889,7 +1890,7 @@ uriParameters:
     get:
       displayName: Get ShippingMethods for a cart in a store
       description: |
-        Retrieves all the ShippingMethods that can ship to the shipping address of the given Cart in a given [Store](ctp:api:type:Store).
+        Retrieves all the active ShippingMethods that can ship to the shipping address of the given Cart in a given [Store](ctp:api:type:Store).
         Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
         This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
       is:
@@ -1929,7 +1930,7 @@ uriParameters:
           type: string
           description: |
             ID of the Cart with a shipping address set.
-      description: Checks if a ShippingMethod that can ship to the shipping address of the given Cart exists in the given [Store](ctp:api:type:Store). Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
+      description: Checks if an active ShippingMethod that can ship to the shipping address of the given Cart exists in the given [Store](ctp:api:type:Store). Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
 /shopping-lists:
   type:
     baseDomain:
