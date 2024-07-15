@@ -4,21 +4,36 @@ description: The source of data for suggestions is the searchKeyword field in a 
 get:
   displayName: Get suggestion keywords
   queryParameters:
-    fuzzy?:
-      type: boolean
-      description: Whether to apply fuzzy search on the text to analyze.
-    #TODO clarify correct syntax
     /searchKeywords\.[a-z]{2}(-[A-Z]{2})?/:
+      type: string[]
+      required: true
       (placeholderParam):
         paramName: searchKeywords
         template: searchKeywords.<locale>
         placeholder: locale
-      type: string[]
-      required: false
+      description: |-
+        The input text provided for the language specified as [Locale](ctp:api:type:Locale).
+    limit?:
+      type: number
+      format: int32
+      default: 10
+      maximum: 100
+      description: |
+        Controls how many suggestions per language the [SuggestionResult](ctp:api:type:SuggestionResult) will contain.
+        The default limit is `10` Suggestions per language and the maximum is `100`.
+    fuzzy?:
+      type: boolean
+      description: |
+        Defaults to `false`.
+
+        If set to `true`, [fuzzy search](/../api/projects/products-search#fuzzy-search) is applied on the text to analyze.
+    staged?:
+      type: boolean
+      description: |
+        Defaults to `false`.
+
+        If set to `true` (possible only while using the `view_products` scope), staged projections is queried.
   is:
-    - sortable:
-        sortExample: createdAt asc
-    - paging
     - projectionSelecting
   securedBy:
     [
