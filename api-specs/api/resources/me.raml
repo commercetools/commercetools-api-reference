@@ -146,23 +146,58 @@ delete:
 /active-cart:
   type: base
   get:
-    displayName: Get my active cart
+    displayName: Get My active Cart
     description: |
-      Retrieves the Customer's most recently modified active Cart.
+      Retrieves the Customer's most recently modified [active Cart](ctp:api:type:CartState). Returns a `200 OK` status if successful.
+
       Carts with `Merchant` or `Quote` [CartOrigin](ctp:api:type:CartOrigin) are ignored.
 
-      If no active Cart exists, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no active Cart exists.
+      - If an active Cart exists but does not have a `customerId` that matches the [customer:{id}](/scopes#customer_idid) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope.
+
     is:
       - expandable
-    securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
     responses:
       200:
         body:
           application/json:
             type: Cart
   head:
-    securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
-    description: Checks if an active Cart exists. Returns a `200 OK` status if an active Cart exists or a `404 Not Found` otherwise.
+    displayName: Check if active Cart exists
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    description: |
+      Checks if an active Cart exists. Returns a `200 OK` status if successful.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no active Cart exists.
+      - If an active Cart exists but does not have a `customerId` that matches the [customer:{id}](/scopes#customer_idid) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope.
+
 /business-units:
   type:
     baseDomain:
@@ -321,6 +356,7 @@ delete:
           application/json:
             example: !include ../examples/carts.example.json
   head:
+    displayName: Check if Cart exists by Query Predicate
     securedBy:
       [
         oauth_2_0:
@@ -334,7 +370,7 @@ delete:
           },
       ]
     description: |
-      Checks if a Cart exists that matches a given Query Predicate and contains either a matching `customerId` or `anonymousId`. Returns a `200 OK` status if the Cart exists, or a `404 Not Found` otherwise.
+      Checks if a Cart exists that matches a given Query Predicate and contains either a matching `customerId` or `anonymousId`. Returns a `200 OK` status if the Cart exists, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
     queryParameters:
       where?:
         type: QueryPredicate[]
@@ -353,7 +389,8 @@ delete:
           },
       ]
     description: |
-      Creates a Cart for a given `customerId` or `anonymousId`.
+
+      Creates a Cart for the Customer or anonymous user. The `customerId` or `anonymousId` field on the Cart is automatically set based on the [customer:{id}](/scopes#customer_idid) or [anonymous_id:{id}](/scopes#anonymous_idid) scope.
 
       Specific Error Codes:
 
@@ -370,43 +407,6 @@ delete:
         body:
           application/json:
             example: !include ../examples/cart.example.json
-  /key={key}:
-    (methodName): withKey
-    type:
-      baseResource:
-        uriParameterName: key
-        resourceType: Cart
-        resourceUpdateType: MyCartUpdate
-    get:
-      displayName: Get My Cart by Key
-      securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
-      responses:
-        200:
-          body:
-            application/json:
-              example: !include ../examples/cart.example.json
-    head:
-      securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
-      description: Checks if a Cart exists for a given `key`. Returns a `200 OK` status if the Cart exists or a `404 Not Found` otherwise.
-    post:
-      displayName: Update my cart by key
-      securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
-      body:
-        application/json:
-          example: !include ../examples/cart-update.example.json
-      responses:
-        200:
-          body:
-            application/json:
-              example: !include ../examples/cart.example.json
-    delete:
-      displayName: Delete my cart by key
-      securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
-      responses:
-        200:
-          body:
-            application/json:
-              example: !include ../examples/cart.example.json
   /{ID}:
     (methodName): withId
     type:
@@ -429,15 +429,20 @@ delete:
             },
         ]
       description: |
-        Returns a Cart for a given `id`. Returns a `200 OK` status if the Cart exists, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+        Returns a Cart for a given `id`. Returns a `200 OK` status if successful.
 
-        If the Cart exists in the Project but does not have a matching `customerId` or `anonymousId`, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Cart exists for a given `id`.
+        - If the Cart exists but does not have a `customerId` that matches the [customer:{id}](/scopes#customer_idid) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope.
+
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/cart.example.json
     head:
+      displayName: Check if Cart exists by ID
       securedBy:
         [
           oauth_2_0:
@@ -451,9 +456,13 @@ delete:
             },
         ]
       description: |
-        Checks if a Cart exists for a given `id`. Returns a `200 OK` status if the Cart exists, or a `404 Not Found` otherwise.
+        Checks if a Cart exists for a given `id`. Returns a `200 OK` status if the Cart exists.
 
-        If the Cart exists in the Project but does not have a matching `customerId` or `anonymousId`, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Cart exists for a given `id`.
+        - If the Cart exists but does not have a `customerId` that matches the [customer:{id}](/scopes#customer_idid) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope.
+
     post:
       displayName: Update My Cart by ID
       securedBy:
@@ -469,9 +478,13 @@ delete:
             },
         ]
       description: |
-        Updates the Cart for a given `id`. Returns a `200 OK` status if the Cart exists, or a `404 Not Found` otherwise.
+        Updates the Cart for a given `id`. Returns a `200 OK` status if successful.
 
-        If the Cart exists in the Project but does not have a matching `customerId` or `anonymousId`, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Cart exists for a given `id`.
+        - If the Cart exists but does not have a `customerId` that matches the [customer:{id}](/scopes#customer_idid) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope.
+
       body:
         application/json:
           example: !include ../examples/cart-update.example.json
@@ -495,9 +508,13 @@ delete:
             },
         ]
       description: |
-        Deletes the Cart for a given `id`. Returns a `200 OK` status if the Cart exists, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+        Deletes the Cart for a given `id`. Returns a `200 OK` status if successful.
 
-        If the Cart exists in the Project but does not have a matching `customerId` or `anonymousId`, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Cart exists for a given `id`.
+        - If the Cart exists but does not have a `customerId` that matches the [customer:{id}](/scopes#customer_idid) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope.
+
       responses:
         200:
           body:
@@ -559,15 +576,53 @@ delete:
     been completed.
   get:
     displayName: Query My Orders
-    securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    description: |
+      Returns all Orders that match a given Query Predicate.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no Orders exist for a given Query Predicate.
+      - If the Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#customer_idid) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope.
+
     responses:
       200:
         body:
           application/json:
             example: !include ../examples/orders.example.json
   head:
-    securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
-    description: Checks if an Order exists for a given Query Predicate. Returns a `200 OK` status if any Orders match the Query Predicate or a `404 Not Found` otherwise.
+    displayName: Check if Order exists by Query Predicate
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'customer:{customerId}',
+                'anonymous_id:{anonymousId}',
+              ],
+          },
+      ]
+    description: |
+      Checks if an Order exists for a given Query Predicate. Returns a `200 OK` status if successful.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no Order exists that matches the Query Predicate.
+      - If one or more Orders exist but don't have either a `customerId` that matches the [customer:{id}](/scopes#customer_idid) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope.
+
     queryParameters:
       where?:
         type: QueryPredicate[]
@@ -576,9 +631,13 @@ delete:
       - conflicting
     displayName: Create My Order
     description: |
-      The Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction) for taxes to be calculated. When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
 
+      Creates an Order from a Cart for the Customer or anonymous user. The `customerId` or `anonymousId` field on the Order is automatically set based on the [customer:{id}](/scopes#customer_idid) or [anonymous_id:{id}](/scopes#anonymous_idid) scope.
+
+      The Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction) for taxes to be calculated. When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
       Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
+      If the Cart's `customerId` does not match the [customer:{id}](/scopes#customer_idid) scope, or the `anonymousId` does not match the [anonymous_id:{id}](/scopes#anonymous_idid) scope, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
 
       If a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.
       If you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.
@@ -593,7 +652,18 @@ delete:
       - [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)
       - [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)
       - [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)
-    securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
     body:
       application/json:
         example: !include ../examples/my-order-create.example.json
@@ -611,15 +681,53 @@ delete:
         resourceUpdateType: MyOrderUpdate
     get:
       displayName: Get My Order by ID
-      securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
+      description: |
+        Returns an Order for a given `id`. Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Order exists for the given `id`.
+        - If the Order exists but does not have either a `customerId` that matches the [customer:{id}](/scopes#customer_idid) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope.
+
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_orders:{projectKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/order.example.json
     head:
-      securedBy: [oauth_2_0: { scopes: ['manage_my_orders:{projectKey}'] }]
-      description: Checks if an Order exists for a given `id`. Returns a `200 OK` status if the Order exists or a `404 Not Found` otherwise.
+      displayName: Check if Order exists by ID
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_orders:{projectKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      description: |
+        Checks if an Order exists for a given `id`. Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Order exists for the given `id`.
+        - If the Order exists but does not have either a `customerId` that matches the [customer:{id}](/scopes#customer_idid) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope.
+
   /quotes:
     (methodName): orderQuote
     type: base
@@ -638,7 +746,11 @@ delete:
         - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
         - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
         - [AssociateMissingPermission](ctp:api:type:AssociateMissingPermissionError)
-      securedBy: [oauth_2_0: { scopes: ['manage_quotes:{projectKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            { scopes: ['manage_quotes:{projectKey}', 'customer_id:{id}'] },
+        ]
       body:
         application/json:
           example: !include ../examples/my-order-from-quote.example.json
@@ -746,25 +858,47 @@ delete:
     The My Quote Requests endpoint creates and provides access to Quote Requests
     scoped to a specific user.
   get:
-    displayName: Query My Quote Requests
+    displayName: Query My QuoteRequests
+    description: |
+      Returns all Quote Requests that match a given Query Predicate. Returns a `200 OK` status if successful.
     securedBy:
-      [oauth_2_0: { scopes: ['manage_my_quote_requests:{projectKey}'] }]
+      [
+        oauth_2_0:
+          {
+            scopes:
+              ['manage_my_quote_requests:{projectKey}', 'customer_id:{id}'],
+          },
+      ]
     responses:
       200:
         body:
           application/json:
             example: !include ../examples/quote-requests.example.json
   head:
+    displayName: Check if QuoteRequest exists by Query Predicate
     securedBy:
-      [oauth_2_0: { scopes: ['manage_my_quote_requests:{projectKey}'] }]
-    description: Checks if my QuoteRequest exists for a given Query Predicate. Returns a `200 OK` status if any QuoteRequests match the Query Predicate or a `404 Not Found` otherwise.
+      [
+        oauth_2_0:
+          {
+            scopes:
+              ['manage_my_quote_requests:{projectKey}', 'customer_id:{id}'],
+          },
+      ]
+    description: |
+      Checks if a QuoteRequest exists for a given Query Predicate. Returns a `200 OK` status if any QuoteRequests match the Query Predicate or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
     queryParameters:
       where?:
         type: QueryPredicate[]
   post:
-    displayName: Create My Quote Requests
+    displayName: Create My QuoteRequest
     securedBy:
-      [oauth_2_0: { scopes: ['manage_my_quote_requests:{projectKey}'] }]
+      [
+        oauth_2_0:
+          {
+            scopes:
+              ['manage_my_quote_requests:{projectKey}', 'customer_id:{id}'],
+          },
+      ]
     body:
       application/json:
         example: !include ../examples/my-quote-request-create.example.json
@@ -781,22 +915,41 @@ delete:
         resourceType: QuoteRequest
         resourceUpdateType: MyQuoteRequestUpdate
     get:
-      displayName: Get My Quote Requests by ID
+      displayName: Get My QuoteRequest by ID
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_quote_requests:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                ['manage_my_quote_requests:{projectKey}', 'customer_id:{id}'],
+            },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/quote-request.example.json
     head:
+      displayName: Check if QuoteRequest exists by ID
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_quote_requests:{projectKey}'] }]
-      description: Checks if my QuoteRequest exists for a given `id`. Returns a `200 OK` status if the QuoteRequest exists or a `404 Not Found` otherwise.
+        [
+          oauth_2_0:
+            {
+              scopes:
+                ['manage_my_quote_requests:{projectKey}', 'customer_id:{id}'],
+            },
+        ]
+      description: Checks if a QuoteRequest exists for a given `id`. Returns a `200 OK` status if the QuoteRequest exists or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
     post:
-      displayName: Update My Quote Requests by ID
+      displayName: Update My QuoteRequest by ID
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_quote_requests:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                ['manage_my_quote_requests:{projectKey}', 'customer_id:{id}'],
+            },
+        ]
       body:
         application/json:
           example: !include ../examples/my-quote-request-update.example.json
@@ -805,15 +958,6 @@ delete:
           body:
             application/json:
               example: !include ../examples/quote-request-update-response.example.json
-    delete:
-      displayName: Delete My Quote Requests by ID
-      securedBy:
-        [oauth_2_0: { scopes: ['manage_my_quote_requests:{projectKey}'] }]
-      responses:
-        200:
-          body:
-            application/json:
-              example: !include ../examples/quote-request.example.json
   /key={key}:
     (methodName): withKey
     type:
@@ -822,22 +966,41 @@ delete:
         resourceType: QuoteRequest
         resourceUpdateType: MyQuoteRequestUpdate
     get:
-      displayName: Get My Quote Requests by Key
+      displayName: Get My QuoteRequest by Key
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_quote_requests:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                ['manage_my_quote_requests:{projectKey}', 'customer_id:{id}'],
+            },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/quote-request.example.json
     head:
+      displayName: Check if QuoteRequest exists by Key
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_quote_requests:{projectKey}'] }]
-      description: Checks if my QuoteRequest exists for a given `key`. Returns a `200 OK` status if the QuoteRequest exists or a `404 Not Found` otherwise.
+        [
+          oauth_2_0:
+            {
+              scopes:
+                ['manage_my_quote_requests:{projectKey}', 'customer_id:{id}'],
+            },
+        ]
+      description: Checks if a QuoteRequest exists for a given `key`. Returns a `200 OK` status if the QuoteRequest exists or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
     post:
-      displayName: Update my Quote Requests by Key
+      displayName: Update My QuoteRequest by Key
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_quote_requests:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                ['manage_my_quote_requests:{projectKey}', 'customer_id:{id}'],
+            },
+        ]
       body:
         application/json:
           example: !include ../examples/my-quote-request-update.example.json
@@ -846,15 +1009,6 @@ delete:
           body:
             application/json:
               example: !include ../examples/quote-request-update-response.example.json
-    delete:
-      displayName: Delete my Quote Requests by Key
-      securedBy:
-        [oauth_2_0: { scopes: ['manage_my_quote_requests:{projectKey}'] }]
-      responses:
-        200:
-          body:
-            application/json:
-              example: !include ../examples/quote-request.example.json
 /quotes:
   type:
     baseDomain:
@@ -865,15 +1019,24 @@ delete:
   description: The My Quote endpoint provides access to Quotes scoped to a specific user.
   get:
     displayName: Query My Quotes
-    securedBy: [oauth_2_0: { scopes: ['manage_my_quotes:{projectKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          { scopes: ['manage_my_quotes:{projectKey}', 'customer_id:{id}'] },
+      ]
     responses:
       200:
         body:
           application/json:
             example: !include ../examples/quotes.example.json
   head:
-    securedBy: [oauth_2_0: { scopes: ['manage_my_quotes:{projectKey}'] }]
-    description: Checks if a Quote exists for a given Query Predicate. Returns a `200 OK` status if any Quotes match the Query Predicate or a `404 Not Found` otherwise.
+    displayName: Check if Quote exists by Query Predicate
+    securedBy:
+      [
+        oauth_2_0:
+          { scopes: ['manage_my_quotes:{projectKey}', 'customer_id:{id}'] },
+      ]
+    description: Checks if a Quote exists for a given Query Predicate. Returns a `200 OK` status if any Quotes match the Query Predicate or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
     queryParameters:
       where?:
         type: QueryPredicate[]
@@ -886,18 +1049,31 @@ delete:
         resourceUpdateType: MyQuoteUpdate
     get:
       displayName: Get My Quote by ID
-      securedBy: [oauth_2_0: { scopes: ['manage_my_quotes:{projectKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            { scopes: ['manage_my_quotes:{projectKey}', 'customer_id:{id}'] },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/quote.example.json
     head:
-      securedBy: [oauth_2_0: { scopes: ['manage_my_quotes:{projectKey}'] }]
-      description: Checks if a Quote exists for a given `id`. Returns a `200 OK` status if the Quote exists or a `404 Not Found` otherwise.
+      displayName: Check if Quote exists by ID
+      securedBy:
+        [
+          oauth_2_0:
+            { scopes: ['manage_my_quotes:{projectKey}', 'customer_id:{id}'] },
+        ]
+      description: Checks if a Quote exists for a given `id`. Returns a `200 OK` status if the Quote exists or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
     post:
       displayName: Update My Quote by ID
-      securedBy: [oauth_2_0: { scopes: ['manage_my_quotes:{projectKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            { scopes: ['manage_my_quotes:{projectKey}', 'customer_id:{id}'] },
+        ]
       body:
         application/json:
           example: !include ../examples/my-quote-update.example.json
@@ -915,18 +1091,31 @@ delete:
         resourceUpdateType: MyQuoteUpdate
     get:
       displayName: Get My Quote by Key
-      securedBy: [oauth_2_0: { scopes: ['manage_my_quotes:{projectKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            { scopes: ['manage_my_quotes:{projectKey}', 'customer_id:{id}'] },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/quote.example.json
     head:
-      securedBy: [oauth_2_0: { scopes: ['manage_my_quotes:{projectKey}'] }]
-      description: Checks if a Quote exists for a given `key`. Returns a `200 OK` status if the Quote exists or a `404 Not Found` otherwise.
+      displayName: Check if Quote exists by Key
+      securedBy:
+        [
+          oauth_2_0:
+            { scopes: ['manage_my_quotes:{projectKey}', 'customer_id:{id}'] },
+        ]
+      description: Checks if a Quote exists for a given `key`. Returns a `200 OK` status if the Quote exists or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
     post:
       displayName: Update My Quote by Key
-      securedBy: [oauth_2_0: { scopes: ['manage_my_quotes:{projectKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            { scopes: ['manage_my_quotes:{projectKey}', 'customer_id:{id}'] },
+        ]
       body:
         application/json:
           example: !include ../examples/my-quote-update.example.json
@@ -948,9 +1137,27 @@ delete:
   (createable): MyShoppingListDraft
   description: The My Shopping Lists endpoint creates and provides access to Shopping Lists scoped to a specific user.
   get:
-    displayName: Query my shopping lists
+    displayName: Query My ShoppingLists
     securedBy:
-      [oauth_2_0: { scopes: ['manage_my_shopping_lists:{projectKey}'] }]
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_shopping_lists:{projectKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    description: |
+      Returns all ShoppingLists that match the given Query Predicate. Returns a `200 OK` status if successful.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no ShoppingList exists for the given Query Predicate.
+      - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+
     queryParameters:
       expand:
         description: |
@@ -963,16 +1170,47 @@ delete:
           application/json:
             example: !include ../examples/my-shopping-lists.example.json
   head:
+    displayName: Check if ShoppingList exists by Query Predicate
     securedBy:
-      [oauth_2_0: { scopes: ['manage_my_shopping_lists:{projectKey}'] }]
-    description: Checks if a ShoppingList exists for a given Query Predicate. Returns a `200 OK` status if any ShoppingLists match the Query Predicate or a `404 Not Found` otherwise.
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_shopping_lists:{projectKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    description: |
+      Checks if a ShoppingList matches the given Query Predicate. Returns a `200 OK` status if successful.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no ShoppingList exists for the given Query Predicate.
+      - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+
     queryParameters:
       where?:
         type: QueryPredicate[]
   post:
-    displayName: Create my shopping list
+    displayName: Create My ShoppingList
     securedBy:
-      [oauth_2_0: { scopes: ['manage_my_shopping_lists:{projectKey}'] }]
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_shopping_lists:{projectKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    description: |
+      Creates a ShoppingList for the Customer or anonymous user. The `customerId` or `anonymousId` on the ShoppingList is automatically set based on the given [customer:{id}](/scopes#customer_idid) or [anonymous_id:{id}](/scopes#anonymous_idid) scope.
+
     queryParameters:
       expand:
         description: |
@@ -995,9 +1233,27 @@ delete:
         resourceType: ShoppingList
         resourceUpdateType: MyShoppingListUpdate
     get:
-      displayName: Get my shopping list by id
+      displayName: Get My ShoppingList by ID
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_shopping_lists:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      description: |
+        Returns a ShoppingList for a given `id`. Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList exists for the given `id`.
+        - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+
       queryParameters:
         expand:
           description: |
@@ -1010,13 +1266,41 @@ delete:
             application/json:
               example: !include ../examples/my-shopping-list.example.json
     head:
+      displayName: Check if ShoppingList exists by ID
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_shopping_lists:{projectKey}'] }]
-      description: Checks if a ShoppingList exists for a given `id`. Returns a `200 OK` status if the ShoppingList exists or a `404 Not Found` otherwise.
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      description: |
+        Checks if a ShoppingList exists for a given `id`. Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList exists for the given `id`.
+        - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+
     post:
-      displayName: Update my shopping list by id
+      displayName: Update My ShoppingList by ID
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_shopping_lists:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
       queryParameters:
         expand:
           description: |
@@ -1026,21 +1310,47 @@ delete:
       body:
         application/json:
           example: !include ../examples/my-shopping-list-update.example.json
+      description: |
+        Updates a ShoppingList for a given `id`. Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList exists for the given `id`.
+        - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/my-shopping-list.example.json
     delete:
-      displayName: Delete my shopping list by id
+      displayName: Delete My ShoppingList by ID
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_shopping_lists:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
       queryParameters:
         expand:
           description: |
             When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
           type: Expansion[]
           required: false
+      description: |
+        Deletes the ShoppingList for a given `id`. Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList exists for the given `id`.
+        - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+
       responses:
         200:
           body:
@@ -1054,28 +1364,74 @@ delete:
         resourceType: ShoppingList
         resourceUpdateType: MyShoppingListUpdate
     get:
-      displayName: Get my shopping list by key
+      displayName: Get My ShoppingList by Key
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_shopping_lists:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
       queryParameters:
         expand:
           description: |
             When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
           type: Expansion[]
           required: false
+      description: |
+        Returns a ShoppingList for a given `key`. Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList exists for the given `key`.
+        - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/my-shopping-list.example.json
     head:
+      displayName: Check if ShoppingList exists by Key
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_shopping_lists:{projectKey}'] }]
-      description: Checks if a ShoppingList exists for a given `key`. Returns a `200 OK` status if the ShoppingList exists or a `404 Not Found` otherwise.
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      description: |
+        Checks if a ShoppingList exists for a given `key`. Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList exists for the given `key`.
+        - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+
     post:
-      displayName: Update my shopping list by key
+      displayName: Update My ShoppingList by Key
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_shopping_lists:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
       queryParameters:
         expand:
           description: |
@@ -1085,21 +1441,47 @@ delete:
       body:
         application/json:
           example: !include ../examples/my-shopping-list-update.example.json
+      description: |
+        Updates a ShoppingList for a given `key`. Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList exists for the given `key`.
+        - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/my-shopping-list.example.json
     delete:
-      displayName: Delete my shopping list by key
+      displayName: Delete My ShoppingList by Key
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_shopping_lists:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
       queryParameters:
         expand:
           description: |
             When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
           type: Expansion[]
           required: false
+      description: |
+        Deletes the ShoppingList for a given `key`. Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList exists for the given `key`.
+        - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+
       responses:
         200:
           body:
