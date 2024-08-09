@@ -12454,7 +12454,16 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeGet
+      description: |-
+        Returns a Customer for a given Query Predicate in a [Store](ctp:api:type:Store). Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Customer exists in the Store for the given Query Predicate.
+        - If a Customer exists in the Store for the given Query Predicate, but does not have an `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+        - If a Customer exists for the given Query Predicate but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
       parameters:
         - name: sort
           in: query
@@ -12530,7 +12539,15 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMePost
+      description: |-
+        Updates the Customer in a [Store](ctp:api:type:Store). Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#customer_idid) scope.
+        - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
       requestBody:
         content:
           application/json:
@@ -12551,7 +12568,15 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeDelete
+      description: |-
+        Deletes the Customer in a [Store](ctp:api:type:Store). Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#customer_idid) scope.
+        - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
       parameters:
         - name: version
           in: query
@@ -13102,9 +13127,15 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeEmailConfirmPost
       description: |-
-        This is the last step in the [email verification process of a Customer](/../api/projects/customers#email-verification-of-customer-in-store).
+        This is the last step in the [email verification process of a Customer](/../api/projects/customers#email-verification-of-customer-in-store). Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#customer_idid) scope.
+        - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
       requestBody:
         content:
           application/json:
@@ -13151,9 +13182,12 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeLoginPost
       description: |-
         Retrieves the authenticated Customer (that matches the given email/password pair) if they are part of a specific [Store](ctp:api:type:Store).
+
+        If used with an optional [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly logged-in Customer.
 
         - If the Customer does not have a Cart, the most recently modified anonymous cart becomes the Customer's Cart.
         - If the Customer already has a Cart, the most recently modified anonymous cart is handled according to [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
@@ -13530,9 +13564,15 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMePasswordPost
       description: |-
-        Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
+        Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.  Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#customer_idid) scope.
+        - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
       requestBody:
         content:
           application/json:
@@ -13581,11 +13621,17 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMePasswordResetPost
       description: |-
         This is the last step in the [password reset process of the authenticated Customer](/../api/projects/customers#password-reset-of-customer-in-store).
 
-        Resetting a password produces the of the Customer [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
+        Resetting a password produces the Customer [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#customer_idid) scope.
+        - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
       requestBody:
         content:
           application/json:
@@ -14293,8 +14339,11 @@ paths:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
             - "manage_my_profile:{projectKey}:{storeKey}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeSignupPost
       description: |-
+        If used with an optional [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly created Customer.
+
         If omitted in the request body, the [Customer](ctp:api:type:Customer) `stores` field is set to the [Store](ctp:api:type:Store) specified in the path parameter.
 
         A Cart returned in the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) has any invalid Line Items removed and is [updated](/api/carts-orders-overview#cart-updates) with the latest prices, taxes, and discounts. During these updates, the following errors can be returned: [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError) and [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError).
@@ -18917,7 +18966,15 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMeGet
+      description: |-
+        Returns a Customer for a given Query Predicate. Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Customer exists for the given Query Predicate.
+        - If a Customer exists for the given Query Predicate, but does not have an `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
       parameters:
         - name: sort
           in: query
@@ -19006,7 +19063,10 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMePost
+      description: |-
+        Updates the Customer specified in the [customer:{id}](/scopes#customer_idid) scope. Returns a `200 OK` status if successful.
       requestBody:
         content:
           application/json:
@@ -19040,7 +19100,10 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMeDelete
+      description: |-
+        Deletes the Customer specified in the [customer:{id}](/scopes#customer_idid) scope. Returns a `200 OK` status if successful.
       parameters:
         - name: version
           in: query
@@ -19177,7 +19240,10 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_business_units:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMeBusinessUnitsGet
+      description: |-
+        Returns all of the authenticated Customer’s Business Units in a Project. Returns a `200 OK` status if successful, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
       parameters:
         - name: expand
           in: query
@@ -19266,9 +19332,10 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_business_units:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMeBusinessUnitsHead
       description: |-
-        Checks if a BusinessUnit exists for a given Query Predicate. Returns a `200 OK` status if any BusinessUnits match the Query Predicate or a `404 Not Found` otherwise.
+        Checks if a BusinessUnit exists for a given Query Predicate. Returns a `200 OK` status if any BusinessUnits match the Query Predicate and the Customer has access to them, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
       parameters:
         - name: where
           in: query
@@ -19302,6 +19369,7 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_business_units:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMeBusinessUnitsPost
       description: |-
         Automatically assigns the Associate to the Business Unit in the default [Associate Role](ctp:api:type:AssociateRole) defined in [BusinessUnitConfiguration](ctp:api:type:BusinessUnitConfiguration). If there is no default Associate Role configured, this request fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error. When creating a Division, the Associate must have the `AddChildUnits` [Permission](ctp:api:type:Permission) in the parent unit. If the required [Permission](/projects/associate-roles#permission) is missing, an [AssociateMissingPermission](/errors#associatemissingpermission) error is returned.
@@ -19360,7 +19428,10 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_business_units:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMeBusinessUnitsKeyByKeyGet
+      description: |-
+        Returns a Business Unit for a given `key`. Returns a `200 OK` status if the Business Unit exists and the Customer has access to it, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
       parameters:
         - name: expand
           in: query
@@ -19398,9 +19469,10 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_business_units:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMeBusinessUnitsKeyByKeyHead
       description: |-
-        Checks if a BusinessUnit exists for a given `key`. Returns a `200 OK` status if the BusinessUnit exists or a `404 Not Found` otherwise.
+        Checks if a BusinessUnit exists for a given `key`. Returns a `200 OK` status if the Business Unit exists and the Customer has access to it, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
       responses:
         "200":
           description: |-
@@ -19424,7 +19496,10 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_business_units:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMeBusinessUnitsKeyByKeyPost
+      description: |-
+        Updates a Business Unit for a given `key`. Returns a `200 OK` status if the Business Unit exists and the Customer has access to it, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
       parameters:
         - name: expand
           in: query
@@ -19441,54 +19516,6 @@ paths:
             schema:
               $ref: '#/components/schemas/MyBusinessUnitUpdate'
 
-      responses:
-        "200":
-          description: |-
-            200
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BusinessUnit'
-
-        "409":
-          $ref: '#/components/responses/conflicting_409'
-        "400":
-          $ref: '#/components/responses/errorable_400'
-        "401":
-          $ref: '#/components/responses/errorable_401'
-        "403":
-          $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
-        "500":
-          $ref: '#/components/responses/errorable_500'
-        "502":
-          $ref: '#/components/responses/errorable_502'
-        "503":
-          $ref: '#/components/responses/errorable_503'
-    delete:
-      security:
-        - oauth_2_0:
-            - "manage_my_business_units:{projectKey}"
-      operationId: ByProjectKeyMeBusinessUnitsKeyByKeyDelete
-      parameters:
-        - name: version
-          in: query
-          required: true
-          style: form
-          schema:
-            type: "number"
-            format: "double"
-          explode: true
-        - name: expand
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              $ref: '#/components/schemas/Expansion'
-          explode: true
       responses:
         "200":
           description: |-
@@ -19530,7 +19557,10 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_business_units:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMeBusinessUnitsByIDGet
+      description: |-
+        Returns a Business Unit for a given `id`. Returns a `200 OK` status if the Business Unit exists and the Customer has access to it, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
       parameters:
         - name: expand
           in: query
@@ -19568,9 +19598,10 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_business_units:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMeBusinessUnitsByIDHead
       description: |-
-        Checks if a BusinessUnit exists for a given `id`. Returns a `200 OK` status if the BusinessUnit exists or a `404 Not Found` otherwise.
+        Checks if a BusinessUnit exists for a given `id`. Returns a `200 OK` status if the BusinessUnit exists and the Customer has access to it, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
       responses:
         "200":
           description: |-
@@ -19594,7 +19625,10 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_business_units:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMeBusinessUnitsByIDPost
+      description: |-
+        Updates a Business Unit for a given `id`. Returns a `200 OK` status if the Business Unit exists and the Customer has access to it, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
       parameters:
         - name: expand
           in: query
@@ -19611,54 +19645,6 @@ paths:
             schema:
               $ref: '#/components/schemas/MyBusinessUnitUpdate'
 
-      responses:
-        "200":
-          description: |-
-            200
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BusinessUnit'
-
-        "409":
-          $ref: '#/components/responses/conflicting_409'
-        "400":
-          $ref: '#/components/responses/errorable_400'
-        "401":
-          $ref: '#/components/responses/errorable_401'
-        "403":
-          $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
-        "500":
-          $ref: '#/components/responses/errorable_500'
-        "502":
-          $ref: '#/components/responses/errorable_502'
-        "503":
-          $ref: '#/components/responses/errorable_503'
-    delete:
-      security:
-        - oauth_2_0:
-            - "manage_my_business_units:{projectKey}"
-      operationId: ByProjectKeyMeBusinessUnitsByIDDelete
-      parameters:
-        - name: version
-          in: query
-          required: true
-          style: form
-          schema:
-            type: "number"
-            format: "double"
-          explode: true
-        - name: expand
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              $ref: '#/components/schemas/Expansion'
-          explode: true
       responses:
         "200":
           description: |-
@@ -20154,6 +20140,7 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMeEmailConfirmPost
       description: |-
         This is the last step in the [email verification process of a Customer](/../api/projects/customers#email-verification-of-customer).
@@ -20197,11 +20184,12 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyMeLoginPost
       description: |-
         Retrieves the authenticated customer (that matches the given email/password pair).
 
-        If used with [an access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly logged-in Customer.
+        If used with an optional [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly logged-in Customer.
 
         - If the Customer does not have a Cart yet, the most recently modified anonymous cart becomes the Customer's Cart.
         - If the Customer already has a Cart, the most recently modified anonymous cart is handled in accordance with [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
@@ -20614,6 +20602,7 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMePasswordPost
       description: |-
         Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
@@ -20661,6 +20650,7 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
+            - "customer_id:{id}"
       operationId: ByProjectKeyMePasswordResetPost
       description: |-
         This is the last step in the [password reset process of a Customer](/../api/projects/customers#password-reset-of-customer).
@@ -22485,9 +22475,10 @@ paths:
       security:
         - oauth_2_0:
             - "manage_my_profile:{projectKey}"
+            - "anonymous_id:{id}"
       operationId: ByProjectKeyMeSignupPost
       description: |-
-        If used with an [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly created Customer.
+        If used with an optional [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly created Customer.
 
         Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
       requestBody:
