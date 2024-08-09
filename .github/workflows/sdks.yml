@@ -19,7 +19,7 @@ jobs:
           - csharp
           - typescript
           - php
-#          - postman
+          - postman
         include:
           - language: java
             repository: 'commercetools/commercetools-sdk-java-v2'
@@ -41,9 +41,9 @@ jobs:
             makeParams: "-j2"
             API_RAML: "../commercetools-api-reference/api-specs/api/api-mixin.raml"
             diffFormat: PHP_MARKDOWN
-#          - language: postman
-#            repository: 'commercetools/commercetools-postman-collection'
-#            sshKey: ${{ secrets.POSTMAN_DEPLOY_KEY }}
+          - language: postman
+            repository: 'commercetools/commercetools-postman-collection'
+            API_RAML: "../commercetools-api-reference/api-specs/api/postman.raml"
     steps:
         # Get GitHub token via the CT SDKs App
       - name: Generate GitHub token (via CT SDKs App)
@@ -153,6 +153,21 @@ jobs:
           ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
           HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
 
+      - name: "Generate connect postman collection"
+        if: ${{ matrix.language == 'postman' }}
+        run: sudo chmod 777 /usr/local/bin && make build
+        working-directory: commercetools-sdk
+        env:
+          RAML_FILE: "../commercetools-api-reference/api-specs/connect/api.raml"
+          LIB_NAME: "connect"
+
+      - name: Minify Api postman collection
+        if: ${{ matrix.language == 'postman' }}
+        working-directory: commercetools-sdk
+        run: |-
+          jq -r tostring api/collection.json > api/minified.json
+          mv api/minified.json api/collection.json
+
       - name: "Checkout previous api reference"
         uses: actions/checkout@v4
         with:
@@ -253,11 +268,21 @@ jobs:
         working-directory: commercetools-sdk
 
       - uses: stefanzweifel/git-auto-commit-action@v4
-        if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/main'
+        if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/main' && matrix.language != 'postman'
         with:
           repository: commercetools-sdk
           branch: gen-sdk-updates
           commit_message: "build(codegen): updating SDK"
+          commit_author: ct-sdks[bot] <${{ steps.get_app_user.outputs.email }}>
+          commit_user_name: ct-sdks[bot]
+          commit_user_email: ${{ steps.get_app_user.outputs.email }}
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: ${{ matrix.language == 'postman' && env.CHANGES_PENDING != '0'  && github.ref == 'refs/heads/main' }}
+        with:
+          repository: commercetools-sdk
+          branch: master
+          commit_message: "TASK: Updating Postman collection"
           commit_author: ct-sdks[bot] <${{ steps.get_app_user.outputs.email }}>
           commit_user_name: ct-sdks[bot]
           commit_user_email: ${{ steps.get_app_user.outputs.email }}
