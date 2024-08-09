@@ -1459,7 +1459,7 @@ uriParameters:
               application/json:
                 example: !include ../examples/shopping-list.example.json
   get:
-    displayName: Get my customer details in a store
+    displayName: Get My Customer in Store
     is:
       - sortable:
           sortExample: createdAt asc
@@ -1475,9 +1475,19 @@ uriParameters:
               [
                 'manage_my_profile:{projectKey}',
                 'manage_my_profile:{projectKey}:{storeKey}',
+                'customer_id:{id}',
               ],
           },
       ]
+    description: |
+      Returns a Customer for a given Query Predicate in a [Store](ctp:api:type:Store). Returns a `200 OK` status if successful.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no Customer exists in the Store for the given Query Predicate.
+      - If a Customer exists in the Store for the given Query Predicate, but does not have an `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+      - If a Customer exists for the given Query Predicate but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
+
     responses:
       200:
         body:
@@ -1485,7 +1495,7 @@ uriParameters:
             example: !include ../examples/customer.example.json
             type: Customer
   post:
-    displayName: Update my customer in a store
+    displayName: Update My Customer in Store
     securedBy:
       [
         oauth_2_0:
@@ -1494,9 +1504,18 @@ uriParameters:
               [
                 'manage_my_profile:{projectKey}',
                 'manage_my_profile:{projectKey}:{storeKey}',
+                'customer_id:{id}',
               ],
           },
       ]
+    description: |
+      Updates the Customer in a [Store](ctp:api:type:Store). Returns a `200 OK` status if successful.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#customer_idid) scope.
+      - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
+
     body:
       application/json:
         example: !include ../examples/customer-update.example.json
@@ -1508,7 +1527,7 @@ uriParameters:
             example: !include ../examples/customer-update-response.example.json
             type: Customer
   delete:
-    displayName: Delete my Customer in a store
+    displayName: Delete My Customer in Store
     is:
       - versioned
       - conflicting
@@ -1520,9 +1539,18 @@ uriParameters:
               [
                 'manage_my_profile:{projectKey}',
                 'manage_my_profile:{projectKey}:{storeKey}',
+                'customer_id:{id}',
               ],
           },
       ]
+    description: |
+      Deletes the Customer in a [Store](ctp:api:type:Store). Returns a `200 OK` status if successful.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#customer_idid) scope.
+      - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
+
     responses:
       200:
         body:
@@ -1532,9 +1560,15 @@ uriParameters:
   /email/confirm:
     type: base
     post:
-      displayName: Verify my Customer's Email in a store
+      displayName: Verify email of My Customer in Store
       description: |
-        This is the last step in the [email verification process of a Customer](/../api/projects/customers#email-verification-of-customer-in-store).
+        This is the last step in the [email verification process of a Customer](/../api/projects/customers#email-verification-of-customer-in-store). Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#customer_idid) scope.
+        - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
+
       securedBy:
         [
           oauth_2_0:
@@ -1543,6 +1577,7 @@ uriParameters:
                 [
                   'manage_my_profile:{projectKey}',
                   'manage_my_profile:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
                 ],
             },
         ]
@@ -1560,9 +1595,15 @@ uriParameters:
   /password:
     type: base
     post:
-      displayName: Change my customers password in a store
+      displayName: Change password of My Customer in Store
       description: |
-        Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
+        Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.  Returns a `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#customer_idid) scope.
+        - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
+
       is:
         - conflicting
       securedBy:
@@ -1573,6 +1614,7 @@ uriParameters:
                 [
                   'manage_my_profile:{projectKey}',
                   'manage_my_profile:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
                 ],
             },
         ]
@@ -1589,11 +1631,17 @@ uriParameters:
     /reset:
       type: base
       post:
-        displayName: Reset my Customer's Password in a store
+        displayName: Reset password of My Customer in Store
         description: |
           This is the last step in the [password reset process of the authenticated Customer](/../api/projects/customers#password-reset-of-customer-in-store).
 
-          Resetting a password produces the of the Customer [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
+          Resetting a password produces the Customer [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
+
+          A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+          - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#customer_idid) scope.
+          - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
+
         securedBy:
           [
             oauth_2_0:
@@ -1602,6 +1650,7 @@ uriParameters:
                   [
                     'manage_my_profile:{projectKey}',
                     'manage_my_profile:{projectKey}:{storeKey}',
+                    'customer_id:{id}',
                   ],
               },
           ]
@@ -1618,8 +1667,11 @@ uriParameters:
   /signup:
     type: base
     post:
-      displayName: Signup my customer in a store
+      displayName: Create (sign up) My Customer in Store
       description: |
+
+        If used with an optional [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly created Customer.
+
         If omitted in the request body, the [Customer](ctp:api:type:Customer) `stores` field is set to the [Store](ctp:api:type:Store) specified in the path parameter.
 
         A Cart returned in the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) has any invalid Line Items removed and is [updated](/api/carts-orders-overview#cart-updates) with the latest prices, taxes, and discounts. During these updates, the following errors can be returned: [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError) and [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError).
@@ -1633,6 +1685,7 @@ uriParameters:
                 [
                   'manage_my_profile:{projectKey}',
                   'manage_my_profile:{projectKey}:{storeKey}',
+                  'anonymous_id:{id}',
                 ],
             },
         ]
@@ -1649,9 +1702,12 @@ uriParameters:
   /login:
     type: base
     post:
-      displayName: Authenticate my Customer (Sign In) in a store
+      displayName: Authenticate (sign in) My Customer in Store
       description: |
+
         Retrieves the authenticated Customer (that matches the given email/password pair) if they are part of a specific [Store](ctp:api:type:Store).
+
+        If used with an optional [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly logged-in Customer.
 
         - If the Customer does not have a Cart, the most recently modified anonymous cart becomes the Customer's Cart.
         - If the Customer already has a Cart, the most recently modified anonymous cart is handled according to [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
@@ -1668,6 +1724,7 @@ uriParameters:
                 [
                   'manage_my_profile:{projectKey}',
                   'manage_my_profile:{projectKey}:{storeKey}',
+                  'anonymous_id:{id}',
                 ],
             },
         ]
@@ -1718,7 +1775,7 @@ uriParameters:
       where?:
         type: QueryPredicate[]
   post:
-    displayName: Create customer in store
+    displayName: Create Customer in Store
     securedBy:
       - oauth_2_0:
           scopes:

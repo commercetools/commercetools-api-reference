@@ -1,13 +1,25 @@
 type: base
 get:
-  displayName: Get my customer details
+  displayName: Get My Customer
   is:
     - sortable:
     - paging
     - expandable
     - query:
         whereExample: 'customerEmail = "email@example.com"'
-  securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
+  securedBy:
+    [
+      oauth_2_0:
+        { scopes: ['manage_my_profile:{projectKey}', 'customer_id:{id}'] },
+    ]
+  description: |
+    Returns a Customer for a given Query Predicate. Returns a `200 OK` status if successful.
+
+    A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+    - If no Customer exists for the given Query Predicate.
+    - If a Customer exists for the given Query Predicate, but does not have an `id` value that matches the [customer:{id}](/scopes#customer_idid) scope.
+
   responses:
     200:
       body:
@@ -15,12 +27,18 @@ get:
           example: !include ../examples/customer.example.json
           type: Customer
 post:
-  displayName: Update my customer
-  securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
+  displayName: Update My Customer
+  securedBy:
+    [
+      oauth_2_0:
+        { scopes: ['manage_my_profile:{projectKey}', 'customer_id:{id}'] },
+    ]
   body:
     application/json:
       example: !include ../examples/customer-update.example.json
       type: MyCustomerUpdate
+  description: |
+    Updates the Customer specified in the [customer:{id}](/scopes#customer_idid) scope. Returns a `200 OK` status if successful.
   responses:
     200:
       body:
@@ -28,11 +46,16 @@ post:
           example: !include ../examples/customer-update-response.example.json
           type: Customer
 delete:
-  displayName: Delete my Customer
+  displayName: Delete My Customer
   is:
     - versioned
     - conflicting
-  securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
+  securedBy:
+    [
+      oauth_2_0:
+        { scopes: ['manage_my_profile:{projectKey}', 'customer_id:{id}'] },
+    ]
+  description: Deletes the Customer specified in the [customer:{id}](/scopes#customer_idid) scope. Returns a `200 OK` status if successful.
   responses:
     200:
       body:
@@ -42,10 +65,14 @@ delete:
 /email/confirm:
   type: base
   post:
-    displayName: Verify my Customer's Email
+    displayName: Verify email of My Customer
     description: |
       This is the last step in the [email verification process of a Customer](/../api/projects/customers#email-verification-of-customer).
-    securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          { scopes: ['manage_my_profile:{projectKey}', 'customer_id:{id}'] },
+      ]
     body:
       application/json:
         example: !include ../examples/Customer/CustomerEmailVerify.json
@@ -60,14 +87,18 @@ delete:
 /password:
   type: base
   post:
-    displayName: Change my customers password
+    displayName: Change password of My Customer
     description: |
       Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
 
       If the current password does not match, an [InvalidCurrentPassword](ctp:api:type:InvalidCurrentPasswordError) error is returned.
     is:
       - conflicting
-    securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          { scopes: ['manage_my_profile:{projectKey}', 'customer_id:{id}'] },
+      ]
     body:
       application/json:
         type: MyCustomerChangePassword
@@ -81,12 +112,16 @@ delete:
   /reset:
     type: base
     post:
-      displayName: Reset my Customer's Password
+      displayName: Reset password of My Customer
       description: |
         This is the last step in the [password reset process of a Customer](/../api/projects/customers#password-reset-of-customer).
 
         Resetting a password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
-      securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
+      securedBy:
+        [
+          oauth_2_0:
+            { scopes: ['manage_my_profile:{projectKey}', 'customer_id:{id}'] },
+        ]
       body:
         application/json:
           example: !include ../examples/Customer/CustomerResetPassword.json
@@ -100,12 +135,16 @@ delete:
 /signup:
   type: base
   post:
-    displayName: Signup my customer
+    displayName: Create (sign up) My Customer
     description: |
-      If used with an [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly created Customer.
+      If used with an optional [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly created Customer.
 
       Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
-    securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          { scopes: ['manage_my_profile:{projectKey}', 'anonymous_id:{id}'] },
+      ]
     body:
       application/json:
         example: !include ../examples/customer-create.example.json
@@ -119,11 +158,11 @@ delete:
 /login:
   type: base
   post:
-    displayName: Authenticate my Customer (Sign In)
+    displayName: Authenticate (sign in) My Customer
     description: |
       Retrieves the authenticated customer (that matches the given email/password pair).
 
-      If used with [an access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly logged-in Customer.
+      If used with an optional [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly logged-in Customer.
 
       - If the Customer does not have a Cart yet, the most recently modified anonymous cart becomes the Customer's Cart.
       - If the Customer already has a Cart, the most recently modified anonymous cart is handled in accordance with [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
@@ -131,8 +170,11 @@ delete:
       A Cart returned in the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) has any invalid Line Items removed and is [updated](/api/carts-orders-overview#cart-updates) with the latest prices, taxes, and discounts. During these updates, the following errors can be returned: [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError) and [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError).
 
       If an account with the given credentials is not found, an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error is returned.
-
-    securedBy: [oauth_2_0: { scopes: ['manage_my_profile:{projectKey}'] }]
+    securedBy:
+      [
+        oauth_2_0:
+          { scopes: ['manage_my_profile:{projectKey}', 'anonymous_id:{id}'] },
+      ]
     body:
       application/json:
         type: MyCustomerSignin
@@ -177,7 +219,7 @@ delete:
           application/json:
             type: Cart
   head:
-    displayName: Check if active Cart exists
+    displayName: Check if active Cart exists by Query Predicate
     securedBy:
       [
         oauth_2_0:
@@ -197,7 +239,6 @@ delete:
 
       - If no active Cart exists.
       - If an active Cart exists but does not have a `customerId` that matches the [customer:{id}](/scopes#customer_idid) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#anonymous_idid) scope.
-
 /business-units:
   type:
     baseDomain:
@@ -212,24 +253,47 @@ delete:
   description: MyBusinessUnit creates and provides access to Business Units scoped to a specific user.
   get:
     displayName: Query My Business Units
+    description: |
+      Returns all of the authenticated Customer’s Business Units in a Project. Returns a `200 OK` status if successful, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+
     securedBy:
-      [oauth_2_0: { scopes: ['manage_my_business_units:{projectKey}'] }]
+      [
+        oauth_2_0:
+          {
+            scopes:
+              ['manage_my_business_units:{projectKey}', 'customer_id:{id}'],
+          },
+      ]
     responses:
       200:
         body:
           application/json:
             example: !include ../examples/my-business-units.example.json
   head:
+    displayName: Check if Business Unit exists by Query Predicate
     securedBy:
-      [oauth_2_0: { scopes: ['manage_my_business_units:{projectKey}'] }]
-    description: Checks if a BusinessUnit exists for a given Query Predicate. Returns a `200 OK` status if any BusinessUnits match the Query Predicate or a `404 Not Found` otherwise.
+      [
+        oauth_2_0:
+          {
+            scopes:
+              ['manage_my_business_units:{projectKey}', 'customer_id:{id}'],
+          },
+      ]
+    description: |
+      Checks if a BusinessUnit exists for a given Query Predicate. Returns a `200 OK` status if any BusinessUnits match the Query Predicate and the Customer has access to them, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
     queryParameters:
       where?:
         type: QueryPredicate[]
   post:
     displayName: Create My Business Units
     securedBy:
-      [oauth_2_0: { scopes: ['manage_my_business_units:{projectKey}'] }]
+      [
+        oauth_2_0:
+          {
+            scopes:
+              ['manage_my_business_units:{projectKey}', 'customer_id:{id}'],
+          },
+      ]
     description: |
       Automatically assigns the Associate to the Business Unit in the default [Associate Role](ctp:api:type:AssociateRole) defined in [BusinessUnitConfiguration](ctp:api:type:BusinessUnitConfiguration). If there is no default Associate Role configured, this request fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error. When creating a Division, the Associate must have the `AddChildUnits` [Permission](ctp:api:type:Permission) in the parent unit. If the required [Permission](/projects/associate-roles#permission) is missing, an [AssociateMissingPermission](/errors#associatemissingpermission) error is returned.
     body:
@@ -248,34 +312,49 @@ delete:
         resourceType: BusinessUnit
         resourceUpdateType: MyBusinessUnitUpdate
     get:
-      displayName: Get My Business Units by ID
+      displayName: Get My Business Unit by ID
+      description: |
+        Returns a Business Unit for a given `id`. Returns a `200 OK` status if the Business Unit exists and the Customer has access to it, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_business_units:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                ['manage_my_business_units:{projectKey}', 'customer_id:{id}'],
+            },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/my-business-unit.example.json
     head:
+      displayName: Check if Business Unit exists by ID
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_business_units:{projectKey}'] }]
-      description: Checks if a BusinessUnit exists for a given `id`. Returns a `200 OK` status if the BusinessUnit exists or a `404 Not Found` otherwise.
+        [
+          oauth_2_0:
+            {
+              scopes:
+                ['manage_my_business_units:{projectKey}', 'customer_id:{id}'],
+            },
+        ]
+      description: Checks if a BusinessUnit exists for a given `id`. Returns a `200 OK` status if the BusinessUnit exists and the Customer has access to it, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
     post:
       displayName: Update My Business Units by ID
+      description: |
+        Updates a Business Unit for a given `id`. Returns a `200 OK` status if the Business Unit exists and the Customer has access to it, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_business_units:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                ['manage_my_business_units:{projectKey}', 'customer_id:{id}'],
+            },
+        ]
       body:
         application/json:
           example: !include ../examples/my-business-unit-update.example.json
-      responses:
-        200:
-          body:
-            application/json:
-              example: !include ../examples/my-business-unit.example.json
-    delete:
-      displayName: Delete My Business Units by ID
-      securedBy:
-        [oauth_2_0: { scopes: ['manage_my_business_units:{projectKey}'] }]
       responses:
         200:
           body:
@@ -289,34 +368,48 @@ delete:
         resourceType: BusinessUnit
         resourceUpdateType: MyBusinessUnitUpdate
     get:
-      displayName: Get My Business Units by Key
+      displayName: Get My Business Unit by Key
+      description: Returns a Business Unit for a given `key`. Returns a `200 OK` status if the Business Unit exists and the Customer has access to it, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_business_units:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                ['manage_my_business_units:{projectKey}', 'customer_id:{id}'],
+            },
+        ]
       responses:
         200:
           body:
             application/json:
               example: !include ../examples/my-business-unit.example.json
     head:
+      displayName: Check if Business Unit exists by Key
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_business_units:{projectKey}'] }]
-      description: Checks if a BusinessUnit exists for a given `key`. Returns a `200 OK` status if the BusinessUnit exists or a `404 Not Found` otherwise.
+        [
+          oauth_2_0:
+            {
+              scopes:
+                ['manage_my_business_units:{projectKey}', 'customer_id:{id}'],
+            },
+        ]
+      description: Checks if a BusinessUnit exists for a given `key`. Returns a `200 OK` status if the Business Unit exists and the Customer has access to it, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
     post:
-      displayName: Update My Business Units by Key
+      displayName: Update My Business Unit by Key
+      description: Updates a Business Unit for a given `key`. Returns a `200 OK` status if the Business Unit exists and the Customer has access to it, or a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+
       securedBy:
-        [oauth_2_0: { scopes: ['manage_my_business_units:{projectKey}'] }]
+        [
+          oauth_2_0:
+            {
+              scopes:
+                ['manage_my_business_units:{projectKey}', 'customer_id:{id}'],
+            },
+        ]
       body:
         application/json:
           example: !include ../examples/my-business-unit-update.example.json
-      responses:
-        200:
-          body:
-            application/json:
-              example: !include ../examples/my-business-unit.example.json
-    delete:
-      displayName: Delete My Business Units by Key
-      securedBy:
-        [oauth_2_0: { scopes: ['manage_my_business_units:{projectKey}'] }]
       responses:
         200:
           body:
