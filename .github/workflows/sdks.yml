@@ -43,7 +43,6 @@ jobs:
             diffFormat: PHP_MARKDOWN
           - language: postman
             repository: 'commercetools/commercetools-postman-collection'
-            API_RAML: "../commercetools-api-reference/api-specs/api/postman.raml"
     steps:
         # Get GitHub token via the CT SDKs App
       - name: Generate GitHub token (via CT SDKs App)
@@ -144,6 +143,7 @@ jobs:
           sed -i 's/^type Query implements.*/type Query {/' commercetools-sdk/commercetools/commercetools-graphql-api/src/main/resources/graphql/schema.graphqls
 
       - name: "Generate SDK"
+        if: ${{ matrix.language != 'postman' }}
         run: sudo chmod 777 /usr/local/bin && make ${{ matrix.makeParams }} build
         working-directory: commercetools-sdk
         env:
@@ -153,18 +153,14 @@ jobs:
           ML_RAML: "../commercetools-api-reference/api-specs/ml/api.raml"
           HISTORY_RAML: "../commercetools-api-reference/api-specs/history/api.raml"
 
-      - name: "Generate connect postman collection"
-        if: ${{ matrix.language == 'postman' }}
-        run: sudo chmod 777 /usr/local/bin && make build
-        working-directory: commercetools-sdk
-        env:
-          RAML_FILE: "../commercetools-api-reference/api-specs/connect/api.raml"
-          LIB_NAME: "connect"
-
-      - name: Minify Api postman collection
-        if: ${{ matrix.language == 'postman' }}
+      - name: "Generate postman collections"
+        if: ${{ matrix.language != 'postman' }}
         working-directory: commercetools-sdk
         run: |-
+          sudo chmod 777 /usr/local/bin
+          make RAML_FILE=../commercetools-api-reference/api-specs/api/postman.raml LIB_NAME=api build
+          make RAML_FILE=../commercetools-api-reference/api-specs/import/postman.raml LIB_NAME=import build
+          make RAML_FILE=../commercetools-api-reference/api-specs/connect/postman.raml LIB_NAME=connect build
           jq -r tostring api/collection.json > api/minified.json
           mv api/minified.json api/collection.json
 
