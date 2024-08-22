@@ -44,6 +44,17 @@ input AWSLambdaDestinationInput {
   accessSecret: String!
 }
 
+type AbsoluteCartDiscountValue implements CartDiscountValue {
+  money: [Money!]!
+  applicationMode: DiscountApplicationMode!
+  type: String!
+}
+
+input AbsoluteCartDiscountValueInput {
+  money: [MoneyInput!]!
+  applicationMode: DiscountApplicationMode!
+}
+
 type AbsoluteDiscountValue implements CartDiscountValue & ProductDiscountValue {
   money: [Money!]!
   type: String!
@@ -1911,6 +1922,7 @@ input CartDiscountValueBaseMoneyInput {
 input CartDiscountValueInput {
   relative: RelativeDiscountValueInput
   absolute: AbsoluteDiscountValueInput
+  absoluteCart: AbsoluteCartDiscountValueInput
   fixed: FixedPriceDiscountValueInput
   giftLineItem: GiftLineItemValueInput
 }
@@ -3967,6 +3979,12 @@ input DirectDiscountDraft {
 type DirectDiscountDraftOutput {
   value: CartDiscountValue!
   target: CartDiscountTarget
+}
+
+enum DiscountApplicationMode {
+  ProportionateDistribution
+  EvenDistribution
+  IndividualApplication
 }
 
 "With discount codes it is possible to give specific cart discounts to an eligible amount of users. They are defined by a string value which can be added to a cart so that specific cart discounts can be applied to the cart."
