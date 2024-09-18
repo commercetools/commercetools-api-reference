@@ -180,35 +180,65 @@ post:
   /images:
     post:
       displayName: Upload a Product image
+      description: |
+        Uploads a JPEG, PNG, or a GIF image file to a [ProductVariant](ctp:api:type:ProductVariant).
+        The maximum file size of the image is **10MB**.
+        Either `variant` or `sku` is required to update a specific ProductVariant.
+        If neither is provided, the image is uploaded to the Master Variant of the Product.
+
+        The response status code depends on the size of the original image.
+        If the image is small, the API responds with `200 OK`, and if the image is larger, it responds with `202 Accepted`.
+        The Product returned with a `202 Accepted` status code contains a `warnings` field with an [ImageProcessingOngoing](ctp:api:type:ImageProcessingOngoingWarning) Warning.
+
+        Produces the [ProductImageAdded](/projects/messages/product-catalog-messages#product-image-added) Message.
+
       queryParameters:
         filename?:
           type: string
-          description: Base filename of the image when stored in the Content Delivery Network. The filename will be modified when uploaded to prevent filename conflicts. If not included a random filename will be allocated.
+          default: 'img'
+          description: |
+            URL-encoded filename of the image when stored in the Content Delivery Network (CDN).
+            The filename is modified when uploaded to prevent filename conflicts.
+            If not provided, a random filename is generated.
         variant?:
           type: number
           format: int64
-          description: The id of the [ProductVariant](ctp:api:type:ProductVariant) the image should be uploaded to.
+          description: |
+            The `id` of the [ProductVariant](ctp:api:type:ProductVariant) the image should be uploaded to.
         sku?:
           type: string
-          description: The sku of the [ProductVariant](ctp:api:type:ProductVariant) the image should be uploaded to.
+          description: |
+            The `sku` of the [ProductVariant](ctp:api:type:ProductVariant) the image should be uploaded to.
         staged?:
           type: boolean
-          description: If `true`, only the staged ProductVariant is updated. If `false`, both the current and staged ProductVariant are updated.
-      description: |
-        Upload a JPEG, PNG and GIF file to a [ProductVariant](ctp:api:type:ProductVariant). The maximum file size of the image is 10MB. `variant` or `sku` is required to update a specific ProductVariant. The image is uploaded to the Master Variant if `variant` or `sku` are not included. Produces the [ProductImageAdded](/projects/messages/product-catalog-messages#product-image-added) Message when the `Small` version of the image has been uploaded to the CDN.
+          default: true
+          description: |
+            If `true`, only the staged ProductVariant is updated.
+            If `false`, both the current and staged ProductVariant are updated.
       securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
       body:
-        type: file
-        fileTypes: ['image/jpeg', 'image/png', 'image/gif']
+        image/jpeg:
+          type: file
+        image/png:
+          type: file
+        image/gif:
+          type: file
       headers:
         Content-Type:
-          enum: ['image/jpeg', 'image/png', 'image/gif']
+          type: string
+          description: |
+            One of `image/jpeg`, `image/png`, or `image/gif`.
       responses:
         200:
           body:
-            example: !include ../examples/product.example.json
-            type: Product
-
+            application/json:
+              type: Product
+              example: !include ../examples/product.example.json
+        202:
+          body:
+            application/json:
+              type: Product
+              example: !include ../examples/product-with-image-processing-warning.example.json
   /product-selections:
     type:
       baseDomain:

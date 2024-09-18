@@ -3004,34 +3004,66 @@ uriParameters:
       /images:
         post:
           displayName: Upload a Product Tailoring image
+          description: |
+            Uploads a JPEG, PNG and GIF file to a [ProductVariantTailoring](ctp:api:type:ProductVariantTailoring).
+            The maximum file size of the image is **10MB**.
+            Either `variant` or `sku` is required to update a specific ProductVariant.
+            If neither is provided, the image is uploaded to the Master Variant of the Product.
+
+            The response status code depends on the size of the original image.
+            If the image is small, the API responds with `200 OK`, and if the image is larger, it responds with `202 Accepted`.
+            The Product returned with a `202 Accepted` status code contains a `warnings` field with an [ImageProcessingOngoing](ctp:api:type:ImageProcessingOngoingWarning) Warning.
+
+            Produces the [ProductTailoringImageAdded](/projects/messages/product-catalog-messages#product-tailoring-image-added) Message.
           queryParameters:
             filename?:
               type: string
-              description: Base filename of the image when stored in the Content Delivery Network. The filename will be modified when uploaded to prevent filename conflicts. If not included a random filename will be allocated.
+              default: 'img'
+              description: |
+                URL-encoded filename of the image when stored in the Content Delivery Network (CDN).
+                The filename is modified when uploaded to prevent filename conflicts.
+                If not provided, a random filename is generated.
             variant?:
               type: number
               format: int64
-              description: The `id` of the [ProductTailoringVariant](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to. It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
+              description: |
+                The `id` of the [ProductVariantTailoring](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to.
+                It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
             sku?:
               type: string
-              description: The `sku` of the [ProductTailoringVariant](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to. It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
+              description: |
+                The `sku` of the [ProductVariantTailoring](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to.
+                It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
             staged?:
               type: boolean
-              description: If `true`, only the staged ProductTailoringVariant is updated. If `false`, both the current and staged ProductTailoringVariant are updated.
-          description: |
-            Upload a JPEG, PNG and GIF file to a [ProductTailoringVariant](ctp:api:type:ProductTailoringVariant). The maximum file size of the image is 10MB. `variant` or `sku` is required to update a specific ProductVariant. Produces the [ProductTailoringImageAdded](/projects/messages/product-catalog-messages#product-tailoring-image-added) Message when the `Small` version of the image has been uploaded to the CDN.
+              default: true
+              description: |
+                If `true`, only the staged ProductVariantTailoring is updated.
+                If `false`, both the current and staged ProductVariantTailoring are updated.
           securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
           body:
-            type: file
-            fileTypes: ['image/jpeg', 'image/png', 'image/gif']
+            image/jpeg:
+              type: file
+            image/png:
+              type: file
+            image/gif:
+              type: file
           headers:
             Content-Type:
-              enum: ['image/jpeg', 'image/png', 'image/gif']
+              type: string
+              description: |
+                One of `image/jpeg`, `image/png`, or `image/gif`.
           responses:
             200:
               body:
-                type: ProductTailoring
-                example: !include ../examples/product-tailoring.example.json
+                application/json:
+                  type: ProductTailoring
+                  example: !include ../examples/product-tailoring.example.json
+            202:
+              body:
+                application/json:
+                  type: ProductTailoring
+                  example: !include ../examples/product-tailoring-with-image-processing-warning.example.json
   /key={productKey}:
     (methodName): withProductKey
     uriParameters:
@@ -3113,34 +3145,66 @@ uriParameters:
       /images:
         post:
           displayName: Upload a Product Tailoring image
+          description: |
+            Uploads a JPEG, PNG and GIF file to a [ProductVariantTailoring](ctp:api:type:ProductVariantTailoring).
+            The maximum file size of the image is **10MB**.
+            Either `variant` or `sku` is required to update a specific ProductVariant.
+            If neither is provided, the image is uploaded to the Master Variant of the Product.
+
+            The response status code depends on the size of the original image.
+            If the image is small, the API responds with `200 OK`, and if the image is larger, it responds with `202 Accepted`.
+            The Product returned with a `202 Accepted` status code contains a `warnings` field with an [ImageProcessingOngoing](ctp:api:type:ImageProcessingOngoingWarning) Warning.
+
+            Produces the [ProductTailoringImageAdded](/projects/messages/product-catalog-messages#product-tailoring-image-added) Message.
           queryParameters:
             filename?:
               type: string
-              description: Base filename of the image when stored in the Content Delivery Network. The filename will be modified when uploaded to prevent filename conflicts. If not included a random filename will be allocated.
+              default: 'img'
+              description: |
+                URL-encoded filename of the image when stored in the Content Delivery Network (CDN).
+                The filename is modified when uploaded to prevent filename conflicts.
+                If not provided, a random filename is generated.
             variant?:
               type: number
               format: int64
-              description: The `id` of the [ProductTailoringVariant](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to. It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
+              description: |
+                The `id` of the [ProductVariantTailoring](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to.
+                It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
             sku?:
               type: string
-              description: The `sku` of the [ProductTailoringVariant](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to. It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
+              description: |
+                The `sku` of the [ProductVariantTailoring](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to.
+                It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
             staged?:
               type: boolean
-              description: If `true`, only the staged ProductTailoringVariant is updated. If `false`, both the current and staged ProductTailoringVariant are updated.
-          description: |
-            Upload a JPEG, PNG and GIF file to a [ProductTailoringVariant](ctp:api:type:ProductTailoringVariant). The maximum file size of the image is 10MB. `variant` or `sku` is required to update a specific ProductVariant. Produces the [ProductTailoringImageAdded](/projects/messages/product-catalog-messages#product-tailoring-image-added) Message when the `Small` version of the image has been uploaded to the CDN.
+              default: true
+              description: |
+                If `true`, only the staged ProductVariantTailoring is updated.
+                If `false`, both the current and staged ProductVariantTailoring are updated.
           securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
           body:
-            type: file
-            fileTypes: ['image/jpeg', 'image/png', 'image/gif']
+            image/jpeg:
+              type: file
+            image/png:
+              type: file
+            image/gif:
+              type: file
           headers:
             Content-Type:
-              enum: ['image/jpeg', 'image/png', 'image/gif']
+              type: string
+              description: |
+                One of `image/jpeg`, `image/png`, or `image/gif`.
           responses:
             200:
               body:
-                type: ProductTailoring
-                example: !include ../examples/product-tailoring.example.json
+                application/json:
+                  type: ProductTailoring
+                  example: !include ../examples/product-tailoring.example.json
+            202:
+              body:
+                application/json:
+                  type: ProductTailoring
+                  example: !include ../examples/product-tailoring-with-image-processing-warning.example.json
 /quote-requests:
   type:
     baseDomain:
