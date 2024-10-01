@@ -238,6 +238,8 @@ post:
   post:
     displayName: Search Customers
     securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
+    description: |
+      A [SearchNotReady](ctp:api:type:SearchNotReadyError) error is returned if the indexing is in progress or the feature is deactivated. If deactivated, you can [reactivate](/../api/projects/customer-search#reactivate) it.
     body:
       application/json:
         type: CustomerSearchRequest
@@ -249,20 +251,20 @@ post:
   head:
     securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
     description: |
-      Checks whether a search index for the Project's Customers exists.
-      Returns a `200 OK` status if the index exists or `404 Not Found` otherwise.
+      Checks whether a search index of Customers exists for a Project.
+      If an index exists, a `200 OK` is returned; otherwise, a `409 Conflict`.
     responses:
       200:
-        description: The search index exists and the Search Customers endpoint is fully operational.
-      404:
-        description: The search index does not exist and the Search Customers endpoint returns Error 404 only.
+        description: A search index exists and the [Search Customers](ctp:api:endpoint:/{projectKey}/customers/search:POST) endpoint is fully operational.
+      409:
+        description: A search index does not exist and the [Search Customers](ctp:api:endpoint:/{projectKey}/customers/search:POST) endpoint returns a 409 error.
 /search/indexing-status:
   type: base
   displayName: Customer Search Status
-  description: |
-    This endpoint provides information on the status of a Customer search for a project
   get:
     displayName: Customer Search Status
+    description: |
+      Returns the indexing status of the Customer Search for a Project.
     securedBy: [oauth_2_0: { scopes: ['view_project_settings:{projectKey}'] }]
     responses:
       200:
