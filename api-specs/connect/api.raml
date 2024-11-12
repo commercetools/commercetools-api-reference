@@ -9,7 +9,7 @@ uses:
 version: v1
 mediaType: application/json
 baseUri: https://connect.{region}.commercetools.com
-(annotations.sdkBaseUri): https://connect.europe-west1.gcp.commercetools.com
+(annotations.sdkBaseUri): https://connect.{region}.commercetools.com
 baseUriParameters:
   region:
     type: string
@@ -114,14 +114,11 @@ resourceTypes: !include types/resource-types.raml
         type: DeploymentDraft
         example: !include ./examples/deployment/draft.json
       description: |
-        Specific error codes:
+        Specific Error Codes:
         - [ConnectorStagedNotPreviewable](ctp:connect:type:ConnectorStagedNotPreviewableError)
         - [DeploymentUnsupportedRegion](ctp:connect:type:DeploymentUnsupportedRegionError)
         - [DeploymentUnknownApplicationConfiguration](ctp:connect:type:DeploymentUnknownApplicationConfigurationError)
         - [DeploymentUnknownApplicationConfigurationKey](ctp:connect:type:DeploymentUnknownApplicationConfigurationKeyError)
-        - [DeploymentApplicationDoNotBelong](ctp:connect:type:DeploymentApplicationDoNotBelongError)
-        - [DeploymentMustIncludeApplication](ctp:connect:type:DeploymentMustIncludeApplicationError)
-        - [DeploymentApplicationRequired](ctp:connect:type:DeploymentApplicationRequiredError)
       responses:
         201:
           body:
@@ -133,14 +130,6 @@ resourceTypes: !include types/resource-types.raml
             type: ErrorResponse
     get:
       queryParameters:
-        integrationTypes?:
-          description: |
-            Filter the results by the `integrationType` of a Connector.
-          type: common.IntegrationType[]
-        deploymentType?:
-          description: |
-            Filter the results by the `deploymentType` of a Connector.
-          type: common.DeploymentType
         limit?:
           type: number
           format: int64
@@ -153,6 +142,14 @@ resourceTypes: !include types/resource-types.raml
             Number of [elements skipped](/../api/general-concepts#offset).
         sort?:
           type: string[]
+        integrationTypes?:
+          description: |
+            Filter the results by the `integrationType` of a Connector.
+          type: common.IntegrationType[]
+        deploymentType?:
+          description: |
+            Filter the results by the `deploymentType` of a Connector.
+          type: common.DeploymentType
       description: Retrieves all deployments of a project key.
       is:
         - secured_by_view_connectors_deployments
@@ -283,10 +280,6 @@ resourceTypes: !include types/resource-types.raml
             type: ErrorResponse
     get:
       queryParameters:
-        integrationTypes?:
-          description: |
-            Filter the results by the `integrationType` of a ConnectorStaged.
-          type: common.IntegrationType[]
         limit?:
           type: number
           format: int64
@@ -299,6 +292,14 @@ resourceTypes: !include types/resource-types.raml
             Number of [elements skipped](/../api/general-concepts#offset).
         sort?:
           type: string[]
+        isPrivate?:
+          type: boolean
+          description: |
+            If `true`, only private Connectors are returned. If `false`, only public Connectors are returned.
+        integrationTypes?:
+          description: |
+            Filter the results by the `integrationType` of a ConnectorStaged.
+          type: common.IntegrationType[]
       is:
         - secured_by_view_connectors
       responses:

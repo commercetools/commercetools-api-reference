@@ -31,8 +31,8 @@ types:
       comment:
         type: string
         description: The body text of the comment.
-  ConfigurationKeyStandard:
-    example: !include ../examples/connector/ConfigurationKeyStandard.json
+  StandardConfigurationKey:
+    example: !include ../examples/connector/ConfigurationKey.json
     description: |
       The name, description, and default value of a standard environment variable.
     properties:
@@ -49,8 +49,8 @@ types:
         type: boolean
         description: Indicates if the environment variable is required.
         default: false
-  ConfigurationKeySecured:
-    example: !include ../examples/connector/ConfigurationKeySecured.json
+  SecuredConfigurationKey:
+    example: !include ../examples/connector/ConfigurationKey.json
     description: |
       The name and description of a secret environment variable.
     properties:
@@ -91,13 +91,22 @@ types:
           - service
           - event
           - job
-          - mc-app
+          - merchant-center-custom-application
           - assets
       standardConfiguration:
-        type: ConfigurationKeyStandard[]
+        type: StandardConfigurationKey[]
         description: Contains the name, description, and default values of standard environment variables.
       securedConfiguration:
-        type: ConfigurationKeySecured[]
+        type: SecuredConfigurationKey[]
+        description: Contains the name and description of secret environment variables.
+  ConnectorGlobalConfiguration:
+    description: Global configuration applied to all applications in the deployment.
+    properties:
+      standardConfiguration?:
+        type: StandardConfigurationKey[]
+        description: Contains the name and description of standard environment variables.
+      securedConfiguration?:
+        type: SecuredConfigurationKey[]
         description: Contains the name and description of secret environment variables.
   DeploymentConfigurationApplication:
     description: |
@@ -270,9 +279,30 @@ types:
       repository:
         type: Repository
         description: Details of the GitHub repository that contains the Connect applications.
+      configurations?:
+        type: ConnectorConfigurationApplication[]
+        description: Configurations needed by Connectors for hosting. Loaded as environment variables in the application.
+      globalConfiguration?:
+        type: ConnectorGlobalConfiguration
+        description: Global configuration applied to all applications in the deployment.
       certified:
         type: boolean
         description: If `true`, the Connector is certified.
+      supportedRegions?:
+        type: Region[]
+        description: If not empty, Connectors can only be deployed in these Regions. If empty, Connectors can be deployed in any [supported Region](hosts-and-authorization#hosts).
+      documentationUrl?:
+        type: string
+        description: URL to the documentation of the Connector.
+  DeploymentGlobalConfiguration:
+    description: Global configuration applied to all applications in the deployment.
+    properties:
+      standardConfiguration?:
+        type: ConfigurationValue[]
+        description: List of standard environment variables.
+      securedConfiguration?:
+        type: ConfigurationValue[]
+        description: List of secured environment variables.
   DeploymentCreator:
     example: !include ../examples/deployment/DeploymentCreator.json
     description: The details of the deployed [DeploymentConnector](ctp:connect:type:DeploymentConnector) creator.
@@ -293,6 +323,12 @@ types:
       noOfContributors?:
         type: integer
         description: Number of contributors currently working for the company.
+      logoUrl?:
+        type: string
+        description: URL to an image used as the company logo.
+      supportUrl?:
+        type: string
+        description: Url to support website of the company.
   DeploymentReportEntryType:
     type: string
     description: |
@@ -403,20 +439,6 @@ types:
   IntegrationType:
     description: |
       Integration type of the Connector.
-    enum:
-      - tax
-      - marketplace
-      - oms
-      - psp
-      - pim
-      - promotion
-      - search
-      - erp
-      - crm
-      - email
-      - analytics
-      - shipping
-      - other
     (annotations.enumDescriptions):
       tax: Tax.
       marketplace: Marketplace.
@@ -431,6 +453,20 @@ types:
       analytics: Analytics.
       shipping: Shipping and delivery.
       other: The Connector provides a service or functionality that is not covered by the other values.
+    enum:
+      - tax
+      - marketplace
+      - oms
+      - psp
+      - pim
+      - promotion
+      - search
+      - erp
+      - crm
+      - email
+      - analytics
+      - shipping
+      - other
   DeploymentType:
     description: |
       Deployment type of the Connector.
