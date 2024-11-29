@@ -1,0 +1,571 @@
+#%RAML 1.0
+---
+title: Commercetools Test API Spec
+version: v0.1 beta
+mediaType: application/json
+baseUri: https://api.regionOne.providerOne.commercetools.com
+(annotations.docsBaseUri): https://api.{region}.{cloudProvider}.commercetools.com
+(annotations.docsBaseUriParameters):
+  region:
+    type: string
+    required: true
+    enum:
+      - regionOne
+      - regionTwo
+      - regionThree
+    description: |
+      Free text description of the uri parameter.
+  cloudProvider:
+    type: string
+    required: true
+    enum:
+      - providerOne
+      - providerTwo
+      - providerThree
+    description: |
+      Free text description of the uri parameter.
+securitySchemes:
+  oauth_2_0: !include security-schemes/oauth2.raml
+securedBy: [oauth_2_0]
+
+# This API represents a series of test cases from which to generate API documentation
+
+uses:
+  annotations: annotation-types/annotations.raml
+  annotations-test-type: types/annotations-test-type.raml
+  any-properties-type: types/any-properties-type.raml
+  any-test-type: types/any-test-type.raml
+  arrays: types/arrays.raml
+  constants: types/constants.raml
+  date-test-type: types/date-test-type.raml
+  descriptions-with-urn-links: types/descriptions-with-urn-links.raml
+  enums: types/enums.raml
+  examples: types/examples.raml
+  link-test-types: types/link-test-types.raml
+  type-overrides: types/type-overrides.raml
+  objects: types/objects.raml
+  optional-property-test-type: types/optional-property-test-type.raml
+  out-of-order-properties-test-type: types/out-of-order-properties-test-type.raml
+  references: types/references.raml
+  regex-properties-type-string: types/regex-properties-type-string.raml
+  regex-properties-type-object: types/regex-properties-type-object.raml
+  regex-properties-type-array: types/regex-properties-type-array.raml
+  scalars: types/scalars.raml
+  soft-links: types/soft-links.raml
+  unions: types/unions.raml
+
+# Endpoints ("Resources" in RAML and HTTP terminology)
+# Every CT API endpoint starts at this root
+/{projectKey}:
+  uriParameters:
+    projectKey:
+      description: The CTP project key.
+      type: string
+  /resource:
+    post:
+      displayName: Create or Update a Resource
+      description: Create or Update (POST) operation to a resource.
+      securedBy:
+        - oauth_2_0:
+            scopes:
+              [
+                'manage_test:{projectKey}',
+                'customer_id_test:{id}',
+                'manage_my_profile_test:{projectKey}',
+                'customer_id_test:{id}',
+                'manage_my_profile_test:{projectKey}',
+                'manage_test:{projectKey}',
+                'manage_my_profile_test:{projectKey}',
+                'customer_id_test:{id}',
+                'manage_test:{projectKey}',
+                'manage_my_profile_test:{projectKey}',
+                'customer_id_test:{id}',
+                'manage_my_profile_test:{projectKey}',
+              ]
+      body:
+        type: objects.ObjectTestTypeDraft
+        example: !include examples/object-test-type-draft.json
+      responses:
+        201:
+          description: 201 Created response. This is the success response when creating something.
+          body:
+            type: objects.ObjectTestType
+            example: !include examples/object-test-type.json
+    head:
+      displayName: Check for existence
+      description: Check if at least one resource exists matching the query condition.
+      queryParameters:
+        stringParameter:
+          type: string
+          required: false
+          default: test
+          example: 6 in arrayOfIntExample
+        booleanParameter:
+          type: boolean
+          required: false
+          default: false
+        floatParameter:
+          type: number
+          required: false
+          default: 10
+          example: 50
+        integerParameter:
+          type: integer
+          required: false
+          default: 5
+          example: 50
+        withMarkdownDescription:
+          type: number
+          description: This `markdown` should be parsed correctly.
+          required: false
+          default: 1500
+          example: 50
+        objectParameter:
+          type: objects.ObjectTestType
+          required: false
+        arrayOfString:
+          type: string[]
+          required: false
+        arrayOfStringWithDescription:
+          description: This should render above the text "The parameter can be passed multiple times."
+          type: string[]
+          required: false
+      securedBy:
+        - oauth_2_0:
+            scopes: ['manage_test:{projectKey}', 'view_test:{projectKey}']
+      responses:
+        200:
+          description: A 200 response.  This is the case when reading or modifying something.
+    put:
+      displayName: Create or Overwrite a Resource
+      description: Create or Overwrite (PUT) operation to a resource.
+      securedBy:
+        - oauth_2_0:
+            scopes: ['manage_test:{projectKey}']
+      body:
+        type: objects.ObjectTestTypeDraft
+      responses:
+        201:
+          description: 201 Created response. This is the success response when creating something.
+          body:
+            type: objects.ObjectTestType
+    patch:
+      displayName: Overwrite a Resource
+      description: Overwrite (PATCH) operation to a resource.
+      securedBy:
+        - oauth_2_0:
+            scopes: ['manage_test:{projectKey}']
+      body:
+        type: objects.ObjectTestTypeDraft
+      responses:
+        201:
+          description: 201 Created response. This is the success response when creating something.
+          body:
+            type: objects.ObjectTestType
+    get:
+      displayName: Get all resources
+      description: Query/retrieve (GET) a specific resource or resource(s). This should return a paged query result of _blah_.
+      queryParameters:
+        stringParameter:
+          type: string
+          required: false
+          example: 6 in arrayOfIntExample
+        floatParameter:
+          type: number
+          required: false
+          example: 50
+        integerParameter:
+          type: integer
+          required: false
+          example: 50
+        withMarkdownDescription:
+          type: number
+          description: This `markdown` should be parsed correctly.
+          required: false
+          example: 50
+        objectParameter:
+          type: objects.ObjectTestType
+          required: false
+        arrayOfString:
+          type: string[]
+          required: false
+        arrayOfStringWithDescription:
+          description: This should render above the text "The parameter can be passed multiple times."
+          type: string[]
+          required: false
+        unionParameter:
+          type: number | datetime | objects.ObjectTestType
+          required: false
+      securedBy:
+        - oauth_2_0:
+            scopes: ['manage_test:{projectKey}', 'view_test:{projectKey}']
+      responses:
+        200:
+          description: A 200 response.  This is the case when reading or modifying something.
+          body:
+            type: arrays.ArrayTestType
+            example: !include examples/array-test-type.json
+    /{id}:
+      post:
+        displayName: Update a Resource by ID
+        description: Update a resource by ID
+        body:
+          type: examples.ExampleResourceUpdate
+          example: !include examples/example-resource-update.json
+      get:
+        displayName: Get a Resource by its ID
+        description: Query by ID
+        securedBy:
+          - oauth_2_0:
+              scopes: ['manage_test:{projectKey}', 'view_test:{projectKey}']
+        queryParameters:
+          optionalQueryParameter:
+            required: false
+            type: string
+            description: |
+              This is a query parameter.
+            example: optional
+          secondOptionalQueryParameter:
+            required: false
+            type: string
+            description: |
+              This is another query parameter.
+            example: second optional
+        responses:
+          200:
+            body:
+              type: objects.ObjectTestType
+              example: !include examples/object-test-type.json
+      delete:
+        displayName: Delete a Resource by its ID
+        description: Deletes a resource.
+        securedBy:
+          - oauth_2_0:
+              scopes: ['manage_test:{projectKey}']
+        responses:
+          200:
+            description: Deletion was successful.
+            body:
+              type: objects.ObjectTestType
+              example: !include examples/object-test-type.json
+    /key={key}:
+      get:
+        displayName: Get a Resource by its Key
+        description: Query by key. Has three responses to see the difference between modeling patterns in RAML
+        securedBy:
+          [
+            oauth_2_0:
+              {
+                scopes: ['manage_test:{projectKey}', 'view_test:{projectKey}'],
+              },
+          ]
+        responses:
+          200:
+            description: this is directly using a named type without messing with it, thats how we want to use RAML
+            body:
+              type: objects.ObjectTestType
+              example: !include examples/object-test-type.json
+          502:
+            body:
+              type: scalars.StringTestType
+              example: !include examples/string-test-type.json
+
+    /artificially-complex/path/uri-parameter-one={uriParameterOne}/{uriParameterTwo}:
+      description: Artificial Endpoint constructing a high complexity of what could theoretically come together in one API
+      (annotations.beta): true
+      uriParameters:
+        uriParameterOne:
+          type: string
+          description: A Path parameter in the equal-sign-pseudo-query notation
+          example: lastName = "Doe"
+        uriParameterTwo:
+          type: string
+          description: A Path parameter as a plain variable path element
+          example: plain
+      post:
+        description: Updates the resource. OutOfOrderPropertiesTestType is used because it is big and long.
+        queryParameters:
+          queryParameterOne:
+            type: number
+            description: some parameter to construct a combination of URI and query params
+            required: false
+            example: 1
+          queryParameterTwo:
+            type: string
+            required: false
+            example: string-path
+        body:
+          type: out-of-order-properties-test-type.OutOfOrderPropertiesTestType
+          example: !include examples/out-of-order-properties-test-type.json
+        responses:
+          200:
+            description: ArrayTestType is used because it is big and long.
+            body:
+              type: arrays.ArrayTestType
+              example: !include examples/array-test-type-custom-1.json
+
+          201:
+            description: ArrayTestType using type example
+            body:
+              type: arrays.ArrayTestType
+
+          203:
+            description: ArrayTestType using 2 different custom example files
+            body:
+              application/x-www-form-urlencoded:
+                type: arrays.ArrayTestType
+                examples:
+                  custom1: !include examples/array-test-type-custom-1.json
+                  custom2: !include examples/array-test-type-custom-2.json
+
+    /description-with-urn-links:
+      post:
+        description: This link - [ObjectTestTypeDraft](ctp:test:type:ObjectTestTypeDraft), `[ObjectTestTypeDraft](ctp:test:type:ObjectTestTypeDraft)`, must be auto-generated.
+        queryParameters:
+          queryParameterOne:
+            type: number
+            description: This link - [StringTestType](ctp:test:type:StringTestType), `[StringTestType](ctp:test:type:StringTestType)`, must be auto-generated.
+            required: false
+            example: 1
+          queryParameterTwo:
+            type: string
+            required: false
+            example: string-path
+        body:
+          type: out-of-order-properties-test-type.OutOfOrderPropertiesTestType
+          example: !include examples/out-of-order-properties-test-type.json
+        responses:
+          200:
+            description: ArrayTestType is used because it is big and long.
+            body:
+              type: arrays.ArrayTestType
+              example: !include examples/array-test-type.json
+          202:
+            description: |
+              DateTestType is used because it is big and long
+              This is not used by commercetools but a valid 2xx response that says that it will process the stuff later.
+              It's here to check how we handle multiple "OK" style response options.
+            body:
+              type: date-test-type.DateTestType
+              example: !include examples/date-test-type.json
+
+    /product-projection-search:
+      post:
+        displayName: Search Products by post
+        securedBy:
+          [
+            oauth_2_0:
+              {
+                scopes:
+                  [
+                    'view_products:{projectKey}',
+                    'view_published_products:{projectKey}',
+                  ],
+              },
+          ]
+        description: Search Product Projection with content type `application/x-www-form-urlencoded`.
+        body:
+          application/x-www-form-urlencoded:
+            type: scalars.StringTestType
+        responses:
+          200:
+            body:
+              application/json:
+                type: scalars.StringTestType
+          201:
+            body:
+              type: date-test-type.DateTestType
+
+    /searchApiPattern:
+      get:
+        displayName: Search Resources
+        description: Search all resources by specific parameters.
+        securedBy:
+          - oauth_2_0:
+              scopes: ['manage_test:{projectKey}', 'view_test:{projectKey}']
+        queryParameters:
+          fuzzy?:
+            type: boolean
+            description: Whether to apply fuzzy search on the text to analyze.
+            example: true
+          fuzzyLevel?:
+            type: number
+            description: |
+              Provide explicitly the fuzzy level desired if fuzzy is enabled. This value can not be higher than the one
+              chosen by the platform by default.
+            example: 7
+          staged?:
+            type: boolean
+            description: Whether to query for the current or staged projections.
+            example: true
+          filter?:
+            type: string
+            example: bodyMassIndex
+          filter.facets?:
+            type: string
+            example: weight,height
+          filter.query?:
+            type: string
+            example: lastName = Doe
+          facet?:
+            type: string
+          /text\.[a-z]{2}(-[A-Z]{2})?/:
+            type: string
+            required: false
+            example: en
+
+    /sorted-query-parameters:
+      get:
+        displayName: Sorted Query Parameters
+        description: Query parameters should be sorted as in the description of each parameter.
+        securedBy:
+          - oauth_2_0:
+              scopes: ['manage_test:{projectKey}', 'view_test:{projectKey}']
+        queryParameters:
+          expand?:
+            type: objects.ObjectTestType[]
+            description: Should display 6th (1st in RAML)
+          where?:
+            type: objects.ObjectTestType[]
+            description: Should display 1st (2nd in RAML)
+          sort?:
+            type: objects.ObjectTestType[]
+            description: Should display 2nd (3rd in RAML)
+          limit?:
+            type: number
+            description: Should display 3rd (4th in RAML)
+            example: 500
+          offset?:
+            type: number
+            description: Should display 4th (5th in RAML)
+            example: 5
+          /^var[.][a-zA-Z0-9]+$/:
+            type: string[]
+            required: false
+            description: Should display 7th (6th in RAML)
+          withTotal?:
+            type: boolean
+            description: Should display 5th (7th in RAML)
+            example: true
+
+    /images:
+      post:
+        displayName: Upload a product image
+        queryParameters:
+          filename?:
+            type: string
+          variant?:
+            type: number
+            format: int64
+          sku?:
+            type: string
+          staged?:
+            type: boolean
+        description: |
+          Uploads a binary image file to a given product variant. The supported image formats are JPEG, PNG and GIF.
+        securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
+        body:
+          image/jpeg:
+            type: file
+          image/png:
+            type: file
+          image/gif:
+            type: file
+        headers:
+          Content-Type:
+            enum: ['image/jpeg', 'image/png', 'image/gif']
+        responses:
+          200:
+            body:
+              application/json:
+                type: objects.ObjectTestType
+          202:
+            body:
+              application/json:
+                type: scalars.StringTestType
+
+    /namespace-action:
+      uriParameters:
+        namespace:
+          displayName: Namespace
+          type: string
+          description: Namespace
+        action:
+          displayName: Action
+          type: string
+          description: Action
+      get:
+        description: Use the GET method to allow the frontend to fetch data asynchronously.
+        responses:
+          200:
+            description: We recommend to use standard HTTP response codes and `application/json` encoded content.
+      post:
+        description: Use the POST method to write data to a backend system.
+        responses:
+          200:
+            description: We recommend to use standard HTTP response codes and `application/json` encoded content.
+
+    /namespace-action-with-example:
+      get:
+        description: Use the GET method to allow the frontend to fetch data asynchronously. The example fetches a cart.
+        responses:
+          200:
+            description: We recommend to use standard HTTP response codes and `application/json` encoded content. The response will look like the response you have declared in your action. As an example we will fetch the cart.
+            body:
+              application/json:
+                type: object
+                example: !include examples/action-success.json
+
+    /namespace-action-with-headers:
+      uriParameters:
+        namespace:
+          displayName: Namespace
+          type: string
+          description: The namespace where the action to invoked is located.
+        action:
+          displayName: Action
+          type: string
+          description: The name of the action to invoked.
+      get:
+        headers:
+          Accept:
+            displayName: Accept Header
+            type: string
+            description: Accept application/json Header.
+            required: true
+            pattern: application/json
+            default: application/json
+          Test-Header:
+            displayName: Header with special type.
+            type: objects.ObjectTestType
+            description: A header with a special type.
+          Path-Header:
+            displayName: Path Header
+            type: string
+            required: true
+            pattern: ^/.*$
+        description: Use the GET method to allow the frontend to fetch data from a backend system. For the response, we recommend to use standard HTTP codes and `application/json` encoded content. The response will be structured as defined by the body property of the action.
+        responses:
+          200:
+            description: The response will be structured as defined by the body property of the action.
+            body:
+              application/json:
+                type: object
+                example: !include examples/action-success.json
+
+    /json-serializable-primitive-type:
+      put:
+        description: Use the PUT method to write data to a backend system. Any JSON serializable payload is accepted. The following request example adds a product to a cart. For the response, we recommend to use standard HTTP codes and `application/json` encoded content. The response will be structured [as defined by the `body` property of the action](/). The following response example contains the updated cart information, which includes the added product.
+        body:
+          application/json:
+            type: object
+            example: !include examples/json-serializable-primitive-object.json
+        responses:
+          200:
+            description: We recommend to use standard HTTP response codes and `application/json` encoded content. The response will look like the response you have declared in your action. As an example we will fetch the cart.
+            body:
+              application/json:
+                type: any
+                example: !include examples/json-serializable-primitive-raw.json
+#   /resourceWithHeaders:
+#    description: Tests use of specific headers.

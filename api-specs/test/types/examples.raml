@@ -1,0 +1,114 @@
+#%RAML 1.0 Library
+usage: Example test types.
+
+types:
+  ExamplesTestType:
+    properties:
+      foo:
+        type: string
+      baz:
+        type: integer
+      boo:
+        type: boolean
+    examples:
+      simpleExample: !include ../examples/example.json
+      fullExample:
+        displayName: Full Example
+        description: |
+          This **markdown** formatted description of the code example is to be shown with it.
+          The title of this example must be "Full Example" (displayName overrides the name).
+          The JSON contained must be code highlighted because the mime type is set.
+        value: !include ../examples/example.json
+      fullExampleWithLoosenedStrict:
+        displayName: Full Example with default strict setting
+        description: |
+          "strict" defaults to true, this is set to false and the example is wrong so it should parse
+        value: !include ../examples/example-nonconforming.json
+        strict: false
+      fullExampleInRamlNotation:
+        displayName: Example in RAML notation
+        description: |
+          We're not typically doing this but it should not fail. It places an object in RAML/YAML notation
+          in the tree. The parser's default output serializes it to JSON, which is another pointer that JSON _is_ the
+          default assumption.
+        value:
+          foo: bar
+          baz: 100
+          boo: false
+        strict: true
+
+  SingleExampleTestType:
+    properties:
+      foo:
+        type: string
+      baz:
+        type: integer
+      boo:
+        type: boolean
+    example: !include ../examples/example.json
+
+  SingleFullExampleTestType:
+    properties:
+      foo:
+        type: string
+      baz:
+        type: integer
+      boo:
+        type: boolean
+    example:
+      displayName: Full Example
+      description: |
+        This **markdown** formatted description of the code example is to be shown with it.
+        The title of this example must be "Full Example" (displayName overrides the name).
+        The JSON contained must be code highlighted because the mime type is set.
+      value: !include ../examples/example.json
+      strict: false
+
+  # Update / Update Actions related.
+  # The actual Update Action Types are postfixed with "OnFooBar" to namespace them across endpoints.
+  # All Update Actions for a given resource must inherit from a given parent type.
+  # The parent type must not inherit from further levels of abstract types.
+  # The Update Actions are modeled as a Union-Like pattern (see above)
+  ExampleResourceUpdate:
+    properties:
+      version:
+        type: number
+        description: |
+          The expected version of the ExampleResource on which the changes should be applied.
+          If the expected version does not match the actual version, a 409 Conflict will be returned.
+      actions:
+        type: array
+        items: ExampleResourceUpdateAction
+        description: |
+          The list of update actions to be performed on the ExampleResource.
+          Actions are applied in the given order.
+    example: !include ../examples/example-resource-update.json
+
+  ExampleResourceUpdateAction:
+    discriminator: action
+    properties:
+      action:
+        type: string
+
+  DoSomeThingOnExampleResource:
+    displayName: Do SomeThing
+    type: ExampleResourceUpdateAction
+    discriminatorValue: doSomeThing
+    example: !include ../examples/do-something-on-example-resource.json
+
+  ChangeSomePropertyOnExampleResource:
+    type: ExampleResourceUpdateAction
+    displayName: Change SomeProperty
+    discriminatorValue: changeSomeProperty
+    properties:
+      someProperty:
+        type: string
+
+  ImportFooForSecondPropertyToUpdateOnExampleResource:
+    type: ExampleResourceUpdateAction
+    description: Another Update action for ExampleResource that needs crazy long name
+    displayName: Import Foo for SecondPropertyToUpdate
+    discriminatorValue: importFooForSecondPropertyToUpdate
+    properties:
+      secondPropertyToUpdate:
+        type: string

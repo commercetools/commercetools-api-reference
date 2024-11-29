@@ -1,0 +1,59 @@
+#%RAML 1.0 Library
+usage: Unions test types.
+
+# Not supporting actual RAML Union types, only a pattern that has a parent without own properties except the discriminator
+
+uses:
+  enums: enums.raml
+
+types:
+  UnionLike:
+    description: |
+      A pattern of inheritance that is to be represented like a union, i.e. this parent type would not be shown with a property list on its own.
+    type: object
+    discriminator: kind
+    properties:
+      kind: string
+      nonDiscriminatorProperty: string
+  UnionLikeSubType1:
+    description: This specific instance of the union is rendered like a regular type with a property table
+    type: UnionLike
+    discriminatorValue: subtype1
+    properties:
+      foo: string
+      name: string
+  UnionLikeSubType2:
+    description: This specific instance of the union is rendered like a regular type with a property table
+    type: UnionLike
+    discriminatorValue: subtype2
+    properties:
+      bar: string
+      name: string
+  UnionLikeWithEnumDescriptionPropertiesInSubtype:
+    description: |
+      This pattern has sub-types whose properties are enumerations with descriptions.
+    type: object
+    discriminator: type
+    properties:
+      type: enums.EnumWithDescriptionExample
+  UnionLikeSubTypeWithEnumDescriptionProperties1:
+    description: The discriminatorValue (value1) of this union like sub stype is defined in EnumWithDescriptionExample
+    type: UnionLikeWithEnumDescriptionPropertiesInSubtype
+    discriminatorValue: enumValue1
+    properties:
+      foo: string
+      name: string
+  UnionLikeSubTypeWithEnumDescriptionProperties2:
+    description: The discriminatorValue (value2) of this union like sub stype is defined in EnumWithDescriptionExample
+    type: UnionLikeWithEnumDescriptionPropertiesInSubtype
+    discriminatorValue: enumValue2
+    properties:
+      bar: string
+      name: string
+  UnionLikeSubTypeWithEnumDescriptionProperties3:
+    description: The discriminatorValue (value2) of this union like sub stype is defined in EnumWithDescriptionExample but without a description.
+    type: UnionLikeWithEnumDescriptionPropertiesInSubtype
+    discriminatorValue: enumWithoutDescription
+    properties:
+      baz: string
+      name: string

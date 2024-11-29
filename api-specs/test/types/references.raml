@@ -1,0 +1,147 @@
+#%RAML 1.0 Library
+usage: References test types.
+
+uses:
+  annotations: ../annotation-types/annotations.raml
+  scalars: scalars.raml
+
+types:
+  ExampleTargetType:
+    description: empty target object type, just here to be able to point to it.
+
+  ReferenceTypeId:
+    description: |
+      The allowed typeIds of the referenced resource.
+    type: string
+    enum:
+      - example-target
+      - cart-discount
+      - category
+      - channel
+      - customer
+      - customer-group
+      - price
+      - product
+      - product-type
+      - product-variant
+      - shipping-method
+      - state
+      - tax-category
+    (annotations.enumDescriptions):
+      example-target: References an ExampleTargetType.
+      cart-discount: References a cart discount.
+      category: References a category.
+      channel: References a channel.
+      customer: References a customer.
+      customer-group: References a customer group.
+      price: References a price.
+      product: References a product.
+      product-type: References a product type.
+      product-variant: References a product variant.
+      shipping-method: References a shipping method.
+      state: References a state.
+      tax-category: References a tax-category.
+
+  ResourceIdentifier:
+    type: object
+    discriminator: typeId
+    properties:
+      typeId:
+        type: ReferenceTypeId
+        required: false
+      id:
+        type: string
+        required: false
+      key:
+        type: string
+        required: false
+
+  Reference:
+    type: object
+    discriminator: typeId
+    properties:
+      typeId:
+        type: ReferenceTypeId
+      id:
+        type: string
+      obj:
+        type: any
+        required: false
+
+  KeyReference:
+    type: object
+    discriminator: typeId
+    properties:
+      typeId:
+        type: ReferenceTypeId
+      key:
+        type: string
+
+  ExampleTargetTypeReference:
+    type: Reference
+    displayName: Reference
+    (annotations.refersTo): ExampleTargetType
+    discriminatorValue: example-target
+    properties:
+      obj:
+        type: scalars.IntegerTestType
+
+  ExampleTargetTypeKeyReference:
+    type: KeyReference
+    displayName: KeyReference
+    (annotations.refersTo): ExampleTargetType
+    discriminatorValue: example-target
+
+  ExampleTargetTypeResourceIdentifier:
+    type: ResourceIdentifier
+    displayName: ResourceIdentifier
+    (annotations.refersTo): ExampleTargetType
+    discriminatorValue: example-target
+
+  # This pattern is needed for cases like the customerId on the Cart, which is a pointer to another resource, but in plain String id format.
+  # The refersTo Annotation allows to also render these kinds of links in a structured way.
+  ExampleTargetTypePointer:
+    displayName: String
+    type: string
+    (annotations.refersTo): ExampleTargetType
+
+  # References: This is the actual Test Type to be rendered:
+  ReferencesTestType:
+    description: Example for various sorts of References
+    properties:
+      exampleTargetId:
+        type: ExampleTargetTypePointer
+        description: |
+          A kind of reference that is not an object but directly the ID.
+          To be rendered as "String, refers to ExampleTargetType"
+          with "ExampleTargetType" being a link.
+      exampleTarget:
+        type: ExampleTargetTypeReference
+        description: |
+          Type should be rendered as "Reference, refers to ExampleTargetType"
+          with "Reference" and the "ExampleTargetType" being links.
+      exampleTargets:
+        type: ExampleTargetTypeReference[]
+        description: |
+          Type should be rendered as "Array of References, refers to ExampleTargetType"
+          with "References" and "ExampleTargetType" being links.
+      exampleTargetIdentifier:
+        type: ExampleTargetTypeResourceIdentifier
+        description: |
+          Type should be rendered as "ResourceIdentifier, refers to ExampleTargetType"
+          with "ResourceIdentifier" and "ExampleTargetType" being links.
+      exampleTargetIdentifiers:
+        type: ExampleTargetTypeResourceIdentifier[]
+        description: |
+          Type should be rendered as "Array of ResourceIdentifiers, refers to ExampleTargetType"
+          with "ResourceIdentifiers" and "ExampleTargetType" being links.
+      exampleTargetByKey:
+        type: ExampleTargetTypeKeyReference
+        description: |
+          Type should be rendered as "KeyReference, refers to ExampleTargetType"
+          with "KeyReference" and "ExampleTargetType" being links.
+      exampleTargetsByKey:
+        type: ExampleTargetTypeKeyReference[]
+        description: |
+          Type should be rendered as "Array of KeyReferences, refers to ExampleTargetType"
+          with "KeyReferences" and "ExampleTargetType" being links.
