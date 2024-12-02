@@ -1,6 +1,6 @@
 #%RAML 1.0 Library
 usage: Common data types.
-(annotations.package): common
+(annotations.package): Common
 (annotations.beta): true
 
 uses:
@@ -9,7 +9,7 @@ uses:
 types:
   Region:
     description: |
-      The Region in which the Checkout application is [hosted](/../checkout/hosts-and-authorization).
+      The Region in which the Checkout application is [hosted](/hosts-and-authorization).
     enum:
       - europe-west1.gcp
       - us-central1.gcp
@@ -24,9 +24,10 @@ types:
         for Australia (Google Cloud, Sydney)
       eastus.azure: |
         for North America (Azure, Virginia)
+
   Amount:
     description: |
-      The amount related to a [payment action](ctp:checkout:type:PaymentAction).
+      Money in cent amounts for a specific currency.
     properties:
       centAmount:
         type: integer
@@ -40,30 +41,3 @@ types:
         description: |
           Currency code compliant to [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
         pattern: ^[A-Z]{3}$
-  PaymentOperation:
-    type: string
-    description: |
-      The possible values for a [payment action](ctp:checkout:type:PaymentAction).
-    (annotations.enumDescriptions):
-      capturePayment: |
-        [Captures](ctp:checkout:type:CapturePaymentAction) the given [Payment](/../api/projects/payments#payment) amount.
-      refundPayment: |
-        [Refunds](ctp:checkout:type:RefundPaymentAction) the given Payment amount.
-      cancelPayment: |
-        [Cancels](ctp:checkout:type:CancelPaymentAction) an authorized Payment.
-    enum:
-      - capturePayment
-      - refundPayment
-      - cancelPayment
-  PaymentAction:
-    description: |
-      Depending on the action specified, Checkout requests the [payment service provider](/../checkout/payment-connectors-applications#supported-psps-payment-integration-types-and-payment-methods) (PSP) to capture, refund, or cancel the authorization for the given Payment.
-    properties:
-      action:
-        type: PaymentOperation
-        description: |
-          Action to execute for the given Payment.
-      amount?:
-        type: Amount
-        description: |
-          Amount to be captured or refunded.

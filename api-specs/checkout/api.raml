@@ -42,7 +42,40 @@ securedBy: [oauth_2_0]
 traits:
   secured_by_manage_payments:
     securedBy:
-      [oauth_2_0: { scopes: ['manage_checkout_payment_intents:{projectKey}'] }]
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_checkout_payment_intents:{projectKey}',
+                'manage_projects:{projectKey}',
+              ],
+          },
+      ]
+  secured_by_manage_transactions:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_checkout_transactions:{projectKey}',
+                'manage_projects:{projectKey}',
+              ],
+          },
+      ]
+  secured_by_view_transactions:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_checkout_transactions:{projectKey}',
+                'manage_projects:{projectKey}',
+              ],
+          },
+      ]
 
 /{projectKey}:
   (annotations.methodName): withProjectKey
@@ -62,7 +95,7 @@ traits:
         is:
           - secured_by_manage_payments
         body:
-          type: Payment
+          type: PaymentIntent
           example: !include ./examples/payments/capturePayment.json
         description: |
           Specific Error Codes:
@@ -73,6 +106,75 @@ traits:
           200:
             body:
               example: !include ../checkout/examples/payments/capturePaymentResponse.json
+          400:
+            description: The request was invalid.
+            body:
+              type: ErrorResponse
+  /transactions:
+    post:
+      is:
+        - secured_by_manage_transactions
+      body:
+        type: TransactionDraft
+        example: !include ./examples/transactions/transactionDraft.json
+      description: |
+        Creates a Transaction on Checkout. Specific Error Codes:
+        - [InvalidInput](ctp:checkout:type:InvalidInputError)
+        - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+        - [ConnectorFailed](ctp:checkout:type:ConnectorFailedError)
+        - [PaymentFailure](ctp:checkout:type:PaymentFailureError)
+        - [RequiredField](ctp:checkout:type:RequiredFieldError)
+      responses:
+        201:
+          body:
+            type: Transaction
+            example: !include ../checkout/examples/transactions/transaction.json
+        400:
+          description: The request was invalid.
+          body:
+            type: ErrorResponse
+    /{id}:
+      (annotations.methodName): withId
+      uriParameters:
+        id:
+          type: string
+          description: |
+            `id` of the [Transaction](/transactions-api#transaction).
+      get:
+        is:
+          - secured_by_view_transactions
+        description: |
+          Returns a Transaction with a given `id`. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [GeneralError](ctp:checkout:type:GeneralError)
+        responses:
+          200:
+            body:
+              type: Transaction
+              example: !include ../checkout/examples/transactions/transaction.json
+          400:
+            description: The request was invalid.
+            body:
+              type: ErrorResponse
+    /key={key}:
+      (annotations.methodName): withKey
+      uriParameters:
+        key:
+          type: string
+          description: |
+            `key` of the [Transaction](/transactions-api#transaction).
+      get:
+        is:
+          - secured_by_view_transactions
+        description: |
+          Returns a Transaction with a given `key`. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [GeneralError](ctp:checkout:type:GeneralError)
+        responses:
+          200:
+            body:
+              type: Transaction
+              example: !include ../checkout/examples/transactions/transaction.json
           400:
             description: The request was invalid.
             body:
