@@ -1,0 +1,37 @@
+#%RAML 1.0 DataType
+(package): CartDiscount
+type: PatternComponent
+(beta): true
+displayName: CountOnCustomLineItemUnits
+discriminatorValue: CountOnCustomLineItemUnits
+properties:
+  predicate:
+    type: string
+    description: |
+      Valid [CustomLineItem predicate](/../api/projects/predicates#customlineitem-field-identifiers) that determines the units participating in the Discount.
+  minCount?:
+    type: integer
+    description: |
+      Minimum number of units of a Custom Line Item that match the predicate.
+    minimum: 0
+    default: 1
+  maxCount?:
+    type: integer
+    description: |
+      Maximum number of units of a Custom Line Item that match the predicate.
+      There might be more units matching the predicate, but they will not be participating to the resulting set.
+
+      The value must be greater than or equal to `minCount`.
+      If not provided, the component will match all units that satisfy the predicate.
+    minimum: 1
+  excludeCount?:
+    type: integer
+    description: |
+      Number of units of a Custom Line Item to exclude on every application of the Discount.
+
+      Set only when configuring the `targetPattern`.
+
+      The units matched first (satisfying the pattern component) will be excluded from the resulting set.
+      The `minCount`and `maxCount` are considered only after the exclusion. Pattern components are matched only if any further units satisfying the pattern component exist.
+      For example, if 5 jeans are required but only 3 should be discounted, the `excludeCount` value must be 2.
+    default: 0

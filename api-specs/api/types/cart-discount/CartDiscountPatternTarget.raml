@@ -1,0 +1,37 @@
+#%RAML 1.0 DataType
+(package): 'CartDiscount'
+type: CartDiscountTarget
+displayName: CartDiscountPatternTarget
+discriminatorValue: pattern
+description: |
+  Pattern targets can be used to model Buy and Get discounts.
+
+  Unlike [CartDiscountLineItemsTarget](#cartdiscountlineitemstarget) and [CartDiscountCustomLineItemsTarget](#cartdiscountcustomlineitemstarget), it does not apply to a (Custom) Line Item as a whole, but to individual units of a (Custom) Line Item. The discounts can apply multiple times on the same cart, but each unit can be discounted only once.
+properties:
+  triggerPattern?:
+    type: array
+    items: PatternComponent
+    description: |
+      Units of a (Custom) Line Item that trigger a discount application.
+
+      Based on the availability of matching units, the `triggerPattern` can match multiple times, effecting the number of times the discount will be applied.
+      To further limit the discount application, set the `maxOccurrence`.
+
+      If empty or not set, the Discount will apply indefinitely.
+  targetPattern:
+    type: array
+    items: PatternComponent
+    description: |
+      Units of (Custom) Line Items on which the Discount is applied.
+
+      Based on the availability of matching units and the limits from the `triggerPattern` or `maxOccurence`, the `targetPattern` can match multiple times.
+  maxOccurrence?:
+    type: integer
+    description: |
+      Maximum number of times the Discount can apply on a Cart.
+
+      If empty or not set, the Discount will apply indefinitely.
+  selectionMode:
+    type: SelectionMode
+    description: |
+      Determines which of the matching units of (Custom) Line Items are discounted.

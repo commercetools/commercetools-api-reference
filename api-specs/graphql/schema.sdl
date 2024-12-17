@@ -1827,6 +1827,23 @@ type CartDiscountLimitsProjection {
   totalActiveWithoutDiscountCodes: CartDiscountLimitWithCurrent!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type CartDiscountPatternTarget implements CartDiscountTarget {
+  triggerPattern: [PatternComponent!]!
+  targetPattern: [PatternComponent!]!
+  maxOccurrence: Int
+  selectionMode: SelectionMode!
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input CartDiscountPatternTargetInput {
+  triggerPattern: [PatternComponentInput!]!
+  targetPattern: [PatternComponentInput!]!
+  maxOccurrence: Int
+  selectionMode: SelectionMode
+}
+
 "Fields to access cartDiscounts. Includes direct access to a single cartDiscount and searching for cartDiscounts."
 interface CartDiscountQueryInterface {
   cartDiscount(
@@ -1875,6 +1892,9 @@ input CartDiscountTargetInput {
   multiBuyLineItems: MultiBuyLineItemsTargetInput
   multiBuyCustomLineItems: MultiBuyCustomLineItemsTargetInput
   totalPrice: CartDiscountTotalPriceTargetInput
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  pattern: CartDiscountPatternTargetInput
 }
 
 type CartDiscountTotalPriceTarget implements CartDiscountTarget {
@@ -1921,11 +1941,13 @@ input CartDiscountValueBaseMoneyInput {
   centAmount: Long
 }
 
+
 input CartDiscountValueInput {
   relative: RelativeDiscountValueInput
   absolute: AbsoluteDiscountValueInput
   absoluteCart: AbsoluteCartDiscountValueInput
   fixed: FixedPriceDiscountValueInput
+  fixedCart: FixedPriceCartDiscountValueInput
   giftLineItem: GiftLineItemValueInput
 }
 
@@ -3061,6 +3083,41 @@ input ConfluentCloudDestinationInput {
   acks: String!
   topic: String!
   key: String
+}
+
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type CountOnCustomLineItemUnits implements PatternComponent {
+  predicate: String!
+  minCount: Int
+  maxCount: Int
+  excludeCount: Int
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input CountOnCustomLineItemUnitsInput {
+  predicate: String!
+  minCount: Int = 1
+  maxCount: Int
+  excludeCount: Int
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type CountOnLineItemUnits implements PatternComponent {
+  predicate: String!
+  minCount: Int
+  maxCount: Int
+  excludeCount: Int
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input CountOnLineItemUnitsInput {
+  predicate: String!
+  minCount: Int = 1
+  maxCount: Int
+  excludeCount: Int
 }
 
 "[ISO 3166-1](http://en.wikipedia.org/wiki/ISO_3166-1) country code."
@@ -4445,6 +4502,17 @@ input FieldTypeSetElementTypeDraft {
 
 input FieldTypeSetTypeDraft {
   elementType: FieldTypeSetElementTypeDraft!
+}
+
+type FixedPriceCartDiscountValue implements CartDiscountValue {
+  type: String!
+  money: [BaseMoney!]!
+  applicationMode: DiscountApplicationMode!
+}
+
+input FixedPriceCartDiscountValueInput {
+  money: [CartDiscountValueBaseMoneyInputType!]!
+  applicationMode: DiscountApplicationMode!
 }
 
 type FixedPriceDiscountValue implements CartDiscountValue {
@@ -7281,6 +7349,17 @@ type ParcelTrackingDataUpdated implements MessagePayload & OrderMessagePayload {
   trackingData: TrackingData
   shippingKey: String
   type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+interface PatternComponent {
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input PatternComponentInput {
+  CountOnLineItemUnits: CountOnLineItemUnitsInput
+  CountOnCustomLineItemUnits: CountOnCustomLineItemUnitsInput
 }
 
 """
