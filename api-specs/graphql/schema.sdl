@@ -4845,6 +4845,13 @@ type InStore implements CartDiscountQueryInterface & CartQueryInterface & Custom
     "Queries with specified key"
     key: String): Quote
   quotes(where: String, sort: [String!], limit: Int, offset: Int): QuoteQueryResult!
+  businessUnit(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): BusinessUnit
+  businessUnits(where: String, sort: [String!], limit: Int, offset: Int): BusinessUnitQueryResult!
 }
 
 type InStoreMe implements MeQueryInterface & CartQueryInterface & ActiveCartInterface & OrderQueryInterface & ShoppingListQueryInterface {
@@ -6449,11 +6456,17 @@ type Mutation {
   createBusinessUnit(draft: BusinessUnitDraft!,
 
     "Create/modify entity as an associate in business-unit."
-    asAssociate: AsAssociateArgument): BusinessUnit
+    asAssociate: AsAssociateArgument,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput): BusinessUnit
   updateBusinessUnit(version: Long!, actions: [BusinessUnitUpdateAction!]!,
 
     "Create/modify entity as an associate in business-unit."
     asAssociate: AsAssociateArgument,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
 
     "Queries with specified ID"
     id: String,
@@ -6461,6 +6474,9 @@ type Mutation {
     "Queries with specified key"
     key: String): BusinessUnit
   deleteBusinessUnit(version: Long!, personalDataErasure: Boolean = false,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput,
 
     "Queries with specified ID"
     id: String,
