@@ -1,0 +1,143 @@
+#%RAML 1.0 ResourceType
+
+get:
+  description: |
+    Returns a list of available roles.
+  headers:
+    token:
+      displayName: Token
+      description: |
+        Login token generated for an admin.
+      type: string
+  responses:
+    200:
+      body:
+        type: Role[]
+        example: !include ../examples/roles/roles.json
+    400:
+      description: The request was invalid.
+      body:
+        type: ErrorResponse
+    401:
+      description: Route is not in scope for the current session.
+      body:
+        type: ErrorResponse
+    403:
+      description: No token provided.
+      body:
+        type: ErrorResponse
+put:
+  description: |
+    Updates the role found using the provided database ID. Returns the amended role's info.
+  headers:
+    token:
+      displayName: Token
+      description: |
+        Login token generated for an admin.
+      type: string
+  body:
+    type: Role
+  responses:
+    202:
+      body:
+        type: Role
+        example: !include ../examples/roles/role.json
+    400:
+      description: Cannot update Role without ID.
+      body:
+        type: ErrorResponse
+    401:
+      description: Route is not in scope for the current session.
+      body:
+        type: ErrorResponse
+    403:
+      description: No token provided.
+      body:
+        type: ErrorResponse
+post:
+  description: |
+    Creates a new role according to the provided specifications. Returns the new role's information.
+  headers:
+    token:
+      displayName: Token
+      description: |
+        Login token generated for an admin.
+      type: string
+  body:
+    type: Role
+  responses:
+    201:
+      body:
+        type: Role
+        example: !include ../examples/roles/role.json
+    400:
+      description: The role you submitted is not valid.
+      body:
+        type: ErrorResponse
+    401:
+      description: Route is not in scope for the current session.
+      body:
+        type: ErrorResponse
+    403:
+      description: No token provided.
+      body:
+        type: ErrorResponse
+delete:
+  description: |
+    Deletes the role associated with the provided database ID.
+  headers:
+    token:
+      displayName: Token
+      description: |
+        Login token generated for an admin.
+      type: string
+  body:
+    type: RoleId
+  responses:
+    202:
+      body:
+        type: Role
+        example: !include ../examples/roles/role.json
+    400:
+      description: Cannot delete Role without ID.
+      body:
+        type: ErrorResponse
+    401:
+      description: Route is not in scope for the current session.
+      body:
+        type: ErrorResponse
+    403:
+      description: No token provided.
+      body:
+        type: ErrorResponse
+/{role}:
+  uriParameters:
+    role:
+      type: string
+      description: Name of role (must be globally unique within tenant namespace)
+  get:
+    description: |
+      Finds and returns a role using the provided name.
+    headers:
+      token:
+        displayName: Token
+        description: |
+          Login token generated for an admin.
+        type: string
+    responses:
+      200:
+        body:
+          type: Role
+          example: !include ../examples/roles/role.json
+      400:
+        description: The request was invalid.
+        body:
+          type: ErrorResponse
+      401:
+        description: Route is not in scope for the current session.
+        body:
+          type: ErrorResponse
+      403:
+        description: No token provided.
+        body:
+          type: ErrorResponse
