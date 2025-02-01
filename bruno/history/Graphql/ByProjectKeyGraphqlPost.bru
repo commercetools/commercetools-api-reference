@@ -1,0 +1,52 @@
+meta {
+  name: GraphQL
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/graphql
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "query" : "query getCategoryChanges($startDate: DateFilterValue!, $endDate: DateFilterValue!){categories(date:{from:$startDate to:$endDate}) {results {type modifiedAt changes {previousValue nextValue change} resource{id} }}}",
+    "operationName" : "getCategoryChanges",
+    "variables" : {
+      "startDate" : "2024-09-07T08:53:28.471Z",
+      "endDate" : "2024-11-07T08:53:28.471Z"
+    }
+  }
+}  
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("graphql-id", data.results[0].id); 
+          bru.setEnvVar("graphql-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("graphql-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("graphql-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("graphql-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("graphql-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

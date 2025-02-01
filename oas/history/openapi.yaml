@@ -81,6 +81,7 @@ paths:
                 format: "double"
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -89,6 +90,7 @@ paths:
             format: "int32"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -157,7 +159,7 @@ paths:
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/Source'
           explode: true
         - name: changes
           in: query
@@ -243,6 +245,36 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /{projectKey}/graphql:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "view_audit_log:{projectKey}"
+            - "view_categories:{projectKey}"
+      operationId: ByProjectKeyGraphqlPost
+      description: |-
+        Execute a GraphQL request.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GraphQLRequest'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraphQLResponse'
+
   /{projectKey}/{resourceType}:
     parameters:
       - name: projectKey
@@ -311,6 +343,7 @@ paths:
                 format: "double"
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -319,6 +352,7 @@ paths:
             format: "int32"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -380,7 +414,7 @@ paths:
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/Source'
           explode: true
         - name: changes
           in: query
@@ -539,6 +573,7 @@ paths:
                 format: "double"
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -547,6 +582,7 @@ paths:
             format: "int32"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -601,7 +637,7 @@ paths:
           required: false
           style: form
           schema:
-            type: "string"
+            $ref: '#/components/schemas/Source'
           explode: true
         - name: changes
           in: query
@@ -847,6 +883,33 @@ components:
         - type
         - zone
       x-annotation-package: "ChangeHistory"
+      x-annotation-enumDescriptions:
+        associate-role: "for [AssociateRole](/projects/associate-roles#associaterole)"
+        business-unit: "for [BusinessUnit](/projects/business-units#businessunit)"
+        cart-discount: "for [CartDiscount](/projects/cartDiscounts#cartdiscount)"
+        category: "for [Category](/projects/categories#category)"
+        channel: "for [Channel](/projects/channels#channel)"
+        customer: "for [Customer](/projects/customers#customer)"
+        customer-group: "for [CustomerGroup](/projects/customerGroups#customergroup)"
+        discount-code: "for [DiscountCode](/projects/discountCodes#discountcode)"
+        inventory-entry: "for [InventoryEntry](/projects/inventory#inventoryentry)"
+        key-value-document: "for [CustomObject](/projects/custom-objects#customobject)"
+        order: "for [Order](/projects/orders#order)"
+        payment: "for [Payment](/projects/payments#payment)"
+        product: "for [Product](/projects/products#product)"
+        product-discount: "for [ProductDiscount](/projects/productDiscounts#productdiscount)"
+        product-selection: "for [ProductSelection](/projects/product-selections#productselection)"
+        product-type: "for [ProductType](/projects/productTypes#producttype)"
+        quote-request: "for [QuoteRequest](/projects/quote-requests#quoterequest)"
+        quote: "for [Quote](/projects/quotes#quote)"
+        review: "for [Review](/projects/reviews#review)"
+        shopping-list: "for [ShoppingList](/projects/shoppingLists#shoppinglist)"
+        state: "for [State](/projects/states#state)"
+        staged-quote: "for [StagedQuote](/projects/staged-quotes#stagedquote)"
+        store: "for [Store](/projects/stores#store)"
+        tax-category: "for [TaxCategory](/projects/taxCategories#taxcategory)"
+        type: "for [Type](/projects/types#type)"
+        zone: "for [Zone](/projects/zones#zone)"
     DateStringFilter:
       type: "string"
       enum:
@@ -884,10 +947,11 @@ components:
     ModifiedBy:
       type: "object"
       required:
-        - id
         - isPlatformClient
         - type
       properties:
+        isPlatformClient:
+          type: "boolean"
         id:
           type: "string"
         type:
@@ -900,8 +964,6 @@ components:
           $ref: '#/components/schemas/Reference'
         associate:
           $ref: '#/components/schemas/Reference'
-        isPlatformClient:
-          type: "boolean"
     PlatformInitiatedChange:
       type: "string"
       enum:
@@ -919,6 +981,10 @@ components:
         - ImpEx
         - ApiClient
       x-annotation-package: "ChangeHistory"
+      x-annotation-enumDescriptions:
+        MerchantCenter: "The change was made through the Merchant Center."
+        ApiClient: "The change was made through an API Client."
+        ImpEx: "The change was made through the now-decommissioned ImpEx tool."
     UpdateType:
       type: "string"
       enum:
@@ -1535,6 +1601,7 @@ components:
           lineItems: '#/components/schemas/ChangeTargetLineItemsChangeValue'
           multiBuyCustomLineItems: '#/components/schemas/ChangeTargetMultiBuyCustomLineItemsChangeValue'
           multiBuyLineItems: '#/components/schemas/ChangeTargetMultiBuyLineItemsChangeValue'
+          pattern: '#/components/schemas/ChangeTargetPatternChangeValue'
           shipping: '#/components/schemas/ChangeTargetShippingChangeValue'
       required:
         - type
@@ -1555,6 +1622,63 @@ components:
       properties:
         type:
           type: "string"
+    GraphQLRequest:
+      type: "object"
+      required:
+        - query
+      properties:
+        query:
+          type: "string"
+        operationName:
+          type: "string"
+        variables:
+          $ref: '#/components/schemas/GraphQLVariablesMap'
+    GraphQLResponse:
+      type: "object"
+      properties:
+        data:
+          {}
+        errors:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/GraphQLError'
+    GraphQLError:
+      type: "object"
+      required:
+        - extensions
+        - locations
+        - message
+      properties:
+        message:
+          type: "string"
+        locations:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/GraphQLErrorLocation'
+        path:
+          type: "array"
+          items:
+            {}
+        extensions:
+          type: "object"
+    GraphQLErrorLocation:
+      type: "object"
+      required:
+        - column
+        - line
+      properties:
+        line:
+          type: "integer"
+          format: "int64"
+        column:
+          type: "integer"
+          format: "int64"
+    GraphQLVariablesMap:
+      type: "object"
+      required:
+        - //
+      additionalProperties:
+        type: "string"
     AddAddressChange:
       allOf:
         - $ref: '#/components/schemas/Change'
@@ -3718,6 +3842,31 @@ components:
               format: "int32"
             selectionMode:
               $ref: '#/components/schemas/SelectionMode'
+    ChangeTargetPatternChangeValue:
+      allOf:
+        - $ref: '#/components/schemas/ChangeTargetChangeValue'
+        - type: "object"
+          required:
+            - selectionMode
+            - targetPattern
+            - triggerPattern
+            - type
+          properties:
+            type:
+              type: "string"
+            triggerPattern:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/PatternComponent'
+            targetPattern:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/PatternComponent'
+            maxOccurrence:
+              type: "integer"
+              format: "int32"
+            selectionMode:
+              $ref: '#/components/schemas/SelectionMode'
     ChangeTargetShippingChangeValue:
       allOf:
         - $ref: '#/components/schemas/ChangeTargetChangeValue'
@@ -5550,6 +5699,13 @@ components:
         - Cheapest
         - MostExpensive
       x-annotation-package: "Common"
+    PatternComponent:
+      type: "object"
+      required:
+        - type
+      properties:
+        type:
+          type: "string"
     SetAddressChange:
       allOf:
         - $ref: '#/components/schemas/Change'

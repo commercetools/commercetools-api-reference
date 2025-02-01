@@ -14,7 +14,6 @@ servers:
          - europe-west1.gcp
          - eu-central-1.aws
          - australia-southeast1.gcp
-         - eastus.azure
         description: |
           [Region](/../api/general-concepts#hosts) in which the Project is hosted.
 
@@ -125,6 +124,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -133,6 +133,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -402,6 +403,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -410,6 +412,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -845,6 +848,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -853,6 +857,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -1059,6 +1064,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -1067,6 +1073,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -1423,6 +1430,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -1431,6 +1439,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -2071,6 +2080,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -2079,6 +2089,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -2602,6 +2613,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -2610,6 +2622,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -3064,6 +3077,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -3072,6 +3086,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -3470,6 +3485,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -3478,6 +3494,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -3992,6 +4009,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -4000,6 +4018,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -4510,6 +4529,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -4518,6 +4538,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -4824,6 +4845,119 @@ paths:
           $ref: '#/components/responses/errorable_502'
         "503":
           $ref: '#/components/responses/errorable_503'
+  /{projectKey}/business-units/search:
+    description: |-
+      This endpoint provides high-performance search queries over Business Units.
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "view_business_units:{projectKey}"
+      operationId: ByProjectKeyBusinessUnitsSearchPost
+      description: |-
+        If the initial indexing is in progress or the feature is inactive, A [SearchNotReady](ctp:api:type:SearchNotReadyError) error is returned. If inactive, you can [reactivate](/../api/projects/business-unit-search#reactivate) it.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessUnitSearchRequest'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessUnitPagedSearchResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_business_units:{projectKey}"
+      operationId: ByProjectKeyBusinessUnitsSearchHead
+      description: |-
+        Checks whether a search index of Business Units exists for a Project.
+        Returns a `200 OK` if an index exists; otherwise, returns a `409 Conflict`.
+      responses:
+        "200":
+          description: |-
+            A search index exists and the [Search Business Units](ctp:api:endpoint:/{projectKey}/business-units/search:POST) endpoint is fully operational.
+          content: {}
+        "409":
+          description: |-
+            A search index does not exist and the [Search Business Units](ctp:api:endpoint:/{projectKey}/business-units/search:POST) endpoint returns a 409 error.
+          content: {}
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/business-units/search/indexing-status:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_project_settings:{projectKey}"
+      operationId: ByProjectKeyBusinessUnitsSearchIndexingStatusGet
+      description: |-
+        Returns the indexing status of the Business Unit Search for a Project.
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessUnitSearchIndexingStatusResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
   /{projectKey}/business-units/{ID}:
     parameters:
       - name: projectKey
@@ -5029,6 +5163,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -5037,6 +5172,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -5563,6 +5699,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -5571,6 +5708,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -6245,6 +6383,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -6253,6 +6392,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -6789,6 +6929,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -6797,6 +6938,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -6919,6 +7061,178 @@ paths:
               schema:
                 $ref: '#/components/schemas/Channel'
 
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/channels/key={key}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_products:{projectKey}"
+      operationId: ByProjectKeyChannelsKeyByKeyGet
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_products:{projectKey}"
+      operationId: ByProjectKeyChannelsKeyByKeyHead
+      description: |-
+        Checks if a Channel exists for a given `key`. Returns a `200 OK` status if the Channel exists or a `404 Not Found` otherwise.
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyChannelsKeyByKeyPost
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChannelUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyChannelsKeyByKeyDelete
+      description: |-
+        Returns a [ReferenceExists](ctp:api:type:ReferenceExistsError) error if other resources reference the Channel to be deleted.
+      parameters:
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
         "400":
           $ref: '#/components/responses/errorable_400'
         "401":
@@ -7144,6 +7458,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -7152,6 +7467,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -7259,7 +7575,7 @@ paths:
         If an object with the given container/key exists, the object will be replaced with the new value and the version is incremented.
         If the request contains a version and an object with the given container/key, then the version must match the version of the existing object. Concurrent updates to the same Custom Object returns a [ConcurrentModification](ctp:api:type:ConcurrentModificationError) error even if the version is not provided.
 
-        Fields with `null` values will **not be saved**.
+        Fields within `value` that have `null` values **are not saved**.
       parameters:
         - name: expand
           in: query
@@ -7365,6 +7681,7 @@ paths:
               type: "string"
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -7373,6 +7690,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -7572,6 +7890,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -7580,6 +7899,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -8092,6 +8412,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -8100,6 +8421,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -8752,6 +9074,9 @@ paths:
         - oauth_2_0:
             - "view_customers:{projectKey}"
       operationId: ByProjectKeyCustomersSearchPost
+      description: |-
+        If the initial indexing is in progress or the feature is inactive, a [SearchNotReady](ctp:api:type:SearchNotReadyError) error is returned.
+        If inactive, you can [reactivate](/../api/projects/customer-search#reactivate) it.
       requestBody:
         content:
           application/json:
@@ -8787,21 +9112,25 @@ paths:
             - "view_customers:{projectKey}"
       operationId: ByProjectKeyCustomersSearchHead
       description: |-
-        Checks whether a search index for the Project's Customers exists.
-        Returns a `200 OK` status if the index exists or `404 Not Found` otherwise.
+        Checks whether a search index of Customers exists for a Project.
+        Returns a `200 OK` if an index exists; otherwise, returns a `409 Conflict`.
       responses:
         "200":
           description: |-
-            The search index exists and the Search Customers endpoint is fully operational.
+            A search index exists and the [Search Customers](ctp:api:endpoint:/{projectKey}/customers/search:POST) endpoint is fully operational.
           content: {}
-        "404":
-          $ref: '#/components/responses/errorable_404'
+        "409":
+          description: |-
+            A search index does not exist and the [Search Customers](ctp:api:endpoint:/{projectKey}/customers/search:POST) endpoint returns a 409 error.
+          content: {}
         "400":
           $ref: '#/components/responses/errorable_400'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -8809,8 +9138,6 @@ paths:
         "503":
           $ref: '#/components/responses/errorable_503'
   /{projectKey}/customers/search/indexing-status:
-    description: |-
-      This endpoint provides information on the status of a Customer search for a project
     parameters:
       - name: projectKey
         in: path
@@ -8822,6 +9149,8 @@ paths:
         - oauth_2_0:
             - "view_project_settings:{projectKey}"
       operationId: ByProjectKeyCustomersSearchIndexingStatusGet
+      description: |-
+        Returns the indexing status of the Customer Search for a Project.
       responses:
         "200":
           description: |-
@@ -9063,6 +9392,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -9071,6 +9401,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -9608,6 +9939,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -9616,6 +9948,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -10039,10 +10372,10 @@ paths:
             - "view_products:{projectKey}"
       operationId: ByProjectKeyGraphqlPost
       description: |-
-        Execute a GraphQL query
+        Execute a GraphQL request.
       requestBody:
         content:
-          application/graphql:
+          application/json:
             schema:
               $ref: '#/components/schemas/GraphQLRequest'
 
@@ -10105,6 +10438,552 @@ paths:
               schema:
                 $ref: '#/components/schemas/CustomerSignInResult'
 
+  /{projectKey}/in-store/key={storeKey}/business-units:
+    description: |-
+      A Business Unit can represent a Company or a Division.
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: storeKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_business_units:{projectKey}"
+            - "view_business_units:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyBusinessUnitsGet
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+        - name: sort
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Sort'
+          explode: true
+        - name: limit
+          x-annotation-default: 20
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: offset
+          x-annotation-default: 0
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: withTotal
+          x-annotation-default: true
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+        - name: /^var[.][a-zA-Z0-9]+$/
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessUnitPagedQueryResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_business_units:{projectKey}"
+            - "view_business_units:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyBusinessUnitsHead
+      description: |-
+        Checks if a BusinessUnit exists for a given Query Predicate. Returns a `200 OK` status if any BusinessUnits match the Query Predicate or a `404 Not Found` otherwise.
+      parameters:
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_business_units:{projectKey}"
+            - "manage_business_units:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyBusinessUnitsPost
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessUnitDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessUnit'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/in-store/key={storeKey}/business-units/key={key}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: storeKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_business_units:{projectKey}"
+            - "view_business_units:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyBusinessUnitsKeyByKeyGet
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessUnit'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_business_units:{projectKey}"
+            - "view_business_units:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyBusinessUnitsKeyByKeyHead
+      description: |-
+        Checks if a BusinessUnit exists for a given `key`. Returns a `200 OK` status if the BusinessUnit exists or a `404 Not Found` otherwise.
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_business_units:{projectKey}"
+            - "manage_business_units:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyBusinessUnitsKeyByKeyPost
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessUnitUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessUnit'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_business_units:{projectKey}"
+            - "manage_business_units:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyBusinessUnitsKeyByKeyDelete
+      parameters:
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessUnit'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/in-store/key={storeKey}/business-units/{ID}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: storeKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_business_units:{projectKey}"
+            - "view_business_units:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyBusinessUnitsByIDGet
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessUnit'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_business_units:{projectKey}"
+            - "view_business_units:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyBusinessUnitsByIDHead
+      description: |-
+        Checks if a BusinessUnit exists for a given `id`. Returns a `200 OK` status if the BusinessUnit exists or a `404 Not Found` otherwise.
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_business_units:{projectKey}"
+            - "manage_business_units:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyBusinessUnitsByIDPost
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessUnitUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessUnit'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_business_units:{projectKey}"
+            - "manage_business_units:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyBusinessUnitsByIDDelete
+      parameters:
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessUnit'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
   /{projectKey}/in-store/key={storeKey}/cart-discounts:
     parameters:
       - name: projectKey
@@ -10145,6 +11024,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -10153,6 +11033,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -10728,6 +11609,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -10736,6 +11618,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -11465,6 +12348,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -11473,6 +12357,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -12474,6 +13359,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -12482,6 +13368,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -12738,6 +13625,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -12746,6 +13634,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -13267,6 +14156,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -13275,6 +14165,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -13710,6 +14601,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -13718,6 +14610,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -14417,6 +15310,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -14425,6 +15319,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -15329,6 +16224,7 @@ paths:
         Only Products of Product Selections that are activated in the Store will be returned.
       parameters:
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -15337,6 +16233,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -15425,6 +16322,7 @@ paths:
         Queries Product Tailoring in a specific [Store](ctp:api:type:Store).
       parameters:
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -15433,6 +16331,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -15738,9 +16637,19 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyProductsKeyByProductKeyProductTailoringImagesPost
       description: |-
-        Upload a JPEG, PNG and GIF file to a [ProductTailoringVariant](ctp:api:type:ProductTailoringVariant). The maximum file size of the image is 10MB. `variant` or `sku` is required to update a specific ProductVariant. Produces the [ProductTailoringImageAdded](/projects/messages/product-catalog-messages#product-tailoring-image-added) Message when the `Small` version of the image has been uploaded to the CDN.
+        Uploads a JPEG, PNG and GIF file to a [ProductVariantTailoring](ctp:api:type:ProductVariantTailoring).
+        The maximum file size of the image is **10MB**.
+        Either `variant` or `sku` is required to update a specific ProductVariant.
+        If neither is provided, the image is uploaded to the Master Variant of the Product.
+
+        The response status code depends on the size of the original image.
+        If the image is small, the API responds with `200 OK`, and if the image is larger, it responds with `202 Accepted`.
+        The Product returned with a `202 Accepted` status code contains a `warnings` field with an [ImageProcessingOngoing](ctp:api:type:ImageProcessingOngoingWarning) Warning.
+
+        Produces the [ProductTailoringImageAdded](/projects/messages/product-catalog-messages#product-tailoring-image-added) Message.
       parameters:
         - name: filename
+          x-annotation-default: "img"
           in: query
           required: false
           style: form
@@ -15763,6 +16672,7 @@ paths:
             type: "string"
           explode: true
         - name: staged
+          x-annotation-default: true
           in: query
           required: false
           style: form
@@ -15778,6 +16688,14 @@ paths:
         "200":
           description: |-
             200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "202":
+          description: |-
+            202
           content:
             application/json:
               schema:
@@ -15964,9 +16882,19 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyProductsByProductIDProductTailoringImagesPost
       description: |-
-        Upload a JPEG, PNG and GIF file to a [ProductTailoringVariant](ctp:api:type:ProductTailoringVariant). The maximum file size of the image is 10MB. `variant` or `sku` is required to update a specific ProductVariant. Produces the [ProductTailoringImageAdded](/projects/messages/product-catalog-messages#product-tailoring-image-added) Message when the `Small` version of the image has been uploaded to the CDN.
+        Uploads a JPEG, PNG and GIF file to a [ProductVariantTailoring](ctp:api:type:ProductVariantTailoring).
+        The maximum file size of the image is **10MB**.
+        Either `variant` or `sku` is required to update a specific ProductVariant.
+        If neither is provided, the image is uploaded to the Master Variant of the Product.
+
+        The response status code depends on the size of the original image.
+        If the image is small, the API responds with `200 OK`, and if the image is larger, it responds with `202 Accepted`.
+        The Product returned with a `202 Accepted` status code contains a `warnings` field with an [ImageProcessingOngoing](ctp:api:type:ImageProcessingOngoingWarning) Warning.
+
+        Produces the [ProductTailoringImageAdded](/projects/messages/product-catalog-messages#product-tailoring-image-added) Message.
       parameters:
         - name: filename
+          x-annotation-default: "img"
           in: query
           required: false
           style: form
@@ -15989,6 +16917,7 @@ paths:
             type: "string"
           explode: true
         - name: staged
+          x-annotation-default: true
           in: query
           required: false
           style: form
@@ -16004,6 +16933,14 @@ paths:
         "200":
           description: |-
             200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTailoring'
+
+        "202":
+          description: |-
+            202
           content:
             application/json:
               schema:
@@ -16049,6 +16986,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -16057,6 +16995,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -16610,6 +17549,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -16618,6 +17558,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -17277,6 +18218,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -17285,6 +18227,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -17857,6 +18800,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -17865,6 +18809,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -18411,6 +19356,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -18419,6 +19365,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -18985,6 +19932,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -18993,6 +19941,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -19263,6 +20212,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -19271,6 +20221,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -19707,6 +20658,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -19715,6 +20667,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -20268,6 +21221,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -20276,6 +21230,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -20722,6 +21677,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -20730,6 +21686,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -21096,6 +22053,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -21104,6 +22062,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -21527,6 +22486,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -21535,6 +22495,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -21921,6 +22882,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -21929,6 +22891,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -22566,6 +23529,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -22574,6 +23538,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -22778,6 +23743,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -22786,6 +23752,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -22977,6 +23944,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -22985,6 +23953,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -24076,6 +25045,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -24084,6 +25054,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -24612,6 +25583,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -24620,6 +25592,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -25234,6 +26207,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -25242,6 +26216,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -25605,6 +26580,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -25613,6 +26589,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -25957,6 +26934,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -25965,6 +26943,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -26292,6 +27271,15 @@ paths:
       operationId: ByProjectKeyProductSelectionsKeyByKeyProductsGet
       description: |-
       parameters:
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
         - name: expand
           in: query
           required: false
@@ -26302,6 +27290,7 @@ paths:
               $ref: '#/components/schemas/Expansion'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -26310,6 +27299,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -26548,6 +27538,15 @@ paths:
       operationId: ByProjectKeyProductSelectionsByIDProductsGet
       description: |-
       parameters:
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
         - name: expand
           in: query
           required: false
@@ -26558,6 +27557,7 @@ paths:
               $ref: '#/components/schemas/Expansion'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -26566,6 +27566,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -26647,6 +27648,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -26655,6 +27657,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -26705,6 +27708,42 @@ paths:
           $ref: '#/components/responses/errorable_403'
         "404":
           $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_products:{projectKey}"
+      operationId: ByProjectKeyProductTailoringHead
+      description: |-
+        Checks if a ProductTailoring exists for a given Query Predicate. Returns a `200 OK` status if any ProductTailoring match the Query Predicate or a `404 Not Found` otherwise.
+      parameters:
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -27084,6 +28123,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -27092,6 +28132,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -27640,6 +28681,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -27648,6 +28690,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -28105,6 +29148,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -28113,6 +29157,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -28183,6 +29228,9 @@ paths:
         - oauth_2_0:
             - "view_published_products:{projectKey}"
       operationId: ByProjectKeyProductsSearchPost
+      description: |-
+        If the indexing is in progress or the feature is inactive, an [ObjectNotFound](ctp:api:type:ObjectNotFoundError) error is returned.
+        If inactive, you can [reactivate](/../api/projects/product-search#activation-of-the-feature) it.
       requestBody:
         content:
           application/json:
@@ -28493,9 +29541,19 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductsByIDImagesPost
       description: |-
-        Upload a JPEG, PNG and GIF file to a [ProductVariant](ctp:api:type:ProductVariant). The maximum file size of the image is 10MB. `variant` or `sku` is required to update a specific ProductVariant. The image is uploaded to the Master Variant if `variant` or `sku` are not included. Produces the [ProductImageAdded](/projects/messages/product-catalog-messages#product-image-added) Message when the `Small` version of the image has been uploaded to the CDN.
+        Uploads a JPEG, PNG, or a GIF image file to a [ProductVariant](ctp:api:type:ProductVariant).
+        The maximum file size of the image is **10MB**.
+        Either `variant` or `sku` is required to update a specific ProductVariant.
+        If neither is provided, the image is uploaded to the Master Variant of the Product.
+
+        The response status code depends on the size of the original image.
+        If the image is small, the API responds with `200 OK`, and if the image is larger, it responds with `202 Accepted`.
+        The Product returned with a `202 Accepted` status code contains a `warnings` field with an [ImageProcessingOngoing](ctp:api:type:ImageProcessingOngoingWarning) Warning.
+
+        Produces the [ProductImageAdded](/projects/messages/product-catalog-messages#product-image-added) Message.
       parameters:
         - name: filename
+          x-annotation-default: "img"
           in: query
           required: false
           style: form
@@ -28518,6 +29576,7 @@ paths:
             type: "string"
           explode: true
         - name: staged
+          x-annotation-default: true
           in: query
           required: false
           style: form
@@ -28533,6 +29592,14 @@ paths:
         "200":
           description: |-
             200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+        "202":
+          description: |-
+            202
           content:
             application/json:
               schema:
@@ -28575,6 +29642,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -28583,6 +29651,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -28673,6 +29742,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -28681,6 +29751,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -29207,6 +30278,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -29215,6 +30287,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -29741,6 +30814,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -29749,6 +30823,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -30277,6 +31352,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -30285,6 +31361,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -31279,6 +32356,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -31287,6 +32365,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -31813,6 +32892,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -31821,6 +32901,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -32347,6 +33428,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -32355,6 +33437,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -32876,6 +33959,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -32884,6 +33968,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -33394,6 +34479,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -33402,6 +34488,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -33903,6 +34990,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -33911,6 +34999,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -34385,6 +35474,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -34393,6 +35483,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -34913,6 +36004,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -34921,6 +36013,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -35431,6 +36524,7 @@ paths:
               $ref: '#/components/schemas/Sort'
           explode: true
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -35439,6 +36533,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -36340,6 +37435,8 @@ components:
                 $ref: '#/components/schemas/RuleRequester'
             businessUnit:
               $ref: '#/components/schemas/BusinessUnitKeyReference'
+            custom:
+              $ref: '#/components/schemas/CustomFields'
     ApprovalRuleDraft:
       type: "object"
       required:
@@ -36400,6 +37497,30 @@ components:
               type: "string"
             approvers:
               $ref: '#/components/schemas/ApproverHierarchyDraft'
+    ApprovalRuleSetCustomFieldAction:
+      allOf:
+        - $ref: '#/components/schemas/ApprovalRuleUpdateAction'
+        - type: "object"
+          required:
+            - name
+          properties:
+            action:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+    ApprovalRuleSetCustomTypeAction:
+      allOf:
+        - $ref: '#/components/schemas/ApprovalRuleUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            type:
+              $ref: '#/components/schemas/TypeResourceIdentifier'
+            fields:
+              $ref: '#/components/schemas/FieldContainer'
     ApprovalRuleSetDescriptionAction:
       allOf:
         - $ref: '#/components/schemas/ApprovalRuleUpdateAction'
@@ -36494,6 +37615,8 @@ components:
         propertyName: action
         mapping:
           setApprovers: '#/components/schemas/ApprovalRuleSetApproversAction'
+          setCustomField: '#/components/schemas/ApprovalRuleSetCustomFieldAction'
+          setCustomType: '#/components/schemas/ApprovalRuleSetCustomTypeAction'
           setDescription: '#/components/schemas/ApprovalRuleSetDescriptionAction'
           setKey: '#/components/schemas/ApprovalRuleSetKeyAction'
           setName: '#/components/schemas/ApprovalRuleSetNameAction'
@@ -37142,6 +38265,102 @@ components:
               type: "string"
             key:
               type: "string"
+    BusinessUnitIndexingProgress:
+      type: "object"
+      required:
+        - estimatedTotal
+        - failed
+        - indexed
+      properties:
+        indexed:
+          type: "integer"
+          format: "int32"
+        failed:
+          type: "integer"
+          format: "int32"
+        estimatedTotal:
+          type: "integer"
+          format: "int32"
+    BusinessUnitIndexingStatus:
+      type: "string"
+      enum:
+        - Scheduled
+        - Indexing
+        - Ready
+        - Failed
+      x-annotation-package: "Project"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Scheduled: "Indexing is scheduled."
+        Indexing: "Indexing is in progress."
+        Ready: "Indexing is complete and the [Search Business Units](ctp:api:endpoint:/{projectKey}/business-units/search:POST)
+         endpoint returns up-to-date results."
+        Failed: "Indexing failed due to an internal error."
+    BusinessUnitPagedSearchResponse:
+      type: "object"
+      required:
+        - limit
+        - offset
+        - results
+        - total
+      properties:
+        total:
+          type: "integer"
+          format: "int64"
+        limit:
+          type: "integer"
+          format: "int32"
+        offset:
+          type: "integer"
+          format: "int32"
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/BusinessUnitSearchResult'
+    BusinessUnitSearchIndexingStatusResponse:
+      type: "object"
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/BusinessUnitIndexingStatus'
+        states:
+          $ref: '#/components/schemas/BusinessUnitIndexingProgress'
+        startedAt:
+          type: "string"
+          format: "datetime"
+        lastModifiedAt:
+          type: "string"
+          format: "datetime"
+        retryCount:
+          type: "integer"
+          format: "int32"
+    BusinessUnitSearchRequest:
+      type: "object"
+      properties:
+        query:
+          $ref: '#/components/schemas/SearchQuery'
+        sort:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/SearchSorting'
+        limit:
+          type: "integer"
+          format: "int32"
+        offset:
+          type: "integer"
+          format: "int32"
+    BusinessUnitSearchResult:
+      type: "object"
+      required:
+        - id
+        - relevance
+      properties:
+        id:
+          type: "string"
+        relevance:
+          type: "number"
+          format: "double"
     Associate:
       type: "object"
       required:
@@ -37258,6 +38477,10 @@ components:
             status:
               $ref: '#/components/schemas/BusinessUnitStatus'
             stores:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreKeyReference'
+            inheritedStores:
               type: "array"
               items:
                 $ref: '#/components/schemas/StoreKeyReference'
@@ -37557,6 +38780,10 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/StoreKeyReference'
+            inheritedStores:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreKeyReference'
             storeMode:
               $ref: '#/components/schemas/BusinessUnitStoreMode'
             unitType:
@@ -37680,6 +38907,10 @@ components:
             status:
               $ref: '#/components/schemas/BusinessUnitStatus'
             stores:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreKeyReference'
+            inheritedStores:
               type: "array"
               items:
                 $ref: '#/components/schemas/StoreKeyReference'
@@ -38276,6 +39507,30 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/CartDiscount'
+    CartDiscountPatternTarget:
+      allOf:
+        - $ref: '#/components/schemas/CartDiscountTarget'
+        - type: "object"
+          required:
+            - selectionMode
+            - targetPattern
+            - triggerPattern
+          properties:
+            type:
+              type: "string"
+            triggerPattern:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/PatternComponent'
+            targetPattern:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/PatternComponent'
+            maxOccurrence:
+              type: "integer"
+              format: "int32"
+            selectionMode:
+              $ref: '#/components/schemas/SelectionMode'
     CartDiscountReference:
       allOf:
         - $ref: '#/components/schemas/Reference'
@@ -38314,6 +39569,7 @@ components:
         mapping:
           customLineItems: '#/components/schemas/CartDiscountCustomLineItemsTarget'
           lineItems: '#/components/schemas/CartDiscountLineItemsTarget'
+          pattern: '#/components/schemas/CartDiscountPatternTarget'
           shipping: '#/components/schemas/CartDiscountShippingCostTarget'
           totalPrice: '#/components/schemas/CartDiscountTotalPriceTarget'
           multiBuyCustomLineItems: '#/components/schemas/MultiBuyCustomLineItemsTarget'
@@ -38442,6 +39698,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/TypedMoney'
+            applicationMode:
+              $ref: '#/components/schemas/DiscountApplicationMode'
     CartDiscountValueFixedDraft:
       allOf:
         - $ref: '#/components/schemas/CartDiscountValueDraft'
@@ -38455,6 +39713,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/TypedMoneyDraft'
+            applicationMode:
+              $ref: '#/components/schemas/DiscountApplicationMode'
     CartDiscountValueGiftLineItem:
       allOf:
         - $ref: '#/components/schemas/CartDiscountValue'
@@ -38517,6 +39777,46 @@ components:
             permyriad:
               type: "integer"
               format: "int64"
+    CountOnCustomLineItemUnits:
+      allOf:
+        - $ref: '#/components/schemas/PatternComponent'
+        - type: "object"
+          required:
+            - predicate
+          properties:
+            type:
+              type: "string"
+            predicate:
+              type: "string"
+            minCount:
+              type: "integer"
+              format: "int32"
+            maxCount:
+              type: "integer"
+              format: "int32"
+            excludeCount:
+              type: "integer"
+              format: "int32"
+    CountOnLineItemUnits:
+      allOf:
+        - $ref: '#/components/schemas/PatternComponent'
+        - type: "object"
+          required:
+            - predicate
+          properties:
+            type:
+              type: "string"
+            predicate:
+              type: "string"
+            minCount:
+              type: "integer"
+              format: "int32"
+            maxCount:
+              type: "integer"
+              format: "int32"
+            excludeCount:
+              type: "integer"
+              format: "int32"
     DiscountApplicationMode:
       type: "string"
       enum:
@@ -38581,6 +39881,18 @@ components:
               format: "int32"
             selectionMode:
               $ref: '#/components/schemas/SelectionMode'
+    PatternComponent:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          CountOnCustomLineItemUnits: '#/components/schemas/CountOnCustomLineItemUnits'
+          CountOnLineItemUnits: '#/components/schemas/CountOnLineItemUnits'
+      required:
+        - type
+      properties:
+        type:
+          type: "string"
     SelectionMode:
       type: "string"
       enum:
@@ -39303,9 +40615,10 @@ components:
       x-annotation-enumDescriptions:
         Standard: "Allows application of [Cart Discounts](/../api/projects/cartDiscounts)
          for the Custom Line Item.nnThis is the default mode for backwards compatibility.n"
-        External: "Deactivates application of Cart Discounts for the Custom Line Item, despite
-         a matching [CartDiscountCustomLineItemsTarget](ctp:api:type:CartDiscountCustomLineItemsTarget)
-         and [MultiBuyCustomLineItemsTarget](ctp:api:type:MultiBuyCustomLineItemsTarget).n"
+        External: "Deactivates application of Cart Discounts for the Custom Line Item despite
+         a matching [CartDiscountCustomLineItemsTarget](ctp:api:type:CartDiscountCustomLineItemsTarget),
+         [MultiBuyCustomLineItemsTarget](ctp:api:type:MultiBuyCustomLineItemsTarget), or
+         [CartDiscountPatternTarget](ctp:api:type:CartDiscountPatternTarget).n"
     CustomShippingDraft:
       type: "object"
       required:
@@ -39469,7 +40782,7 @@ components:
         - discountedAmount
       properties:
         discount:
-          $ref: '#/components/schemas/CartDiscountReference'
+          $ref: '#/components/schemas/Reference'
         discountedAmount:
           $ref: '#/components/schemas/TypedMoney'
     ExternalLineItemTotalPrice:
@@ -40649,6 +41962,8 @@ components:
               $ref: '#/components/schemas/TaxCategoryResourceIdentifier'
             externalTaxRate:
               $ref: '#/components/schemas/ExternalTaxRateDraft'
+            custom:
+              $ref: '#/components/schemas/CustomFieldsDraft'
     CartSetCustomTypeAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -42936,11 +44251,10 @@ components:
         - Ready
         - Failed
       x-annotation-package: "Project"
-      x-beta: true
       x-annotation-enumDescriptions:
         Scheduled: "Indexing is scheduled."
         Indexing: "Indexing is in progress."
-        Ready: "Indexing is complete and the [Search Customers](/../api/projects/customer-search#search-customers)
+        Ready: "Indexing is complete and the [Search Customers](ctp:api:endpoint:/{projectKey}/customers/search:POST)
          endpoint returns up-to-date results."
         Failed: "Indexing failed due to an internal error."
     CustomerPagedSearchResponse:
@@ -44734,6 +46048,7 @@ components:
           SearchExecutionFailure: '#/components/schemas/SearchExecutionFailureError'
           SearchFacetPathNotFound: '#/components/schemas/SearchFacetPathNotFoundError'
           SearchIndexingInProgress: '#/components/schemas/SearchIndexingInProgressError'
+          SearchNotReady: '#/components/schemas/SearchNotReadyError'
           SemanticError: '#/components/schemas/SemanticErrorError'
           ShippingMethodDoesNotMatchCart: '#/components/schemas/ShippingMethodDoesNotMatchCartError'
           StoreCartDiscountsLimitReached: '#/components/schemas/StoreCartDiscountsLimitReachedError'
@@ -45603,6 +46918,20 @@ components:
               type: "string"
           additionalProperties:
             type: "string"
+    SearchNotReadyError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
     SemanticErrorError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -46154,6 +47483,7 @@ components:
           SearchExecutionFailure: '#/components/schemas/GraphQLSearchExecutionFailureError'
           SearchFacetPathNotFound: '#/components/schemas/GraphQLSearchFacetPathNotFoundError'
           SearchIndexingInProgress: '#/components/schemas/GraphQLSearchIndexingInProgressError'
+          SearchNotReady: '#/components/schemas/GraphQLSearchNotReadyError'
           SemanticError: '#/components/schemas/GraphQLSemanticErrorError'
           ShippingMethodDoesNotMatchCart: '#/components/schemas/GraphQLShippingMethodDoesNotMatchCartError'
           StoreCartDiscountsLimitReached: '#/components/schemas/GraphQLStoreCartDiscountsLimitReachedError'
@@ -46846,6 +48176,17 @@ components:
               type: "string"
           additionalProperties:
             type: "string"
+    GraphQLSearchNotReadyError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
+          additionalProperties:
+            type: "string"
     GraphQLSemanticErrorError:
       allOf:
         - $ref: '#/components/schemas/GraphQLErrorObject'
@@ -47052,6 +48393,7 @@ components:
         - order
         - payment
         - customer
+        - customer-group
         - quote-request
         - staged-quote
         - quote
@@ -47063,6 +48405,7 @@ components:
         order: "Extension triggered for operations on [Orders](/../api/projects/orders)."
         payment: "Extension triggered for operations on [Payments](/../api/projects/payments)."
         customer: "Extension triggered for operations on [Customers](/../api/projects/customers)."
+        customer-group: "Extension triggered for operations on [CustomerGroups](/../api/projects/customerGroups)."
         quote-request: "Extension triggered for operations on [QuoteRequests](/../api/projects/quote-requests)."
         staged-quote: "Extension triggered for operations on [StagedQuotes](/../api/projects/staged-quotes)."
         quote: "Extension triggered for operations on [Quotes](/../api/projects/quotes)."
@@ -47215,10 +48558,10 @@ components:
       properties:
         line:
           type: "integer"
-          format: "int32"
+          format: "int64"
         column:
           type: "integer"
-          format: "int32"
+          format: "int64"
     GraphQLRequest:
       type: "object"
       required:
@@ -58036,6 +59379,110 @@ components:
               $ref: '#/components/schemas/Reference'
             force:
               type: "boolean"
+    ShoppingListLineItemAddedMessage:
+      allOf:
+        - $ref: '#/components/schemas/ShoppingListMessage'
+        - type: "object"
+          required:
+            - lineItem
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            lineItem:
+              $ref: '#/components/schemas/ShoppingListLineItem'
+    ShoppingListLineItemRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/ShoppingListMessage'
+        - type: "object"
+          required:
+            - lineItem
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            lineItem:
+              $ref: '#/components/schemas/ShoppingListLineItem'
+    ShoppingListMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
     StagedQuoteCreatedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -62387,6 +63834,35 @@ components:
               $ref: '#/components/schemas/Reference'
             force:
               type: "boolean"
+    ShoppingListLineItemAddedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/ShoppingListMessagePayload'
+        - type: "object"
+          required:
+            - lineItem
+          properties:
+            type:
+              type: "string"
+            lineItem:
+              $ref: '#/components/schemas/ShoppingListLineItem'
+    ShoppingListLineItemRemovedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/ShoppingListMessagePayload'
+        - type: "object"
+          required:
+            - lineItem
+          properties:
+            type:
+              type: "string"
+            lineItem:
+              $ref: '#/components/schemas/ShoppingListLineItem'
+    ShoppingListMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
     ShoppingListStoreSetMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -63068,7 +64544,7 @@ components:
               items:
                 $ref: '#/components/schemas/CustomLineItem'
             totalPrice:
-              $ref: '#/components/schemas/TypedMoney'
+              $ref: '#/components/schemas/CentPrecisionMoney'
             taxedPrice:
               $ref: '#/components/schemas/TaxedPrice'
             taxedShippingPrice:
@@ -63890,6 +65366,8 @@ components:
               $ref: '#/components/schemas/TaxCategoryResourceIdentifier'
             externalTaxRate:
               $ref: '#/components/schemas/ExternalTaxRateDraft'
+            custom:
+              $ref: '#/components/schemas/CustomFieldsDraft'
     StagedOrderSetCustomTypeAction:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
@@ -64400,6 +65878,8 @@ components:
               $ref: '#/components/schemas/TaxCategoryResourceIdentifier'
             externalTaxRate:
               $ref: '#/components/schemas/ExternalTaxRateDraft'
+            custom:
+              $ref: '#/components/schemas/CustomFieldsDraft'
     StagedOrderSetShippingAddressAndShippingMethodAction:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
@@ -65233,7 +66713,7 @@ components:
               items:
                 $ref: '#/components/schemas/CustomLineItem'
             totalPrice:
-              $ref: '#/components/schemas/TypedMoney'
+              $ref: '#/components/schemas/CentPrecisionMoney'
             taxedPrice:
               $ref: '#/components/schemas/TaxedPrice'
             taxedShippingPrice:
@@ -65829,6 +67309,7 @@ components:
         - Delayed
         - Partial
         - Backorder
+        - Canceled
       x-annotation-package: "Order"
       x-annotation-enumDescriptions:
         Shipped: "Indicates that the Order is shipped.n"
@@ -65839,6 +67320,7 @@ components:
         Partial: "Indicates that items in the Order are shipped in more than one shipment.n"
         Backorder: "Indicates that items in the Order are not in stock and will be delivered
          once the items are restocked.n"
+        Canceled: "Indicates that the shipment of the Order is canceled.n"
     ShippingInfoImportDraft:
       type: "object"
       required:
@@ -67792,10 +69274,10 @@ components:
       properties:
         id:
           type: "string"
-        productProjection:
-          $ref: '#/components/schemas/ProductProjection'
         matchingVariants:
           $ref: '#/components/schemas/ProductSearchMatchingVariants'
+        productProjection:
+          $ref: '#/components/schemas/ProductProjection'
     ProductSearchFacetCountExpression:
       allOf:
         - $ref: '#/components/schemas/ProductSearchFacetExpression'
@@ -68542,6 +70024,20 @@ components:
               $ref: '#/components/schemas/ProductTailoringData'
             hasStagedChanges:
               type: "boolean"
+            warnings:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/WarningObject'
+    ProductTailoringAttribute:
+      type: "object"
+      required:
+        - name
+        - value
+      properties:
+        name:
+          type: "string"
+        value:
+          {}
     ProductTailoringData:
       type: "object"
       properties:
@@ -68700,6 +70196,8 @@ components:
           setAssetKey: '#/components/schemas/ProductTailoringSetAssetKeyAction'
           setAssetSources: '#/components/schemas/ProductTailoringSetAssetSourcesAction'
           setAssetTags: '#/components/schemas/ProductTailoringSetAssetTagsAction'
+          setAttribute: '#/components/schemas/ProductTailoringSetAttributeAction'
+          setAttributeInAllVariants: '#/components/schemas/ProductTailoringSetAttributeInAllVariantsAction'
           setDescription: '#/components/schemas/ProductTailoringSetDescriptionAction'
           setImages: '#/components/schemas/ProductTailoringSetExternalImagesAction'
           setImageLabel: '#/components/schemas/ProductTailoringSetImageLabelAction'
@@ -68731,6 +70229,10 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/Asset'
+        attributes:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductTailoringAttribute'
     ProductVariantTailoringDraft:
       type: "object"
       properties:
@@ -68747,6 +70249,10 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/Asset'
+        attributes:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductTailoringAttribute'
     ProductTailoringAddAssetAction:
       allOf:
         - $ref: '#/components/schemas/ProductTailoringUpdateAction'
@@ -68806,6 +70312,10 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/AssetDraft'
+            attributes:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductTailoringAttribute'
             staged:
               type: "boolean"
     ProductTailoringChangeAssetNameAction:
@@ -69061,6 +70571,41 @@ components:
               type: "array"
               items:
                 type: "string"
+    ProductTailoringSetAttributeAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - name
+          properties:
+            action:
+              type: "string"
+            variantId:
+              type: "integer"
+              format: "int64"
+            sku:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+            staged:
+              type: "boolean"
+    ProductTailoringSetAttributeInAllVariantsAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - name
+          properties:
+            action:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+            staged:
+              type: "boolean"
     ProductTailoringSetDescriptionAction:
       allOf:
         - $ref: '#/components/schemas/ProductTailoringUpdateAction'
@@ -69076,8 +70621,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/ProductTailoringUpdateAction'
         - type: "object"
-          required:
-            - images
           properties:
             action:
               type: "string"
@@ -70059,6 +71602,10 @@ components:
               $ref: '#/components/schemas/ReviewRatingStatistics'
             priceMode:
               $ref: '#/components/schemas/ProductPriceModeEnum'
+            warnings:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/WarningObject'
     ProductCatalogData:
       type: "object"
       required:
@@ -71416,6 +72963,16 @@ components:
         Inactive: "The [Business Unit](ctp:api:type:BusinessUnit) cannot be used in [Orders](ctp:api:type:Order),
          [Carts](ctp:api:type:Cart), and [Quotes](/../api/quotes-overview) and cannot be
          updated using the [My Business Unit endpoint](ctp:api:endpoint:/{projectKey}/me/business-units:POST)."
+    BusinessUnitSearchStatus:
+      type: "string"
+      enum:
+        - Activated
+        - Deactivated
+      x-annotation-package: "Project"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Activated: "indicates that the Business Unit Search feature is fully operational."
+        Deactivated: "indicates that the Business Unit Search feature is currently not active."
     CartClassificationType:
       allOf:
         - $ref: '#/components/schemas/ShippingRateInputType'
@@ -71457,11 +73014,9 @@ components:
         - Activated
         - Deactivated
       x-annotation-package: "Project"
-      x-beta: true
       x-annotation-enumDescriptions:
-        Activated: "indicates that the [Customer Search](/../api/projects/customer-search#search-customers)
-         endpoint is fully operational."
-        Deactivated: "indicates that the Customer Search enpoint is currently not active."
+        Activated: "indicates that the Customer Search feature is fully operational."
+        Deactivated: "indicates that the Customer Search feature is currently not active."
     ExternalOAuth:
       type: "object"
       required:
@@ -71490,21 +73045,9 @@ components:
         - ProductProjectionsSearch
         - ProductsSearch
       x-annotation-package: "Project"
-      x-beta: true
       x-annotation-enumDescriptions:
         ProductProjectionsSearch: "For [Product Projection Search](/../api/projects/products-search).n"
         ProductsSearch: "For [Product Search](/../api/projects/product-search).n"
-    ProductSearchStatus:
-      type: "string"
-      enum:
-        - Activated
-        - Deactivated
-      x-annotation-package: "Project"
-      x-beta: true
-      x-annotation-enumDescriptions:
-        Activated: "indicates that the [Search Products](/../api/projects/product-search#search-products)
-         endpoint is fully operational."
-        Deactivated: "indicates that the Product Search feature is currently not active."
     Project:
       type: "object"
       required:
@@ -71574,6 +73117,7 @@ components:
       discriminator:
         propertyName: action
         mapping:
+          changeBusinessUnitSearchStatus: '#/components/schemas/ProjectChangeBusinessUnitSearchStatusAction'
           changeMyBusinessUnitStatusOnCreation: '#/components/schemas/ProjectChangeBusinessUnitStatusOnCreationAction'
           changeCartsConfiguration: '#/components/schemas/ProjectChangeCartsConfigurationAction'
           changeCountries: '#/components/schemas/ProjectChangeCountriesAction'
@@ -71603,6 +73147,10 @@ components:
         productsSearch:
           $ref: '#/components/schemas/SearchIndexingConfigurationValues'
         orders:
+          $ref: '#/components/schemas/SearchIndexingConfigurationValues'
+        customers:
+          $ref: '#/components/schemas/SearchIndexingConfigurationValues'
+        businessUnits:
           $ref: '#/components/schemas/SearchIndexingConfigurationValues'
     SearchIndexingConfigurationStatus:
       type: "string"
@@ -71647,6 +73195,17 @@ components:
         deleteDaysAfterLastModification:
           type: "integer"
           format: "int64"
+    ProjectChangeBusinessUnitSearchStatusAction:
+      allOf:
+        - $ref: '#/components/schemas/ProjectUpdateAction'
+        - type: "object"
+          required:
+            - status
+          properties:
+            action:
+              type: "string"
+            status:
+              $ref: '#/components/schemas/BusinessUnitSearchStatus'
     ProjectChangeBusinessUnitStatusOnCreationAction:
       allOf:
         - $ref: '#/components/schemas/ProjectUpdateAction'
@@ -72797,7 +74356,29 @@ components:
             - exact
           properties:
             exact:
-              $ref: '#/components/schemas/SearchAnyValue'
+              $ref: '#/components/schemas/SearchExactValue'
+    SearchExactValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchQueryExpressionValue'
+        - type: "object"
+          properties:
+            field:
+              type: "string"
+            boost:
+              type: "number"
+              format: "double"
+            fieldType:
+              $ref: '#/components/schemas/SearchFieldType'
+            value:
+              {}
+            values:
+              type: "array"
+              items:
+                {}
+            language:
+              $ref: '#/components/schemas/Locale'
+            caseInsensitive:
+              type: "boolean"
     SearchExistsExpression:
       allOf:
         - $ref: '#/components/schemas/SearchQueryExpression'
@@ -75783,12 +77364,15 @@ components:
           required:
             - accountId
             - region
+            - source
           properties:
             type:
               type: "string"
             region:
               type: "string"
             accountId:
+              type: "string"
+            source:
               type: "string"
     GoogleCloudPubSubDestination:
       allOf:
@@ -75882,9 +77466,11 @@ components:
         - payment
         - product
         - product-selection
+        - product-tailoring
         - quote
         - quote-request
         - review
+        - shopping-list
         - staged-quote
         - standalone-price
         - store
@@ -75906,9 +77492,11 @@ components:
         payment: "Messages related to [Payments](ctp:api:type:Payment).n"
         product: "Messages related to [Products](ctp:api:type:Product).n"
         product-selection: "Messages related to [ProductSelections](ctp:api:type:ProductSelection).n"
+        product-tailoring: "Messages related to [ProductTailoring](ctp:api:type:ProductTailoring).n"
         quote: "Messages related to [Quotes](ctp:api:type:Quote).n"
         quote-request: "Messages related to [Quote Requests](ctp:api:type:QuoteRequest).n"
         review: "Messages related to [Reviews](ctp:api:type:Review).n"
+        shopping-list: "Messages related to [Shopping Lists](ctp:api:type:ShoppingList).n"
         staged-quote: "Messages related to [Staged Quotes](ctp:api:type:StagedQuote).n"
         standalone-price: "Messages related to [StandalonePrices](ctp:api:type:StandalonePrice).n"
         store: "Messages related to [Stores](ctp:api:type:Store).n"
@@ -76589,6 +78177,7 @@ components:
       type: "string"
       enum:
         - approval-flow
+        - approval-rule
         - associate-role
         - business-unit
         - cart
@@ -76608,6 +78197,7 @@ components:
       x-annotation-package: "Type"
       x-annotation-enumDescriptions:
         approval-flow: "[ApprovalFlow](ctp:api:type:ApprovalFlow)n"
+        approval-rule: "[ApprovalRule](ctp:api:type:ApprovalRule)n"
         associate-role: "[AssociateRole](ctp:api:type:AssociateRole)n"
         business-unit: "[BusinessUnit](ctp:api:type:BusinessUnit)n"
         cart: "[Cart](ctp:api:type:Cart)n"
@@ -76722,6 +78312,7 @@ components:
         - address
         - asset
         - approval-flow
+        - approval-rule
         - associate-role
         - business-unit
         - cart-discount
@@ -76742,6 +78333,7 @@ components:
         - payment-interface-interaction
         - product-price
         - product-selection
+        - product-tailoring
         - quote
         - review
         - shipping
@@ -76758,6 +78350,7 @@ components:
          [Customer](ctp:api:type:Customer), and [Channel](ctp:api:type:Channel)n"
         asset: "[Asset](ctp:api:type:Asset) on [Category](ctp:api:type:Category) and [ProductVariant](ctp:api:type:ProductVariant)n"
         approval-flow: "[ApprovalFlow](ctp:api:type:ApprovalFlow)n"
+        approval-rule: "[ApprovalRule](ctp:api:type:ApprovalRule)n"
         associate-role: "[AssociateRole](ctp:api:type:AssociateRole)n"
         business-unit: "[BusinessUnit](ctp:api:type:BusinessUnit)n"
         cart-discount: "[CartDiscount](ctp:api:type:CartDiscount)n"
@@ -76784,6 +78377,7 @@ components:
          on [Payment](ctp:api:type:Payment)n"
         product-price: "[Embedded Price](ctp:api:type:Price) on [ProductVariant](ctp:api:type:ProductVariant)n"
         product-selection: "[ProductSelection](ctp:api:type:ProductSelection)n"
+        product-tailoring: "[ProductTailoring](ctp:api:type:ProductTailoring)n"
         quote: "[Quote](ctp:api:type:Quote), [QuoteRequest](ctp:api:type:QuoteRequest) and
          [StagedQuote](ctp:api:type:StagedQuote).nWhen a [StagedQuote](ctp:api:type:StagedQuote)
          is created, the [CustomFields](ctp:api:type:CustomFields) will be copied from
@@ -77155,6 +78749,32 @@ components:
               type: "string"
             description:
               $ref: '#/components/schemas/LocalizedString'
+    ImageProcessingOngoingWarning:
+      allOf:
+        - $ref: '#/components/schemas/WarningObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    WarningObject:
+      type: "object"
+      discriminator:
+        propertyName: code
+        mapping:
+          ImageProcessingOngoing: '#/components/schemas/ImageProcessingOngoingWarning'
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: "string"
+        message:
+          type: "string"
     Location:
       type: "object"
       required:

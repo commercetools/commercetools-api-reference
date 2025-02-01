@@ -1,0 +1,56 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface WarningObject [[WarningObject.svg]]  {
+    code: String
+    message: String
+}
+
+
+interface ImageProcessingOngoingWarning [[ImageProcessingOngoingWarning.svg]]  {
+    code: String
+    message: String
+}
+interface ProductTailoring [[ProductTailoring.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    store: [[StoreKeyReference.svg StoreKeyReference]]
+    product: [[ProductReference.svg ProductReference]]
+    published: Boolean
+    current: [[ProductTailoringData.svg ProductTailoringData]]
+    staged: [[ProductTailoringData.svg ProductTailoringData]]
+    hasStagedChanges: Boolean
+    warnings: [[WarningObject.svg List<WarningObject>]]
+}
+interface Product [[Product.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    productType: [[ProductTypeReference.svg ProductTypeReference]]
+    masterData: [[ProductCatalogData.svg ProductCatalogData]]
+    taxCategory: [[TaxCategoryReference.svg TaxCategoryReference]]
+    state: [[StateReference.svg StateReference]]
+    reviewRatingStatistics: [[ReviewRatingStatistics.svg ReviewRatingStatistics]]
+    priceMode: [[ProductPriceModeEnum.svg ProductPriceModeEnum]]
+    warnings: [[WarningObject.svg List<WarningObject>]]
+}
+WarningObject --> ImageProcessingOngoingWarning #blue;text:blue : "code : ImageProcessingOngoing"
+WarningObject --> ProductTailoring #green;text:green : "warnings"
+WarningObject --> Product #green;text:green : "warnings"
+@enduml
