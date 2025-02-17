@@ -1,0 +1,47 @@
+meta {
+  name: Anonymous session flow
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{authUrl}}/oauth/{{project-key}}/anonymous/token
+  body: formUrlEncoded
+  auth: basic
+}
+
+auth:basic {
+  username: {{ctp_client_id}}
+  password: {{ctp_client_secret}}
+}
+
+body:form-urlencoded {
+  grant_type: client_credentials
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  if(res.status == 200) {
+    var data = res.body;
+    if(data.access_token){
+      bru.setEnvVar("ctp_access_token", data.access_token, true);
+    }
+  
+    if (data.scope) {
+      parts = data.scope.split(" ");
+      parts = parts.filter(scope => scope.includes(":")).map(scope => scope.split(":"))
+      if (parts.length > 0) {
+          scopeParts = parts[0];
+          bru.setEnvVar("project-key", scopeParts[1]);
+          parts = parts.filter(scope => scope.length >= 3)
+          if (parts.length > 0) {
+              scopeParts = parts[0];
+              bru.setEnvVar("store-key", scopeParts[2]);
+          }
+      }
+    }
+  }
+}
