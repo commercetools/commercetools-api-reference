@@ -48,6 +48,8 @@ post:
   get:
     displayName: Get customer by password verification token
     securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
+    description: |
+      Use this method to retrieve the details of a global Customer by using the password token during their [password reset process](/../api/customers-overview#customer-password-reset).
     responses:
       200:
         body:
@@ -62,6 +64,8 @@ post:
   get:
     displayName: Get customer by email verification token
     securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
+    description: |
+      Use this method to retrieve a global Customer's details by using the email token during their [email verification process](/../api/customers-overview#customer-email-verification).
     responses:
       200:
         body:
@@ -71,8 +75,11 @@ post:
   type: base
   post:
     displayName: Create a Token for verifying the Customer's Email
-    description: Produces the [CustomerEmailTokenCreated](ctp:api:type:CustomerEmailTokenCreatedMessage) Message.
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
+    description: |
+      Use this method to create an email token for a global Customer during their [email verification process](/../api/customers-overview#customer-email-verification).
+
+      Creating an email token for the Customer produces the [CustomerEmailTokenCreated](ctp:api:type:CustomerEmailTokenCreatedMessage) Message.
     body:
       application/json:
         example: !include ../examples/Customer/CustomerCreateEmailToken.json
@@ -88,6 +95,8 @@ post:
   post:
     displayName: Verifies customer's email.
     description: |
+      Use this method to verify a global Customer's email during their [email verification process](/../api/customers-overview#customer-email-verification).
+      
       Verifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     body:
@@ -124,6 +133,10 @@ post:
   post:
     displayName: Reset Customer's Password
     description: |
+      Use this method to reset a global Customer's password during their [password reset process](/../api/customers-overview#customer-password-reset).
+
+      After the password is reset, any previously issued access and/or refresh tokens created through the [password flow](/authorization#password-flow) or [refresh token flow](/authorization#refresh-token-flow) are invalidated.
+      
       Resetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     body:
@@ -143,6 +156,10 @@ post:
   post:
     displayName: Create a Token for Resetting the Customer's Password
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
+    description: |
+      Use this method to create a password reset token for a global Customer during their [password reset process](/../api/customers-overview#customer-password-reset).
+      
+      Creating a password reset token does not invalidate existing tokens.
     body:
       application/json:
         example: !include ../examples/Customer/CustomerCreatePasswordResetToken.json

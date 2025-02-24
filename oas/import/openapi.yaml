@@ -181,6 +181,7 @@ paths:
         Retrieves all import containers of a given project key.
       parameters:
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -189,6 +190,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -327,6 +329,7 @@ paths:
         Retrieves all [ImportOperations](ctp:import:type:ImportOperation) of a given ImportContainer key.
       parameters:
         - name: limit
+          x-annotation-default: 20
           in: query
           required: false
           style: form
@@ -335,6 +338,7 @@ paths:
             format: "double"
           explode: true
         - name: offset
+          x-annotation-default: 0
           in: query
           required: false
           style: form
@@ -726,7 +730,8 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductVariantPatchesImportContainersByImportContainerKeyPost
       description: |-
-        Creates a new import request for product variant patches
+        Creates a new import request for Product Variant Patches.
+        Returns an [InvalidField](ctp:import:type:InvalidFieldError) error if the [ProductVariantPatchRequest](ctp:import:type:ProductVariantPatchRequest) contains patches with and without the `product` field set.
       requestBody:
         content:
           application/json:
@@ -982,13 +987,14 @@ components:
           insufficient_scope: '#/components/schemas/InsufficientScopeError'
           InvalidCredentials: '#/components/schemas/InvalidCredentialsError'
           InvalidField: '#/components/schemas/InvalidFieldError'
+          InvalidFieldUpdate: '#/components/schemas/InvalidFieldsUpdateError'
           InvalidInput: '#/components/schemas/InvalidInput'
           InvalidJsonInput: '#/components/schemas/InvalidJsonInput'
           InvalidOperation: '#/components/schemas/InvalidOperation'
           invalid_scope: '#/components/schemas/InvalidScopeError'
           InvalidTransition: '#/components/schemas/InvalidStateTransitionError'
           invalid_token: '#/components/schemas/InvalidTokenError'
-          ReferencedResourceNotFound: '#/components/schemas/ReferencedResourceNotFound'
+          NewMasterVariantAdditionNotAllowed: '#/components/schemas/NewMasterVariantAdditionNotAllowedError'
           RequiredField: '#/components/schemas/RequiredFieldError'
           ResourceCreation: '#/components/schemas/ResourceCreationError'
           ResourceDeletion: '#/components/schemas/ResourceDeletionError'
@@ -1149,6 +1155,22 @@ components:
             resourceIndex:
               type: "integer"
               format: "int32"
+    InvalidFieldsUpdateError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - fields
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            fields:
+              type: "array"
+              items:
+                type: "string"
     InvalidJsonInput:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -1277,24 +1299,16 @@ components:
               type: "string"
             message:
               type: "string"
-    ReferencedResourceNotFound:
+    NewMasterVariantAdditionNotAllowedError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
           required:
-            - code
             - message
-            - typeId
           properties:
             code:
               type: "string"
             message:
-              type: "string"
-            typeId:
-              $ref: '#/components/schemas/ReferenceType'
-            id:
-              type: "string"
-            key:
               type: "string"
     ImportOperation:
       type: "object"
@@ -2675,6 +2689,8 @@ components:
       properties:
         key:
           type: "string"
+        country:
+          $ref: '#/components/schemas/CountryCode'
         title:
           type: "string"
         salutation:
@@ -2697,8 +2713,6 @@ components:
           type: "string"
         state:
           type: "string"
-        country:
-          $ref: '#/components/schemas/CountryCode'
         company:
           type: "string"
         department:
@@ -3609,55 +3623,51 @@ components:
         - store
         - transaction
       x-annotation-enumDescriptions:
-        address: "[Address](/../api/types#address) on [BusinessUnit](/../api/projects/business-units#businessunit),
-         [Cart](/../api/projects/carts#cart), [Order](/../api/projects/orders#order), [OrderEdit](/../api/projects/order-edits#orderedit),
-         [Customer](/../api/projects/customers#customer), and [Channel](/../api/projects/channels#channel)n"
-        asset: "[Asset](/../api/types#asset) on [Category](/../api/projects/categories#category)
-         and [ProductVariant](/../api/projects/products#productvariant)n"
-        business-unit: "[BusinessUnit](/../api/projects/business-units#businessunit)n"
-        cart-discount: "[CartDiscount](/../api/projects/cartDiscounts#cartdiscount)n"
-        category: "[Category](/../api/projects/categories#category)n"
-        channel: "[Channel](/../api/projects/channels#channel)n"
-        custom-line-item: "[CustomLineItem](/../api/projects/carts#customlineitem) on [Cart](/../api/projects/carts#cart)
-         and [Order](/../api/projects/orders#order)n"
-        customer: "[Customer](/../api/projects/customers#customer)n"
-        customer-group: "[CustomerGroup](/../api/projects/customerGroups#customergroup)n"
-        discount-code: "[DiscountCode](/../api/projects/discountCodes#discountcode)n"
-        inventory-entry: "[InventoryEntry](/../api/projects/inventory#inventoryentry)n"
-        line-item: "[LineItem](/../api/projects/carts#lineitem) on [Cart](/../api/projects/carts#cart)
-         and [Order](/../api/projects/orders#order), and [LineItem](/../api/projects/carts#lineitem)
-         on [ShoppingList](/../api/projects/shoppingLists#shoppinglist)n"
-        order: "[Cart](/../api/projects/carts#cart) and [Order](/../api/projects/orders#order).n
-        When a [Cart](/../api/projects/carts#cart) is ordered, the [CustomFields](/../api/projects/custom-fields#customfields)
-         need to be copied to the [Order](/../api/projects/orders#order).nFor this reason,
-         the Types for Carts are also valid for Orders, and hence both have the same identifier:
-         `order`.n"
-        order-edit: "[OrderEdit](/../api/projects/order-edits#orderedit)n"
-        order-delivery: "[Delivery](/../api/projects/orders#delivery)n"
-        order-parcel: "[Parcel](/../api/projects/orders#parcel)n"
-        order-return-item: "[ReturnItem](/../api/projects/orders#returnitem)n"
-        payment: "[Payment](/../api/projects/payments#payment)n"
-        payment-interface-interaction: "[InterfaceInteraction](/../api/projects/payments#add-interfaceinteraction)
-         on [Payment](/../api/projects/payments#payment)n"
+        address: "[Address](ctp:api:type:Address) on [BusinessUnit](ctp:api:type:BusinessUnit),
+         [Cart](ctp:api:type:Cart), [Order](ctp:api:type:Order), [OrderEdit](ctp:api:type:OrderEdit),
+         [Customer](ctp:api:type:Customer), and [Channel](ctp:api:type:Channel)n"
+        asset: "[Asset](ctp:api:type:Asset) on [Category](ctp:api:type:Category) and [ProductVariant](ctp:api:type:ProductVariant)n"
+        business-unit: "[BusinessUnit](ctp:api:type:BusinessUnit)n"
+        cart-discount: "[CartDiscount](ctp:api:type:CartDiscount)n"
+        category: "[Category](ctp:api:type:Category)n"
+        channel: "[Channel](ctp:api:type:Channel)n"
+        custom-line-item: "[CustomLineItem](ctp:api:type:CustomLineItem) on [Cart](ctp:api:type:Cart)
+         and [Order](ctp:api:type:Order)n"
+        customer: "[Customer](ctp:api:type:Customer)n"
+        customer-group: "[CustomerGroup](ctp:api:type:CustomerGroup)n"
+        discount-code: "[DiscountCode](ctp:api:type:DiscountCode)n"
+        inventory-entry: "[InventoryEntry](ctp:api:type:InventoryEntry)n"
+        line-item: "[LineItem](ctp:api:type:LineItem) on [Cart](ctp:api:type:Cart) and [Order](ctp:api:type:Order),
+         and on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem).n"
+        order: "[Cart](ctp:api:type:Cart) and [Order](ctp:api:type:Order).nWhen a [Cart](ctp:api:type:Cart)
+         is ordered, the [CustomFields](/projects/custom-fields#customfields) need to be
+         copied to the [Order](ctp:api:type:Order).nFor this reason, the Types for Carts
+         are also valid for Orders, and hence both have the same identifier: `order`.n"
+        order-edit: "[OrderEdit](ctp:api:type:OrderEdit)n"
+        order-delivery: "[Delivery](ctp:api:type:Delivery)n"
+        order-parcel: "[Parcel](ctp:api:type:Parcel)n"
+        order-return-item: "[ReturnItem](ctp:api:type:ReturnItem)n"
+        payment: "[Payment](ctp:api:type:Payment)n"
+        payment-interface-interaction: "[InterfaceInteraction](ctp:api:type:PaymentAddInterfaceInteractionAction)
+         on [Payment](ctp:api:type:Payment)n"
         product-price: "[Embedded Price](/../api/types#price) on [ProductVariant](/../api/projects/products#productvariant)n"
-        product-selection: "[ProductSelection](/../api/projects/product-selections#productselection)n"
-        quote: "[Quote](/../api/projects/quotes#quote), [QuoteRequest](/../api/projects/quote-requests#quoterequest)
-         and [StagedQuote](/../api/projects/staged-quotes#stagedquote).nWhen a [StagedQuote](/../api/projects/staged-quotes#stagedquote)
-         is created, the [CustomFields](/../api/projects/custom-fields#customfields) will
-         be copied from the [QuoteRequest](/../api/projects/quote-requests#quoterequest)
-         and when a [Quote](/../api/projects/quotes#quote) is created, the [CustomFields](/../api/projects/custom-fields#customfields)
-         will be copied from the [StagedQuote](/../api/projects/staged-quotes#stagedquote).n
-        For this reason, the Types for Quotes are also valid for QuoteRequests and StagedQuotes,
-         and hence all have the same identifier: `quote`.n"
-        review: "[Review](/../api/projects/reviews#review)n"
-        shipping: "[Shipping](/../api/projects/carts#shipping)n"
-        shipping-method: "[ShippingMethod](/../api/projects/shippingMethods#shippingmethod)n"
-        shopping-list: "[ShoppingList](/../api/projects/shoppingLists#shoppinglist)n"
-        shopping-list-text-line-item: "[TextLineItem](/../api/projects/shoppingLists#textlineitem)
-         on [ShoppingList](/../api/projects/shoppingLists#shoppinglist)n"
-        standalone-price: "[StandalonePrice](/../api/projects/standalone-prices#standaloneprice)n"
-        store: "[Store](/../api/projects/stores#store)n"
-        transaction: "[Transaction](/../api/projects/payments#transaction) on [Payment](/../api/projects/payments#payment)n"
+        product-selection: "[ProductSelection](ctp:api:type:ProductSelection)n"
+        quote: "[Quote](ctp:api:type:Quote), [QuoteRequest](ctp:api:type:QuoteRequest) and
+         [StagedQuote](ctp:api:type:StagedQuote).nWhen a [StagedQuote](ctp:api:type:StagedQuote)
+         is created, the [CustomFields](/projects/custom-fields#customfields) will be copied
+         from the [QuoteRequest](ctp:api:type:QuoteRequest) and when a [Quote](ctp:api:type:Quote)
+         is created, the [CustomFields](/projects/custom-fields#customfields) will be copied
+         from the [StagedQuote](ctp:api:type:StagedQuote).nFor this reason, the Types
+         for Quotes are also valid for QuoteRequests and StagedQuotes, and hence all have
+         the same identifier: `quote`.n"
+        review: "[Review](ctp:api:type:Review)n"
+        shipping: "[Shipping](ctp:api:type:Shipping)n"
+        shipping-method: "[ShippingMethod](ctp:api:type:ShippingMethod)n"
+        shopping-list: "[ShoppingList](ctp:api:type:ShoppingList)n"
+        shopping-list-text-line-item: "[TextLineItem](ctp:api:type:TextLineItem) on [ShoppingList](ctp:api:type:ShoppingList)n"
+        standalone-price: "[StandalonePrice](ctp:api:type:StandalonePrice))n"
+        store: "[Store](ctp:api:type:Store)n"
+        transaction: "[Transaction](ctp:api:type:Transaction) on [Payment](ctp:api:type:Payment)n"
     FieldType:
       type: "object"
       discriminator:
