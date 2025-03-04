@@ -1737,6 +1737,7 @@ type Cart implements Versioned & ReferenceExpandable {
   taxedShippingPrice: TaxedPrice
   shippingMode: ShippingMode!
   shippingCustomFields: CustomFieldsType
+  discountTypeCombination: DiscountTypeCombination
   cartState: CartState!
   key: String
   custom: CustomFieldsType
@@ -1961,6 +1962,25 @@ input CartDiscountValueInput {
   fixed: FixedPriceDiscountValueInput
   fixedCart: FixedPriceCartDiscountValueInput
   giftLineItem: GiftLineItemValueInput
+}
+
+"Chosen discount type for the cart as part of best deal"
+enum ChosenDiscountType {
+  CartDiscount
+  ProductDiscount
+}
+
+interface DiscountTypeCombination {
+  type: String!
+}
+
+type Stacking implements DiscountTypeCombination {
+  type: String!
+}
+
+type BestDeal implements DiscountTypeCombination {
+  type: String!
+  chosenDiscountType: ChosenDiscountType
 }
 
 input CartDraft {
@@ -6820,6 +6840,7 @@ type Order implements Versioned & ReferenceExpandable {
   shippingInfo: ShippingInfo
   discountCodes: [DiscountCodeInfo!]!
   directDiscounts: [DirectDiscount!]!
+  discountTypeCombination: DiscountTypeCombination
   refusedGifts: [CartDiscount!]!
   refusedGiftsRefs: [Reference!]!
   paymentInfo: PaymentInfo
