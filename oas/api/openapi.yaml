@@ -40145,6 +40145,17 @@ components:
             validUntil:
               type: "string"
               format: "datetime"
+    BestDeal:
+      allOf:
+        - $ref: '#/components/schemas/DiscountTypeCombination'
+        - type: "object"
+          required:
+            - chosenDiscountType
+          properties:
+            type:
+              type: "string"
+            chosenDiscountType:
+              type: "string"
     Cart:
       allOf:
         - $ref: '#/components/schemas/BaseResource'
@@ -40268,6 +40279,8 @@ components:
               $ref: '#/components/schemas/CartOrigin'
             custom:
               $ref: '#/components/schemas/CustomFields'
+            discountTypeCombination:
+              $ref: '#/components/schemas/DiscountTypeCombination'
             deleteDaysAfterLastModification:
               type: "integer"
               format: "int32"
@@ -40767,6 +40780,18 @@ components:
           $ref: '#/components/schemas/TypedMoney'
         discountedGrossAmount:
           $ref: '#/components/schemas/TypedMoney'
+    DiscountTypeCombination:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          BestDeal: '#/components/schemas/BestDeal'
+          Stacking: '#/components/schemas/Stacking'
+      required:
+        - type
+      properties:
+        type:
+          type: "string"
     DiscountedLineItemPortion:
       type: "object"
       required:
@@ -41266,6 +41291,13 @@ components:
       properties:
         type:
           type: "string"
+    Stacking:
+      allOf:
+        - $ref: '#/components/schemas/DiscountTypeCombination'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
     TaxCalculationMode:
       type: "string"
       enum:
@@ -64656,6 +64688,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ReturnInfo'
+            discountTypeCombination:
+              $ref: '#/components/schemas/DiscountTypeCombination'
             lastMessageSequenceNumber:
               type: "integer"
               format: "int64"
@@ -66825,6 +66859,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ReturnInfo'
+            discountTypeCombination:
+              $ref: '#/components/schemas/DiscountTypeCombination'
             lastMessageSequenceNumber:
               type: "integer"
               format: "int64"
