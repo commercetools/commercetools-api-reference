@@ -1,0 +1,42 @@
+meta {
+  name: Get Associate in BusinessUnit by Key
+  type: http
+  seq: 190
+}
+
+get {
+  url: {{apiUrl}}/{{project-key}}/business-units/key={{associate-key}}/associates/{{associate-id}}
+  body: none
+  auth: inherit
+}
+
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("associate-id", data.results[0].id); 
+          bru.setEnvVar("associate-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("associate-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("associate-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("associate-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("associate-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
