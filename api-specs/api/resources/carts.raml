@@ -11,6 +11,7 @@ type:
 description: A shopping cart holds product variants and can be ordered.
 get:
   securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
+  description: Retrieves all Carts in the Project.
   responses:
     200:
       body:
@@ -18,13 +19,17 @@ get:
           example: !include ../examples/carts.example.json
 head:
   securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
-  description: Checks if a Cart exists for a given Query Predicate. Returns a `200 OK` status if any Carts match the Query Predicate, or a `404 Not Found` otherwise.
+  displayName: Check if a Cart exists by Query Predicate
+  description: Checks if one or more Carts exist for the provided query predicate. Returns a `200 OK` status if any Carts match the query predicate, or a `404 Not Found` otherwise.
   queryParameters:
     where?:
       type: QueryPredicate[]
 post:
   securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
   description: |
+
+    Creates a Cart in the Project.
+
     If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, or if the Shipping Method is not active, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
 
     Specific Error Codes:
@@ -87,7 +92,7 @@ post:
             example: !include ../examples/cart.example.json
   head:
     securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
-    description: Checks if a Cart of a Customer exists. Returns a `200 OK` status if the Cart exists or a `404 Not Found` otherwise.
+    description: Checks if a Cart exists for a Customer. Returns a `200 OK` status if the Cart exists or a `404 Not Found` otherwise.
 /key={key}:
   (methodName): withKey
   type:
@@ -98,6 +103,7 @@ post:
   get:
     securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
     description: |
+      Retrieves a Cart with the provided `key`.
       To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
     responses:
       200:
@@ -106,8 +112,9 @@ post:
             example: !include ../examples/cart.example.json
   head:
     securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
-    description: Checks if a Cart exists for a given `key`. Returns a `200 OK` status if the Cart exists or a `404 Not Found` otherwise.
+    description: Checks if a Cart exists for the provided `key`. Returns a `200 OK` status if the Cart exists or a `404 Not Found` otherwise.
   post:
+    description: Updates a Cart in the Project using one or more [update actions](/../projects/carts#update-actions).
     securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
     body:
       application/json:
@@ -121,6 +128,7 @@ post:
     is:
       - dataErasure
     securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+    description: Deletes a Cart in the Project.
     responses:
       200:
         body:
@@ -136,6 +144,7 @@ post:
   get:
     securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
     description: |
+      Retrieves a Cart with the provided `id`.
       To ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
     responses:
       200:
@@ -144,9 +153,10 @@ post:
             example: !include ../examples/cart.example.json
   head:
     securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
-    description: Checks if a Cart exists for a given `id`. Returns a `200 OK` status if the Cart exists or a `404 Not Found` otherwise.
+    description: Checks if a Cart exists for the provided `id`. Returns a `200 OK` status if the Cart exists or a `404 Not Found` otherwise.
   post:
     securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+    description: Updates a Cart in the Project using one or more [update actions](/../projects/carts#update-actions).
     body:
       application/json:
         example: !include ../examples/cart-update.example.json
@@ -159,6 +169,7 @@ post:
     is:
       - dataErasure
     securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+    description: Deletes a Cart in the Project.
     responses:
       200:
         body:
