@@ -896,13 +896,20 @@ input ApproverHierarchyDraft {
   tiers: [ApproverConjunctionDraft!]!
 }
 
-type AsAssociate implements CartQueryInterface & OrderQueryInterface & QuoteQueryInterface & QuoteRequestQueryInterface {
+type AsAssociate implements CartQueryInterface & OrderQueryInterface & QuoteQueryInterface & QuoteRequestQueryInterface & ShoppingListQueryInterface {
   cart(id: String!): Cart
   carts(where: String, sort: [String!], limit: Int, offset: Int): CartQueryResult!
   order(
     "Queries with specified ID"
     id: String, orderNumber: String): Order
   orders(where: String, sort: [String!], limit: Int, offset: Int): OrderQueryResult!
+  shoppingList(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): ShoppingList
+  shoppingLists(where: String, sort: [String!], limit: Int, offset: Int): ShoppingListQueryResult!
   quoteRequest(
     "Queries with specified ID"
     id: String,
@@ -6162,11 +6169,17 @@ type Mutation {
   createShoppingList(draft: ShoppingListDraft!,
 
     "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
-    storeKey: KeyReferenceInput): ShoppingList
+    storeKey: KeyReferenceInput,
+
+    "Create/modify entity as an associate in business-unit."
+    asAssociate: AsAssociateArgument): ShoppingList
   updateShoppingList(version: Long!, actions: [ShoppingListUpdateAction!]!,
 
     "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
     storeKey: KeyReferenceInput,
+
+    "Create/modify entity as an associate in business-unit."
+    asAssociate: AsAssociateArgument,
 
     "Queries with specified ID"
     id: String,
@@ -6177,6 +6190,9 @@ type Mutation {
 
     "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
     storeKey: KeyReferenceInput,
+
+    "Create/modify entity as an associate in business-unit."
+    asAssociate: AsAssociateArgument,
 
     "Queries with specified ID"
     id: String,
@@ -7593,14 +7609,18 @@ enum Permission {
   CreateMyOrdersFromMyCarts
   CreateMyOrdersFromMyQuotes
   CreateMyQuoteRequestsFromMyCarts
+  CreateMyShoppingLists
   CreateOrdersFromOthersCarts
   CreateOrdersFromOthersQuotes
   CreateOthersCarts
+  CreateOthersShoppingLists
   CreateQuoteRequestsFromOthersCarts
   DeclineMyQuotes
   DeclineOthersQuotes
   DeleteMyCarts
+  DeleteMyShoppingLists
   DeleteOthersCarts
+  DeleteOthersShoppingLists
   ReassignMyQuotes
   ReassignOthersQuotes
   RenegotiateMyQuotes
@@ -7612,18 +7632,22 @@ enum Permission {
   UpdateMyCarts
   UpdateMyOrders
   UpdateMyQuoteRequests
+  UpdateMyShoppingLists
   UpdateOthersCarts
   UpdateOthersOrders
   UpdateOthersQuoteRequests
+  UpdateOthersShoppingLists
   UpdateParentUnit
   ViewMyCarts
   ViewMyOrders
   ViewMyQuoteRequests
   ViewMyQuotes
+  ViewMyShoppingLists
   ViewOthersCarts
   ViewOthersOrders
   ViewOthersQuoteRequests
   ViewOthersQuotes
+  ViewOthersShoppingLists
 }
 
 type PlainEnumValue {
@@ -12277,6 +12301,10 @@ input SetShoppingListAnonymousId {
   anonymousId: String
 }
 
+input SetShoppingListBusinessUnit {
+  businessUnit: ResourceIdentifierInput!
+}
+
 input SetShoppingListCustomField {
   name: String!
   value: String
@@ -13539,6 +13567,8 @@ type ShoppingList implements Versioned & ReferenceExpandable {
   slugAllLocales: [LocalizedString!]
   customerRef: Reference
   customer: Customer
+  businessUnit: BusinessUnit
+  businessUnitRef: KeyReference
   storeRef: KeyReference
   store: Store
   anonymousId: String
@@ -13557,6 +13587,7 @@ type ShoppingList implements Versioned & ReferenceExpandable {
 input ShoppingListDraft {
   name: [LocalizedStringItemInputType!]!
   description: [LocalizedStringItemInputType!]
+  businessUnit: ResourceIdentifierInput
   lineItems: [ShoppingListLineItemDraft!] = []
   textLineItems: [TextLineItemDraft!] = []
   custom: CustomFieldsDraft
@@ -13657,6 +13688,7 @@ input ShoppingListUpdateAction {
   removeLineItem: RemoveShoppingListLineItem
   removeTextLineItem: RemoveShoppingListTextLineItem
   setAnonymousId: SetShoppingListAnonymousId
+  setBusinessUnit: SetShoppingListBusinessUnit
   setCustomField: SetShoppingListCustomField
   setCustomType: SetShoppingListCustomType
   setCustomer: SetShoppingListCustomer

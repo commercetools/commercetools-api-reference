@@ -390,6 +390,196 @@ type: base
                   example: !include ../examples/b2b-cart.example.json
                   type: Cart
           securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+    /shopping-lists:
+      type:
+        baseDomain:
+          resourceType: ShoppingList
+          resourceQueryType: ShoppingListPagedQueryResponse
+          resourceDraft: ShoppingListDraft
+          whereExample: 'key = "my-shopping-list"'
+          sortExample: createdAt asc
+      description: |
+        shopping-lists e.g. for wishlist support
+      get:
+        displayName: Query ShoppingLists in BusinessUnit
+        securedBy: [oauth_2_0: { scopes: ['view_shopping_lists:{projectKey}'] }]
+        queryParameters:
+          expand:
+            description: |
+              When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), expand the entire array; you cannot expand only a single element of the array—for example, `expand=lineItems[0].variant` is not supported.
+            type: Expansion[]
+            required: false
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/shopping-lists.example.json
+      head:
+        displayName: Check if ShoppingList exists in BusinessUnit by Query Predicate
+        securedBy: [oauth_2_0: { scopes: ['view_shopping_lists:{projectKey}'] }]
+        description: |
+          Checks if a ShoppingList exists for a given Query Predicate. Returns a `200 OK` if any ShoppingLists match the Query Predicate; otherwise, returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        queryParameters:
+          where?:
+            type: QueryPredicate[]
+      post:
+        displayName: Create ShoppingList in BusinessUnit
+        securedBy:
+          [oauth_2_0: { scopes: ['manage_shopping_lists:{projectKey}'] }]
+        queryParameters:
+          expand:
+            description: |
+              When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), expand the entire array; you cannot expand only a single element of the array—for example, `expand=lineItems[0].variant` is not supported.
+            type: Expansion[]
+            required: false
+        body:
+          application/json:
+            example: !include ../examples/shopping-list-create.example.json
+        description: |
+          Creates a ShoppingList in the [BusinessUnit](ctp:api:type:BusinessUnit) referenced by `businessUnitKey`. As such, the `businessUnit` field on [ShoppingListDraft](ctp:api:type:ShoppingListDraft) is ignored for this request.
+        responses:
+          201:
+            body:
+              application/json:
+                example: !include ../examples/shopping-list.example.json
+      /key={key}:
+        (methodName): withKey
+        type:
+          baseResource:
+            uriParameterName: key
+            resourceType: ShoppingList
+            resourceUpdateType: ShoppingListUpdate
+        get:
+          displayName: Get ShoppingList in BusinessUnit by Key
+          securedBy:
+            [oauth_2_0: { scopes: ['view_shopping_lists:{projectKey}'] }]
+          queryParameters:
+            expand:
+              description: |
+                When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), expand the entire array; you cannot expand only a single element of the array—for example, `expand=lineItems[0].variant` is not supported.
+              type: Expansion[]
+              required: false
+          description: |
+            If the ShoppingList exists in the Project but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/shopping-list.example.json
+        head:
+          displayName: Check if ShoppingList exists in BusinessUnit by Key
+          securedBy:
+            [oauth_2_0: { scopes: ['view_shopping_lists:{projectKey}'] }]
+          description: |
+            Checks if a ShoppingList exists for a given `key`. Returns a `200 OK` if the ShoppingList exists; otherwise, returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        post:
+          displayName: Update ShoppingList in BusinessUnit by Key
+          securedBy:
+            [oauth_2_0: { scopes: ['manage_shopping_lists:{projectKey}'] }]
+          queryParameters:
+            expand:
+              description: |
+                When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), expand the entire array; you cannot expand only a single element of the array—for example, `expand=lineItems[0].variant` is not supported.
+              type: Expansion[]
+              required: false
+          description: |
+            If the Shopping List exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          body:
+            application/json:
+              example: !include ../examples/shopping-list-update.example.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/shopping-list.example.json
+        delete:
+          displayName: Delete ShoppingList in BusinessUnit by Key
+          is:
+            - dataErasure
+          securedBy:
+            [oauth_2_0: { scopes: ['manage_shopping_lists:{projectKey}'] }]
+          queryParameters:
+            expand:
+              description: |
+                When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), expand the entire array; you cannot expand only a single element of the array—for example, `expand=lineItems[0].variant` is not supported.
+              type: Expansion[]
+              required: false
+          description: |
+            If the ShoppingList exists in the Project but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/shopping-list.example.json
+      /{ID}:
+        (methodName): withId
+        type:
+          baseResource:
+            uriParameterName: ID
+            resourceType: ShoppingList
+            resourceUpdateType: ShoppingListUpdate
+        get:
+          displayName: Get ShoppingList in BusinessUnit by ID
+          securedBy:
+            [oauth_2_0: { scopes: ['view_shopping_lists:{projectKey}'] }]
+          queryParameters:
+            expand:
+              description: |
+                When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), expand the entire array; you cannot expand only a single element of the array—for example, `expand=lineItems[0].variant` is not supported.
+              type: Expansion[]
+              required: false
+          description: |
+            If the ShoppingList exists in the Project but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/shopping-list.example.json
+        head:
+          displayName: Check if ShoppingList exists in BusinessUnit by ID
+          securedBy:
+            [oauth_2_0: { scopes: ['view_shopping_lists:{projectKey}'] }]
+          description: |
+            Checks if a ShoppingList exists for a given `id`. Returns a `200 OK` if the ShoppingList exists; otherwise, returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+        post:
+          displayName: Update ShoppingList in BusinessUnit by ID
+          securedBy:
+            [oauth_2_0: { scopes: ['manage_shopping_lists:{projectKey}'] }]
+          queryParameters:
+            expand:
+              description: |
+                When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), expand the entire array; you cannot expand only a single element of the array—for example, `expand=lineItems[0].variant` is not supported.
+              type: Expansion[]
+              required: false
+          body:
+            application/json:
+              example: !include ../examples/shopping-list-update.example.json
+          description: |
+            If the ShoppingList exists in the Project but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/shopping-list.example.json
+        delete:
+          displayName: Delete ShoppingList in BusinessUnit by ID
+          is:
+            - dataErasure
+          securedBy:
+            [oauth_2_0: { scopes: ['manage_shopping_lists:{projectKey}'] }]
+          queryParameters:
+            expand:
+              description: |
+                When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), expand the entire array; you cannot expand only a single element of the array—for example, `expand=lineItems[0].variant` is not supported.
+              type: Expansion[]
+              required: false
+          description: |
+            If the ShoppingList exists in the Project but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/shopping-list.example.json
     /orders:
       type:
         baseDomain:
