@@ -1,0 +1,79 @@
+meta {
+  name: Create ShoppingList in BusinessUnit
+  type: http
+  seq: 134
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/as-associate/{{associate-id}}/in-business-unit/key={{business-unit-key}}/shopping-lists
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name" : {
+      "en" : "My shopping list"
+    },
+    "slug" : {
+      "en" : "my-shopping-list"
+    },
+    "customer" : {
+      "typeId" : "customer",
+      "id" : "e73cd97f-846e-44a0-b418-3ed044a8e398"
+    },
+    "key" : "my-shopping-list",
+    "deleteDaysAfterLastModification" : 100,
+    "lineItems" : [ {
+      "sku" : "product-variant-sku",
+      "quantity" : 5
+    }, {
+      "productId" : "0e131f46-8d1a-4761-9c83-b45ab5d3501e",
+      "variantId" : 2
+    } ],
+    "textLineItems" : [ {
+      "name" : {
+        "en" : "My shopping list item"
+      },
+      "description" : {
+        "en" : "This is a good gift idea"
+      },
+      "quantity" : 5
+    } ],
+    "businessUnit" : {
+      "key" : "bu-345-france",
+      "typeId" : "business-unit"
+    }
+  }
+}  
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("shopping-list-id", data.results[0].id); 
+          bru.setEnvVar("shopping-list-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("shopping-list-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("shopping-list-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("shopping-list-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("shopping-list-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
