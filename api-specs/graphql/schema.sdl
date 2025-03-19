@@ -198,6 +198,11 @@ input AddCustomerBillingAddressId {
   addressKey: String
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input AddCustomerGroupAssignment {
+  customerGroupAssignment: CustomerGroupAssignmentDraft!
+}
+
 input AddCustomerShippingAddressId {
   addressId: String
   addressKey: String
@@ -3521,6 +3526,9 @@ type Customer implements Versioned & ReferenceExpandable {
   billingAddresses: [Address!]!
   storesRef: [KeyReference!]!
   stores: [Store!]!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  customerGroupAssignments: [CustomerGroupAssignment!]
   custom: CustomFieldsType
   id: String!
   version: Long!
@@ -3675,6 +3683,35 @@ type CustomerGroup implements Versioned & ReferenceExpandable {
   custom: CustomFieldsType
   createdBy: Initiator
   lastModifiedBy: Initiator
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type CustomerGroupAssignment {
+  customerGroupRef: Reference
+  customerGroup: CustomerGroup
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type CustomerGroupAssignmentAdded implements MessagePayload {
+  customerGroupAssignment: CustomerGroupAssignment!
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input CustomerGroupAssignmentDraft {
+  customerGroup: ResourceIdentifierInput!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type CustomerGroupAssignmentRemoved implements MessagePayload {
+  customerGroupAssignment: CustomerGroupAssignment!
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type CustomerGroupAssignmentsSet implements MessagePayload {
+  customerGroupAssignments: [CustomerGroupAssignment!]!
+  type: String!
 }
 
 type CustomerGroupCustomFieldAdded implements MessagePayload {
@@ -3910,6 +3947,9 @@ input CustomerSignUpDraft {
   anonymousCart: ResourceIdentifierInput
   externalId: String
   customerGroup: ResourceIdentifierInput
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  customerGroupAssignments: [CustomerGroupAssignmentDraft!]
   isEmailVerified: Boolean
   anonymousId: String
   authenticationMode: AuthenticationMode
@@ -3923,12 +3963,18 @@ type CustomerTitleSet implements MessagePayload {
 input CustomerUpdateAction {
   addAddress: AddCustomerAddress
   addBillingAddressId: AddCustomerBillingAddressId
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  addCustomerGroupAssignment: AddCustomerGroupAssignment
   addShippingAddressId: AddCustomerShippingAddressId
   addStore: AddCustomerStore
   changeAddress: ChangeCustomerAddress
   changeEmail: ChangeCustomerEmail
   removeAddress: RemoveCustomerAddress
   removeBillingAddressId: RemoveCustomerBillingAddressId
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  removeCustomerGroupAssignment: RemoveCustomerGroupAssignment
   removeShippingAddressId: RemoveCustomerShippingAddressId
   removeStore: RemoveCustomerStore
   setCompanyName: SetCustomerCompanyName
@@ -3938,6 +3984,9 @@ input CustomerUpdateAction {
   setCustomField: SetCustomerCustomField
   setCustomType: SetCustomerCustomType
   setCustomerGroup: SetCustomerGroup
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setCustomerGroupAssignments: SetCustomerGroupAssignments
   setKey: SetCustomerKey
   setLocale: SetCustomerLocale
   setCustomerNumber: SetCustomerNumber
@@ -8999,7 +9048,7 @@ type ProductVariant {
   prices: [ProductPrice!]
 
   "Returns a single price based on the price selection rules."
-  price(currency: Currency!, country: Country, customerGroupId: String, channelId: String, date: DateTime): ProductPrice
+  price(currency: Currency!, country: Country, customerGroupId: String, customerGroupAssignmentIds: [String!], channelId: String, date: DateTime): ProductPrice
   images: [Image!]!
   assets: [Asset!]!
   availability: ProductVariantAvailabilityWithChannels
@@ -10048,6 +10097,11 @@ input RemoveCustomerAddress {
 input RemoveCustomerBillingAddressId {
   addressId: String
   addressKey: String
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input RemoveCustomerGroupAssignment {
+  customerGroup: ResourceIdentifierInput!
 }
 
 input RemoveCustomerShippingAddressId {
@@ -11287,6 +11341,11 @@ input SetCustomerFirstName {
 
 input SetCustomerGroup {
   customerGroup: ResourceIdentifierInput
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetCustomerGroupAssignments {
+  customerGroupAssignments: [CustomerGroupAssignmentDraft!]!
 }
 
 input SetCustomerGroupCustomField {
