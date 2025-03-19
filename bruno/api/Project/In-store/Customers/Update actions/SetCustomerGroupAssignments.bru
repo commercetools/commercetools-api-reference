@@ -1,0 +1,64 @@
+meta {
+  name: SetCustomerGroupAssignments
+  type: http
+  seq: 750
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/in-store/key={{store-key}}/customers/{{customer-id}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "version": {{customer-version}},
+      "actions": [
+          {
+              "action" : "setCustomerGroupAssignments",
+              "customerGroupAssignments" : [ {
+                "customerGroup" : {
+                  "id" : "{{customer-group-id-1}}",
+                  "typeId" : "customer-group"
+                }
+              }, {
+                "customerGroup" : {
+                  "id" : "{{customer-group-id-2}}",
+                  "typeId" : "customer-group"
+                }
+              } ]
+            }
+      ]
+  }
+}  
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("customer-id", data.results[0].id); 
+          bru.setEnvVar("customer-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("customer-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("customer-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("customer-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("customer-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
