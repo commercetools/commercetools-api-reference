@@ -1,0 +1,49 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface EventSubscription [[EventSubscription.svg]]  {
+    resourceTypeId: [[EventSubscriptionResourceTypeId.svg EventSubscriptionResourceTypeId]]
+    types: [[EventType.svg List<EventType>]]
+}
+
+
+
+interface Subscription [[Subscription.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    changes: [[ChangeSubscription.svg List<ChangeSubscription>]]
+    destination: [[Destination.svg Destination]]
+    key: String
+    messages: [[MessageSubscription.svg List<MessageSubscription>]]
+    events: [[EventSubscription.svg List<EventSubscription>]]
+    format: [[DeliveryFormat.svg DeliveryFormat]]
+    status: [[SubscriptionHealthStatus.svg SubscriptionHealthStatus]]
+}
+interface SubscriptionDraft [[SubscriptionDraft.svg]]  {
+    changes: [[ChangeSubscription.svg List<ChangeSubscription>]]
+    destination: [[Destination.svg Destination]]
+    key: String
+    messages: [[MessageSubscription.svg List<MessageSubscription>]]
+    events: [[EventSubscription.svg List<EventSubscription>]]
+    format: [[DeliveryFormat.svg DeliveryFormat]]
+}
+interface SubscriptionSetEventsAction [[SubscriptionSetEventsAction.svg]]  {
+    action: String
+    messages: [[EventSubscription.svg List<EventSubscription>]]
+}
+
+EventSubscription --> Subscription #green;text:green : "events"
+EventSubscription --> SubscriptionDraft #green;text:green : "events"
+EventSubscription --> SubscriptionSetEventsAction #green;text:green : "messages"
+@enduml
