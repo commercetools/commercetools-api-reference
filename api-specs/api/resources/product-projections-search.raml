@@ -1,12 +1,10 @@
 type: base
 displayName: Product Projection Search
-description: |
-  This endpoint provides high performance search queries over ProductProjections. The query result contains the
-  ProductProjections for which at least one ProductVariant matches the search query. This means that variants can
-  be included in the result also for which the search query does not match. To determine which ProductVariants match
-  the search query, the returned ProductProjections include the additional field isMatchingVariant.
 post:
-  displayName: Search Products by post
+  displayName: Search Products by POST
+  description: |
+    For implementing funnel search on Product Listing Pages where users select multiple filters, use this POST method.
+    To avoid URL length restrictions, this method passes the same query parameters as defined in the [GET](ctp:api:endpoint:/{projectKey}/product-projections/search:GET) method, within the request body in URL-encoded format.
   securedBy:
     [
       oauth_2_0:
@@ -18,7 +16,6 @@ post:
             ],
         },
     ]
-  description: Product Projection Search
   body:
     application/x-www-form-urlencoded:
       type: string
@@ -29,33 +26,18 @@ post:
           example: !include ../examples/product-projections-search.example.json
           type: ProductProjectionPagedSearchResponse
 get:
-  displayName: Search Products by get
-  description: Product Projection Search
+  displayName: Search Products by GET
+  description: |
+    This method appends query parameters to the URL.
+    The maximum allowed URL length is 8192 characters.
+    Exceeding this limit will result in URL truncation, potentially leading to unexpected results.
+    For funnel searches on Product Listing Pages, where users select multiple filters, we recommend the [POST](ctp:api:endpoint:/{projectKey}/product-projections/search:POST) method which passes the query parameters within the request body, avoiding URL length restrictions.
   queryParameters:
-    fuzzy?:
-      type: boolean
-      description: Whether to apply fuzzy search on the text to analyze.
-    fuzzyLevel?:
-      type: number
-      format: int32
-      minimum: 0
-      maximum: 2
-      description: |
-        The fuzzy level desired, if fuzzy is enabled. This value cannot exceed the default value that is calculated based on the length of the searched text.
     markMatchingVariants?:
       type: boolean
       default: false
       description: |
-        If `markMatchingVariants` parameter is `true`, those ProductVariants that match the search query have the additional
-        field `isMatchingVariant` set to `true`. For the other variants in the same product projection, this field is set to `false`.
-    filter?:
-      type: string[]
-    filter.facets?:
-      type: string[]
-    filter.query?:
-      type: string[]
-    facet?:
-      type: string[]
+        Set to `true` to mark [matching variants](/../api/projects/products-search#matching-variants) in the search result.
     #TODO clarify correct syntax
     /text\.[a-z]{2}(-[A-Z]{2})?/:
       (placeholderParam):
@@ -64,15 +46,90 @@ get:
         placeholder: locale
       type: string[]
       required: false
+      description: |
+        The text to analyze and search for, for example as supplied by a user through a search input field.
+        The parameter must include the language in form of a [Locale](ctp:api:type:Locale).
+        The content to search in, that means the full-text search, is only performed in the localized Product content of the specified language.
+    fuzzy?:
+      type: boolean
+      default: false
+      description: |
+        Set to `true` to apply [fuzzy search](#fuzzy-search) on the `text` to analyze.
+    fuzzyLevel?:
+      type: number
+      format: int32
+      minimum: 0
+      maximum: 2
+      description: |
+        Set this parameter to overwrite the default fuzzy level.
+        Only applicable if `fuzzy` is `true`.
+
+        - `0` for `text` with 1-2 characters
+        - `1` for `text` with 3-5 characters
+        - `2` for `text` with more than 5 characters
+
+        If the provided value exceeds the default value, the API responds with an [InvalidInput](/../api/errors#invalidinput) error.
+    filter.query?:
+      type: string[]
+      description: |
+        Applies a [filter](/../api/projects/products-search#filters) to the [query results](/../api/projects/products-search#query-results) before [facets](/../api/projects/products-search#facets) are calculated.
+        This parameter has an impact on facet counts.
+        If you don't use the `facet` parameter in the same request, use this parameter instead of `filter`.
+    filter?:
+      type: string[]
+      description: |
+        Applies a [filter](/../api/projects/products-search#filters) to the query results after facets are calculated.
+        This parameter does not have an impact on facet counts.
+        Use this parameter in combination with the `facet` and `filter.facets` parameters for multi-select faceting.
+    facet?:
+      type: string[]
+      description: |
+        Requests calculation of [facets](/../api/projects/products-search#facets).
+    filter.facets?:
+      type: string[]
+      description: |
+        Applies a [filter](/../api/projects/products-search#filters) to the calculated [facet results](/../api/projects/products-search#facet-results), not to the Products returned with the [query results](/../api/projects/products-search#query-results).
+        A facet's own aggregation is not filtered by its corresponding `filter.facets` criteria.
+        Use this parameter in combination with the `facet` and `filter` parameters for multi-select faceting.
+    expand?:
+      type: string[]
+      description: |
+        Enables server-side expansion of [References](ctp:api:type:Reference). For details, see [Reference Expansion](/../api/general-concepts#reference-expansion).
+    sort?:
+      type: string[]
+      description: |
+        Controls [sorting](/../api/projects/products-search#sorting) of results.
+        Use this parameter multiple times to sort by multiple fields.
+
+        * When `text` is provided, but no sort parameter is given, the results are returned in descending order of relevance (equivalent to `score desc`).
+        * When neither `text` nor a sort parameter is given, the sort order is nondeterministic.
+    limit?:
+      type: number
+      format: int32
+      default: 20
+      minimum: 0
+      maximum: 500
+      description: |
+        The maximum number of results returned on a [page](/../api/projects/products-search#pagination).
+    offset?:
+      type: number
+      format: int32
+      default: 0
+      minimum: 0
+      maximum: 10000
+      description: |
+        The starting point for retrieving [paginated](/../api/projects/products-search#pagination) results.
+    staged?:
+      type: boolean
+      description: |
+        Whether to search in the current or staged Product Projections.
+
+        For API Clients with the `view_published_products`, but not the `view_products` [OAuth scope](/../api/scopes#products), `true` leads to a [403 Forbidden](/../api/errors#403-forbidden) error.
   is:
-    - sortable:
-        sortExample: createdAt asc
-    - paging
     - projectionSelecting
     - priceSelecting
     - localeProjecting
     - storeProjectingTailoring
-    - expandable
   securedBy:
     [
       oauth_2_0:

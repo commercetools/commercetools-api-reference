@@ -6,14 +6,32 @@ discriminatorValue: terms
 properties:
   dataType:
     type: TermFacetResultType
+    description: |
+      Data type to which the facet is applied.
   missing:
     type: number
     format: int64
+    description: |
+      Number of [ProductVariants](ctp:api:type:ProductVariant) that have no value for the specified [term facet expression](/../api/projects/products-search#term-facet-expression).
   total:
     type: number
     format: int64
+    description: |
+      Number of terms matching the [term facet expression](/../api/projects/products-search#term-facet-expression).
+
+      - If the expression refers to Product fields like `categories.id` and `reviewRatingStatistics.count`, the value represents the number of Products.
+      - If the expression is defined for fields specific to Product Variants, for example, `variants.attributes.{name}`, the value represents the number of Product Variants matching the expression.
   other:
     type: number
     format: int64
+    description: |
+      Number of terms not represented in this object (such as the number of terms beyond the [limit](/limits#product-projection-search)).
   terms:
     type: FacetTerm[]
+    maxItems: 200
+    description: |
+      Values for the field specified in [term facet expression](/../api/projects/products-search#term-facet-expression) for which at least one [ProductVariant](ctp:api:type:ProductVariant) could be found.
+
+      By default, facet terms are returned in a descending order of their `count`.
+
+      If the term facet expression specifies to count [Products](ctp:api:type:Product) through the `counting products` [extension](/projects/products-search#counting-products), then facet terms are returned in a descending order of their `productCount`.

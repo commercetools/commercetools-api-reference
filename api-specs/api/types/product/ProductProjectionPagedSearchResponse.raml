@@ -2,24 +2,44 @@
 (package): Product
 displayName: ProductProjectionPagedSearchResponse
 type: object
+description: |
+  The response returned to a [Product Projection Search](/../api/projects/products-search#product-projection-search) request.
+  The object contains the [query results](/../api/projects/products-search#query-results) with Product Projections where at least one ProductVariant matches the search query, as well as the [facet results](/../api/projects/products-search#facet-results), if requested.
 properties:
   limit:
     type: number
     format: int64
     description: |
-      Number of [results requested](/../api/general-concepts#limit).
-  count:
-    type: number
-    format: int64
-  total?:
-    type: number
-    format: int64
+      The maximum number of results returned on a [page](/../api/projects/products-search#pagination).
+    default: 20
+    minimum: 0
+    maximum: 500
   offset:
     type: number
     format: int64
     description: |
-      Number of [elements skipped](/../api/general-concepts#offset).
+      The starting point for the retrieved [paginated](/../api/projects/products-search#pagination) result.
+    default: 0
+    minimum: 0
+    maximum: 10000
+  count:
+    type: number
+    format: int64
+    description: |
+      Actual number of results returned.
+  total?:
+    type: number
+    format: int64
+    description: |
+      Total number of results matching the query.
   results:
     type: ProductProjection[]
-  facets:
+    description: |
+      [ProductProjections](ctp:api:type:ProductProjection) where at least one [ProductVariant](ctp:api:type:ProductVariant) matches the search query, provided with the `text.{language}` and/or `filter.query` or `filter` query parameter.
+      If the query parameter `markMatchingVariants=true` was provided with the request, the [matching variants](/../api/projects/products-search#matching-variants) are marked as such.
+  facets?:
     type: FacetResults
+    description: |
+      Facet results for each [facet expression](/../api/projects/products-search#facets) specified in the search request.
+
+      Only present if at least one `facet` parameter was provided with the search request.
