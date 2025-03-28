@@ -27324,11 +27324,6 @@ paths:
         "503":
           $ref: '#/components/responses/errorable_503'
   /{projectKey}/product-projections/search:
-    description: |-
-      This endpoint provides high performance search queries over ProductProjections. The query result contains the
-      ProductProjections for which at least one ProductVariant matches the search query. This means that variants can
-      be included in the result also for which the search query does not match. To determine which ProductVariants match
-      the search query, the returned ProductProjections include the additional field isMatchingVariant.
     parameters:
       - name: projectKey
         in: path
@@ -27342,7 +27337,8 @@ paths:
             - "view_published_products:{projectKey}"
       operationId: ByProjectKeyProductProjectionsSearchPost
       description: |-
-        Product Projection Search
+        For implementing funnel search on Product Listing Pages where users select multiple filters, use this POST method.
+        To avoid URL length restrictions, this method passes the same query parameters as defined in the [GET](ctp:api:endpoint:/{projectKey}/product-projections/search:GET) method, within the request body in URL-encoded format.
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -27379,9 +27375,30 @@ paths:
             - "view_published_products:{projectKey}"
       operationId: ByProjectKeyProductProjectionsSearchGet
       description: |-
-        Product Projection Search
+        This method appends query parameters to the URL.
+        The maximum allowed URL length is 8192 characters.
+        Exceeding this limit will result in URL truncation, potentially leading to unexpected results.
+        For funnel searches on Product Listing Pages, where users select multiple filters, we recommend the [POST](ctp:api:endpoint:/{projectKey}/product-projections/search:POST) method which passes the query parameters within the request body, avoiding URL length restrictions.
       parameters:
+        - name: markMatchingVariants
+          x-annotation-default: false
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+        - name: /text.[a-z]{2}(-[A-Z]{2})?/
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
         - name: fuzzy
+          x-annotation-default: false
           in: query
           required: false
           style: form
@@ -27396,33 +27413,16 @@ paths:
             type: "number"
             format: "double"
           explode: true
-        - name: markMatchingVariants
-          x-annotation-default: false
+        - name: filter.query
           in: query
           required: false
           style: form
           schema:
-            type: "boolean"
+            type: "array"
+            items:
+              type: "string"
           explode: true
         - name: filter
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              type: "string"
-          explode: true
-        - name: filter.facets
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              type: "string"
-          explode: true
-        - name: filter.query
           in: query
           required: false
           style: form
@@ -27440,7 +27440,16 @@ paths:
             items:
               type: "string"
           explode: true
-        - name: /text.[a-z]{2}(-[A-Z]{2})?/
+        - name: filter.facets
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
+        - name: expand
           in: query
           required: false
           style: form
@@ -27456,7 +27465,7 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: '#/components/schemas/Sort'
+              type: "string"
           explode: true
         - name: limit
           x-annotation-default: 20
@@ -27475,14 +27484,6 @@ paths:
           schema:
             type: "number"
             format: "double"
-          explode: true
-        - name: withTotal
-          x-annotation-default: true
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "boolean"
           explode: true
         - name: staged
           x-annotation-default: false
@@ -27544,15 +27545,6 @@ paths:
           style: form
           schema:
             type: "string"
-          explode: true
-        - name: expand
-          in: query
-          required: false
-          style: form
-          schema:
-            type: "array"
-            items:
-              $ref: '#/components/schemas/Expansion'
           explode: true
       responses:
         "200":
@@ -47356,6 +47348,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
+          required:
+            - code
+            - message
           properties:
             code:
               type: "string"
@@ -48734,6 +48729,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/GraphQLErrorObject'
         - type: "object"
+          required:
+            - code
           properties:
             code:
               type: "string"
@@ -73177,7 +73174,6 @@ components:
       type: "object"
       required:
         - count
-        - facets
         - limit
         - offset
         - results
@@ -73185,13 +73181,13 @@ components:
         limit:
           type: "integer"
           format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
         count:
           type: "integer"
           format: "int64"
         total:
-          type: "integer"
-          format: "int64"
-        offset:
           type: "integer"
           format: "int64"
         results:
@@ -73507,6 +73503,13 @@ components:
         - boolean
         - number
       x-annotation-package: "Product"
+      x-annotation-enumDescriptions:
+        text: "For [AttributeTextType](ctp:api:type:AttributeTextType) Attributes.n"
+        date: "For [AttributeDateType](ctp:api:type:AttributeDateType) Attributes.n"
+        time: "For [AttributeTimeType](ctp:api:type:AttributeTimeType) Attributes.n"
+        datetime: "For [AttributeDateTimeType](ctp:api:type:AttributeDateTimeType) Attributes.n"
+        boolean: "For [AttributeBooleanType](ctp:api:type:AttributeBooleanType) Attributes.n"
+        number: "For [AttributeNumberType](ctp:api:type:AttributeNumberType) Attributes.n"
     WhitespaceTokenizer:
       allOf:
         - $ref: '#/components/schemas/SuggestTokenizer'
