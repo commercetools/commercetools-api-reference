@@ -147,7 +147,9 @@ paths:
             - "manage_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersPost
       description: |-
-        Creates a new import container.
+        Creates a new Import Container.
+
+        Generates the [ImportContainerCreated](/projects/events#import-container-created-event) Event.
       requestBody:
         content:
           application/json:
@@ -178,7 +180,7 @@ paths:
             - "view_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersGet
       description: |-
-        Retrieves all import containers of a given project key.
+        Retrieves all Import Containers of a given project key.
       parameters:
         - name: limit
           x-annotation-default: 20
@@ -234,7 +236,7 @@ paths:
             - "manage_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersByImportContainerKeyPut
       description: |-
-        Updates the import container given by the key.
+        Updates the Import Container given by the key.
       requestBody:
         content:
           application/json:
@@ -244,7 +246,7 @@ paths:
       responses:
         "200":
           description: |-
-            The import container was successfully updated.
+            The Import Container was successfully updated.
           content:
             application/json:
               schema:
@@ -265,11 +267,11 @@ paths:
             - "view_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersByImportContainerKeyGet
       description: |-
-        Retrieves the import container given by the key.
+        Retrieves the Import Container given by the key.
       responses:
         "200":
           description: |-
-            The requested import container was found.
+            The requested Import Container was found.
           content:
             application/json:
               schema:
@@ -277,7 +279,7 @@ paths:
 
         "404":
           description: |-
-            The requested import container wasn't found.
+            The requested Import Container wasn't found.
           content:
             application/json:
               schema:
@@ -289,11 +291,13 @@ paths:
             - "manage_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersByImportContainerKeyDelete
       description: |-
-        Deletes the import container given by the key.
+        Deletes the Import Container specified by the `importContainerKey`.
+
+        Generates the [ImportContainerDeleted](/projects/events#import-container-deleted-event) Event.
       responses:
         "200":
           description: |-
-            The deleted import container.
+            The deleted Import Container.
           content:
             application/json:
               schema:
@@ -301,7 +305,7 @@ paths:
 
         "404":
           description: |-
-            The import container to delete wasn't found.
+            The Import Container to delete wasn't found.
           content:
             application/json:
               schema:
@@ -405,7 +409,7 @@ paths:
             - "view_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersByImportContainerKeyImportSummariesGet
       description: |-
-        Retrieves an [ImportSummary](ctp:import:type:ImportSummary) for the given import container. An [ImportSummary](ctp:import:type:ImportSummary) is calculated on demand.
+        Retrieves an [ImportSummary](ctp:import:type:ImportSummary) for the given Import Container. An [ImportSummary](ctp:import:type:ImportSummary) is calculated on demand.
       responses:
         "200":
           description: |-
@@ -4697,17 +4701,21 @@ components:
          fields) meets Import API specifications. The resource import is in progress."
         imported: "The resource was successfully imported."
         unresolved: "The import request contains [KeyReferences](ctp:import:type:KeyReference)
-         to resources that do not exist in your Composable Commerce Project."
+         to resources that do not exist in your Composable Commerce Project. Generates
+         the [ImportUnresolved](/projects/events#import-unresolved-event) Event."
         validationFailed: "Either the request payload is missing the data as per Import API
          specifications, or even though the references were resolved, the data does not
-         meet validation constraints."
+         meet validation constraints. Generates the [ImportValidationFailed](/projects/events#import-validation-failed-event)
+         Event."
         waitForMasterVariant: "Products must have at least one Product Variant, also known
          as the Master Variant. If you import a Product without a Master Variant, the import
          request will have this status until another import request includes Master Variant
-         data for the Product."
+         data for the Product. Generates the [ImportWaitForMasterVariant](/projects/events#import-wait-for-master-variant-event)
+         Event."
         rejected: "The resource could not be imported. References were resolved, but the system
          could not import the data due to an internal server error and the retry limit
-         was reached."
+         was reached. Generates the [ImportOperationRejected](/projects/events#import-operation-rejected-event)
+         Event."
         canceled: "The import request was canceled and the resource was not imported."
     Address:
       type: "object"
