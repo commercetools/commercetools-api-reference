@@ -165,8 +165,11 @@ traits:
       type: string
   /import-containers:
     post:
-      displayName: Creates a new import container.
-      description: Creates a new import container.
+      displayName: Create a new Import Container.
+      description: |
+        Creates a new Import Container.
+
+        Generates the [ImportContainerCreated](/projects/events#import-container-created-event) Event.
       is:
         - secured_by_manage_import_containers
       body:
@@ -201,29 +204,30 @@ traits:
           description: |
             See [Sorting](/../api/general-concepts#sorting).
           type: string[]
-      description: Retrieves all import containers of a given project key.
+      description: Retrieves all Import Containers of a given project key.
       is:
         - secured_by_view_import_containers
       responses:
         200:
           body:
             type: import-container.ImportContainerPagedResponse
+            example: !include examples/import-container-paged-query-response.json
     /{importContainerKey}:
       type: baseByParam
       uriParameters:
         importContainerKey:
           (postman.paramName): import-container-key
-          description: The key of the import container.
+          description: The key of the Import Container.
           type: string
       put:
-        description: Updates the import container given by the key.
+        description: Updates the Import Container given by the key.
         is:
           - secured_by_manage_import_containers
         body:
           type: import-container.ImportContainerUpdateDraft
         responses:
           200:
-            description: The import container was successfully updated.
+            description: The Import Container was successfully updated.
             body:
               type: import-container.ImportContainer
               example: !include examples/import-container-minimal.json
@@ -235,31 +239,35 @@ traits:
               type: error.ErrorResponse
               example: !include examples/error-response-concurrent-modification.json
       get:
-        description: Retrieves the import container given by the key.
+        description: Retrieves the Import Container given by the key.
         is:
           - secured_by_view_import_containers
         responses:
           200:
-            description: The requested import container was found.
+            description: The requested Import Container was found.
             body:
               type: import-container.ImportContainer
               example: !include examples/import-container-minimal.json
           404:
-            description: The requested import container wasn't found.
+            description: The requested Import Container wasn't found.
             body:
               type: error.ErrorResponse
               example: !include examples/error-response-resource-not-found.json
       delete:
-        description: Deletes the import container given by the key.
+        displayName: Delete an Import Container.
+        description: |
+          Deletes the Import Container specified by the `importContainerKey`.
+
+          Generates the [ImportContainerDeleted](/projects/events#import-container-deleted-event) Event.
         is:
           - secured_by_manage_import_containers
         responses:
           200:
-            description: The deleted import container.
+            description: The deleted Import Container.
             body:
               type: import-container.ImportContainer
           404:
-            description: The import container to delete wasn't found.
+            description: The Import Container to delete wasn't found.
             body:
               type: error.ErrorResponse
       /import-summaries:
@@ -268,7 +276,7 @@ traits:
           is:
             - secured_by_view_import_containers
           description: |
-            Retrieves an [ImportSummary](ctp:import:type:ImportSummary) for the given import container. An [ImportSummary](ctp:import:type:ImportSummary) is calculated on demand.
+            Retrieves an [ImportSummary](ctp:import:type:ImportSummary) for the given Import Container. An [ImportSummary](ctp:import:type:ImportSummary) is calculated on demand.
           responses:
             200:
               body:
