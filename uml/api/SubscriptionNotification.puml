@@ -8,16 +8,19 @@ legend
 |<back:green>   </back>| property reference |
 |<back:blue>   </back>| discriminated class |
 endlegend
-interface DeliveryPayload [[DeliveryPayload.svg]] extends SubscriptionNotification {
-    notificationType: String
-    projectKey: String
-    resource: [[Reference.svg Reference]]
-    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
-}
 interface SubscriptionNotification [[SubscriptionNotification.svg]]  {
     notificationType: String
 }
 
+
+interface EventDeliveryPayload [[EventDeliveryPayload.svg]]  {
+    notificationType: String
+    id: String
+    type: [[EventType.svg EventType]]
+    resourceType: String
+    data: [[Object.svg Object]]
+    createdAt: DateTime
+}
 interface MessageDeliveryPayload [[MessageDeliveryPayload.svg]]  {
     notificationType: String
     projectKey: String
@@ -57,21 +60,11 @@ interface ResourceUpdatedDeliveryPayload [[ResourceUpdatedDeliveryPayload.svg]] 
     oldVersion: Long
     modifiedAt: DateTime
 }
-interface CloudEventsPayload [[CloudEventsPayload.svg]]  {
-    specversion: String
-    id: String
-    type: String
-    source: String
-    subject: String
-    time: DateTime
-    sequence: String
-    sequencetype: String
-    dataref: String
-    data: [[DeliveryPayload.svg DeliveryPayload]]
-}
-DeliveryPayload --> MessageDeliveryPayload #blue;text:blue : "notificationType : Message"
-DeliveryPayload --> ResourceCreatedDeliveryPayload #blue;text:blue : "notificationType : ResourceCreated"
-DeliveryPayload --> ResourceDeletedDeliveryPayload #blue;text:blue : "notificationType : ResourceDeleted"
-DeliveryPayload --> ResourceUpdatedDeliveryPayload #blue;text:blue : "notificationType : ResourceUpdated"
-DeliveryPayload --> CloudEventsPayload #green;text:green : "data"
+
+SubscriptionNotification --> EventDeliveryPayload #blue;text:blue : "notificationType : Event"
+SubscriptionNotification --> MessageDeliveryPayload #blue;text:blue : "notificationType : Message"
+SubscriptionNotification --> ResourceCreatedDeliveryPayload #blue;text:blue : "notificationType : ResourceCreated"
+SubscriptionNotification --> ResourceDeletedDeliveryPayload #blue;text:blue : "notificationType : ResourceDeleted"
+SubscriptionNotification --> ResourceUpdatedDeliveryPayload #blue;text:blue : "notificationType : ResourceUpdated"
+
 @enduml

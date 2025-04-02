@@ -79073,20 +79073,29 @@ components:
         type:
           type: "string"
     DeliveryPayload:
-      type: "object"
-      discriminator:
-        propertyName: notificationType
-        mapping:
-          Event: '#/components/schemas/EventDeliveryPayload'
-          Message: '#/components/schemas/MessageDeliveryPayload'
-          ResourceCreated: '#/components/schemas/ResourceCreatedDeliveryPayload'
-          ResourceDeleted: '#/components/schemas/ResourceDeletedDeliveryPayload'
-          ResourceUpdated: '#/components/schemas/ResourceUpdatedDeliveryPayload'
-      required:
-        - notificationType
-      properties:
-        notificationType:
-          type: "string"
+      allOf:
+        - $ref: '#/components/schemas/SubscriptionNotification'
+        - type: "object"
+          discriminator:
+            propertyName: notificationType
+            mapping:
+              Message: '#/components/schemas/MessageDeliveryPayload'
+              ResourceCreated: '#/components/schemas/ResourceCreatedDeliveryPayload'
+              ResourceDeleted: '#/components/schemas/ResourceDeletedDeliveryPayload'
+              ResourceUpdated: '#/components/schemas/ResourceUpdatedDeliveryPayload'
+          required:
+            - notificationType
+            - projectKey
+            - resource
+          properties:
+            notificationType:
+              type: "string"
+            projectKey:
+              type: "string"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
     Destination:
       type: "object"
       discriminator:
@@ -79124,7 +79133,7 @@ components:
               type: "string"
     EventDeliveryPayload:
       allOf:
-        - $ref: '#/components/schemas/DeliveryPayload'
+        - $ref: '#/components/schemas/SubscriptionNotification'
         - type: "object"
           required:
             - createdAt
@@ -79214,21 +79223,23 @@ components:
             - createdAt
             - id
             - lastModifiedAt
-            - projectKey
-            - resource
             - resourceVersion
             - sequenceNumber
             - version
           properties:
             notificationType:
               type: "string"
+            projectKey:
+              type: "string"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
             id:
               type: "string"
             version:
               type: "integer"
               format: "int64"
-            projectKey:
-              type: "string"
             createdAt:
               type: "string"
               format: "datetime"
@@ -79241,10 +79252,6 @@ components:
             resourceVersion:
               type: "integer"
               format: "int64"
-            resource:
-              $ref: '#/components/schemas/Reference'
-            resourceUserProvidedIdentifiers:
-              $ref: '#/components/schemas/UserProvidedIdentifiers'
             payloadNotIncluded:
               $ref: '#/components/schemas/PayloadNotIncluded'
     MessageSubscription:
@@ -79340,8 +79347,6 @@ components:
         - type: "object"
           required:
             - modifiedAt
-            - projectKey
-            - resource
             - version
           properties:
             notificationType:
@@ -79364,8 +79369,6 @@ components:
         - type: "object"
           required:
             - modifiedAt
-            - projectKey
-            - resource
             - version
           properties:
             notificationType:
@@ -79391,8 +79394,6 @@ components:
           required:
             - modifiedAt
             - oldVersion
-            - projectKey
-            - resource
             - version
           properties:
             notificationType:
@@ -79556,6 +79557,17 @@ components:
          change to [Healthy](ctp:api:type:SubscriptionHealthStatus). To return your subscriptions
          to a [Healthy](ctp:api:type:SubscriptionHealthStatus) status, contact the [Composable
          Commerce support team](https://support.commercetools.com/)."
+    SubscriptionNotification:
+      type: "object"
+      discriminator:
+        propertyName: notificationType
+        mapping:
+          Event: '#/components/schemas/EventDeliveryPayload'
+      required:
+        - notificationType
+      properties:
+        notificationType:
+          type: "string"
     SubscriptionPagedQueryResponse:
       type: "object"
       required:
