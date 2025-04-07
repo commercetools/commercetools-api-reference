@@ -2060,6 +2060,8 @@ paths:
         - oauth_2_0:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyOrdersGet
+      description: |-
+        Retrieves Orders in a [BusinessUnit](ctp:api:type:BusinessUnit).
       parameters:
         - name: expand
           in: query
@@ -2152,7 +2154,7 @@ paths:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyOrdersHead
       description: |-
-        Checks if one or more Orders exist for the provided query predicate. Returns a `200 OK` status if any Orders match the query predicate, or a `404 Not Found` otherwise.
+        Checks if one or more Orders exist with provided query predicate in a [BusinessUnit](ctp:api:type:BusinessUnit). Returns a `200 OK` status if any Orders match the query predicate, or a `404 Not Found` otherwise.
       parameters:
         - name: where
           in: query
@@ -2268,6 +2270,7 @@ paths:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyOrdersOrderNumberByOrderNumberGet
       description: |-
+        Retrieves an Order with the provided `orderNumber` in a [BusinessUnit](ctp:api:type:BusinessUnit).
         If the Order exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
       parameters:
         - name: expand
@@ -2308,7 +2311,7 @@ paths:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyOrdersOrderNumberByOrderNumberHead
       description: |-
-        Checks if an Order exists for a given `orderNumber`. Returns a `200 OK` status if the Order exists or a `404 Not Found` otherwise.
+        Checks if an Order exists with the provided `orderNumber` in a [BusinessUnit](ctp:api:type:BusinessUnit). Returns a `200 OK` status if the Order exists or a `404 Not Found` otherwise.
       responses:
         "200":
           description: |-
@@ -2334,7 +2337,8 @@ paths:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyOrdersOrderNumberByOrderNumberPost
       description: |-
-        If the Order exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+        Updates an Order in a [BusinessUnit](ctp:api:type:BusinessUnit) using one or more [update actions](/../api/projects/orders#update-actions).
+        If the Order exists in the [Project](ctp:api:type:Project) but does not reference the requested Business Unit, this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
       parameters:
         - name: expand
           in: query
@@ -2464,7 +2468,8 @@ paths:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyOrdersByIDGet
       description: |-
-        If the Order exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+        Retrieves an Order with the provided `id` in a [BusinessUnit](ctp:api:type:BusinessUnit).
+        If the Order exists in the [Project](ctp:api:type:Project) but does not reference the requested Business Unit, this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
       parameters:
         - name: expand
           in: query
@@ -2504,7 +2509,7 @@ paths:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyOrdersByIDHead
       description: |-
-        Checks if an Order exists with the provided `id`. Returns a `200 OK` status if the Order exists or a `404 Not Found` otherwise.
+        Checks if an Order exists with the provided `id` in a [BusinessUnit](ctp:api:type:BusinessUnit). Returns a `200 OK` status if the Order exists or a `404 Not Found` otherwise.
       responses:
         "200":
           description: |-
@@ -2530,7 +2535,8 @@ paths:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyOrdersByIDPost
       description: |-
-        If the Order exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
+        Updates an Order in a [BusinessUnit](ctp:api:type:BusinessUnit) using one or more [update actions](/../api/projects/orders#update-actions).
+        If the Order exists in the [Project](ctp:api:type:Project) but does not reference the requested Business Unit, this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
       parameters:
         - name: expand
           in: query
@@ -14981,7 +14987,12 @@ paths:
             - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeOrdersGet
       description: |-
-        Returns all Orders in a Store that match a given Query Predicate and contain either a `customerId` that matches the [customer_id:{id}](/scopes#composable-commerce-oauth) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+        Retrieves Orders in a [Store](ctp:api:type:Store) for the authenticated Customer or anonymous user.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Orders exist that match the provided query predicate.
+        - If an Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
       parameters:
         - name: expand
           in: query
@@ -15077,9 +15088,9 @@ paths:
             - "anonymous_id:{anonymousId}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeOrdersHead
       description: |-
-        Checks if one or more Orders exist for the provided query predicate in a Store. Returns a `200 OK` status if successful.
+        Checks if one or more Orders exist for the provided query predicate in a [Store](ctp:api:type:Store) for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
-        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+        A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
 
         - If no Orders exist in the Store that match the Query Predicate.
         - If an Order matches the Query Predicate, but no `store` is specified, or the `store` field references a different Store.
@@ -15122,7 +15133,7 @@ paths:
             - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeOrdersPost
       description: |-
-        Creates an Order in a Store from a Cart for the Customer or anonymous user. The `customerId` or `anonymousId` field on the Order is automatically set based on the [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+        Creates an Order from a Cart in a [Store](ctp:api:type:Store) for the Customer or anonymous user. The `customerId` or `anonymousId` field on the Order is automatically set based on the [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
 
         The Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction) for taxes to be calculated. When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
 
@@ -15208,13 +15219,13 @@ paths:
             - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeOrdersByIDGet
       description: |-
-        Returns an Order for a given `id` in a Store. Returns a `200 OK` status if successful.
+        Retrieves an Order with the provided `id` in a [Store](ctp:api:type:Store) for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
         A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-        - If no Order exists in the Store for the given `id`.
-        - If the Order exists but does not have a `store` specified, or the `store` field references a different Store.
-        - If the Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+        - If no Orders exists in the Store with the provided `id`.
+        - If an Order exists but does not have a `store` specified, or the `store` field references a different Store.
+        - If an Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
       parameters:
         - name: expand
           in: query
@@ -15257,13 +15268,13 @@ paths:
             - "anonymous_id:{id}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyMeOrdersByIDHead
       description: |-
-        Checks if an Order exists with the provided `id` in a Store. Returns a `200 OK` status if successful.
+        Checks if an Order exists with the provided `id` in a [Store](ctp:api:type:Store) for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
-        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+        A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
 
-        - If no Order exists in the Store for the given `id`.
-        - If the Order exists but does not have a `store` specified, or the `store` field references a different Store.
-        - If the Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+        - If no Order exists in the Store with the provided `id`.
+        - If an Order exists but does not have a `store` specified, or the `store` field references a different Store.
+        - If an Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
       responses:
         "200":
           description: |-
@@ -16136,6 +16147,8 @@ paths:
             - "view_orders:{projectKey}"
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersGet
+      description: |-
+        Retrieves Orders in a [Store](ctp:api:type:Store).
       parameters:
         - name: expand
           in: query
@@ -16229,7 +16242,7 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersHead
       description: |-
-        Checks if one or more Orders exist for the provided query predicate. Returns a `200 OK` status if any Orders match the query predicate, or [Not Found](/../api/errors#404-not-found) otherwise.
+        Checks if one or more Orders exist for the provided query predicate in a [Store](ctp:api:type:Store). Returns a `200 OK` status if any Orders match the query predicate, or [Not Found](/../api/errors#404-not-found) otherwise.
       parameters:
         - name: where
           in: query
@@ -16266,6 +16279,7 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersPost
       description: |-
+        Creates an Order from a Cart in a [Store](ctp:api:type:Store).
         Before you create an Order, the Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction).
         The shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).
 
@@ -16347,6 +16361,7 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersOrderNumberByOrderNumberGet
       description: |-
+        Retrieves an Order with the provided `orderNumber` in a [Store](ctp:api:type:Store).
         If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
@@ -16388,7 +16403,7 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersOrderNumberByOrderNumberHead
       description: |-
-        Checks if an Order exists for a given `orderNumber`. Returns a `200 OK` status if the Order exists or [Not Found](/../api/errors#404-not-found) otherwise.
+        Checks if an Order exists with the provided `orderNumber` in a [Store](ctp:api:type:Store). Returns a `200 OK` status if the Order exists or [Not Found](/../api/errors#404-not-found) otherwise.
       responses:
         "200":
           description: |-
@@ -16415,6 +16430,7 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersOrderNumberByOrderNumberPost
       description: |-
+        Updates an Order in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/orders#update-actions).
         If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
@@ -16464,6 +16480,7 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersOrderNumberByOrderNumberDelete
       description: |-
+        Deletes an Order in a [Store](ctp:api:type:Store).
         If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
 
         Deleting an Order produces the [OrderDeleted](ctp:api:type:OrderDeletedMessage) Message.
@@ -16600,6 +16617,7 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersByIDGet
       description: |-
+        Retrieves an Order with the provided `id` in a [Store](ctp:api:type:Store).
         If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
@@ -16641,7 +16659,7 @@ paths:
             - "view_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersByIDHead
       description: |-
-        Checks if an Order exists with the provided `id`. Returns a `200 OK` status if the Order exists or [Not Found](/../api/errors#404-not-found) otherwise.
+        Checks if an Order exists with the provided `id` in a [Store](ctp:api:type:Store). Returns a `200 OK` status if the Order exists or [Not Found](/../api/errors#404-not-found) otherwise.
       responses:
         "200":
           description: |-
@@ -16668,6 +16686,7 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersByIDPost
       description: |-
+        Updates an Order in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/orders#update-actions).
         If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       parameters:
         - name: expand
@@ -16717,6 +16736,7 @@ paths:
             - "manage_orders:{projectKey}:{storeKey}"
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersByIDDelete
       description: |-
+        Deletes an Order in a [Store](ctp:api:type:Store).
         If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
 
         Deleting an Order produces the [OrderDeleted](ctp:api:type:OrderDeletedMessage) Message.
@@ -22074,12 +22094,12 @@ paths:
             - "anonymous_id:{id}"
       operationId: ByProjectKeyMeOrdersGet
       description: |-
-        Returns all Orders that match a given Query Predicate.
+        Retrieves Orders for the authenticated Customer or anonymous user.
 
         A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-        - If no Orders exist for a given Query Predicate.
-        - If the Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+        - If no Orders exist for the provided query predicate.
+        - If an Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
       parameters:
         - name: expand
           in: query
@@ -22174,11 +22194,11 @@ paths:
             - "anonymous_id:{anonymousId}"
       operationId: ByProjectKeyMeOrdersHead
       description: |-
-        Checks if one or more Orders exist for the provided query predicate. Returns a `200 OK` status if successful.
+        Checks if one or more Orders exist for the provided query predicate for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
-        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+        A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
 
-        - If no Order exists that matches the Query Predicate.
+        - If no Orders exist that match the provided query predicate.
         - If one or more Orders exist but don't have either a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
       parameters:
         - name: where
@@ -22292,7 +22312,7 @@ paths:
             - "customer_id:{id}"
       operationId: ByProjectKeyMeOrdersQuotesPost
       description: |-
-        Creates an Order from a [Quote](ctp:api:type:Quote). To create [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyQuotes` [Permission](ctp:api:type:Permission).
+        Creates an Order from a [Quote](ctp:api:type:Quote) for the authenticated Customer. To create [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyQuotes` [Permission](ctp:api:type:Permission).
 
         The referenced Quote must have the `Pending` [state](ctp:api:type:QuoteState) and must be valid (not past the `validTo` date); otherwise, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
 
@@ -22353,11 +22373,11 @@ paths:
             - "anonymous_id:{id}"
       operationId: ByProjectKeyMeOrdersByIDGet
       description: |-
-        Returns an Order for a given `id`. Returns a `200 OK` status if successful.
+        Retrieves an Order with the provided `id` for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
         A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-        - If no Order exists for the given `id`.
+        - If no Order exists for the provided `id`.
         - If the Order exists but does not have either a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
       parameters:
         - name: expand
@@ -22400,11 +22420,11 @@ paths:
             - "anonymous_id:{id}"
       operationId: ByProjectKeyMeOrdersByIDHead
       description: |-
-        Checks if an Order exists with the provided `id`. Returns a `200 OK` status if successful.
+        Checks if an Order exists with the provided `id` for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
-        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+        A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
 
-        - If no Order exists for the given `id`.
+        - If no Order exists for the provided `id`.
         - If the Order exists but does not have either a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
       responses:
         "200":
@@ -24603,6 +24623,8 @@ paths:
         - oauth_2_0:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyOrdersGet
+      description: |-
+        Retrieves Orders in the Project.
       parameters:
         - name: expand
           in: query
@@ -24731,6 +24753,7 @@ paths:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyOrdersPost
       description: |-
+        Creates an Order from a Cart.
         Before you create an Order, the Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction).
         The shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).
 
@@ -24804,6 +24827,8 @@ paths:
         - oauth_2_0:
             - "view_order_edits:{projectKey}"
       operationId: ByProjectKeyOrdersEditsGet
+      description: |-
+        Retrieves OrderEdits in the Project.
       parameters:
         - name: expand
           in: query
@@ -24932,6 +24957,7 @@ paths:
             - "manage_order_edits:{projectKey}"
       operationId: ByProjectKeyOrdersEditsPost
       description: |-
+        Creates an OrderEdit in the Project.
         You can either create multiple Order Edits for an Order and apply them sequentially to an Order, or create multiple Order Edits parallelly (as alternatives to each other) and apply one of them to the Order.
 
         You can only create an Order Edit if the [InventoryMode](/projects/carts#inventorymode) of the Order and its [LineItems](/projects/carts#lineitem) is `None`.
@@ -24991,6 +25017,8 @@ paths:
         - oauth_2_0:
             - "view_order_edits:{projectKey}"
       operationId: ByProjectKeyOrdersEditsKeyByKeyGet
+      description: |-
+        Retrieves an OrderEdit with the provided `key`.
       parameters:
         - name: expand
           in: query
@@ -25055,6 +25083,8 @@ paths:
         - oauth_2_0:
             - "manage_order_edits:{projectKey}"
       operationId: ByProjectKeyOrdersEditsKeyByKeyPost
+      description: |-
+        Updates an OrderEdit in the Project using one or more [update actions](/../api/projects/order-edits#update-actions).
       parameters:
         - name: expand
           in: query
@@ -25101,6 +25131,8 @@ paths:
         - oauth_2_0:
             - "manage_order_edits:{projectKey}"
       operationId: ByProjectKeyOrdersEditsKeyByKeyDelete
+      description: |-
+        Deletes an OrderEdit in the Project.
       parameters:
         - name: version
           in: query
@@ -25161,6 +25193,8 @@ paths:
         - oauth_2_0:
             - "view_order_edits:{projectKey}"
       operationId: ByProjectKeyOrdersEditsByIDGet
+      description: |-
+        Retrieves an OrderEdit with the provided `id`.
       parameters:
         - name: expand
           in: query
@@ -25225,6 +25259,8 @@ paths:
         - oauth_2_0:
             - "manage_order_edits:{projectKey}"
       operationId: ByProjectKeyOrdersEditsByIDPost
+      description: |-
+        Updates an OrderEdit in the Project using one or more [update actions](/../api/projects/order-edits#update-actions).
       parameters:
         - name: expand
           in: query
@@ -25271,6 +25307,8 @@ paths:
         - oauth_2_0:
             - "manage_order_edits:{projectKey}"
       operationId: ByProjectKeyOrdersEditsByIDDelete
+      description: |-
+        Deletes an OrderEdit in the Project.
       parameters:
         - name: version
           in: query
@@ -25375,6 +25413,7 @@ paths:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyOrdersImportPost
       description: |-
+        Creates an Order without needing to create a Cart first.
         Importing an Order produces the [Order Imported](ctp:api:type:OrderImportedMessage) Message.
 
         Specific Error Codes:
@@ -25427,6 +25466,8 @@ paths:
         - oauth_2_0:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyOrdersOrderNumberByOrderNumberGet
+      description: |-
+        Retrieves an Order with the provided `orderNumber`.
       parameters:
         - name: expand
           in: query
@@ -25466,7 +25507,7 @@ paths:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyOrdersOrderNumberByOrderNumberHead
       description: |-
-        Checks if an Order exists for a given `orderNumber`. Returns a `200 OK` status if the Order exists or a `404 Not Found` otherwise.
+        Checks if an Order exists with the provided `orderNumber`. Returns a `200 OK` status if the Order exists or a `404 Not Found` otherwise.
       responses:
         "200":
           description: |-
@@ -25491,6 +25532,8 @@ paths:
         - oauth_2_0:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyOrdersOrderNumberByOrderNumberPost
+      description: |-
+        Updates an Order in the Project using one or more [update actions](/../api/projects/orders#update-actions).
       parameters:
         - name: expand
           in: query
@@ -25538,6 +25581,7 @@ paths:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyOrdersOrderNumberByOrderNumberDelete
       description: |-
+        Deletes an Order in the Project.
         Deleting an Order produces the [OrderDeleted](ctp:api:type:OrderDeletedMessage) Message.
       parameters:
         - name: dataErasure
@@ -25729,6 +25773,8 @@ paths:
         - oauth_2_0:
             - "view_orders:{projectKey}"
       operationId: ByProjectKeyOrdersByIDGet
+      description: |-
+        Retrieves an Order with the provided `id`.
       parameters:
         - name: expand
           in: query
@@ -25793,6 +25839,8 @@ paths:
         - oauth_2_0:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyOrdersByIDPost
+      description: |-
+        Updates an Order in the Project using one or more [update actions](/../api/projects/orders#update-actions).
       parameters:
         - name: expand
           in: query
@@ -25840,6 +25888,7 @@ paths:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyOrdersByIDDelete
       description: |-
+        Deletes an Order in the Project.
         Deleting an Order produces the [OrderDeleted](ctp:api:type:OrderDeletedMessage) Message.
       parameters:
         - name: dataErasure
