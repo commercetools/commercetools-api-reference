@@ -873,7 +873,7 @@ delete:
     specific user.
   get:
     displayName: Query My Payments
-    description: Returns all [Payments](/projects/me-payments#mypayment) that match a given Query Predicate.
+    description: Retrieves all [Payments](/projects/me-payments#mypayment) for the authenticated Customer or anonymous user.
     securedBy:
       [
         oauth_2_0:
@@ -893,7 +893,7 @@ delete:
             example: !include ../examples/my-payments.example.json
   head:
     displayName: Check if My Payment exists by Query Predicate
-    description: Checks if a [Payment](/projects/me-payments#mypayment) exists for the provided query predicate. Returns a `200 OK` status if any Payments match the query predicate, or a `404 Not Found` otherwise.
+    description: Checks if one or more [Payments](/projects/me-payments#mypayment) exist for the provided query predicate for the authenticated Customer or anonymous user. Returns a `200 OK` status if any Payments match the query predicate, or [Not Found](/../api/errors#404-not-found) otherwise.
     securedBy:
       [
         oauth_2_0:
@@ -912,7 +912,7 @@ delete:
   post:
     displayName: Create My Payment
     description: |
-      Creates a [Payment](/projects/me-payments#mypayment) for the Customer or an anonymous user.
+      Creates a [Payment](/projects/me-payments#mypayment) for the authenticated Customer or anonymous user.
       Creating a Payment produces the [PaymentCreated](ctp:api:type:PaymentCreatedMessage) Message.
     securedBy:
       [
@@ -943,7 +943,7 @@ delete:
         resourceUpdateType: MyPaymentUpdate
     get:
       displayName: Get My Payment by ID
-      description: Returns a [Payment](/projects/me-payments#mypayment) for a given `id`.
+      description: Retrieves a [Payment](/projects/me-payments#mypayment) with the provided `id` for the authenticated Customer or anonymous user.
       securedBy:
         [
           oauth_2_0:
@@ -963,7 +963,7 @@ delete:
               example: !include ../examples/my-payment.example.json
     head:
       displayName: Check if My Payment exists by ID
-      description: Checks if a [Payment](/projects/me-payments#mypayment) exists with the provided `id`. Returns a `200 OK` status if the Payment exists or a `404 Not Found` otherwise.
+      description: Checks if a [Payment](/projects/me-payments#mypayment) exists with the provided `id` for the authenticated Customer or anonymous user. Returns a `200 OK` status if the Payment exists, or [Not Found](/../api/errors#404-not-found) otherwise.
       securedBy:
         [
           oauth_2_0:
@@ -994,8 +994,8 @@ delete:
         application/json:
           example: !include ../examples/my-payment-update.example.json
       description: |
-        Updates a [Payment](/projects/me-payments#mypayment) for a given `id`.
-        You can only update a [Payment](/projects/me-payments#mypayment) if it has no [Transactions](ctp:api:type:Transaction).
+        Updates a [Payment](/projects/me-payments#mypayment) for the authenticated Customer or anonymous user using one or more [update actions](/../api/projects/me-payments#update-actions).
+        You can only update a Payment if it has no [Transactions](ctp:api:type:Transaction).
       responses:
         200:
           body:
@@ -1016,8 +1016,8 @@ delete:
             },
         ]
       description: |
-        Deletes the [Payment](/projects/me-payments#mypayment) for a given `id`.
-        You can only delete a [Payment](/projects/me-payments#mypayment) if it has no [Transactions](ctp:api:type:Transaction).
+        Deletes a [Payment](/projects/me-payments#mypayment) with the provided `id` for the authenticated Customer or anonymous user.
+        You can only delete a Payment if it has no [Transactions](ctp:api:type:Transaction).
       responses:
         200:
           body:
@@ -1331,11 +1331,11 @@ delete:
           },
       ]
     description: |
-      Returns all ShoppingLists that match the given Query Predicate. Returns a `200 OK` status if successful.
+      Retrieves all ShoppingLists for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
       A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-      - If no ShoppingList exists for the given Query Predicate.
+      - If no ShoppingList exists for the provided query predicate.
       - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
     queryParameters:
@@ -1364,11 +1364,11 @@ delete:
           },
       ]
     description: |
-      Checks if a ShoppingList matches the given Query Predicate. Returns a `200 OK` status if successful.
+      Checks if one or more ShoppingLists exist for the provided query predicate for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
-      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+      A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
 
-      - If no ShoppingList exists for the given Query Predicate.
+      - If no ShoppingList exists for the provided query predicate.
       - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
     queryParameters:
@@ -1389,7 +1389,7 @@ delete:
           },
       ]
     description: |
-      Creates a ShoppingList for the Customer or anonymous user. The `customerId` or `anonymousId` on the ShoppingList is automatically set based on the given [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+      Creates a ShoppingList for the authenticated Customer or anonymous user. The `customerId` or `anonymousId` on the ShoppingList is automatically set based on the given [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
 
     queryParameters:
       expand:
@@ -1427,11 +1427,11 @@ delete:
             },
         ]
       description: |
-        Returns a ShoppingList for a given `id`. Returns a `200 OK` status if successful.
+        Retrieves a ShoppingList with the provided `id` for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
         A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-        - If no ShoppingList exists for the given `id`.
+        - If no ShoppingList exists with the provided `id`.
         - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
       queryParameters:
@@ -1460,11 +1460,11 @@ delete:
             },
         ]
       description: |
-        Checks if a ShoppingList exists with the provided `id`. Returns a `200 OK` status if successful.
+        Checks if a ShoppingList exists with the provided `id` for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
-        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+        A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
 
-        - If no ShoppingList exists for the given `id`.
+        - If no ShoppingList exists for the provided `id`.
         - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
     post:
@@ -1491,11 +1491,11 @@ delete:
         application/json:
           example: !include ../examples/my-shopping-list-update.example.json
       description: |
-        Updates a ShoppingList for a given `id`. Returns a `200 OK` status if successful.
+        Updates a ShoppingList for the authenticated Customer or anonymous user using one or more [update actions](/../api/projects/me-shoppingLists#update-actions).  Returns a `200 OK` status if successful.
 
         A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-        - If no ShoppingList exists for the given `id`.
+        - If no ShoppingList exists for the provided `id`.
         - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
       responses:
@@ -1524,11 +1524,11 @@ delete:
           type: Expansion[]
           required: false
       description: |
-        Deletes the ShoppingList for a given `id`. Returns a `200 OK` status if successful.
+        Deletes a ShoppingList for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
         A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-        - If no ShoppingList exists for the given `id`.
+        - If no ShoppingList exists with the provided `id`.
         - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
       responses:
@@ -1564,11 +1564,11 @@ delete:
           type: Expansion[]
           required: false
       description: |
-        Returns a ShoppingList for a given `key`. Returns a `200 OK` status if successful.
+        Retrieves a ShoppingList with the provided `key` for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
         A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-        - If no ShoppingList exists for the given `key`.
+        - If no ShoppingList exists with the provided `key`.
         - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
       responses:
@@ -1591,11 +1591,11 @@ delete:
             },
         ]
       description: |
-        Checks if a ShoppingList exists with the provided `key`. Returns a `200 OK` status if successful.
+        Checks if a ShoppingList exists with the provided `key` for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
-        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+        A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
 
-        - If no ShoppingList exists for the given `key`.
+        - If no ShoppingList exists with the provided `key`.
         - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
     post:
@@ -1622,11 +1622,11 @@ delete:
         application/json:
           example: !include ../examples/my-shopping-list-update.example.json
       description: |
-        Updates a ShoppingList for a given `key`. Returns a `200 OK` status if successful.
+        Updates a ShoppingList for the authenticated Customer or anonymous user using one or more [update actions](/../api/projects/me-shoppingLists#update-actions).  Returns a `200 OK` status if successful.
 
         A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-        - If no ShoppingList exists for the given `key`.
+        - If no ShoppingList exists for the provided `key`.
         - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
       responses:
@@ -1655,11 +1655,11 @@ delete:
           type: Expansion[]
           required: false
       description: |
-        Deletes the ShoppingList for a given `key`. Returns a `200 OK` status if successful.
+        Deletes a ShoppingList for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
         A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-        - If no ShoppingList exists for the given `key`.
+        - If no ShoppingList exists for the provided `key`.
         - If a ShoppingList exists but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
       responses:

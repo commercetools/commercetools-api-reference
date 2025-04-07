@@ -304,7 +304,7 @@ uriParameters:
                 ],
             },
         ]
-      description: Checks if a Cart exists for the provided `id` in a Store. Returns a `200 OK` status if the Cart exists or [Not Found](/../api/errors#404-not-found) otherwise.
+      description: Checks if a Cart exists with the provided `id` in a Store. Returns a `200 OK` status if the Cart exists or [Not Found](/../api/errors#404-not-found) otherwise.
     post:
       displayName: Update Cart in Store by ID
       securedBy:
@@ -1104,7 +1104,7 @@ uriParameters:
     get:
       displayName: Query My ShoppingLists in Store
       description: |
-        Returns ShoppingLists that match the given Query Predicate in a Store. Returns `200 OK` status if successful.
+        Retrieves all ShoppingLists for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). Returns `200 OK` status if successful.
 
         A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
@@ -1152,12 +1152,12 @@ uriParameters:
             },
         ]
       description: |
-        Checks if a ShoppingList exists for the given Query Predicate in a Store. Returns `200 OK` status if successful.
+        Checks if one or more ShoppingLists exist for the provided query predicate for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). Returns `200 OK` status if successful.
 
-        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+        A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
 
-        - If no ShoppingLists exist for a given Query Predicate in a Store.
-        - If a ShoppingList matches the Query Predicate but does not have a `store` specified, or the `store` field references a different Store.
+        - If no ShoppingLists exist for the provided query predicate in a Store.
+        - If a ShoppingList matches the query predicate but does not have a `store` specified, or the `store` field references a different Store.
         - If a ShoppingList exists in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
       queryParameters:
@@ -1189,9 +1189,9 @@ uriParameters:
           example: !include ../examples/shopping-list-create.example.json
       description: |
 
-        Creates a ShoppingList in a Store for a Customer or anonymous user. The `customer` or `anonymousId` field on the ShoppingList is automatically set based on the given [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+        Creates a ShoppingList for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). The `customer` or `anonymousId` field on the ShoppingList is automatically set based on the given [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
 
-        When using this endpoint, the `store` field of a ShoppingList is always set to the [Store](ctp:api:type:Store) specified in the path parameter.
+        When using this endpoint, the `store` field of a ShoppingList is always set to the Store specified in the path parameter.
       responses:
         201:
           body:
@@ -1226,13 +1226,13 @@ uriParameters:
             type: Expansion[]
             required: false
         description: |
-          Returns a ShoppingList for a given `key` in a Store. Returns `200 OK` status if successful.
+          Retrieves a ShoppingList with the provided `key` for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). Returns `200 OK` status if successful.
 
           A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-          - If no ShoppingList matches the given `key` in a Store.
-          - If a ShoppingList matches the given `key` but does not have a `store` specified, or the `store` field references a different Store.
-          - If a ShoppingList matches the given `key` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope,
+          - If no ShoppingList matches the provided `key` in a Store.
+          - If a ShoppingList matches the provided `key` but does not have a `store` specified, or the `store` field references a different Store.
+          - If a ShoppingList matches the provided `key` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope,
              or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
         responses:
@@ -1256,13 +1256,13 @@ uriParameters:
               },
           ]
         description: |
-          Checks if a ShoppingList exists with the provided `key` in a Store. Returns a `200 OK` status if successful.
+          Checks if a ShoppingList exists with the provided `key` for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). Returns a `200 OK` status if successful.
 
-          A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+          A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
 
-          - If no ShoppingList exists that matches the given `key` in a Store.
-          - If a ShoppingList matches the given `key` but does not have a `store` specified, or the `store` field references a different Store.
-          - If a ShoppingList matches the given `key` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+          - If no ShoppingList exists that matches the provided `key` in a Store.
+          - If a ShoppingList matches the provided `key` but does not have a `store` specified, or the `store` field references a different Store.
+          - If a ShoppingList matches the provided `key` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
       post:
         displayName: Update My ShoppingList in Store by Key
@@ -1289,13 +1289,13 @@ uriParameters:
           application/json:
             example: !include ../examples/shopping-list-update.example.json
         description: |
-          Updates a ShoppingList for a given `key` in a Store. Returns a `200 OK` status if successful.
+          Updates a ShoppingList for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/me-shoppingLists#update-actions). Returns a `200 OK` status if successful.
 
           A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-          - If no ShoppingList matches the given `key` in a Store.
-          - If a ShoppingList matches the given `key` but does not have a `store` specified, or the `store` field references a different Store.
-          - If a ShoppingList matches the given `key` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+          - If no ShoppingList matches the provided `key` in a Store.
+          - If a ShoppingList matches the provided `key` but does not have a `store` specified, or the `store` field references a different Store.
+          - If a ShoppingList matches the provided `key` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
         responses:
           200:
@@ -1326,13 +1326,13 @@ uriParameters:
             type: Expansion[]
             required: false
         description: |
-          Deletes the ShoppingList for a given `key` in a Store. Returns a `200 OK` status if successful.
+          Deletes a ShoppingList in a [Store](ctp:api:type:Store). Returns a `200 OK` status if successful.
 
           A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-          - If no ShoppingList matches the given `key` in a Store.
-          - If a ShoppingList matches the given `key` but does not have a `store` specified, or the `store` field references a different Store.
-          - If a ShoppingList matches the given `key` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+          - If no ShoppingList matches the provided `key` in a Store.
+          - If a ShoppingList matches the provided `key` but does not have a `store` specified, or the `store` field references a different Store.
+          - If a ShoppingList matches the provided `key` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
         responses:
           200:
@@ -1368,13 +1368,13 @@ uriParameters:
             type: Expansion[]
             required: false
         description: |
-          Returns a ShoppingList for a given `id` in a Store. Returns `200 OK` status if successful.
+          Retrieves a ShoppingList with the provided `id` for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). Returns `200 OK` status if successful.
 
           A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-          - If no ShoppingList matches the given `id` in a Store.
-          - If a ShoppingList matches the given `id` but does not have a `store` specified, or the `store` field references a different Store.
-          - If a ShoppingList matches the given `id` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+          - If no ShoppingList matches the provided `id` in a Store.
+          - If a ShoppingList matches the provided `id` but does not have a `store` specified, or the `store` field references a different Store.
+          - If a ShoppingList matches the provided `id` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
         responses:
           200:
@@ -1397,13 +1397,13 @@ uriParameters:
               },
           ]
         description: |
-          Checks if a ShoppingList exists with the provided `id` in a Store. Returns a `200 OK` status if successful.
+          Checks if a ShoppingList exists with the provided `id` for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). Returns a `200 OK` status if successful.
 
-          A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+          A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
 
-          - If no ShoppingList matches the given `id` in a Store.
-          - If a ShoppingList matches the given `id` but does not have a `store` specified, or the `store` field references a different Store.
-          - If a ShoppingList matches the given `id` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+          - If no ShoppingList matches the provided `id` in a Store.
+          - If a ShoppingList matches the provided `id` but does not have a `store` specified, or the `store` field references a different Store.
+          - If a ShoppingList matches the provided `id` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
       post:
         displayName: Update My ShoppingList in Store by ID
@@ -1430,13 +1430,13 @@ uriParameters:
           application/json:
             example: !include ../examples/shopping-list-update.example.json
         description: |
-          Updates a ShoppingList for a given `id` in a Store. Returns a `200 OK` status if successful.
+          Updates a ShoppingList for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/me-shoppingLists#update-actions). Returns a `200 OK` status if successful.
 
           A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-          - If no ShoppingList matches the given `id` in a Store.
-          - If a ShoppingList matches the given `id` but does not have a `store` specified, or the `store` field references a different Store.
-          - If a ShoppingList matches the given `id` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+          - If no ShoppingList matches the provided `id` in a Store.
+          - If a ShoppingList matches the provided `id` but does not have a `store` specified, or the `store` field references a different Store.
+          - If a ShoppingList matches the provided `id` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
         responses:
           200:
@@ -1467,13 +1467,13 @@ uriParameters:
             type: Expansion[]
             required: false
         description: |
-          Deletes the ShoppingList for a given `id` in a Store. Returns a `200 OK` status if successful.
+          Deletes a ShoppingList in a [Store](ctp:api:type:Store). Returns a `200 OK` status if successful.
 
           A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-          - If no ShoppingList matches the given `id` in a Store.
-          - If a ShoppingList matches the given `id` but does not have a `store` specified, or the `store` field references a different Store.
-          - If a ShoppingList matches the given `id` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+          - If no ShoppingList matches the provided `id` in a Store.
+          - If a ShoppingList matches the provided `id` but does not have a `store` specified, or the `store` field references a different Store.
+          - If a ShoppingList matches the provided `id` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
 
         responses:
           200:
@@ -2209,6 +2209,7 @@ uriParameters:
     shopping-lists e.g. for wishlist support
   get:
     displayName: Query ShoppingLists in Store
+    description: Retrieves all ShoppingLists in a [Store](ctp:api:type:Store).
     securedBy:
       [
         oauth_2_0:
@@ -2244,7 +2245,7 @@ uriParameters:
               ],
           },
       ]
-    description: Checks if one or more ShoppingLists exist for the provided query predicate. Returns a `200 OK` status if any ShoppingLists match the query predicate, or [Not Found](/../api/errors#404-not-found) otherwise.
+    description: Checks if one or more ShoppingLists exist for the provided query predicate in a [Store](ctp:api:type:Store). Returns a `200 OK` status if any ShoppingLists match the query predicate or [Not Found](/../api/errors#404-not-found) otherwise.
     queryParameters:
       where?:
         type: QueryPredicate[]
@@ -2271,6 +2272,7 @@ uriParameters:
       application/json:
         example: !include ../examples/shopping-list-create.example.json
     description: |
+      Creates a ShoppingList in a [Store](ctp:api:type:Store).
       When using this endpoint, the `store` field of a ShoppingList is always set to the [Store](ctp:api:type:Store) specified in the path parameter.
     responses:
       201:
@@ -2304,7 +2306,8 @@ uriParameters:
           type: Expansion[]
           required: false
       description: |
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
+        Retrieves a ShoppingList with the provided `key` in a [Store](ctp:api:type:Store).
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       responses:
         200:
@@ -2324,7 +2327,7 @@ uriParameters:
                 ],
             },
         ]
-      description: Checks if a ShoppingList exists with the provided `key`. Returns a `200 OK` status if the ShoppingList exists or [Not Found](/../api/errors#404-not-found) otherwise.
+      description: Checks if a ShoppingList exists with the provided `key` in a [Store](ctp:api:type:Store). Returns a `200 OK` status if the ShoppingList exists or [Not Found](/../api/errors#404-not-found) otherwise.
     post:
       displayName: Update ShoppingList in Store by Key
       securedBy:
@@ -2345,7 +2348,8 @@ uriParameters:
           type: Expansion[]
           required: false
       description: |
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
+        Updates a ShoppingList in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/shoppingLists#update-actions).
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       body:
         application/json:
@@ -2377,7 +2381,8 @@ uriParameters:
           type: Expansion[]
           required: false
       description: |
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
+        Deletes a ShoppingList in a [Store](ctp:api:type:Store).
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       responses:
         200:
@@ -2411,7 +2416,8 @@ uriParameters:
           type: Expansion[]
           required: false
       description: |
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
+        Retrieves a ShoppingList with the provided `id` in a [Store](ctp:api:type:Store).
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       responses:
         200:
@@ -2419,7 +2425,7 @@ uriParameters:
             application/json:
               example: !include ../examples/shopping-list.example.json
     head:
-      displayName: Check if ShoppingList exists in Store by Query Predicate
+      displayName: Check if ShoppingList exists in Store by ID
       securedBy:
         [
           oauth_2_0:
@@ -2431,7 +2437,7 @@ uriParameters:
                 ],
             },
         ]
-      description: Checks if a ShoppingList exists with the provided `id`. Returns a `200 OK` status if the ShoppingList exists or [Not Found](/../api/errors#404-not-found) otherwise.
+      description: Checks if a ShoppingList exists with the provided `id` in a [Store](ctp:api:type:Store). Returns a `200 OK` status if the ShoppingList exists or [Not Found](/../api/errors#404-not-found) otherwise.
     post:
       displayName: Update ShoppingList in Store by ID
       securedBy:
@@ -2455,7 +2461,8 @@ uriParameters:
         application/json:
           example: !include ../examples/shopping-list-update.example.json
       description: |
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
+        Updates a ShoppingList in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/shoppingLists#update-actions).
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       responses:
         200:
@@ -2484,7 +2491,8 @@ uriParameters:
           type: Expansion[]
           required: false
       description: |
-        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different [Store](ctp:api:type:Store),
+        Deletes a ShoppingList in a [Store](ctp:api:type:Store).
+        If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
         the [ResourceNotFound](/errors#404-not-found-1) error is returned.
       responses:
         200:
