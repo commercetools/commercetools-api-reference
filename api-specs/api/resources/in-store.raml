@@ -370,6 +370,7 @@ uriParameters:
     been completed.
   get:
     displayName: Query Orders in Store
+    description: Retrieves Orders in a [Store](ctp:api:type:Store).
     securedBy:
       [
         oauth_2_0:
@@ -399,7 +400,7 @@ uriParameters:
               ],
           },
       ]
-    description: Checks if one or more Orders exist for the provided query predicate. Returns a `200 OK` status if any Orders match the query predicate, or [Not Found](/../api/errors#404-not-found) otherwise.
+    description: Checks if one or more Orders exist for the provided query predicate in a [Store](ctp:api:type:Store). Returns a `200 OK` status if any Orders match the query predicate, or [Not Found](/../api/errors#404-not-found) otherwise.
     queryParameters:
       where?:
         type: QueryPredicate[]
@@ -417,6 +418,7 @@ uriParameters:
           },
       ]
     description: |
+      Creates an Order from a Cart in a [Store](ctp:api:type:Store).
       Before you create an Order, the Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction).
       The shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).
 
@@ -507,6 +509,7 @@ uriParameters:
             },
         ]
       description: |
+        Retrieves an Order with the provided `orderNumber` in a [Store](ctp:api:type:Store).
         If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       responses:
         200:
@@ -526,7 +529,7 @@ uriParameters:
                 ],
             },
         ]
-      description: Checks if an Order exists for a given `orderNumber`. Returns a `200 OK` status if the Order exists or [Not Found](/../api/errors#404-not-found) otherwise.
+      description: Checks if an Order exists with the provided `orderNumber` in a [Store](ctp:api:type:Store). Returns a `200 OK` status if the Order exists or [Not Found](/../api/errors#404-not-found) otherwise.
     post:
       displayName: Update Order in Store by OrderNumber
       securedBy:
@@ -541,6 +544,7 @@ uriParameters:
             },
         ]
       description: |
+        Updates an Order in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/orders#update-actions).
         If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       body:
         application/json:
@@ -553,6 +557,7 @@ uriParameters:
     delete:
       displayName: Delete Order in Store by OrderNumber
       description: |
+        Deletes an Order in a [Store](ctp:api:type:Store).
         If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
 
         Deleting an Order produces the [OrderDeleted](ctp:api:type:OrderDeletedMessage) Message.
@@ -595,6 +600,7 @@ uriParameters:
             },
         ]
       description: |
+        Retrieves an Order with the provided `id` in a [Store](ctp:api:type:Store).
         If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       responses:
         200:
@@ -614,7 +620,7 @@ uriParameters:
                 ],
             },
         ]
-      description: Checks if an Order exists with the provided `id`. Returns a `200 OK` status if the Order exists or [Not Found](/../api/errors#404-not-found) otherwise.
+      description: Checks if an Order exists with the provided `id` in a [Store](ctp:api:type:Store). Returns a `200 OK` status if the Order exists or [Not Found](/../api/errors#404-not-found) otherwise.
     post:
       displayName: Update Order in Store by ID
       securedBy:
@@ -629,6 +635,7 @@ uriParameters:
             },
         ]
       description: |
+        Updates an Order in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/orders#update-actions).
         If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       body:
         application/json:
@@ -641,6 +648,7 @@ uriParameters:
     delete:
       displayName: Delete Order in Store by ID
       description: |
+        Deletes an Order in a [Store](ctp:api:type:Store).
         If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
 
         Deleting an Order produces the [OrderDeleted](ctp:api:type:OrderDeletedMessage) Message.
@@ -893,7 +901,13 @@ uriParameters:
             },
         ]
       description: |
-        Returns all Orders in a Store that match a given Query Predicate and contain either a `customerId` that matches the [customer_id:{id}](/scopes#composable-commerce-oauth) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+        Retrieves Orders in a [Store](ctp:api:type:Store) for the authenticated Customer or anonymous user.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Orders exist that match the provided query predicate.
+        - If an Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
       responses:
         200:
           body:
@@ -915,9 +929,9 @@ uriParameters:
             },
         ]
       description: |
-        Checks if one or more Orders exist for the provided query predicate in a Store. Returns a `200 OK` status if successful.
+        Checks if one or more Orders exist for the provided query predicate in a [Store](ctp:api:type:Store) for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
-        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+        A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
 
         - If no Orders exist in the Store that match the Query Predicate.
         - If an Order matches the Query Predicate, but no `store` is specified, or the `store` field references a different Store.
@@ -932,7 +946,7 @@ uriParameters:
       displayName: Create My Order in Store from Cart
       description: |
 
-        Creates an Order in a Store from a Cart for the Customer or anonymous user. The `customerId` or `anonymousId` field on the Order is automatically set based on the [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+        Creates an Order from a Cart in a [Store](ctp:api:type:Store) for the Customer or anonymous user. The `customerId` or `anonymousId` field on the Order is automatically set based on the [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
 
         The Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction) for taxes to be calculated. When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
 
@@ -981,13 +995,13 @@ uriParameters:
       get:
         displayName: Get My Order in Store by ID
         description: |
-          Returns an Order for a given `id` in a Store. Returns a `200 OK` status if successful.
+          Retrieves an Order with the provided `id` in a [Store](ctp:api:type:Store) for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
           A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
-          - If no Order exists in the Store for the given `id`.
-          - If the Order exists but does not have a `store` specified, or the `store` field references a different Store.
-          - If the Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+          - If no Orders exists in the Store with the provided `id`.
+          - If an Order exists but does not have a `store` specified, or the `store` field references a different Store.
+          - If an Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
 
         securedBy:
           [
@@ -1023,13 +1037,13 @@ uriParameters:
               },
           ]
         description: |
-          Checks if an Order exists with the provided `id` in a Store. Returns a `200 OK` status if successful.
+          Checks if an Order exists with the provided `id` in a [Store](ctp:api:type:Store) for the authenticated Customer or anonymous user. Returns a `200 OK` status if successful.
 
-          A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+          A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
 
-          - If no Order exists in the Store for the given `id`.
-          - If the Order exists but does not have a `store` specified, or the `store` field references a different Store.
-          - If the Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+          - If no Order exists in the Store with the provided `id`.
+          - If an Order exists but does not have a `store` specified, or the `store` field references a different Store.
+          - If an Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
 
   /active-cart:
     type: base
