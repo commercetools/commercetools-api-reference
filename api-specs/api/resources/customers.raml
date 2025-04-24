@@ -11,6 +11,7 @@ type:
 description: |
   A Customer is a person purchasing products. Carts, Orders, Quotes, Reviews and Payments can be associated to a Customer.
 get:
+  displayName: Query Customers
   securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
   responses:
     200:
@@ -18,12 +19,14 @@ get:
         application/json:
           example: !include ../examples/customers.example.json
 head:
+  displayName: Check if Customer exists by Query Predicate
   securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
   description: Checks if one or more Customers exist for the provided query predicate. Returns a `200 OK` status if any Customers match the query predicate, or a `404 Not Found` otherwise.
   queryParameters:
     where?:
       type: QueryPredicate[]
 post:
+  displayName: Create (sign up) Customer
   securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
   description: |
     If the `anonymousCart` field is set on the [CustomerDraft](ctp:api:type:CustomerDraft), then the newly created Customer will be assigned to that [Cart](ctp:api:type:Cart).
@@ -46,7 +49,7 @@ post:
       uriParameterName: passwordToken
       resourceType: Customer
   get:
-    displayName: Get customer by password verification token
+    displayName: Get Customer by password token
     securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
     description: |
       Use this method to retrieve the details of a global Customer by using the password token during their [password reset process](/../api/customers-overview#customer-password-reset).
@@ -62,7 +65,7 @@ post:
       uriParameterName: emailToken
       resourceType: Customer
   get:
-    displayName: Get customer by email verification token
+    displayName: Get Customer by email token
     securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
     description: |
       Use this method to retrieve a global Customer's details by using the email token during their [email verification process](/../api/customers-overview#customer-email-verification).
@@ -74,7 +77,7 @@ post:
 /email-token:
   type: base
   post:
-    displayName: Create a Token for verifying the Customer's Email
+    displayName: Create email token for Customer
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     description: |
       Use this method to create an email token for a global Customer during their [email verification process](/../api/customers-overview#customer-email-verification).
@@ -91,9 +94,8 @@ post:
             type: CustomerToken
 /email/confirm:
   type: base
-  displayName: Verify Customer's Email
   post:
-    displayName: Verifies customer's email.
+    displayName: Verify email of Customer
     description: |
       Use this method to verify a global Customer's email during their [email verification process](/../api/customers-overview#customer-email-verification).
 
@@ -112,9 +114,8 @@ post:
             type: Customer
 /password:
   type: base
-  displayName: Change Customers Password
   post:
-    displayName: Change a customers password
+    displayName: Change password of Customer
     description: |
       Changing the password produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
@@ -131,7 +132,7 @@ post:
 /password/reset:
   type: base
   post:
-    displayName: Reset Customer's Password
+    displayName: Reset password of Customer
     description: |
       Use this method to reset a global Customer's password during their [password reset process](/../api/customers-overview#customer-password-reset).
 
@@ -151,10 +152,9 @@ post:
             type: Customer
 /password-token:
   type: base
-  displayName: Create a Token for Resetting the Customer's Password
   description: Produces the [CustomerPasswordTokenCreated](ctp:api:type:CustomerPasswordTokenCreatedMessage) Message.
   post:
-    displayName: Create a Token for Resetting the Customer's Password
+    displayName: Create password reset token for Customer
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     description: |
       Use this method to create a password reset token for a global Customer during their [password reset process](/../api/customers-overview#customer-password-reset).
@@ -177,6 +177,7 @@ post:
       resourceType: Customer
       resourceUpdateType: CustomerUpdate
   get:
+    displayName: Get Customer by Key
     securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
     responses:
       200:
@@ -184,9 +185,11 @@ post:
           application/json:
             example: !include ../examples/customer.example.json
   head:
+    displayName: Check if Customer exists by Key
     securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
     description: Checks if a Customer exists with the provided `key`. Returns a `200 OK` status if the Customer exists or a `404 Not Found` otherwise.
   post:
+    displayName: Update Customer by Key
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     description: Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.
     body:
@@ -198,6 +201,7 @@ post:
           application/json:
             example: !include ../examples/customer.example.json
   delete:
+    displayName: Delete Customer by Key
     is:
       - dataErasure
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
@@ -216,6 +220,7 @@ post:
       resourceType: Customer
       resourceUpdateType: CustomerUpdate
   get:
+    displayName: Get Customer by ID
     securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
     responses:
       200:
@@ -223,9 +228,11 @@ post:
           application/json:
             example: !include ../examples/customer.example.json
   head:
+    displayName: Check if Customer exists by ID
     securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
     description: Checks if a Customer exists with the provided `id`. Returns a `200 OK` status if the Customer exists or a `404 Not Found` otherwise.
   post:
+    displayName: Update Customer by ID
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     description: Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.
     body:
@@ -237,6 +244,7 @@ post:
           application/json:
             example: !include ../examples/customer.example.json
   delete:
+    displayName: Delete Customer by ID
     is:
       - dataErasure
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
@@ -249,7 +257,6 @@ post:
             example: !include ../examples/customer.example.json
 /search:
   type: base
-  displayName: Customer Search
   description: |
     This endpoint provides high-performance search queries over Customers.
   post:
@@ -267,6 +274,7 @@ post:
           application/json:
             type: CustomerPagedSearchResponse
   head:
+    displayName: Check if Customer Search index exists
     securedBy: [oauth_2_0: { scopes: ['view_customers:{projectKey}'] }]
     description: |
       Checks whether a search index of Customers exists for a Project.
@@ -278,9 +286,8 @@ post:
         description: A search index does not exist and the [Search Customers](ctp:api:endpoint:/{projectKey}/customers/search:POST) endpoint returns a 409 error.
 /search/indexing-status:
   type: base
-  displayName: Customer Search Status
   get:
-    displayName: Customer Search Status
+    displayName: Get indexing status of Customer Search
     description: |
       Returns the indexing status of the Customer Search for a Project.
     securedBy: [oauth_2_0: { scopes: ['view_project_settings:{projectKey}'] }]
