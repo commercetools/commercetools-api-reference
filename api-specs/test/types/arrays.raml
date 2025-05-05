@@ -3,6 +3,8 @@ usage: Array test types.
 
 uses:
   scalars: scalars.raml
+  objects: objects.raml
+  childObjects: child-objects.raml
 
 types:
   ArrayTestType:
@@ -93,3 +95,28 @@ types:
         type: string
         description: |
           Key type description.
+  ObjectHierarchyExampleTestType:
+    description: A test type with a reference to an object type that has a hierarchy.
+    type: object
+    properties:
+      reference:
+        type: ArrayTestType | WideLayoutArrayTestType
+        description: |
+          Reference description.
+      key?:
+        type: string
+        description: |
+          Key type description.
+      arrayOfObjectType:
+        description: An array of IntegerTestType. JSON primitive is `array`, display type is "Array of IntegerTestType"
+        type: scalars.IntegerTestType[]
+        uniqueItems: false
+      /^[a-z]{2}(-[A-Z]{2})?$/:
+        description: Regular expression property with an array type. To be displayed as "Array of ObjectTestType". The Slashes should appear in blue.
+        type: array
+        items: objects.ObjectTestType
+      objectHierarchyLevel1:
+        type: childObjects.ObjectHierarchyLevel1
+        required: false
+        description: |
+          Object hierarchy level 1 description.
