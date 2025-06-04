@@ -9285,6 +9285,7 @@ paths:
         Use this method to create an email token for a global Customer during their [email verification process](/../api/customers-overview#customer-email-verification).
 
         Creating an email token for the Customer produces the [CustomerEmailTokenCreated](ctp:api:type:CustomerEmailTokenCreatedMessage) Message.
+        The Message will include the token's value, if the token's validity is 60 minutes or less.
       requestBody:
         content:
           application/json:
@@ -9354,12 +9355,12 @@ paths:
 
         "400":
           $ref: '#/components/responses/errorable_400'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -9382,6 +9383,8 @@ paths:
         Use this method to verify a global Customer's email during their [email verification process](/../api/customers-overview#customer-email-verification).
 
         Verifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.
+
+        After the email is verified, all email tokens issued previously through the [email verification flow](/../api/projects/customers#email-verification-of-customer) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
       requestBody:
         content:
           application/json:
@@ -9399,12 +9402,12 @@ paths:
 
         "400":
           $ref: '#/components/responses/errorable_400'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -9653,7 +9656,8 @@ paths:
       description: |-
         Use this method to create a password reset token for a global Customer during their [password reset process](/../api/customers-overview#customer-password-reset).
 
-        Creating a password reset token does not invalidate existing tokens.
+        Creating a password reset token for the Customer produces the [CustomerPasswordTokenCreated](ctp:api:type:CustomerPasswordTokenCreatedMessage) Message.
+        The Message will include the token's value, if the token's validity is 60 minutes or less.
       requestBody:
         content:
           application/json:
@@ -9723,12 +9727,12 @@ paths:
 
         "400":
           $ref: '#/components/responses/errorable_400'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -9750,9 +9754,9 @@ paths:
       description: |-
         Use this method to reset a global Customer's password during their [password reset process](/../api/customers-overview#customer-password-reset).
 
-        After the password is reset, any previously issued access and/or refresh tokens created through the [password flow](/authorization#password-flow) or [refresh token flow](/authorization#refresh-token-flow) are invalidated.
-
         Resetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
+
+        After the password is reset, all password tokens issued previously through the [password reset flow](/../api/projects/customers#password-reset-of-customer) are invalidated. In addition, any access and refresh tokens issued previously through the [password flow](/../api/authorization#password-flow) and [refresh token flow](/../api/authorization#refresh-token-flow) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
       requestBody:
         content:
           application/json:
@@ -9770,12 +9774,12 @@ paths:
 
         "400":
           $ref: '#/components/responses/errorable_400'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -13363,6 +13367,9 @@ paths:
         Use this method to create an email token for a Store-specific Customer during their [email verification process](/../api/customers-overview#customer-email-verification).
 
         If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+        Creating an email token for the Customer produces the [CustomerEmailTokenCreated](ctp:api:type:CustomerEmailTokenCreatedMessage) Message.
+        The Message will include the token's value, if the token's validity is 60 minutes or less.
       requestBody:
         content:
           application/json:
@@ -13440,12 +13447,12 @@ paths:
 
         "400":
           $ref: '#/components/responses/errorable_400'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -13476,6 +13483,8 @@ paths:
         Verifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.
 
         If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+        After the email is verified, all email tokens issued previously through the [email verification flow](/../api/projects/customers#email-verification-of-customer) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
       requestBody:
         content:
           application/json:
@@ -13493,12 +13502,12 @@ paths:
 
         "400":
           $ref: '#/components/responses/errorable_400'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -13772,9 +13781,10 @@ paths:
       description: |-
         Use this method to create a password reset token for a Store-specific Customer during their [password reset process](/../api/customers-overview#customer-password-reset).
 
-        Creating a password reset token does not invalidate existing tokens.
-
         If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+        Creating a password reset token for the Customer produces the [CustomerPasswordTokenCreated](ctp:api:type:CustomerPasswordTokenCreatedMessage) Message.
+        The Message will include the token's value, if the token's validity is 60 minutes or less.
       requestBody:
         content:
           application/json:
@@ -13852,12 +13862,12 @@ paths:
 
         "400":
           $ref: '#/components/responses/errorable_400'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -13885,9 +13895,9 @@ paths:
       description: |-
         Use this method to reset a Store-specific Customer's password during their [password reset process](/../api/customers-overview#customer-password-reset).
 
-        After the password is reset, any previously issued access and/or refresh tokens created through the [password flow](/authorization#password-flow) or [refresh token flow](/authorization#refresh-token-flow) are invalidated.
-
         Resetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
+
+        After the password is reset, all password tokens issued previously through the [password reset flow](/../api/projects/customers#password-reset-of-customer) are invalidated. In addition, any access and refresh tokens issued previously through the [password flow](/../api/authorization#password-flow) and [refresh token flow](/../api/authorization#refresh-token-flow) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
 
         If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), then this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
       requestBody:
@@ -13907,12 +13917,12 @@ paths:
 
         "400":
           $ref: '#/components/responses/errorable_400'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -14872,6 +14882,8 @@ paths:
       description: |-
         This is the last step in the [email verification process of a Customer](/../api/projects/customers#email-verification-of-customer-in-store). Returns a `200 OK` status if successful.
 
+        After the email is verified, all email tokens issued previously through the [email verification flow](/../api/projects/customers#email-verification-of-customer) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
+
         A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
         - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#composable-commerce-oauth) scope.
@@ -14893,12 +14905,12 @@ paths:
 
         "400":
           $ref: '#/components/responses/errorable_400'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -15375,6 +15387,8 @@ paths:
 
         Resetting a password produces the Customer [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
 
+        After the password is reset, all password tokens issued previously through the [password reset flow](/../api/projects/customers#password-reset-of-customer) are invalidated. In addition, any access and refresh tokens issued previously through the [password flow](/../api/authorization#password-flow) and [refresh token flow](/../api/authorization#refresh-token-flow) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
+
         A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
 
         - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#composable-commerce-oauth) scope.
@@ -15396,12 +15410,12 @@ paths:
 
         "400":
           $ref: '#/components/responses/errorable_400'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -21995,6 +22009,8 @@ paths:
       operationId: ByProjectKeyMeEmailConfirmPost
       description: |-
         This is the last step in the [email verification process of a Customer](/../api/projects/customers#email-verification-of-customer).
+
+        After the email is verified, all email tokens issued previously through the [email verification flow](/../api/projects/customers#email-verification-of-customer) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
       requestBody:
         content:
           application/json:
@@ -22012,12 +22028,12 @@ paths:
 
         "400":
           $ref: '#/components/responses/errorable_400'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -22510,6 +22526,8 @@ paths:
         This is the last step in the [password reset process of a Customer](/../api/projects/customers#password-reset-of-customer).
 
         Resetting a password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
+
+        After the password is reset, all password tokens issued previously through the [password reset flow](/../api/projects/customers#password-reset-of-customer) are invalidated. In addition, any access and refresh tokens issued previously through the [password flow](/../api/authorization#password-flow) and [refresh token flow](/../api/authorization#refresh-token-flow) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
       requestBody:
         content:
           application/json:
@@ -22527,12 +22545,12 @@ paths:
 
         "400":
           $ref: '#/components/responses/errorable_400'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "401":
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
-        "404":
-          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -45635,6 +45653,8 @@ components:
         ttlMinutes:
           type: "integer"
           format: "int64"
+        invalidateOlderTokens:
+          type: "boolean"
     CustomerCreatePasswordResetToken:
       type: "object"
       required:
@@ -45645,6 +45665,8 @@ components:
         ttlMinutes:
           type: "integer"
           format: "int64"
+        invalidateOlderTokens:
+          type: "boolean"
     CustomerDraft:
       type: "object"
       required:
@@ -45864,6 +45886,7 @@ components:
         - customerId
         - expiresAt
         - id
+        - invalidateOlderTokens
         - value
       properties:
         id:
@@ -45875,6 +45898,8 @@ components:
         expiresAt:
           type: "string"
           format: "datetime"
+        invalidateOlderTokens:
+          type: "boolean"
         createdAt:
           type: "string"
           format: "datetime"
@@ -47227,6 +47252,8 @@ components:
           EnumKeyDoesNotExist: '#/components/schemas/EnumKeyDoesNotExistError'
           EnumValueIsUsed: '#/components/schemas/EnumValueIsUsedError'
           EnumValuesMustMatch: '#/components/schemas/EnumValuesMustMatchError'
+          ExpiredCustomerEmailToken: '#/components/schemas/ExpiredCustomerEmailTokenError'
+          ExpiredCustomerPasswordToken: '#/components/schemas/ExpiredCustomerPasswordTokenError'
           ExtensionBadResponse: '#/components/schemas/ExtensionBadResponseError'
           ExtensionNoResponse: '#/components/schemas/ExtensionNoResponseError'
           ExtensionPredicateEvaluationFailed: '#/components/schemas/ExtensionPredicateEvaluationFailedError'
@@ -47306,6 +47333,34 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/ErrorObject'
+    ExpiredCustomerEmailTokenError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    ExpiredCustomerPasswordTokenError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
     ExtensionBadResponseError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -48665,6 +48720,8 @@ components:
           EnumKeyDoesNotExist: '#/components/schemas/GraphQLEnumKeyDoesNotExistError'
           EnumValueIsUsed: '#/components/schemas/GraphQLEnumValueIsUsedError'
           EnumValuesMustMatch: '#/components/schemas/GraphQLEnumValuesMustMatchError'
+          ExpiredCustomerEmailToken: '#/components/schemas/GraphQLExpiredCustomerEmailTokenError'
+          ExpiredCustomerPasswordToken: '#/components/schemas/GraphQLExpiredCustomerPasswordTokenError'
           ExtensionBadResponse: '#/components/schemas/GraphQLExtensionBadResponseError'
           ExtensionNoResponse: '#/components/schemas/GraphQLExtensionNoResponseError'
           ExtensionPredicateEvaluationFailed: '#/components/schemas/GraphQLExtensionPredicateEvaluationFailedError'
@@ -48726,6 +48783,28 @@ components:
           type: "string"
       additionalProperties:
         type: "string"
+    GraphQLExpiredCustomerEmailTokenError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLExpiredCustomerPasswordTokenError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
+          additionalProperties:
+            type: "string"
     GraphQLExtensionBadResponseError:
       allOf:
         - $ref: '#/components/schemas/GraphQLErrorObject'
@@ -55484,6 +55563,7 @@ components:
           required:
             - customerId
             - expiresAt
+            - invalidateOlderTokens
           properties:
             id:
               type: "string"
@@ -55517,6 +55597,10 @@ components:
             expiresAt:
               type: "string"
               format: "datetime"
+            value:
+              type: "string"
+            invalidateOlderTokens:
+              type: "boolean"
     CustomerEmailVerifiedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -55954,6 +56038,7 @@ components:
           required:
             - customerId
             - expiresAt
+            - invalidateOlderTokens
           properties:
             id:
               type: "string"
@@ -55987,6 +56072,10 @@ components:
             expiresAt:
               type: "string"
               format: "datetime"
+            value:
+              type: "string"
+            invalidateOlderTokens:
+              type: "boolean"
     CustomerPasswordUpdatedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -63593,6 +63682,7 @@ components:
           required:
             - customerId
             - expiresAt
+            - invalidateOlderTokens
           properties:
             type:
               type: "string"
@@ -63601,6 +63691,10 @@ components:
             expiresAt:
               type: "string"
               format: "datetime"
+            value:
+              type: "string"
+            invalidateOlderTokens:
+              type: "boolean"
     CustomerEmailVerifiedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -63738,6 +63832,7 @@ components:
           required:
             - customerId
             - expiresAt
+            - invalidateOlderTokens
           properties:
             type:
               type: "string"
@@ -63746,6 +63841,10 @@ components:
             expiresAt:
               type: "string"
               format: "datetime"
+            value:
+              type: "string"
+            invalidateOlderTokens:
+              type: "boolean"
     CustomerPasswordUpdatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
