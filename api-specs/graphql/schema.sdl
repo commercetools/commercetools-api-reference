@@ -3660,6 +3660,7 @@ type CustomerEmailToken implements Versioned {
   customerId: String!
   expiresAt: DateTime!
   value: String!
+  invalidateOlderTokens: Boolean!
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -3670,6 +3671,8 @@ type CustomerEmailToken implements Versioned {
 
 type CustomerEmailTokenCreated implements MessagePayload {
   customerId: String!
+  value: String
+  invalidateOlderTokens: Boolean!
   expiresAt: DateTime!
   type: String!
 }
@@ -3814,6 +3817,7 @@ type CustomerPasswordToken implements Versioned {
   customerId: String!
   expiresAt: DateTime!
   value: String!
+  invalidateOlderTokens: Boolean!
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -3824,6 +3828,8 @@ type CustomerPasswordToken implements Versioned {
 
 type CustomerPasswordTokenCreated implements MessagePayload {
   customerId: String!
+  value: String
+  invalidateOlderTokens: Boolean!
   expiresAt: DateTime!
   type: String!
 }
@@ -6023,21 +6029,27 @@ type Mutation {
     "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
     storeKey: KeyReferenceInput): Customer
 
-  "The token value is used to reset the password of the customer with the given email. The token is valid only for 10 minutes."
+  "The token value is used to reset the password of the customer with the given email. The token is valid for the time-to-live period (TTL)."
   customerCreatePasswordResetToken(email: String!,
 
     "The validity of the created token in minutes."
     ttlMinutes: Int,
 
     "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
-    storeKey: KeyReferenceInput): CustomerPasswordToken
+    storeKey: KeyReferenceInput,
+
+    "Invalidate older, previously created tokens when a new token is created."
+    invalidateOlderTokens: Boolean! = false): CustomerPasswordToken
   customerCreateEmailVerificationToken(id: String!, version: Long,
 
     "The validity of the created token in minutes."
     ttlMinutes: Int!,
 
     "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
-    storeKey: KeyReferenceInput): CustomerEmailToken!
+    storeKey: KeyReferenceInput,
+
+    "Invalidate older, previously created tokens when a new token is created."
+    invalidateOlderTokens: Boolean! = false): CustomerEmailToken!
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta If used with an access token for Anonymous Sessions, all orders and carts belonging to the anonymousId will be assigned to the newly created customer."
   customerSignMeUp(draft: CustomerSignMeUpDraft!,

@@ -58,6 +58,10 @@ post:
         body:
           application/json:
             example: !include ../examples/customer.example.json
+      400:
+        description: An [ExpiredCustomerPasswordToken](ctp:api:type:ExpiredCustomerPasswordTokenError) error is returned as the provided token has expired.
+      404:
+        description: The provided token is invalid or does not exist.
 /email-token={emailToken}:
   (methodName): withEmailToken
   type:
@@ -74,6 +78,10 @@ post:
         body:
           application/json:
             example: !include ../examples/customer.example.json
+      400:
+        description: An [ExpiredCustomerEmailToken](ctp:api:type:ExpiredCustomerEmailTokenError) error is returned as the provided token has expired.
+      404:
+        description: The provided token is invalid or does not exist.
 /email-token:
   type: base
   post:
@@ -83,6 +91,7 @@ post:
       Use this method to create an email token for a global Customer during their [email verification process](/../api/customers-overview#customer-email-verification).
 
       Creating an email token for the Customer produces the [CustomerEmailTokenCreated](ctp:api:type:CustomerEmailTokenCreatedMessage) Message.
+      The Message will include the token's value, if the token's validity is 60 minutes or less.
     body:
       application/json:
         example: !include ../examples/Customer/CustomerCreateEmailToken.json
@@ -100,6 +109,8 @@ post:
       Use this method to verify a global Customer's email during their [email verification process](/../api/customers-overview#customer-email-verification).
 
       Verifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.
+
+      After the email is verified, all email tokens issued previously through the [email verification flow](/../api/projects/customers#email-verification-of-customer) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     body:
       application/json:
@@ -112,6 +123,10 @@ post:
           application/json:
             example: !include ../examples/customer.example.json
             type: Customer
+      400:
+        description: An [ExpiredCustomerEmailToken](ctp:api:type:ExpiredCustomerEmailToken) error is returned as the provided token is has expired.
+      404:
+        description: The provided token is invalid or does not exist.
 /password:
   type: base
   post:
@@ -136,9 +151,9 @@ post:
     description: |
       Use this method to reset a global Customer's password during their [password reset process](/../api/customers-overview#customer-password-reset).
 
-      After the password is reset, any previously issued access and/or refresh tokens created through the [password flow](/authorization#password-flow) or [refresh token flow](/authorization#refresh-token-flow) are invalidated.
-
       Resetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
+
+      After the password is reset, all password tokens issued previously through the [password reset flow](/../api/projects/customers#password-reset-of-customer) are invalidated. In addition, any access and refresh tokens issued previously through the [password flow](/../api/authorization#password-flow) and [refresh token flow](/../api/authorization#refresh-token-flow) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
     securedBy: [oauth_2_0: { scopes: ['manage_customers:{projectKey}'] }]
     body:
       application/json:
@@ -150,6 +165,10 @@ post:
           application/json:
             example: !include ../examples/customer.example.json
             type: Customer
+      400:
+        description: An [ExpiredCustomerPasswordToken](ctp:api:type:ExpiredCustomerPasswordTokenError) error is returned as the provided token has expired.
+      404:
+        description: The provided token is invalid or does not exist.
 /password-token:
   type: base
   description: Produces the [CustomerPasswordTokenCreated](ctp:api:type:CustomerPasswordTokenCreatedMessage) Message.
@@ -159,7 +178,8 @@ post:
     description: |
       Use this method to create a password reset token for a global Customer during their [password reset process](/../api/customers-overview#customer-password-reset).
 
-      Creating a password reset token does not invalidate existing tokens.
+      Creating a password reset token for the Customer produces the [CustomerPasswordTokenCreated](ctp:api:type:CustomerPasswordTokenCreatedMessage) Message.
+      The Message will include the token's value, if the token's validity is 60 minutes or less.
     body:
       application/json:
         example: !include ../examples/Customer/CustomerCreatePasswordResetToken.json
