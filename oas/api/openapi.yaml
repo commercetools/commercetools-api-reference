@@ -2191,8 +2191,10 @@ paths:
       operationId: ByProjectKeyAsAssociateByAssociateIdInBusinessUnitKeyByBusinessUnitKeyOrdersPost
       description: |-
         Creates an Order from a [Cart](ctp:api:type:Cart) in a [BusinessUnit](ctp:api:type:BusinessUnit).
-        The Cart must have a shipping address set before creating an Order.
-        Creating an Order fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) if the Cart does not reference the same BusinessUnit as the `businessUnitKey` path parameter.
+
+        The Cart must have a shipping address and an active Shipping Method set.
+
+        If the Cart does not reference the same BusinessUnit as the `businessUnitKey` path parameter, an [InvalidOperation](ctp:api:type:InvalidOperationError) is returned.
 
         Specific Error Codes:
 
@@ -15147,7 +15149,9 @@ paths:
       description: |-
         Creates an Order from a Cart in a [Store](ctp:api:type:Store) for the Customer or anonymous user. The `customerId` or `anonymousId` field on the Order is automatically set based on the [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
 
-        The Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction) for taxes to be calculated. When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
+        The Cart must have a shipping address and an active Shipping Method set.
+
+        When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
 
         If the Cart's `customerId` does not match the [customer:{id}](/scopes#composable-commerce-oauth) scope, or the `anonymousId` does not match the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
 
@@ -16294,10 +16298,12 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersPost
       description: |-
         Creates an Order from a Cart in a [Store](ctp:api:type:Store).
-        Before you create an Order, the Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction).
+        The Cart must have a shipping address and an active Shipping Method set.
+
         The shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).
 
         Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
         If a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.
         If you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.
 
@@ -22255,10 +22261,11 @@ paths:
       description: |-
         Creates an Order from a Cart for the Customer or anonymous user. The `customerId` or `anonymousId` field on the Order is automatically set based on the [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
 
-        The Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction) for taxes to be calculated. When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
-        Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+        The Cart must have a shipping address and an active Shipping Method set. When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
 
         If the Cart's `customerId` does not match the [customer:{id}](/scopes#composable-commerce-oauth) scope, or the `anonymousId` does not match the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+
+        Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
 
         If a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.
         If you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.
@@ -24772,13 +24779,15 @@ paths:
       operationId: ByProjectKeyOrdersPost
       description: |-
         Creates an Order from a Cart.
-        Before you create an Order, the Cart must have a [shipping address set](ctp:api:type:CartSetShippingAddressAction).
+
+        The Cart must have a shipping address and an active Shipping Method set.
+
         The shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).
 
         Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
 
-          If a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.
-          If you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.
+        If a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.
+        If you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.
 
         Specific Error Codes:
 
