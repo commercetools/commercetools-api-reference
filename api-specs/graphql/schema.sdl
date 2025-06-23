@@ -1810,6 +1810,7 @@ type CartDiscount implements Versioned & ReferenceExpandable {
   requiresDiscountCode: Boolean!
   sortOrder: String!
   key: String
+  discountGroupRef: Reference
   name(
     "String is defined for different locales. This argument specifies the desired locale."
     locale: Locale,
@@ -1828,6 +1829,8 @@ type CartDiscount implements Versioned & ReferenceExpandable {
   custom: CustomFieldsType
   storesRef: [KeyReference!]!
   stores: [Store!]!
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  discountGroup: DiscountGroup
   value: CartDiscountValue!
   target: CartDiscountTarget
   id: String!
@@ -1851,7 +1854,7 @@ input CartDiscountDraft {
   value: CartDiscountValueInput!
   cartPredicate: String!
   target: CartDiscountTargetInput
-  sortOrder: String!
+  sortOrder: String
   name: [LocalizedStringItemInputType!]!
   description: [LocalizedStringItemInputType!]
   validFrom: DateTime
@@ -1862,6 +1865,8 @@ input CartDiscountDraft {
   custom: CustomFieldsDraft
   key: String
   stores: [ResourceIdentifierInput!]
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  discountGroup: ResourceIdentifierInput
 }
 
 type CartDiscountLimitWithCurrent implements LimitWithCurrent {
@@ -1966,6 +1971,7 @@ input CartDiscountUpdateAction {
   setValidFrom: SetCartDiscountValidFrom
   setValidFromAndUntil: SetCartDiscountValidFromAndUntil
   setValidUntil: SetCartDiscountValidUntil
+  setDiscountGroup: SetCartDiscountDiscountGroup
 }
 
 interface CartDiscountValue {
@@ -4259,6 +4265,8 @@ enum DiscountCodeState {
   "The discount code is active and none of the discounts were applied because the discount application was stopped by one discount that has the StackingMode of StopAfterThisDiscount defined"
   ApplicationStoppedByPreviousDiscount
 
+  ApplicationStoppedByGroupBestDeal
+
   "The discount code is active and it contains at least one active and valid CartDiscount. But its cart predicate does not match the cart or none of the contained active discount\u2019s cart predicates match the cart"
   DoesNotMatchCart
 
@@ -4290,6 +4298,89 @@ input DiscountCodeUpdateAction {
   setValidFrom: SetDiscountCodeValidFrom
   setValidFromAndUntil: SetDiscountCodeValidFromAndUntil
   setValidUntil: SetDiscountCodeValidUntil
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type DiscountGroup implements Versioned {
+  id: String!
+  version: Long!
+  key: String!
+  sortOrder: String!
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  nameAllLocales: [LocalizedString!]
+  description(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  descriptionAllLocales: [LocalizedString!]
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input DiscountGroupDraft {
+  key: String!
+  sortOrder: String!
+  name: [LocalizedStringItemInputType!]
+  description: [LocalizedStringItemInputType!]
+}
+
+type DiscountGroupCreated implements MessagePayload {
+  discountGroup: DiscountGroup!
+  type: String!
+}
+
+type DiscountGroupDeleted implements MessagePayload {
+  discountGroupId: String!
+  type: String!
+}
+
+type DiscountGroupKeySet implements MessagePayload {
+  key: String!
+  discountGroupId: String!
+  oldKey: String
+  type: String!
+}
+
+type DiscountGroupSortOrderSet implements MessagePayload {
+  sortOrder: String!
+  discountGroupId: String!
+  oldSortOrder: String
+  type: String!
+}
+
+type DiscountGroupLimitWithCurrent implements LimitWithCurrent {
+  limit: Long
+  current: Long!
+}
+
+type DiscountGroupLimitsProjection {
+  totalActive: DiscountGroupLimitWithCurrent!
+}
+
+type DiscountGroupQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+  exists: Boolean!
+  results: [DiscountGroup!]!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input DiscountGroupUpdateAction {
+  setKey: SetDiscountGroupKey
+  setSortOrder: SetDiscountGroupSortOrder
+  setName: SetDiscountGroupName
+  setDescription: SetDiscountGroupDescription
 }
 
 type DiscountOnTotalPrice {
@@ -5907,6 +5998,31 @@ type Mutation {
 
     "Queries with specified key"
     key: String): ProductDiscount
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+    createDiscountGroup(
+      "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+      draft: DiscountGroupDraft!): DiscountGroup
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  updateDiscountGroup(version: Long!,
+      "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+      actions: [DiscountGroupUpdateAction!]!,
+
+      "Queries with specified ID"
+      id: String,
+
+      "Queries with specified key"
+      key: String): DiscountGroup
+
+    "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+    deleteDiscountGroup(version: Long!,
+
+      "Queries with specified ID"
+      id: String,
+
+      "Queries with specified key"
+      key: String): DiscountGroup
   createAttributeGroup(draft: AttributeGroupDraft!): AttributeGroup
   updateAttributeGroup(version: Long!, actions: [AttributeGroupUpdateAction!]!,
 
@@ -9232,6 +9348,7 @@ type ProjectCustomLimitsProjection {
   subscriptions: SubscriptionsLimitsProjection!
   productDiscounts: ProductDiscountLimitsProjection!
   cartDiscounts: CartDiscountLimitsProjection!
+  discountGroups: DiscountGroupLimitsProjection!
   orderEdits: OrderEditLimitsProjection!
   stores: StoreLimitsProjection!
   customers: CustomerLimitsProjection!
@@ -9413,6 +9530,16 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): ProductDiscount
   productDiscounts(where: String, sort: [String!], limit: Int, offset: Int): ProductDiscountQueryResult!
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  discountGroup(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): DiscountGroup
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  discountGroups(where: String, sort: [String!], limit: Int, offset: Int): DiscountGroupQueryResult!
   attributeGroup(
     "Queries with specified ID"
     id: String,
@@ -11021,6 +11148,11 @@ input SetCartDiscountDescription {
   description: [LocalizedStringItemInputType!]
 }
 
+input SetCartDiscountDiscountGroup {
+  discountGroup: ResourceIdentifierInput
+  sortOrder: String
+}
+
 input SetCartDiscountKey {
   key: String
 }
@@ -11460,6 +11592,26 @@ input SetDiscountCodeValidFromAndUntil {
 
 input SetDiscountCodeValidUntil {
   validUntil: DateTime
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetDiscountGroupDescription {
+  description: [LocalizedStringItemInputType!]
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetDiscountGroupKey {
+  key: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetDiscountGroupName {
+  name: [LocalizedStringItemInputType!]
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetDiscountGroupSortOrder {
+  sortOrder: String!
 }
 
 input SetExtensionKey {

@@ -5,7 +5,9 @@ type: string
 description: |
   Indicates the state of a Discount Code in a Cart.
 
-  If an Order is created from a Cart with a state other than `MatchesCart`, a [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError) error is returned.
+  If an Order is created from a Cart with a state other than `MatchesCart` or `ApplicationStoppedByGroupBestDeal`, a [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError) error is returned.
+
+  For Orders created from a Cart with a `ApplicationStoppedByGroupBestDeal` state, the discount code is not applied.
 enum:
   - NotActive
   - NotValid
@@ -13,6 +15,7 @@ enum:
   - MatchesCart
   - MaxApplicationReached
   - ApplicationStoppedByPreviousDiscount
+  - ApplicationStoppedByGroupBestDeal
 (enumDescriptions):
   NotActive: |
     The Discount Code is not active or does not contain any active Cart Discounts.
@@ -28,4 +31,6 @@ enum:
   MaxApplicationReached: |
     The `maxApplications` or `maxApplicationsPerCustomer` for a [DiscountCode](ctp:api:type:DiscountCode) has been reached.
   ApplicationStoppedByPreviousDiscount: |
-    The Discount Code is active and no discounts are applied after a discount with `StopAfterThisDiscount` [StackingMode](ctp:api:type:StackingMode) is defined.
+    The Discount Code is active, but further Cart Discounts are not applied as a Cart Discount with `StopAfterThisDiscount` [StackingMode](ctp:api:type:StackingMode) is applied.
+  ApplicationStoppedByGroupBestDeal: |
+    The Discount Code is active, but Cart Discounts from a Discount Group are not applied as another Cart Discount from that Discount Group, offering a better deal, is applied.
