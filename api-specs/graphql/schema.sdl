@@ -4802,6 +4802,7 @@ interface HasProductTailoringData {
     acceptLanguage: [Locale!]): String
   metaKeywordsAllLocales: [LocalizedString!]
   variants: [ProductVariantTailoring!]!
+  attributesRaw: [RawProductAttribute!]!
 }
 
 type HighPrecisionMoney implements BaseMoney {
@@ -5245,6 +5246,15 @@ type KeyReference {
 
 "A key that references a resource."
 scalar KeyReferenceInput
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum Level {
+  "The attribute can be used on the variant level"
+  Variant
+
+  "The attribute can be used on the product level"
+  Product
+}
 
 type Limit {
   limit: Long
@@ -8065,6 +8075,9 @@ type ProductData {
     "Queries for a [ProductVariant](https://docs.commercetools.com/api/projects/products#productvariant) with specified `key`"
     key: String): ProductVariant
   skus: [String!]!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  attributesRaw: [RawProductAttribute!]!
 }
 
 type ProductDeleted implements MessagePayload {
@@ -8170,6 +8183,9 @@ input ProductDraft {
   metaDescription: [LocalizedStringItemInputType!]
   metaKeywords: [LocalizedStringItemInputType!]
   masterVariant: ProductVariantInput
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  attributes: [ProductAttributeInput!] = []
   variants: [ProductVariantInput!] = []
   taxCategory: ResourceIdentifierInput
   state: ResourceIdentifierInput
@@ -8183,6 +8199,37 @@ type ProductImageAdded implements MessagePayload {
   image: Image!
   staged: Boolean!
   type: String!
+}
+
+"""
+An input object used to define a ProductAttribute. You should pass `value` in the form of an escaped JSON.
+
+
+Here are a few examples for `value`:
+
+* FieldType `String`: `"\"This is a string\""`
+* FieldType `DateTimeType`: `"\"2018-10-12T14:00:00.000Z\""`
+* FieldType `Number`: `"4"`
+* FieldType `Set` with an elementType of `String`: `"[\"This is a string\", \"This is another string\"]"`
+* FieldType `Reference`: `"{\"id\": \"b911b62d-353a-4388-93ee-8d488d9af962\", \"typeId\": \"product\"}"`
+"""
+input ProductLevelAttributeInput {
+  name: String!
+
+  """
+  An input object used to define a ProductLevelAttribute. You should pass `value` in the form of an escaped JSON.
+
+
+  Here are a few examples for `value`:
+
+  * FieldType `String`: `"\"This is a string\""`
+  * FieldType `DateTimeType`: `"\"2018-10-12T14:00:00.000Z\""`
+  * FieldType `Number`: `"4"`
+  * FieldType `Set` with an elementType of `String`: `"[\"This is a string\", \"This is another string\"]"`
+  * FieldType `Reference`: `"{\"id\": \"b911b62d-353a-4388-93ee-8d488d9af962\", \"typeId\": \"product\"}"`
+  """
+  value: String
+  staged: Boolean = true
 }
 
 type ProductLimitsProjection {
@@ -8498,6 +8545,9 @@ type ProductProjectionMessagePayload {
   published: Boolean!
   masterVariant: ProductVariant!
   variants: [ProductVariant!]!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  attributes: [RawProductAttribute!]!
   taxCategoryRef: Reference
   taxCategory: TaxCategory
   stateRef: Reference
@@ -8831,6 +8881,7 @@ type ProductTailoringCreated implements MessagePayload & HasProductTailoringData
     acceptLanguage: [Locale!]): String
   metaKeywordsAllLocales: [LocalizedString!]
   variants: [ProductVariantTailoring!]!
+  attributesRaw: [RawProductAttribute!]!
 }
 
 type ProductTailoringData implements HasProductTailoringData {
@@ -8877,6 +8928,7 @@ type ProductTailoringData implements HasProductTailoringData {
     acceptLanguage: [Locale!]): String
   metaKeywordsAllLocales: [LocalizedString!]
   variants: [ProductVariantTailoring!]!
+  attributesRaw: [RawProductAttribute!]!
 }
 
 type ProductTailoringDeleted implements MessagePayload {
@@ -8918,6 +8970,9 @@ input ProductTailoringDraft {
   metaKeywords: [LocalizedStringItemInputType!]
   publish: Boolean
   variants: [ProductVariantTailoringInput!] = []
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  attributes: [ProductAttributeInput!] = []
 }
 
 type ProductTailoringImageAdded implements MessagePayload {
@@ -9009,6 +9064,9 @@ input ProductTailoringUpdateAction {
   removeVariant: RemoveProductVariantTailoring
   publish: PublishTailoring
   unpublish: UnpublishTailoring
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setProductAttribute: SetProductLevelTailoringAttribute
   addAsset: AddProductTailoringAsset
   addExternalImage: AddProductTailoringExternalImage
   changeAssetName: ChangeProductTailoringAssetName
@@ -9117,6 +9175,9 @@ input ProductUpdateAction {
   revertStagedChanges: RevertStagedChanges
   revertStagedVariantChanges: RevertStagedVariantChanges
   publish: PublishProduct
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setProductAttribute: ProductLevelAttributeInput
   unpublish: UnpublishProduct
   transitionState: TransitionProductState
   removePrice: RemoveProductPrice
@@ -12163,6 +12224,12 @@ input SetProductImageLabel {
 
 input SetProductKey {
   key: String
+}
+
+input SetProductLevelTailoringAttribute {
+  name: String!
+  value: String
+  staged: Boolean = true
 }
 
 input SetProductMetaAttributes {
