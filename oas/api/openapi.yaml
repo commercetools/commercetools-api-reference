@@ -61143,6 +61143,10 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ProductVariantTailoring'
+            attributes:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductTailoringAttribute'
             published:
               type: "boolean"
     ProductTailoringDeletedMessage:
@@ -66458,6 +66462,10 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ProductVariantTailoring'
+            attributes:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductTailoringAttribute'
             published:
               type: "boolean"
     ProductTailoringDeletedMessagePayload:
@@ -73157,6 +73165,10 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/ProductVariantTailoring'
+        attributes:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductTailoringAttribute'
     ProductTailoringDraft:
       type: "object"
       required:
@@ -73187,6 +73199,10 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/ProductVariantTailoringDraft'
+        attributes:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductTailoringAttribute'
     ProductTailoringInStoreDraft:
       type: "object"
       required:
@@ -73214,6 +73230,10 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/ProductVariantTailoringDraft'
+        attributes:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ProductTailoringAttribute'
     ProductTailoringPagedQueryResponse:
       type: "object"
       required:
@@ -73306,6 +73326,7 @@ components:
           setMetaKeywords: '#/components/schemas/ProductTailoringSetMetaKeywordsAction'
           setMetaTitle: '#/components/schemas/ProductTailoringSetMetaTitleAction'
           setName: '#/components/schemas/ProductTailoringSetNameAction'
+          setProductAttribute: '#/components/schemas/ProductTailoringSetProductAttributeAction'
           setSlug: '#/components/schemas/ProductTailoringSetSlugAction'
           unpublish: '#/components/schemas/ProductTailoringUnpublishAction'
       required:
@@ -73814,6 +73835,21 @@ components:
               $ref: '#/components/schemas/LocalizedString'
             staged:
               type: "boolean"
+    ProductTailoringSetProductAttributeAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductTailoringUpdateAction'
+        - type: "object"
+          required:
+            - name
+          properties:
+            action:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+            staged:
+              type: "boolean"
     ProductTailoringSetSlugAction:
       allOf:
         - $ref: '#/components/schemas/ProductTailoringUpdateAction'
@@ -73880,6 +73916,7 @@ components:
         - isRequired
         - isSearchable
         - label
+        - level
         - name
         - type
       properties:
@@ -73891,6 +73928,8 @@ components:
           $ref: '#/components/schemas/LocalizedString'
         isRequired:
           type: "boolean"
+        level:
+          $ref: '#/components/schemas/AttributeLevelEnum'
         attributeConstraint:
           $ref: '#/components/schemas/AttributeConstraintEnum'
         inputTip:
@@ -73915,6 +73954,8 @@ components:
           $ref: '#/components/schemas/LocalizedString'
         isRequired:
           type: "boolean"
+        level:
+          $ref: '#/components/schemas/AttributeLevelEnum'
         attributeConstraint:
           $ref: '#/components/schemas/AttributeConstraintEnum'
         inputTip:
@@ -73936,6 +73977,17 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/AttributePlainEnumValue'
+    AttributeLevelEnum:
+      type: "string"
+      enum:
+        - Product
+        - Variant
+      x-annotation-package: "ProductType"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Product: "Attribute is defined at Product level."
+        Variant: "Attributes are defined at the Product Variant level."
+        default: "Variant"
     AttributeLocalizableTextType:
       allOf:
         - $ref: '#/components/schemas/AttributeType'
@@ -74729,6 +74781,7 @@ components:
     ProductData:
       type: "object"
       required:
+        - attributes
         - categories
         - masterVariant
         - name
@@ -74762,6 +74815,10 @@ components:
             $ref: '#/components/schemas/ProductVariant'
         searchKeywords:
           $ref: '#/components/schemas/SearchKeywords'
+        attributes:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Attribute'
     ProductDraft:
       type: "object"
       required:
@@ -74807,6 +74864,10 @@ components:
           type: "boolean"
         priceMode:
           $ref: '#/components/schemas/ProductPriceModeEnum'
+        attributes:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Attribute'
     ProductPagedQueryResponse:
       type: "object"
       required:
@@ -74849,6 +74910,7 @@ components:
         - $ref: '#/components/schemas/BaseResource'
         - type: "object"
           required:
+            - attributes
             - categories
             - createdAt
             - id
@@ -74913,6 +74975,10 @@ components:
               $ref: '#/components/schemas/ReviewRatingStatistics'
             priceMode:
               $ref: '#/components/schemas/ProductPriceModeEnum'
+            attributes:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Attribute'
     ProductProjectionPagedQueryResponse:
       type: "object"
       required:
@@ -75062,6 +75128,7 @@ components:
           setPriceKey: '#/components/schemas/ProductSetPriceKeyAction'
           setPriceMode: '#/components/schemas/ProductSetPriceModeAction'
           setPrices: '#/components/schemas/ProductSetPricesAction'
+          setProductAttribute: '#/components/schemas/ProductSetProductAttributeAction'
           setProductPriceCustomField: '#/components/schemas/ProductSetProductPriceCustomFieldAction'
           setProductPriceCustomType: '#/components/schemas/ProductSetProductPriceCustomTypeAction'
           setProductVariantKey: '#/components/schemas/ProductSetProductVariantKeyAction'
@@ -75942,6 +76009,21 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/PriceDraft'
+            staged:
+              type: "boolean"
+    ProductSetProductAttributeAction:
+      allOf:
+        - $ref: '#/components/schemas/ProductUpdateAction'
+        - type: "object"
+          required:
+            - name
+          properties:
+            action:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
             staged:
               type: "boolean"
     ProductSetProductPriceCustomFieldAction:
