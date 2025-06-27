@@ -1745,6 +1745,7 @@ type Cart implements Versioned & ReferenceExpandable {
   billingAddress: Address
   inventoryMode: InventoryMode!
   taxMode: TaxMode!
+  priceRoundingMode: RoundingMode!
   taxRoundingMode: RoundingMode!
   taxCalculationMode: TaxCalculationMode!
   customerGroup: CustomerGroup
@@ -2042,6 +2043,7 @@ input CartDraft {
   customerId: String
   externalTaxRateForShippingMethod: ExternalTaxRateDraft
   anonymousId: String
+  priceRoundingMode: RoundingMode = HalfEven
   taxRoundingMode: RoundingMode = HalfEven
   taxCalculationMode: TaxCalculationMode = LineItemLevel
   customerGroup: ResourceIdentifierInput
@@ -2120,6 +2122,7 @@ input CartUpdateAction {
   changeCustomLineItemPriceMode: ChangeCartCustomLineItemPriceMode
   changeCustomLineItemQuantity: ChangeCartCustomLineItemQuantity
   changeLineItemsOrder: ChangeCartLineItemsOrder
+  changePriceRoundingMode: ChangeCartPriceRoundingMode
   changeTaxCalculationMode: ChangeCartTaxCalculationMode
   changeTaxMode: ChangeCartTaxMode
   changeTaxRoundingMode: ChangeCartTaxRoundingMode
@@ -2191,10 +2194,15 @@ type CartsConfiguration {
   deleteDaysAfterLastModification: Int
   allowAddingUnpublishedProducts: Boolean!
   countryTaxRateFallbackEnabled: Boolean!
+  priceRoundingMode: RoundingMode!
+  taxRoundingMode: RoundingMode!
 }
 
 input CartsConfigurationInput {
   deleteDaysAfterLastModification: Int
+  countryTaxRateFallbackEnabled: Boolean
+  priceRoundingMode: RoundingMode
+  taxRoundingMode: RoundingMode
 }
 
 type Category implements Versioned & ReferenceExpandable {
@@ -2466,6 +2474,10 @@ input ChangeCartTaxCalculationMode {
 
 input ChangeCartTaxMode {
   taxMode: TaxMode!
+}
+
+input ChangeCartPriceRoundingMode {
+  priceRoundingMode: RoundingMode!
 }
 
 input ChangeCartTaxRoundingMode {
@@ -2897,6 +2909,15 @@ input ChangeStagedOrderTaxMode {
 type ChangeStagedOrderTaxModeOutput implements StagedOrderUpdateActionOutput {
   type: String!
   taxMode: TaxMode!
+}
+
+input ChangeStagedOrderPriceRoundingMode {
+  priceRoundingMode: RoundingMode!
+}
+
+type ChangeStagedOrderPriceRoundingModeOutput implements StagedOrderUpdateActionOutput {
+  type: String!
+  priceRoundingMode: RoundingMode!
 }
 
 input ChangeStagedOrderTaxRoundingMode {
@@ -7030,6 +7051,7 @@ type Order implements Versioned & ReferenceExpandable {
   billingAddress: Address
   inventoryMode: InventoryMode!
   taxMode: TaxMode!
+  priceRoundingMode: RoundingMode!
   taxRoundingMode: RoundingMode!
   taxCalculationMode: TaxCalculationMode!
   customerGroup: CustomerGroup
@@ -9441,7 +9463,9 @@ input ProjectSettingsUpdateAction {
   changeMyBusinessUnitStatusOnCreation: ChangeProjectSettingsMyBusinessUnitStatusOnCreation
   changeName: ChangeProjectSettingsName
   changeOrderSearchStatus: ChangeProjectSettingsOrderSearchStatus
+  changePriceRoundingMode: ChangeProjectSettingsPriceRoundingMode
   changeShoppingListsConfiguration: ChangeProjectSettingsShoppingListsConfiguration
+  changeTaxRoundingMode: ChangeProjectSettingsTaxRoundingMode
   setExternalOAuth: SetProjectSettingsExternalOAuth
   setShippingRateInputType: SetProjectSettingsShippingRateInputType
 
@@ -9807,6 +9831,7 @@ type Quote implements Versioned {
   itemShippingAddresses: [Address!]!
   inventoryMode: InventoryMode!
   taxMode: TaxMode!
+  priceRoundingMode: RoundingMode!
   taxRoundingMode: RoundingMode!
   taxCalculationMode: TaxCalculationMode!
   country: Country
@@ -9907,6 +9932,7 @@ type QuoteRequest implements Versioned {
   itemShippingAddresses: [Address!]!
   inventoryMode: InventoryMode!
   taxMode: TaxMode!
+  priceRoundingMode: RoundingMode!
   taxRoundingMode: RoundingMode!
   taxCalculationMode: TaxCalculationMode!
   country: Country
@@ -14027,6 +14053,7 @@ input StagedOrderUpdateAction {
   changeOrderState: ChangeStagedOrderOrderState
   changePaymentState: ChangeStagedOrderPaymentState
   changeShipmentState: ChangeStagedOrderShipmentState
+  changePriceRoundingMode: ChangeStagedOrderPriceRoundingMode
   changeTaxCalculationMode: ChangeStagedOrderTaxCalculationMode
   changeTaxMode: ChangeStagedOrderTaxMode
   changeTaxRoundingMode: ChangeStagedOrderTaxRoundingMode
