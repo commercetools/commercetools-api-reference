@@ -6754,6 +6754,27 @@ type Mutation {
 
     "Queries with specified key"
     key: String): AssociateRole
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  createPaymentMethod(draft: PaymentMethodDraft!): PaymentMethod
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  updatePaymentMethod(version: Long!, actions: [PaymentMethodUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): PaymentMethod
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  deletePaymentMethod(version: Long!, personalDataErasure: Boolean = false,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): PaymentMethod
 }
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
@@ -6939,7 +6960,16 @@ input MyPaymentUpdateAction {
   addTransaction: AddMyPaymentTransaction
   changeAmountPlanned: ChangePaymentAmountPlanned
   setCustomField: SetPaymentCustomField
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setMethodInfoCustomField: SetPaymentMethodInfoCustomField
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setMethodInfoCustomType: SetPaymentMethodInfoCustomType
   setMethodInfoInterface: SetPaymentMethodInfoInterface
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setMethodInfoInterfaceAccount: SetPaymentMethodInfoInterfaceAccount
   setMethodInfoMethod: SetPaymentMethodInfoMethod
   setMethodInfoName: SetPaymentMethodInfoName
 }
@@ -7713,6 +7743,101 @@ type PaymentInteractionAdded implements MessagePayload {
   type: String!
 }
 
+type PaymentInterfaceIdSet implements MessagePayload {
+  interfaceId: String
+  oldInterfaceId: String
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type PaymentMethod implements Versioned & ReferenceExpandable {
+  key: String
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  nameAllLocales: [LocalizedString!]
+  customer: Customer
+  customerRef: Reference
+  businessUnit: BusinessUnit
+  businessUnitRef: KeyReference
+  token: PaymentMethodToken
+  method: String
+  paymentInterface: String
+  interfaceAccount: String
+  paymentMethodStatus: PaymentMethodStatus!
+  default: Boolean!
+  custom: CustomFieldsType
+  id: String!
+  version: Long!
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+type PaymentMethodCreated implements MessagePayload {
+  paymentMethod: PaymentMethod!
+  type: String!
+}
+
+type PaymentMethodCustomFieldAdded implements MessagePayload {
+  name: String!
+  value: Json!
+  type: String!
+}
+
+type PaymentMethodCustomFieldChanged implements MessagePayload {
+  name: String!
+  value: Json!
+  oldValue: Json
+  type: String!
+}
+
+type PaymentMethodCustomFieldRemoved implements MessagePayload {
+  name: String!
+  type: String!
+}
+
+type PaymentMethodCustomTypeRemoved implements MessagePayload {
+  oldTypeId: String
+  type: String!
+}
+
+type PaymentMethodCustomTypeSet implements MessagePayload {
+  customFields: CustomFieldsType!
+  oldTypeId: String
+  type: String!
+}
+
+type PaymentMethodDefaultSet implements MessagePayload {
+  default: Boolean!
+  oldDefault: Boolean!
+  type: String!
+}
+
+type PaymentMethodDeleted implements MessagePayload {
+  paymentMethod: PaymentMethod!
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input PaymentMethodDraft {
+  key: String
+  name: [LocalizedStringItemInputType!]
+  customer: ResourceIdentifierInput
+  businessUnit: ResourceIdentifierInput
+  token: PaymentMethodTokenDraft
+  method: String
+  paymentInterface: String
+  interfaceAccount: String
+  paymentMethodStatus: PaymentMethodStatus
+  default: Boolean
+  custom: CustomFieldsDraft
+}
+
 type PaymentMethodInfo {
   paymentInterface: String
   method: String
@@ -7723,12 +7848,185 @@ type PaymentMethodInfo {
     "List of languages the client is able to understand, and which locale variant is preferred."
     acceptLanguage: [Locale!]): String
   nameAllLocales: [LocalizedString!]
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  token: PaymentMethodToken
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  interfaceAccount: String
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  custom: CustomFieldsType
+}
+
+type PaymentMethodInfoCustomFieldAdded implements MessagePayload {
+  name: String!
+  value: Json!
+  type: String!
+}
+
+type PaymentMethodInfoCustomFieldChanged implements MessagePayload {
+  name: String!
+  value: Json!
+  type: String!
+}
+
+type PaymentMethodInfoCustomFieldRemoved implements MessagePayload {
+  name: String!
+  type: String!
+}
+
+type PaymentMethodInfoCustomTypeRemoved implements MessagePayload {
+  oldTypeId: String
+  type: String!
+}
+
+type PaymentMethodInfoCustomTypeSet implements MessagePayload {
+  customFields: CustomFieldsType!
+  oldTypeId: String
+  type: String!
 }
 
 input PaymentMethodInfoInput {
   paymentInterface: String
   method: String
   name: [LocalizedStringItemInputType!]
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  token: PaymentMethodTokenDraft
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  interfaceAccount: String
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  custom: CustomFieldsDraft
+}
+
+type PaymentMethodInfoInterfaceAccountSet implements MessagePayload {
+  interfaceAccount: String
+  oldInterfaceAccount: String
+  type: String!
+}
+
+type PaymentMethodInfoInterfaceSet implements MessagePayload {
+  interface: String
+  oldInterface: String
+  type: String!
+}
+
+type PaymentMethodInfoMethodSet implements MessagePayload {
+  method: String
+  oldMethod: String
+  type: String!
+}
+
+type PaymentMethodInfoNameSet implements MessagePayload {
+  nameAllLocales: [LocalizedString!]
+  oldNameAllLocales: [LocalizedString!]
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  oldName(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  type: String!
+}
+
+type PaymentMethodInfoTokenSet implements MessagePayload {
+  token: PaymentMethodToken
+  oldToken: PaymentMethodToken
+  type: String!
+}
+
+type PaymentMethodInterfaceAccountSet implements MessagePayload {
+  interfaceAccount: String
+  oldInterfaceAccount: String
+  type: String!
+}
+
+type PaymentMethodKeySet implements MessagePayload {
+  key: String
+  oldKey: String
+  type: String!
+}
+
+type PaymentMethodMethodSet implements MessagePayload {
+  method: String
+  oldMethod: String
+  type: String!
+}
+
+type PaymentMethodNameSet implements MessagePayload {
+  nameAllLocales: [LocalizedString!]
+  oldNameAllLocales: [LocalizedString!]
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  oldName(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  type: String!
+}
+
+type PaymentMethodPaymentInterfaceSet implements MessagePayload {
+  paymentInterface: String
+  oldPaymentInterface: String
+  type: String!
+}
+
+type PaymentMethodQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+  exists: Boolean!
+  results: [PaymentMethod!]!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum PaymentMethodStatus {
+  Active
+  Inactive
+}
+
+type PaymentMethodPaymentMethodStatusSet implements MessagePayload {
+  status: PaymentMethodStatus!
+  oldStatus: PaymentMethodStatus!
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type PaymentMethodToken {
+  value: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input PaymentMethodTokenDraft {
+  value: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input PaymentMethodUpdateAction {
+  setCustomField: SetPaymentMethodCustomField
+  setCustomType: SetPaymentMethodCustomType
+  setDefault: SetPaymentMethodDefault
+  setInterfaceAccount: SetPaymentMethodInterfaceAccount
+  setKey: SetPaymentMethodKey
+  setMethod: SetPaymentMethodMethod
+  setName: SetPaymentMethodName
+  setPaymentInterface: SetPaymentMethodPaymentInterface
+  setPaymentMethodStatus: SetPaymentMethodStatus
 }
 
 type PaymentQueryResult {
@@ -7801,9 +8099,24 @@ input PaymentUpdateAction {
   setExternalId: SetPaymentExternalId
   setInterfaceId: SetPaymentInterfaceId
   setKey: SetPaymentKey
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setMethodInfo: SetPaymentMethodInfo
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setMethodInfoCustomField: SetPaymentMethodInfoCustomField
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setMethodInfoCustomType: SetPaymentMethodInfoCustomType
   setMethodInfoInterface: SetPaymentMethodInfoInterface
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setMethodInfoInterfaceAccount: SetPaymentMethodInfoInterfaceAccount
   setMethodInfoMethod: SetPaymentMethodInfoMethod
   setMethodInfoName: SetPaymentMethodInfoName
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setMethodInfoToken: SetPaymentMethodInfoToken
   setStatusInterfaceCode: SetPaymentStatusInterfaceCode
   setStatusInterfaceText: SetPaymentStatusInterfaceText
   setTransactionCustomField: SetPaymentTransactionCustomField
@@ -9816,6 +10129,17 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): AssociateRole
   associateRoles(where: String, sort: [String!], limit: Int, offset: Int): AssociateRoleQueryResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  paymentMethod(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): PaymentMethod
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  paymentMethods(where: String, sort: [String!], limit: Int, offset: Int): PaymentMethodQueryResult!
   productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
 }
 
@@ -12105,8 +12429,53 @@ input SetPaymentKey {
   key: String
 }
 
+input SetPaymentMethodCustomField {
+  name: String!
+  value: String
+}
+
+input SetPaymentMethodCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
+input SetPaymentMethodDefault {
+  default: Boolean!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetPaymentMethodInfo {
+  paymentInterface: String
+  method: String
+  name: [LocalizedStringItemInputType!]
+  token: PaymentMethodTokenDraft
+  interfaceAccount: String
+  custom: CustomFieldsDraft
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetPaymentMethodInfoCustomField {
+  name: String!
+  value: String
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetPaymentMethodInfoCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
 input SetPaymentMethodInfoInterface {
   interface: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetPaymentMethodInfoInterfaceAccount {
+  interfaceAccount: String
 }
 
 input SetPaymentMethodInfoMethod {
@@ -12115,6 +12484,35 @@ input SetPaymentMethodInfoMethod {
 
 input SetPaymentMethodInfoName {
   name: [LocalizedStringItemInputType!]
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetPaymentMethodInfoToken {
+  token: PaymentMethodTokenDraft
+}
+
+input SetPaymentMethodInterfaceAccount {
+  interfaceAccount: String
+}
+
+input SetPaymentMethodKey {
+  key: String
+}
+
+input SetPaymentMethodMethod {
+  method: String
+}
+
+input SetPaymentMethodName {
+  name: [LocalizedStringItemInputType!]
+}
+
+input SetPaymentMethodPaymentInterface {
+  paymentInterface: String
+}
+
+input SetPaymentMethodStatus {
+  paymentMethodStatus: PaymentMethodStatus!
 }
 
 input SetPaymentStatusInterfaceCode {

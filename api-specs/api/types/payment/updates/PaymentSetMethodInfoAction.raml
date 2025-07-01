@@ -1,0 +1,56 @@
+#%RAML 1.0 DataType
+(package): Payment
+type: PaymentUpdateAction
+displayName: PaymentSetMethodInfoAction
+discriminatorValue: setMethodInfo
+(beta): true
+example: !include ../../../examples/Payment/PaymentSetMethodInfoAction.json
+description: |
+  This action lets you update multiple fields of a PaymentMethodInfo in one operation. Only fields with explicitly provided values will be updated.
+properties:
+  paymentInterface?:
+    type: string
+    description: |
+      Payment service that processes the Payment—for example, a PSP.
+      The combination of `paymentInterface` and the `interfaceId` of a Payment must be unique.
+      The value cannot be modified after it is set.
+
+      Setting this field is equivalent to the `setMethodInfoInterface` action and will generate the [PaymentMethodInfoInterfaceSet](ctp:api:type:PaymentMethodInfoInterfaceSetMessage) Message.
+  method?:
+    type: string
+    description: |
+      Payment method to use—for example, a credit card or cash advance.
+      If empty, any existing value will be removed.
+
+      Setting this field is equivalent to the `setMethodInfoMethod` action and will generate the [PaymentMethodInfoMethodSet](ctp:api:type:PaymentMethodInfoMethodSetMessage) Message.
+  name?:
+    type: LocalizedString
+    description: |
+      Name of the Payment Method.
+      If empty, any existing value will be removed.
+
+      Setting this field is equivalent to the `setMethodInfoName` action and will generate the [PaymentMethodInfoNameSet](ctp:api:type:PaymentMethodInfoNameSetMessage) Message.
+  token?:
+    type: PaymentMethodToken
+    description: |
+      Tokenized payment method information of the Payment Method.
+      If empty, any existing value will be removed.
+
+      Setting this field is equivalent to the `setMethodInfoToken` action and will generate the [PaymentMethodInfoTokenSet](ctp:api:type:PaymentMethodInfoTokenSetMessage) Message.
+  interfaceAccount?:
+    type: string
+    description: |
+      Account or instance of the payment interface when multiple accounts are used (per interface).
+      If empty, any existing value will be removed.
+
+      Setting this field is equivalent to the `setMethodInfoInterfaceAccount` action and will generate the [PaymentMethodInfoInterfaceAccountSet](ctp:api:type:PaymentMethodInfoInterfaceAccountSetMessage) Message.
+  custom?:
+    type: CustomFieldsDraft
+    description: |
+      Custom Fields for the PaymentMethodInfo.
+      If not provided, any existing Custom Fields will be removed, including the Custom Type.
+
+      Setting this field is equivalent to the `setMethodInfoCustomType` and `setMethodInfoCustomField` actions, and will generate the following Messages:
+
+      - Adding or updating a Custom Type on a Payment Method Info generates the [PaymentMethodInfoCustomTypeSet](ctp:api:type:PaymentMethodInfoCustomTypeSetMessage) Message, removing one generates the [PaymentMethodInfoCustomTypeRemoved](ctp:api:type:PaymentMethodInfoCustomTypeRemovedMessage) Message.
+      - Adding a Custom Field to a Payment generates the [PaymentMethodInfoCustomFieldAdded](ctp:api:type:PaymentMethodInfoCustomFieldAddedMessage) Message, removing one generates the [PaymentMethodInfoCustomFieldRemoved](ctp:api:type:PaymentMethodInfoCustomFieldRemovedMessage) Message, and updating an existing one generates the [PaymentMethodInfoCustomFieldChanged](ctp:api:type:PaymentMethodInfoCustomFieldChangedMessage) Message.
