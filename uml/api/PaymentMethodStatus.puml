@@ -1,0 +1,71 @@
+@startuml
+
+hide methods
+enum PaymentMethodStatus {
+    ACTIVE
+    INACTIVE
+}
+interface PaymentMethodPaymentMethodStatusSetMessage [[PaymentMethodPaymentMethodStatusSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    status: [[PaymentMethodStatus.svg PaymentMethodStatus]]
+    oldStatus: [[PaymentMethodStatus.svg PaymentMethodStatus]]
+}
+interface PaymentMethodPaymentMethodStatusSetMessagePayload [[PaymentMethodPaymentMethodStatusSetMessagePayload.svg]]  {
+    type: String
+    status: [[PaymentMethodStatus.svg PaymentMethodStatus]]
+    oldStatus: [[PaymentMethodStatus.svg PaymentMethodStatus]]
+}
+interface PaymentMethod [[PaymentMethod.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    name: [[LocalizedString.svg LocalizedString]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    method: String
+    paymentInterface: String
+    interfaceAccount: String
+    token: [[PaymentMethodToken.svg PaymentMethodToken]]
+    paymentMethodStatus: [[PaymentMethodStatus.svg PaymentMethodStatus]]
+    default: Boolean
+    custom: [[CustomFields.svg CustomFields]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+}
+interface PaymentMethodDraft [[PaymentMethodDraft.svg]]  {
+    key: String
+    name: [[LocalizedString.svg LocalizedString]]
+    customer: [[CustomerResourceIdentifier.svg CustomerResourceIdentifier]]
+    businessUnit: [[BusinessUnitResourceIdentifier.svg BusinessUnitResourceIdentifier]]
+    method: String
+    paymentInterface: String
+    interfaceAccount: String
+    token: [[PaymentMethodToken.svg PaymentMethodToken]]
+    paymentMethodStatus: [[PaymentMethodStatus.svg PaymentMethodStatus]]
+    default: Boolean
+    custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
+}
+interface PaymentMethodSetPaymentMethodStatusAction [[PaymentMethodSetPaymentMethodStatusAction.svg]]  {
+    action: String
+    paymentMethodStatus: [[PaymentMethodStatus.svg PaymentMethodStatus]]
+}
+PaymentMethodStatus --> PaymentMethodPaymentMethodStatusSetMessage #green;text:green : "status"
+PaymentMethodStatus --> PaymentMethodPaymentMethodStatusSetMessage #green;text:green : "oldStatus"
+PaymentMethodStatus --> PaymentMethodPaymentMethodStatusSetMessagePayload #green;text:green : "status"
+PaymentMethodStatus --> PaymentMethodPaymentMethodStatusSetMessagePayload #green;text:green : "oldStatus"
+PaymentMethodStatus --> PaymentMethod #green;text:green : "paymentMethodStatus"
+PaymentMethodStatus --> PaymentMethodDraft #green;text:green : "paymentMethodStatus"
+PaymentMethodStatus --> PaymentMethodSetPaymentMethodStatusAction #green;text:green : "paymentMethodStatus"
+@enduml

@@ -26528,6 +26528,548 @@ paths:
           $ref: '#/components/responses/errorable_502'
         "503":
           $ref: '#/components/responses/errorable_503'
+  /{projectKey}/payment-methods:
+    description: |-
+      A PaymentMethod stores details about the method and the PSP
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_payment_methods:{projectKey}"
+      operationId: ByProjectKeyPaymentMethodsGet
+      description: |-
+        Retrieves all PaymentMethods in the Project.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+        - name: sort
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Sort'
+          explode: true
+        - name: limit
+          x-annotation-default: 20
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: offset
+          x-annotation-default: 0
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: withTotal
+          x-annotation-default: true
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+        - name: /^var[.][a-zA-Z0-9]+$/
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethodPagedQueryResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_payment_methods:{projectKey}"
+      operationId: ByProjectKeyPaymentMethodsHead
+      description: |-
+        Checks if one or more PaymentMethods exist for the provided query predicate.
+        Returns a `200 OK` status if any PaymentMethods match the query predicate; otherwise, returns a [Not Found](/../api/errors#404-not-found).
+      parameters:
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_payment_methods:{projectKey}"
+      operationId: ByProjectKeyPaymentMethodsPost
+      description: |-
+        Creates a PaymentMethod in the Project.
+        This request generates the [PaymentMethodCreated](ctp:api:type:PaymentMethodCreatedMessage) Message.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentMethodDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/payment-methods/key={key}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_payment_methods:{projectKey}"
+      operationId: ByProjectKeyPaymentMethodsKeyByKeyGet
+      description: |-
+        Retrieves a PaymentMethod with the provided `key`.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_payment_methods:{projectKey}"
+      operationId: ByProjectKeyPaymentMethodsKeyByKeyHead
+      description: |-
+        Checks if a PaymentMethod exists with the provided `key`.
+        Returns a `200 OK` status if the PaymentMethod exists; otherwise, returns a [Not Found](/../api/errors#404-not-found).
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_payment_methods:{projectKey}"
+      operationId: ByProjectKeyPaymentMethodsKeyByKeyPost
+      description: |-
+        Updates a PaymentMethod in the Project using one or more [update actions](/../api/projects/payment-methods#update-actions).
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentMethodUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_payment_methods:{projectKey}"
+      operationId: ByProjectKeyPaymentMethodsKeyByKeyDelete
+      description: |-
+        Deletes a PaymentMethod in the Project.
+        This request generates the [PaymentMethodDeleted](ctp:api:type:PaymentMethodDeletedMessage) Message.
+      parameters:
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/payment-methods/{ID}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_payment_methods:{projectKey}"
+      operationId: ByProjectKeyPaymentMethodsByIDGet
+      description: |-
+        Retrieves a PaymentMethod with the provided `id`.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_payment_methods:{projectKey}"
+      operationId: ByProjectKeyPaymentMethodsByIDHead
+      description: |-
+        Checks if a PaymentMethod exists with the provided `id`.
+        Returns a `200 OK` status if the PaymentMethod exists; otherwise, returns a [Not Found](/../api/errors#404-not-found).
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_payment_methods:{projectKey}"
+      operationId: ByProjectKeyPaymentMethodsByIDPost
+      description: |-
+        Updates a PaymentMethod in the Project using one or more [update actions](/../api/projects/payment-methods#update-actions).
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentMethodUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_payment_methods:{projectKey}"
+      operationId: ByProjectKeyPaymentMethodsByIDDelete
+      description: |-
+        Deletes a PaymentMethod in the Project.
+        This request generates the [PaymentMethodDeleted](ctp:api:type:PaymentMethodDeletedMessage) Message.
+      parameters:
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
   /{projectKey}/payments:
     description: |-
       Payments hold information about the current state of receiving and/or refunding money
@@ -45528,6 +46070,7 @@ components:
           inventory-entry: '#/components/schemas/InventoryEntryReference'
           order-edit: '#/components/schemas/OrderEditReference'
           order: '#/components/schemas/OrderReference'
+          payment-method: '#/components/schemas/PaymentMethodReference'
           payment: '#/components/schemas/PaymentReference'
           product-discount: '#/components/schemas/ProductDiscountReference'
           product: '#/components/schemas/ProductReference'
@@ -45578,6 +46121,7 @@ components:
         - key-value-document
         - order
         - order-edit
+        - payment-method
         - payment
         - product
         - product-discount
@@ -45631,6 +46175,7 @@ components:
         key-value-document: "References a [CustomObject](ctp:api:type:CustomObject).n"
         order: "References an [Order](ctp:api:type:Order).n"
         order-edit: "References an [Order Edit](ctp:api:type:OrderEdit).n"
+        payment-method: "References a [PaymentMethod](ctp:api:type:PaymentMethod).n"
         payment: "References a [Payment](ctp:api:type:Payment).n"
         product: "References a [Product](ctp:api:type:Product).n"
         product-discount: "References a [ProductDiscount](ctp:api:type:ProductDiscount).n"
@@ -50968,6 +51513,7 @@ components:
         - cart
         - order
         - payment
+        - payment-method
         - customer
         - customer-group
         - quote-request
@@ -50980,6 +51526,7 @@ components:
         cart: "Extension triggered for operations on [Carts](/../api/projects/carts)."
         order: "Extension triggered for operations on [Orders](/../api/projects/orders)."
         payment: "Extension triggered for operations on [Payments](/../api/projects/payments)."
+        payment-method: "Extension triggered for operations on [PaymentMethods](/../api/projects/payment-methods)"
         customer: "Extension triggered for operations on [Customers](/../api/projects/customers)."
         customer-group: "Extension triggered for operations on [CustomerGroups](/../api/projects/customerGroups)."
         quote-request: "Extension triggered for operations on [QuoteRequests](/../api/projects/quote-requests)."
@@ -51859,7 +52406,7 @@ components:
         amountPlanned:
           $ref: '#/components/schemas/Money'
         paymentMethodInfo:
-          $ref: '#/components/schemas/PaymentMethodInfo'
+          $ref: '#/components/schemas/PaymentMethodInfoDraft'
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
         transaction:
@@ -51909,6 +52456,9 @@ components:
           addTransaction: '#/components/schemas/MyPaymentAddTransactionAction'
           changeAmountPlanned: '#/components/schemas/MyPaymentChangeAmountPlannedAction'
           setCustomField: '#/components/schemas/MyPaymentSetCustomFieldAction'
+          setMethodInfoCustomField: '#/components/schemas/MyPaymentSetMethodInfoCustomFieldAction'
+          setMethodInfoCustomType: '#/components/schemas/MyPaymentSetMethodInfoCustomTypeAction'
+          setMethodInfoInterfaceAccount: '#/components/schemas/MyPaymentSetMethodInfoInterfaceAccountAction'
           setMethodInfoInterface: '#/components/schemas/MyPaymentSetMethodInfoInterfaceAction'
           setMethodInfoMethod: '#/components/schemas/MyPaymentSetMethodInfoMethodAction'
           setMethodInfoName: '#/components/schemas/MyPaymentSetMethodInfoNameAction'
@@ -52917,6 +53467,39 @@ components:
               type: "string"
             value:
               {}
+    MyPaymentSetMethodInfoCustomFieldAction:
+      allOf:
+        - $ref: '#/components/schemas/MyPaymentUpdateAction'
+        - type: "object"
+          required:
+            - name
+          properties:
+            action:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+    MyPaymentSetMethodInfoCustomTypeAction:
+      allOf:
+        - $ref: '#/components/schemas/MyPaymentUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            type:
+              $ref: '#/components/schemas/TypeResourceIdentifier'
+            fields:
+              $ref: '#/components/schemas/FieldContainer'
+    MyPaymentSetMethodInfoInterfaceAccountAction:
+      allOf:
+        - $ref: '#/components/schemas/MyPaymentUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            interfaceAccount:
+              type: "string"
     MyPaymentSetMethodInfoInterfaceAction:
       allOf:
         - $ref: '#/components/schemas/MyPaymentUpdateAction'
@@ -57827,6 +58410,31 @@ components:
               OrderPaymentAdded: '#/components/schemas/OrderPaymentAddedMessage'
               PaymentCreated: '#/components/schemas/PaymentCreatedMessage'
               PaymentInteractionAdded: '#/components/schemas/PaymentInteractionAddedMessage'
+              PaymentInterfaceIdSet: '#/components/schemas/PaymentInterfaceIdSetMessage'
+              PaymentMethodCreated: '#/components/schemas/PaymentMethodCreatedMessage'
+              PaymentMethodCustomFieldAdded: '#/components/schemas/PaymentMethodCustomFieldAddedMessage'
+              PaymentMethodCustomFieldChanged: '#/components/schemas/PaymentMethodCustomFieldChangedMessage'
+              PaymentMethodCustomFieldRemoved: '#/components/schemas/PaymentMethodCustomFieldRemovedMessage'
+              PaymentMethodCustomTypeRemoved: '#/components/schemas/PaymentMethodCustomTypeRemovedMessage'
+              PaymentMethodCustomTypeSet: '#/components/schemas/PaymentMethodCustomTypeSetMessage'
+              PaymentMethodDefaultSet: '#/components/schemas/PaymentMethodDefaultSetMessage'
+              PaymentMethodDeleted: '#/components/schemas/PaymentMethodDeletedMessage'
+              PaymentMethodInfoCustomFieldAdded: '#/components/schemas/PaymentMethodInfoCustomFieldAddedMessage'
+              PaymentMethodInfoCustomFieldChanged: '#/components/schemas/PaymentMethodInfoCustomFieldChangedMessage'
+              PaymentMethodInfoCustomFieldRemoved: '#/components/schemas/PaymentMethodInfoCustomFieldRemovedMessage'
+              PaymentMethodInfoCustomTypeRemoved: '#/components/schemas/PaymentMethodInfoCustomTypeRemovedMessage'
+              PaymentMethodInfoCustomTypeSet: '#/components/schemas/PaymentMethodInfoCustomTypeSetMessage'
+              PaymentMethodInfoInterfaceAccountSet: '#/components/schemas/PaymentMethodInfoInterfaceAccountSetMessage'
+              PaymentMethodInfoInterfaceSet: '#/components/schemas/PaymentMethodInfoInterfaceSetMessage'
+              PaymentMethodInfoMethodSet: '#/components/schemas/PaymentMethodInfoMethodSetMessage'
+              PaymentMethodInfoNameSet: '#/components/schemas/PaymentMethodInfoNameSetMessage'
+              PaymentMethodInfoTokenSet: '#/components/schemas/PaymentMethodInfoTokenSetMessage'
+              PaymentMethodInterfaceAccountSet: '#/components/schemas/PaymentMethodInterfaceAccountSetMessage'
+              PaymentMethodKeySet: '#/components/schemas/PaymentMethodKeySetMessage'
+              PaymentMethodMethodSet: '#/components/schemas/PaymentMethodMethodSetMessage'
+              PaymentMethodNameSet: '#/components/schemas/PaymentMethodNameSetMessage'
+              PaymentMethodPaymentInterfaceSet: '#/components/schemas/PaymentMethodPaymentInterfaceSetMessage'
+              PaymentMethodPaymentMethodStatusSet: '#/components/schemas/PaymentMethodPaymentMethodStatusSetMessage'
               PaymentStatusInterfaceCodeSet: '#/components/schemas/PaymentStatusInterfaceCodeSetMessage'
               PaymentStatusStateTransition: '#/components/schemas/PaymentStatusStateTransitionMessage'
               PaymentTransactionAdded: '#/components/schemas/PaymentTransactionAddedMessage'
@@ -59723,6 +60331,923 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             interaction:
               $ref: '#/components/schemas/CustomFields'
+    PaymentInterfaceIdSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            interfaceId:
+              type: "string"
+            oldInterfaceId:
+              type: "string"
+    PaymentMethodCreatedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - paymentMethod
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            paymentMethod:
+              $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodCustomFieldAddedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - name
+            - value
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            name:
+              type: "string"
+            value:
+              {}
+    PaymentMethodCustomFieldChangedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - name
+            - value
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            name:
+              type: "string"
+            value:
+              {}
+            oldValue:
+              {}
+    PaymentMethodCustomFieldRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - name
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            name:
+              type: "string"
+    PaymentMethodCustomTypeRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            oldTypeId:
+              type: "string"
+    PaymentMethodCustomTypeSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - customFields
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            customFields:
+              $ref: '#/components/schemas/CustomFields'
+            oldTypeId:
+              type: "string"
+    PaymentMethodDefaultSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - default
+            - oldDefault
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            default:
+              type: "boolean"
+            oldDefault:
+              type: "boolean"
+    PaymentMethodDeletedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - paymentMethod
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            paymentMethod:
+              $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodInfoCustomFieldAddedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - name
+            - value
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            name:
+              type: "string"
+            value:
+              {}
+    PaymentMethodInfoCustomFieldChangedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - name
+            - value
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            name:
+              type: "string"
+            value:
+              {}
+    PaymentMethodInfoCustomFieldRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - name
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            name:
+              type: "string"
+    PaymentMethodInfoCustomTypeRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            oldTypeId:
+              type: "string"
+    PaymentMethodInfoCustomTypeSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - customFields
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            customFields:
+              $ref: '#/components/schemas/CustomFields'
+            oldTypeId:
+              type: "string"
+    PaymentMethodInfoInterfaceAccountSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            interfaceAccount:
+              type: "string"
+            oldInterfaceAccount:
+              type: "string"
+    PaymentMethodInfoInterfaceSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            interface:
+              type: "string"
+            oldInterface:
+              type: "string"
+    PaymentMethodInfoMethodSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            method:
+              type: "string"
+            oldMethod:
+              type: "string"
+    PaymentMethodInfoNameSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            oldName:
+              $ref: '#/components/schemas/LocalizedString'
+    PaymentMethodInfoTokenSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            token:
+              $ref: '#/components/schemas/PaymentMethodToken'
+            oldToken:
+              $ref: '#/components/schemas/PaymentMethodToken'
+    PaymentMethodInterfaceAccountSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            interfaceAccount:
+              type: "string"
+            oldInterfaceAccount:
+              type: "string"
+    PaymentMethodKeySetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            key:
+              type: "string"
+            oldKey:
+              type: "string"
+    PaymentMethodMethodSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            method:
+              type: "string"
+            oldMethod:
+              type: "string"
+    PaymentMethodNameSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            oldName:
+              $ref: '#/components/schemas/LocalizedString'
+    PaymentMethodPaymentInterfaceSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            paymentInterface:
+              type: "string"
+            oldPaymentInterface:
+              type: "string"
+    PaymentMethodPaymentMethodStatusSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            status:
+              $ref: '#/components/schemas/PaymentMethodStatus'
+            oldStatus:
+              $ref: '#/components/schemas/PaymentMethodStatus'
     PaymentStatusInterfaceCodeSetMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -65192,6 +66717,31 @@ components:
           OrderPaymentAdded: '#/components/schemas/OrderPaymentAddedMessagePayload'
           PaymentCreated: '#/components/schemas/PaymentCreatedMessagePayload'
           PaymentInteractionAdded: '#/components/schemas/PaymentInteractionAddedMessagePayload'
+          PaymentInterfaceIdSet: '#/components/schemas/PaymentInterfaceIdSetMessagePayload'
+          PaymentMethodCreated: '#/components/schemas/PaymentMethodCreatedMessagePayload'
+          PaymentMethodCustomFieldAdded: '#/components/schemas/PaymentMethodCustomFieldAddedMessagePayload'
+          PaymentMethodCustomFieldChanged: '#/components/schemas/PaymentMethodCustomFieldChangedMessagePayload'
+          PaymentMethodCustomFieldRemoved: '#/components/schemas/PaymentMethodCustomFieldRemovedMessagePayload'
+          PaymentMethodCustomTypeRemoved: '#/components/schemas/PaymentMethodCustomTypeRemovedMessagePayload'
+          PaymentMethodCustomTypeSet: '#/components/schemas/PaymentMethodCustomTypeSetMessagePayload'
+          PaymentMethodDefaultSet: '#/components/schemas/PaymentMethodDefaultSetMessagePayload'
+          PaymentMethodDeleted: '#/components/schemas/PaymentMethodDeletedMessagePayload'
+          PaymentMethodInfoCustomFieldAdded: '#/components/schemas/PaymentMethodInfoCustomFieldAddedMessagePayload'
+          PaymentMethodInfoCustomFieldChanged: '#/components/schemas/PaymentMethodInfoCustomFieldChangedMessagePayload'
+          PaymentMethodInfoCustomFieldRemoved: '#/components/schemas/PaymentMethodInfoCustomFieldRemovedMessagePayload'
+          PaymentMethodInfoCustomTypeRemoved: '#/components/schemas/PaymentMethodInfoCustomTypeRemovedMessagePayload'
+          PaymentMethodInfoCustomTypeSet: '#/components/schemas/PaymentMethodInfoCustomTypeSetMessagePayload'
+          PaymentMethodInfoInterfaceAccountSet: '#/components/schemas/PaymentMethodInfoInterfaceAccountSetMessagePayload'
+          PaymentMethodInfoInterfaceSet: '#/components/schemas/PaymentMethodInfoInterfaceSetMessagePayload'
+          PaymentMethodInfoMethodSet: '#/components/schemas/PaymentMethodInfoMethodSetMessagePayload'
+          PaymentMethodInfoNameSet: '#/components/schemas/PaymentMethodInfoNameSetMessagePayload'
+          PaymentMethodInfoTokenSet: '#/components/schemas/PaymentMethodInfoTokenSetMessagePayload'
+          PaymentMethodInterfaceAccountSet: '#/components/schemas/PaymentMethodInterfaceAccountSetMessagePayload'
+          PaymentMethodKeySet: '#/components/schemas/PaymentMethodKeySetMessagePayload'
+          PaymentMethodMethodSet: '#/components/schemas/PaymentMethodMethodSetMessagePayload'
+          PaymentMethodNameSet: '#/components/schemas/PaymentMethodNameSetMessagePayload'
+          PaymentMethodPaymentInterfaceSet: '#/components/schemas/PaymentMethodPaymentInterfaceSetMessagePayload'
+          PaymentMethodPaymentMethodStatusSet: '#/components/schemas/PaymentMethodPaymentMethodStatusSetMessagePayload'
           PaymentStatusInterfaceCodeSet: '#/components/schemas/PaymentStatusInterfaceCodeSetMessagePayload'
           PaymentStatusStateTransition: '#/components/schemas/PaymentStatusStateTransitionMessagePayload'
           PaymentTransactionAdded: '#/components/schemas/PaymentTransactionAddedMessagePayload'
@@ -65912,6 +67462,298 @@ components:
               type: "string"
             interaction:
               $ref: '#/components/schemas/CustomFields'
+    PaymentInterfaceIdSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            interfaceId:
+              type: "string"
+            oldInterfaceId:
+              type: "string"
+    PaymentMethodCreatedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - paymentMethod
+          properties:
+            type:
+              type: "string"
+            paymentMethod:
+              $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodCustomFieldAddedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - name
+            - value
+          properties:
+            type:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+    PaymentMethodCustomFieldChangedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - name
+            - value
+          properties:
+            type:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+            oldValue:
+              {}
+    PaymentMethodCustomFieldRemovedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - name
+          properties:
+            type:
+              type: "string"
+            name:
+              type: "string"
+    PaymentMethodCustomTypeRemovedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            oldTypeId:
+              type: "string"
+    PaymentMethodCustomTypeSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - customFields
+          properties:
+            type:
+              type: "string"
+            customFields:
+              $ref: '#/components/schemas/CustomFields'
+            oldTypeId:
+              type: "string"
+    PaymentMethodDefaultSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - default
+            - oldDefault
+          properties:
+            type:
+              type: "string"
+            default:
+              type: "boolean"
+            oldDefault:
+              type: "boolean"
+    PaymentMethodDeletedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - paymentMethod
+          properties:
+            type:
+              type: "string"
+            paymentMethod:
+              $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodInfoCustomFieldAddedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - name
+            - value
+          properties:
+            type:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+    PaymentMethodInfoCustomFieldChangedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - name
+            - value
+          properties:
+            type:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+    PaymentMethodInfoCustomFieldRemovedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - name
+          properties:
+            type:
+              type: "string"
+            name:
+              type: "string"
+    PaymentMethodInfoCustomTypeRemovedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            oldTypeId:
+              type: "string"
+    PaymentMethodInfoCustomTypeSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - customFields
+          properties:
+            type:
+              type: "string"
+            customFields:
+              $ref: '#/components/schemas/CustomFields'
+            oldTypeId:
+              type: "string"
+    PaymentMethodInfoInterfaceAccountSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            interfaceAccount:
+              type: "string"
+            oldInterfaceAccount:
+              type: "string"
+    PaymentMethodInfoInterfaceSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            interface:
+              type: "string"
+            oldInterface:
+              type: "string"
+    PaymentMethodInfoMethodSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            method:
+              type: "string"
+            oldMethod:
+              type: "string"
+    PaymentMethodInfoNameSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            oldName:
+              $ref: '#/components/schemas/LocalizedString'
+    PaymentMethodInfoTokenSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            token:
+              $ref: '#/components/schemas/PaymentMethodToken'
+            oldToken:
+              $ref: '#/components/schemas/PaymentMethodToken'
+    PaymentMethodInterfaceAccountSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            interfaceAccount:
+              type: "string"
+            oldInterfaceAccount:
+              type: "string"
+    PaymentMethodKeySetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            key:
+              type: "string"
+            oldKey:
+              type: "string"
+    PaymentMethodMethodSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            method:
+              type: "string"
+            oldMethod:
+              type: "string"
+    PaymentMethodNameSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            oldName:
+              $ref: '#/components/schemas/LocalizedString'
+    PaymentMethodPaymentInterfaceSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            paymentInterface:
+              type: "string"
+            oldPaymentInterface:
+              type: "string"
+    PaymentMethodPaymentMethodStatusSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            status:
+              $ref: '#/components/schemas/PaymentMethodStatus'
+            oldStatus:
+              $ref: '#/components/schemas/PaymentMethodStatus'
     PaymentStatusInterfaceCodeSetMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -71352,6 +73194,257 @@ components:
             syncedAt:
               type: "string"
               format: "datetime"
+    PaymentMethod:
+      allOf:
+        - $ref: '#/components/schemas/BaseResource'
+        - type: "object"
+          required:
+            - createdAt
+            - default
+            - id
+            - lastModifiedAt
+            - paymentMethodStatus
+            - version
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            key:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            customer:
+              $ref: '#/components/schemas/CustomerReference'
+            businessUnit:
+              $ref: '#/components/schemas/BusinessUnitKeyReference'
+            method:
+              type: "string"
+            paymentInterface:
+              type: "string"
+            interfaceAccount:
+              type: "string"
+            token:
+              $ref: '#/components/schemas/PaymentMethodToken'
+            paymentMethodStatus:
+              $ref: '#/components/schemas/PaymentMethodStatus'
+            default:
+              type: "boolean"
+            custom:
+              $ref: '#/components/schemas/CustomFields'
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+    PaymentMethodDraft:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        name:
+          $ref: '#/components/schemas/LocalizedString'
+        customer:
+          $ref: '#/components/schemas/CustomerResourceIdentifier'
+        businessUnit:
+          $ref: '#/components/schemas/BusinessUnitResourceIdentifier'
+        method:
+          type: "string"
+        paymentInterface:
+          type: "string"
+        interfaceAccount:
+          type: "string"
+        token:
+          $ref: '#/components/schemas/PaymentMethodToken'
+        paymentMethodStatus:
+          $ref: '#/components/schemas/PaymentMethodStatus'
+        default:
+          type: "boolean"
+        custom:
+          $ref: '#/components/schemas/CustomFieldsDraft'
+    PaymentMethodPagedQueryResponse:
+      type: "object"
+      required:
+        - count
+        - limit
+        - offset
+        - results
+      properties:
+        limit:
+          type: "integer"
+          format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
+        count:
+          type: "integer"
+          format: "int64"
+        total:
+          type: "integer"
+          format: "int64"
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodReference:
+      allOf:
+        - $ref: '#/components/schemas/Reference'
+        - type: "object"
+          required:
+            - id
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            obj:
+              $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodStatus:
+      type: "string"
+      enum:
+        - Active
+        - Inactive
+      x-annotation-package: "PaymentMethod"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Active: "The PaymentMethod is active.n"
+        Inactive: "The PaymentMethod is inactive.n"
+    PaymentMethodToken:
+      type: "object"
+      required:
+        - value
+      properties:
+        value:
+          type: "string"
+    PaymentMethodUpdate:
+      type: "object"
+      required:
+        - actions
+        - version
+      properties:
+        version:
+          type: "integer"
+          format: "int64"
+        actions:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PaymentMethodUpdateAction'
+    PaymentMethodUpdateAction:
+      type: "object"
+      discriminator:
+        propertyName: action
+        mapping:
+          setCustomField: '#/components/schemas/PaymentMethodSetCustomFieldAction'
+          setCustomType: '#/components/schemas/PaymentMethodSetCustomTypeAction'
+          setDefault: '#/components/schemas/PaymentMethodSetDefaultAction'
+          setInterfaceAccount: '#/components/schemas/PaymentMethodSetInterfaceAccountAction'
+          setKey: '#/components/schemas/PaymentMethodSetKeyAction'
+          setMethod: '#/components/schemas/PaymentMethodSetMethodAction'
+          setName: '#/components/schemas/PaymentMethodSetNameAction'
+          setPaymentInterface: '#/components/schemas/PaymentMethodSetPaymentInterfaceAction'
+          setPaymentMethodStatus: '#/components/schemas/PaymentMethodSetPaymentMethodStatusAction'
+      required:
+        - action
+      properties:
+        action:
+          type: "string"
+    PaymentMethodSetCustomFieldAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodUpdateAction'
+        - type: "object"
+          required:
+            - name
+          properties:
+            action:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+    PaymentMethodSetCustomTypeAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            type:
+              $ref: '#/components/schemas/TypeResourceIdentifier'
+            fields:
+              $ref: '#/components/schemas/FieldContainer'
+    PaymentMethodSetDefaultAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodUpdateAction'
+        - type: "object"
+          required:
+            - default
+          properties:
+            action:
+              type: "string"
+            default:
+              type: "boolean"
+    PaymentMethodSetInterfaceAccountAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            interfaceAccount:
+              type: "string"
+    PaymentMethodSetKeyAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            key:
+              type: "string"
+    PaymentMethodSetMethodAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            method:
+              type: "string"
+    PaymentMethodSetNameAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+    PaymentMethodSetPaymentInterfaceAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            paymentInterface:
+              type: "string"
+    PaymentMethodSetPaymentMethodStatusAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodUpdateAction'
+        - type: "object"
+          required:
+            - paymentMethodStatus
+          properties:
+            action:
+              type: "string"
+            paymentMethodStatus:
+              $ref: '#/components/schemas/PaymentMethodStatus'
     Payment:
       allOf:
         - $ref: '#/components/schemas/BaseResource'
@@ -71440,7 +73533,7 @@ components:
         amountRefunded:
           $ref: '#/components/schemas/Money'
         paymentMethodInfo:
-          $ref: '#/components/schemas/PaymentMethodInfo'
+          $ref: '#/components/schemas/PaymentMethodInfoDraft'
         paymentStatus:
           $ref: '#/components/schemas/PaymentStatusDraft'
         transactions:
@@ -71464,6 +73557,27 @@ components:
           type: "string"
         name:
           $ref: '#/components/schemas/LocalizedString'
+        token:
+          $ref: '#/components/schemas/PaymentMethodToken'
+        interfaceAccount:
+          type: "string"
+        custom:
+          $ref: '#/components/schemas/CustomFields'
+    PaymentMethodInfoDraft:
+      type: "object"
+      properties:
+        paymentInterface:
+          type: "string"
+        method:
+          type: "string"
+        name:
+          $ref: '#/components/schemas/LocalizedString'
+        token:
+          $ref: '#/components/schemas/PaymentMethodToken'
+        interfaceAccount:
+          type: "string"
+        custom:
+          $ref: '#/components/schemas/CustomFieldsDraft'
     PaymentPagedQueryResponse:
       type: "object"
       required:
@@ -71564,9 +73678,14 @@ components:
           setExternalId: '#/components/schemas/PaymentSetExternalIdAction'
           setInterfaceId: '#/components/schemas/PaymentSetInterfaceIdAction'
           setKey: '#/components/schemas/PaymentSetKeyAction'
+          setMethodInfo: '#/components/schemas/PaymentSetMethodInfoAction'
+          setMethodInfoCustomField: '#/components/schemas/PaymentSetMethodInfoCustomFieldAction'
+          setMethodInfoCustomType: '#/components/schemas/PaymentSetMethodInfoCustomTypeAction'
+          setMethodInfoInterfaceAccount: '#/components/schemas/PaymentSetMethodInfoInterfaceAccountAction'
           setMethodInfoInterface: '#/components/schemas/PaymentSetMethodInfoInterfaceAction'
           setMethodInfoMethod: '#/components/schemas/PaymentSetMethodInfoMethodAction'
           setMethodInfoName: '#/components/schemas/PaymentSetMethodInfoNameAction'
+          setMethodInfoToken: '#/components/schemas/PaymentSetMethodInfoTokenAction'
           setStatusInterfaceCode: '#/components/schemas/PaymentSetStatusInterfaceCodeAction'
           setStatusInterfaceText: '#/components/schemas/PaymentSetStatusInterfaceTextAction'
           setTransactionCustomField: '#/components/schemas/PaymentSetTransactionCustomFieldAction'
@@ -71829,6 +73948,58 @@ components:
               type: "string"
             key:
               type: "string"
+    PaymentSetMethodInfoAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            paymentInterface:
+              type: "string"
+            method:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            token:
+              $ref: '#/components/schemas/PaymentMethodToken'
+            interfaceAccount:
+              type: "string"
+            custom:
+              $ref: '#/components/schemas/CustomFieldsDraft'
+    PaymentSetMethodInfoCustomFieldAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentUpdateAction'
+        - type: "object"
+          required:
+            - name
+          properties:
+            action:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+    PaymentSetMethodInfoCustomTypeAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            type:
+              $ref: '#/components/schemas/TypeResourceIdentifier'
+            fields:
+              $ref: '#/components/schemas/FieldContainer'
+    PaymentSetMethodInfoInterfaceAccountAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            interfaceAccount:
+              type: "string"
     PaymentSetMethodInfoInterfaceAction:
       allOf:
         - $ref: '#/components/schemas/PaymentUpdateAction'
@@ -71858,6 +74029,15 @@ components:
               type: "string"
             name:
               $ref: '#/components/schemas/LocalizedString'
+    PaymentSetMethodInfoTokenAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            token:
+              $ref: '#/components/schemas/PaymentMethodToken'
     PaymentSetStatusInterfaceCodeAction:
       allOf:
         - $ref: '#/components/schemas/PaymentUpdateAction'

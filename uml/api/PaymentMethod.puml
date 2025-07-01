@@ -1,0 +1,93 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface PaymentMethod [[PaymentMethod.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    name: [[LocalizedString.svg LocalizedString]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    method: String
+    paymentInterface: String
+    interfaceAccount: String
+    token: [[PaymentMethodToken.svg PaymentMethodToken]]
+    paymentMethodStatus: [[PaymentMethodStatus.svg PaymentMethodStatus]]
+    default: Boolean
+    custom: [[CustomFields.svg CustomFields]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+}
+interface BaseResource [[BaseResource.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+}
+
+
+interface PaymentMethodPagedQueryResponse [[PaymentMethodPagedQueryResponse.svg]]  {
+    limit: Long
+    offset: Long
+    count: Long
+    total: Long
+    results: [[PaymentMethod.svg List<PaymentMethod>]]
+}
+interface PaymentMethodCreatedMessage [[PaymentMethodCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    paymentMethod: [[PaymentMethod.svg PaymentMethod]]
+}
+interface PaymentMethodDeletedMessage [[PaymentMethodDeletedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    paymentMethod: [[PaymentMethod.svg PaymentMethod]]
+}
+interface PaymentMethodCreatedMessagePayload [[PaymentMethodCreatedMessagePayload.svg]]  {
+    type: String
+    paymentMethod: [[PaymentMethod.svg PaymentMethod]]
+}
+interface PaymentMethodDeletedMessagePayload [[PaymentMethodDeletedMessagePayload.svg]]  {
+    type: String
+    paymentMethod: [[PaymentMethod.svg PaymentMethod]]
+}
+interface PaymentMethodReference [[PaymentMethodReference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[PaymentMethod.svg PaymentMethod]]
+}
+
+PaymentMethod --> PaymentMethodPagedQueryResponse #green;text:green : "results"
+PaymentMethod --> PaymentMethodCreatedMessage #green;text:green : "paymentMethod"
+PaymentMethod --> PaymentMethodDeletedMessage #green;text:green : "paymentMethod"
+PaymentMethod --> PaymentMethodCreatedMessagePayload #green;text:green : "paymentMethod"
+PaymentMethod --> PaymentMethodDeletedMessagePayload #green;text:green : "paymentMethod"
+PaymentMethod --> PaymentMethodReference #green;text:green : "obj"
+@enduml

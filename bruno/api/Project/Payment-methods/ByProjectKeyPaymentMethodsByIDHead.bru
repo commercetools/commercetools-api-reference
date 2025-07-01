@@ -1,0 +1,42 @@
+meta {
+  name: Check if PaymentMethod exists by ID
+  type: http
+  seq: 331
+}
+
+head {
+  url: {{apiUrl}}/{{project-key}}/payment-methods/{{payment-method-id}}
+  body: none
+  auth: inherit
+}
+
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("payment-method-id", data.results[0].id); 
+          bru.setEnvVar("payment-method-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("payment-method-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("payment-method-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("payment-method-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("payment-method-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
