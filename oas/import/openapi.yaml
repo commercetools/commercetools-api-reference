@@ -25,7 +25,7 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyCategoriesImportContainersByImportContainerKeyPost
       description: |-
-        Creates a request for creating new Categories or updating existing ones.
+        Creates an Import Request for Categories.
       requestBody:
         content:
           application/json:
@@ -67,7 +67,7 @@ paths:
             - "manage_customers:{projectKey}"
       operationId: ByProjectKeyCustomersImportContainersByImportContainerKeyPost
       description: |-
-        Creates a request for creating new Customers or updating existing ones.
+        Creates an Import Request for Customers.
       requestBody:
         content:
           application/json:
@@ -110,7 +110,7 @@ paths:
             - "view_discount_codes:{projectKey}"
       operationId: ByProjectKeyDiscountCodesImportContainersByImportContainerKeyPost
       description: |-
-        Creates a request for creating new Discount Codes or updating existing ones.
+        Creates an Import Request for Discount Codes.
       requestBody:
         content:
           application/json:
@@ -147,7 +147,7 @@ paths:
             - "manage_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersPost
       description: |-
-        Creates a new Import Container.
+        Creates an Import Container in the Project.
 
         Generates the [ImportContainerCreated](/projects/events#import-container-created-event) Event.
       requestBody:
@@ -180,7 +180,7 @@ paths:
             - "view_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersGet
       description: |-
-        Retrieves all Import Containers of a given project key.
+        Retrieves all ImportContainers in the Project.
       parameters:
         - name: limit
           x-annotation-default: 20
@@ -236,7 +236,7 @@ paths:
             - "manage_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersByImportContainerKeyPut
       description: |-
-        Updates the Import Container given by the key.
+        Updates an [ImportContainer](ctp:import:type:ImportContainer) in the Project.
       requestBody:
         content:
           application/json:
@@ -246,7 +246,7 @@ paths:
       responses:
         "200":
           description: |-
-            The Import Container was successfully updated.
+            The [ImportContainer](ctp:import:type:ImportContainer) was successfully updated.
           content:
             application/json:
               schema:
@@ -267,7 +267,7 @@ paths:
             - "view_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersByImportContainerKeyGet
       description: |-
-        Retrieves the Import Container given by the key.
+        Retrieves an [ImportContainer](ctp:import:type:ImportContainer) with the provided `importContainerKey`.
       responses:
         "200":
           description: |-
@@ -291,7 +291,7 @@ paths:
             - "manage_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersByImportContainerKeyDelete
       description: |-
-        Deletes the Import Container specified by the `importContainerKey`.
+        Deletes an Import Container in the Project.
 
         Generates the [ImportContainerDeleted](/projects/events#import-container-deleted-event) Event.
       responses:
@@ -330,7 +330,7 @@ paths:
             - "view_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersByImportContainerKeyImportOperationsGet
       description: |-
-        Retrieves all [ImportOperations](ctp:import:type:ImportOperation) of a given ImportContainer key.
+        Retrieves all ImportOperations within an [ImportContainer](ctp:import:type:ImportContainer).
       parameters:
         - name: limit
           x-annotation-default: 20
@@ -409,7 +409,7 @@ paths:
             - "view_import_containers:{projectKey}"
       operationId: ByProjectKeyImportContainersByImportContainerKeyImportSummariesGet
       description: |-
-        Retrieves an [ImportSummary](ctp:import:type:ImportSummary) for the given Import Container. An [ImportSummary](ctp:import:type:ImportSummary) is calculated on demand.
+        Retrieves an [ImportSummary](ctp:import:type:ImportSummary) for the [ImportContainer](ctp:import:type:ImportContainer) with the provided `importContainerKey`.
       responses:
         "200":
           description: |-
@@ -438,7 +438,7 @@ paths:
             - "view_import_containers:{projectKey}"
       operationId: ByProjectKeyImportOperationsByIdGet
       description: |-
-        Retrieves the [ImportOperation](ctp:import:type:ImportOperation) of a given ID.
+        Retrieves an ImportOperation with the provided `id`.
       responses:
         "200":
           description: |-
@@ -482,7 +482,7 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyInventoriesImportContainersByImportContainerKeyPost
       description: |-
-        Creates a request for creating new Inventories or updating existing ones.
+        Creates an Import Request for InventoryEntries.
       requestBody:
         content:
           application/json:
@@ -524,7 +524,7 @@ paths:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyOrderPatchesImportContainersByImportContainerKeyPost
       description: |-
-        Creates a new import request for order patches
+        Creates an Import Request for updating Orders.
       requestBody:
         content:
           application/json:
@@ -566,7 +566,7 @@ paths:
             - "manage_orders:{projectKey}"
       operationId: ByProjectKeyOrdersImportContainersByImportContainerKeyPost
       description: |-
-        Creates a request for creating new Orders.
+        Creates an Import Request for creating Orders.
       requestBody:
         content:
           application/json:
@@ -608,7 +608,7 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyPricesImportContainersByImportContainerKeyPost
       description: |-
-        Creates a request for creating new Prices or updating existing ones.
+        Creates an Import Request for Prices.
       requestBody:
         content:
           application/json:
@@ -650,12 +650,55 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductDraftsImportContainersByImportContainerKeyPost
       description: |-
-        Creates a request for creating new ProductDrafts or updating existing ones.
+        Creates an Import Request for Products.
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ProductDraftImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/product-selections/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_product_selections:{projectKey}"
+            - "view_product_selections:{projectKey}"
+      operationId: ByProjectKeyProductSelectionsImportContainersByImportContainerKeyPost
+      description: |-
+        Creates an Import Request for Product Selections.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductSelectionImportRequest'
 
       responses:
         "201":
@@ -692,7 +735,7 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductTypesImportContainersByImportContainerKeyPost
       description: |-
-        Creates a request for creating new ProductTypes or updating existing ones.
+        Creates an Import Request for ProductTypes.
       requestBody:
         content:
           application/json:
@@ -734,7 +777,7 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductVariantPatchesImportContainersByImportContainerKeyPost
       description: |-
-        Creates a new import request for Product Variant Patches.
+        Creates an Import Request for updating Product Variants.
         Returns an [InvalidField](ctp:import:type:InvalidFieldError) error if the [ProductVariantPatchRequest](ctp:import:type:ProductVariantPatchRequest) contains patches with and without the `product` field set.
       requestBody:
         content:
@@ -777,7 +820,7 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductVariantsImportContainersByImportContainerKeyPost
       description: |-
-        Creates a request for creating new ProductVariants or updating existing ones.
+        Creates an Import Request for ProductVariants.
       requestBody:
         content:
           application/json:
@@ -819,7 +862,7 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductsImportContainersByImportContainerKeyPost
       description: |-
-        Creates a request for creating new Products or updating existing ones.
+        Creates an Import Request for Products.
       requestBody:
         content:
           application/json:
@@ -862,7 +905,7 @@ paths:
             - "view_standalone_prices:{projectKey}"
       operationId: ByProjectKeyStandalonePricesImportContainersByImportContainerKeyPost
       description: |-
-        Creates a request for creating new Standalone Prices or updating existing ones.
+        Creates an Import Request for Standalone Prices.
       requestBody:
         content:
           application/json:
@@ -905,7 +948,7 @@ paths:
             - "manage_types:{projectKey}"
       operationId: ByProjectKeyTypesImportContainersByImportContainerKeyPost
       description: |-
-        Creates a request for creating new Type or updating existing ones.
+        Creates an Import Request for Types.
       requestBody:
         content:
           application/json:
@@ -1525,6 +1568,7 @@ components:
           price: '#/components/schemas/PriceImportRequest'
           product-draft: '#/components/schemas/ProductDraftImportRequest'
           product: '#/components/schemas/ProductImportRequest'
+          product-selection: '#/components/schemas/ProductSelectionImportRequest'
           product-type: '#/components/schemas/ProductTypeImportRequest'
           product-variant: '#/components/schemas/ProductVariantImportRequest'
           product-variant-patch: '#/components/schemas/ProductVariantPatchRequest'
@@ -1726,6 +1770,19 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/DiscountCodeImport'
+    ProductSelectionImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          required:
+            - resources
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductSelectionImport'
     SubRate:
       type: "object"
       required:
@@ -2284,11 +2341,14 @@ components:
           time-set: '#/components/schemas/TimeSetAttribute'
       required:
         - type
+        - value
       properties:
         name:
           type: "string"
         type:
           type: "string"
+        value:
+          {}
     BooleanAttribute:
       allOf:
         - $ref: '#/components/schemas/Attribute'
@@ -2473,7 +2533,7 @@ components:
             type:
               type: "string"
             value:
-              $ref: '#/components/schemas/TypedMoney'
+              $ref: '#/components/schemas/Money'
     MoneySetAttribute:
       allOf:
         - $ref: '#/components/schemas/Attribute'
@@ -2488,7 +2548,7 @@ components:
             value:
               type: "array"
               items:
-                $ref: '#/components/schemas/TypedMoney'
+                $ref: '#/components/schemas/Money'
     NumberAttribute:
       allOf:
         - $ref: '#/components/schemas/Attribute'
@@ -3135,7 +3195,7 @@ components:
           type: "number"
           format: "double"
         country:
-          type: "string"
+          $ref: '#/components/schemas/CountryCode'
         state:
           type: "string"
         subRates:
@@ -3659,9 +3719,9 @@ components:
         line-item: "[LineItem](ctp:api:type:LineItem) on [Cart](ctp:api:type:Cart) and [Order](ctp:api:type:Order),
          and on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem).n"
         order: "[Cart](ctp:api:type:Cart) and [Order](ctp:api:type:Order).nWhen a [Cart](ctp:api:type:Cart)
-         is ordered, the [CustomFields](/projects/custom-fields#customfields) need to be
-         copied to the [Order](ctp:api:type:Order).nFor this reason, the Types for Carts
-         are also valid for Orders, and hence both have the same identifier: `order`.n"
+         is ordered, the [CustomFields](ctp:api:type:CustomFields) need to be copied to
+         the [Order](ctp:api:type:Order).nFor this reason, the Types for Carts are also
+         valid for Orders, and hence both have the same identifier: `order`.n"
         order-edit: "[OrderEdit](ctp:api:type:OrderEdit)n"
         order-delivery: "[Delivery](ctp:api:type:Delivery)n"
         order-parcel: "[Parcel](ctp:api:type:Parcel)n"
@@ -3669,22 +3729,22 @@ components:
         payment: "[Payment](ctp:api:type:Payment)n"
         payment-interface-interaction: "[InterfaceInteraction](ctp:api:type:PaymentAddInterfaceInteractionAction)
          on [Payment](ctp:api:type:Payment)n"
-        product-price: "[Embedded Price](/../api/types#price) on [ProductVariant](/../api/projects/products#productvariant)n"
+        product-price: "[Embedded Price](/../api/types#price) on [ProductVariant](ctp:api:type:ProductVariant)n"
         product-selection: "[ProductSelection](ctp:api:type:ProductSelection)n"
         quote: "[Quote](ctp:api:type:Quote), [QuoteRequest](ctp:api:type:QuoteRequest) and
          [StagedQuote](ctp:api:type:StagedQuote).nWhen a [StagedQuote](ctp:api:type:StagedQuote)
-         is created, the [CustomFields](/projects/custom-fields#customfields) will be copied
-         from the [QuoteRequest](ctp:api:type:QuoteRequest) and when a [Quote](ctp:api:type:Quote)
-         is created, the [CustomFields](/projects/custom-fields#customfields) will be copied
-         from the [StagedQuote](ctp:api:type:StagedQuote).nFor this reason, the Types
-         for Quotes are also valid for QuoteRequests and StagedQuotes, and hence all have
-         the same identifier: `quote`.n"
+         is created, the [CustomFields](ctp:api:type:CustomFields) will be copied from
+         the [QuoteRequest](ctp:api:type:QuoteRequest) and when a [Quote](ctp:api:type:Quote)
+         is created, the [CustomFields](ctp:api:type:CustomFields) will be copied from
+         the [StagedQuote](ctp:api:type:StagedQuote).nFor this reason, the Types for Quotes
+         are also valid for QuoteRequests and StagedQuotes, and hence all have the same
+         identifier: `quote`.n"
         review: "[Review](ctp:api:type:Review)n"
         shipping: "[Shipping](ctp:api:type:Shipping)n"
         shipping-method: "[ShippingMethod](ctp:api:type:ShippingMethod)n"
         shopping-list: "[ShoppingList](ctp:api:type:ShoppingList)n"
         shopping-list-text-line-item: "[TextLineItem](ctp:api:type:TextLineItem) on [ShoppingList](ctp:api:type:ShoppingList)n"
-        standalone-price: "[StandalonePrice](ctp:api:type:StandalonePrice))n"
+        standalone-price: "[StandalonePrice](ctp:api:type:StandalonePrice)n"
         store: "[Store](ctp:api:type:Store)n"
         transaction: "[Transaction](ctp:api:type:Transaction) on [Payment](ctp:api:type:Payment)n"
     FieldType:
@@ -3826,6 +3886,22 @@ components:
         - state
         - shipping-method
         - zone
+      x-annotation-enumDescriptions:
+        associate-role: "[AssociateRole](ctp:api:type:AssociateRole)n"
+        business-unit: "[BusinessUnit](ctp:api:type:BusinessUnit)n"
+        cart: "[Cart](ctp:api:type:Cart)n"
+        category: "[Category](ctp:api:type:Category)n"
+        channel: "[Channel](ctp:api:type:Channel)n"
+        customer: "[Customer](ctp:api:type:Customer)n"
+        customer-group: "[CustomerGroup](ctp:api:type:CustomerGroup)n"
+        key-value-document: "[CustomObject](ctp:api:type:CustomObject)n"
+        order: "[Order](ctp:api:type:Order)n"
+        product: "[Product](ctp:api:type:Product)n"
+        product-type: "[ProductType](ctp:api:type:ProductType)n"
+        review: "[Review](ctp:api:type:Review)n"
+        state: "[State](ctp:api:type:State)n"
+        shipping-method: "[ShippingMethod](ctp:api:type:ShippingMethod)n"
+        zone: "[Zone](ctp:api:type:Zone)n"
     CustomFieldSetType:
       allOf:
         - $ref: '#/components/schemas/FieldType'
@@ -3950,120 +4026,6 @@ components:
               type: "string"
             value:
               type: "boolean"
-    StringField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              type: "string"
-    LocalizedStringField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              $ref: '#/components/schemas/LocalizedString'
-    EnumField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              type: "string"
-    LocalizedEnumField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              type: "string"
-    NumberField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              type: "number"
-              format: "double"
-    MoneyField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              $ref: '#/components/schemas/TypedMoney'
-    DateField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              type: "string"
-              format: "date-only"
-    TimeField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              type: "string"
-              format: "time-only"
-    DateTimeField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              type: "string"
-              format: "datetime"
-    ReferenceField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              $ref: '#/components/schemas/KeyReference'
     BooleanSetField:
       allOf:
         - $ref: '#/components/schemas/CustomField'
@@ -4077,7 +4039,7 @@ components:
               type: "array"
               items:
                 type: "boolean"
-    StringSetField:
+    DateField:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
@@ -4087,75 +4049,8 @@ components:
             type:
               type: "string"
             value:
-              type: "array"
-              items:
-                type: "string"
-    LocalizedStringSetField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
               type: "string"
-            value:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/LocalizedString'
-    EnumSetField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              type: "array"
-              items:
-                type: "string"
-    LocalizedEnumSetField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              type: "array"
-              items:
-                type: "string"
-    NumberSetField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              type: "array"
-              items:
-                type: "number"
-                format: "double"
-    MoneySetField:
-      allOf:
-        - $ref: '#/components/schemas/CustomField'
-        - type: "object"
-          required:
-            - value
-          properties:
-            type:
-              type: "string"
-            value:
-              type: "array"
-              items:
-                $ref: '#/components/schemas/Money'
+              format: "date-only"
     DateSetField:
       allOf:
         - $ref: '#/components/schemas/CustomField'
@@ -4170,7 +4065,7 @@ components:
               items:
                 type: "string"
                 format: "date-only"
-    TimeSetField:
+    DateTimeField:
       allOf:
         - $ref: '#/components/schemas/CustomField'
         - type: "object"
@@ -4180,10 +4075,8 @@ components:
             type:
               type: "string"
             value:
-              type: "array"
-              items:
-                type: "string"
-                format: "time-only"
+              type: "string"
+              format: "datetime"
     DateTimeSetField:
       allOf:
         - $ref: '#/components/schemas/CustomField'
@@ -4198,6 +4091,139 @@ components:
               items:
                 type: "string"
                 format: "datetime"
+    EnumField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "string"
+    EnumSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+    LocalizedEnumField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "string"
+    LocalizedEnumSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+    LocalizedStringField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              $ref: '#/components/schemas/LocalizedString'
+    LocalizedStringSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/LocalizedString'
+    MoneyField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              $ref: '#/components/schemas/Money'
+    MoneySetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Money'
+    NumberField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "number"
+              format: "double"
+    NumberSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "number"
+                format: "double"
+    ReferenceField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              $ref: '#/components/schemas/KeyReference'
     ReferenceSetField:
       allOf:
         - $ref: '#/components/schemas/CustomField'
@@ -4211,6 +4237,56 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/KeyReference'
+    StringField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "string"
+    StringSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+    TimeField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "string"
+              format: "time-only"
+    TimeSetField:
+      allOf:
+        - $ref: '#/components/schemas/CustomField'
+        - type: "object"
+          required:
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "array"
+              items:
+                type: "string"
+                format: "time-only"
     Asset:
       type: "object"
       required:
@@ -4345,6 +4421,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4354,6 +4432,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4363,6 +4443,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4372,6 +4454,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4381,6 +4465,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4390,15 +4476,33 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
             typeId:
               $ref: '#/components/schemas/ReferenceType'
+    CustomObjectKeyReference:
+      allOf:
+        - $ref: '#/components/schemas/KeyReference'
+        - type: "object"
+          required:
+            - container
+            - key
+          properties:
+            key:
+              type: "string"
+            typeId:
+              $ref: '#/components/schemas/ReferenceType'
+            container:
+              type: "string"
     DiscountCodeKeyReference:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4417,6 +4521,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4426,6 +4532,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4435,6 +4543,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4444,6 +4554,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4453,6 +4565,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4462,6 +4576,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4471,6 +4587,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4480,6 +4598,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4489,6 +4609,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4498,6 +4620,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
+          required:
+            - key
           properties:
             key:
               type: "string"
@@ -4507,24 +4631,13 @@ components:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
         - type: "object"
-          properties:
-            key:
-              type: "string"
-            typeId:
-              $ref: '#/components/schemas/ReferenceType'
-    CustomObjectKeyReference:
-      allOf:
-        - $ref: '#/components/schemas/KeyReference'
-        - type: "object"
           required:
-            - container
+            - key
           properties:
             key:
               type: "string"
             typeId:
               $ref: '#/components/schemas/ReferenceType'
-            container:
-              type: "string"
     UnresolvedReferences:
       type: "object"
       required:
@@ -4623,21 +4736,24 @@ components:
       enum:
         - category
         - customer
+        - discount-code
         - inventory
         - order
         - order-patch
         - price
         - product
         - product-draft
+        - product-selection
         - product-type
         - product-variant
         - product-variant-patch
         - standalone-price
         - type
-        - discount-code
       x-annotation-enumDescriptions:
         category: "The [Category import](ctp:import:type:CategoryImport) resource type."
         customer: "The [Customer import](ctp:import:type:CustomerImport) resource type."
+        discount-code: "The [Discount Code import](ctp:import:type:DiscountCodeImport) resource
+         type."
         inventory: "The [Inventory import](ctp:import:type:InventoryImport) resource type."
         order: "The [Order import](ctp:import:type:OrderImport) resource type."
         order-patch: "The [Order patch import](ctp:import:type:OrderPatchImport) resource
@@ -4646,6 +4762,8 @@ components:
         product: "The [Product import](ctp:import:type:ProductImport) resource type."
         product-draft: "The [Product draft import](ctp:import:type:ProductDraftImport) resource
          type."
+        product-selection: "The [Product Selection import](ctp:import:type:ProductSelectionImport)
+         resource type."
         product-type: "The [Product Type import](ctp:import:type:ProductTypeImport) resource
          type."
         product-variant: "The [Product Variant import](ctp:import:type:ProductVariantImport)
@@ -4655,8 +4773,6 @@ components:
         standalone-price: "The [Standalone Price import](ctp:import:type:StandalonePriceImport)
          resource type."
         type: "The [Type import](ctp:import:type:TypeImport) resource type."
-        discount-code: "The [Discount Code import](ctp:import:type:DiscountCodeImport) resource
-         type."
     ReferenceType:
       type: "string"
       enum:
@@ -4667,6 +4783,7 @@ components:
         - customer
         - customer-group
         - discount-code
+        - key-value-document
         - order
         - payment
         - price
@@ -4679,7 +4796,6 @@ components:
         - store
         - tax-category
         - type
-        - key-value-document
       x-annotation-enumDescriptions:
         cart: "References a cart."
         cart-discount: "References a cart discount."
@@ -4688,6 +4804,7 @@ components:
         customer: "References a customer."
         customer-group: "References a customer group."
         discount-code: "References a discount code."
+        key-value-document: "References a custom object"
         order: "References an order."
         payment: "References a payment"
         price: "References a price."
@@ -4700,7 +4817,6 @@ components:
         store: "References a store."
         tax-category: "References a tax-category."
         type: "References a type."
-        key-value-document: "References a custom object"
     ProcessingState:
       type: "string"
       enum:
@@ -4715,7 +4831,7 @@ components:
         processing: "The initial state assigned if the request payload (JSON structure and
          fields) meets Import API specifications. The resource import is in progress."
         imported: "The resource was successfully imported."
-        unresolved: "The import request contains [KeyReferences](ctp:import:type:KeyReference)
+        unresolved: "The import request contains [KeyReferences](ctp:api:type:KeyReference)
          to resources that do not exist in your Composable Commerce Project. Generates
          the [ImportUnresolved](/projects/events#import-unresolved-event) Event."
         validationFailed: "Either the request payload is missing the data as per Import API
@@ -4838,3 +4954,65 @@ components:
               format: "datetime"
             custom:
               $ref: '#/components/schemas/Custom'
+    VariantSelectionType:
+      type: "string"
+      enum:
+        - includeOnly
+        - includeAllExcept
+      x-annotation-enumDescriptions:
+        includeOnly: "Only the specified SKUs are included."
+        includeAllExcept: "All variants except the specified SKUs are included."
+    VariantSelection:
+      type: "object"
+      required:
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/VariantSelectionType'
+        skus:
+          type: "array"
+          items:
+            type: "string"
+    VariantExclusion:
+      type: "object"
+      properties:
+        skus:
+          type: "array"
+          items:
+            type: "string"
+    ProductSelectionAssignment:
+      type: "object"
+      required:
+        - product
+      properties:
+        product:
+          $ref: '#/components/schemas/ProductKeyReference'
+        variantSelection:
+          $ref: '#/components/schemas/VariantSelection'
+        variantExclusion:
+          $ref: '#/components/schemas/VariantExclusion'
+    ProductSelectionMode:
+      type: "string"
+      enum:
+        - Individual
+        - IndividualExclusion
+    ProductSelectionImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          required:
+            - key
+            - name
+          properties:
+            key:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            mode:
+              $ref: '#/components/schemas/ProductSelectionMode'
+            custom:
+              $ref: '#/components/schemas/Custom'
+            assignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductSelectionAssignment'
