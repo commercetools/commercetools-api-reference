@@ -9,18 +9,26 @@ uses:
 types:
   Attribute:
     description: |
-      This type represents the value of an attribute of a product variant.
-      The name and type property must match the name and type property of an attribute definition of the product type.
+      Represents the value of an Attribute of a Product Variant.
     discriminator: type
     properties:
       name?:
-        description: |
-          The name of this attribute must match a name of the product types attribute definitions.
-          The name is required if this type is used in a product variant and must not be set when
-          used in a product variant patch.
         type: string
+        description: |
+          Required if used for [ProductVariantImport](ctp:import:type:ProductVariantImport).
+          Must not be set if used for [ProductVariantPatch](ctp:import:type:ProductVariantPatch).
+
+          Must match `name` of an [AttributeDefinition](ctp:api:type:AttributeDefinition) of the Product Type.
       type:
         type: string
+        description: |
+          Must match `type` of an [AttributeDefinition](ctp:api:type:AttributeDefinition) of the Product Type.
+          The type is required if this type is used in a product variant and must not be set when
+          used in a product variant patch.
+      value:
+        type: any #    type: AttributeValue | AttributeValue[]
+        description: |
+          The actual value of the Attribute compliant to the `type`, see specific [attribute types](ctp:import:type;Attribute).
   BooleanAttribute:
     description: |
       This type represents an attribute whose value is either "true" or "false".
@@ -29,6 +37,8 @@ types:
     properties:
       value:
         type: boolean
+        description: |
+          `true` or `false`
   BooleanSetAttribute:
     description: |
       This type represents an attribute whose value is set of boolean values.
@@ -37,6 +47,8 @@ types:
     properties:
       value:
         type: boolean[]
+        description: |
+          A set of boolean values.
   DateAttribute:
     description: |
       This type represents an attribute whose value is a date.
@@ -45,6 +57,8 @@ types:
     properties:
       value:
         type: date-only
+        description: |
+          A date in the format `YYYY-MM-DD`.
   DateSetAttribute:
     description: |
       This type represents an attribute whose value is a set of dates.
@@ -53,6 +67,8 @@ types:
     properties:
       value:
         type: date-only[]
+        description: |
+          A set of dates in the format `YYYY-MM-DD`.
   DateTimeAttribute:
     description: |
       This type represents an attribute whose value is a date with time.
@@ -61,6 +77,10 @@ types:
     properties:
       value:
         type: datetime
+        description: |
+          A date with time in the format `YYYY-MM-DDTHH:mm:ss.SSSZ`.
+          The time zone is optional and defaults to UTC if not specified.
+          If the time zone is specified, it must be in the format `±HH:mm` or `Z` for UTC.
   DateTimeSetAttribute:
     description: |
       This type represents an attribute whose value is a set of dates with time.
@@ -69,6 +89,10 @@ types:
     properties:
       value:
         type: datetime[]
+        description: |
+          A set of dates with time in the format `YYYY-MM-DDTHH:mm:ss.SSSZ`.
+          The time zone is optional and defaults to UTC if not specified.
+          If the time zone is specified, it must be in the format `±HH:mm` or `Z` for UTC.
   EnumAttribute:
     description: |
       This type represents an attribute whose value is an enum.
@@ -78,6 +102,9 @@ types:
     properties:
       value:
         type: string
+        description: |
+          The key of the enum value.
+          Must match the key of an [AttributePlainEnumValue](ctp:api:type:AttributePlainEnumValue) in the Product Type.
   EnumSetAttribute:
     description: |
       This type represents an attribute whose value is an enum.
@@ -87,6 +114,9 @@ types:
     properties:
       value:
         type: string[]
+        description: |
+          A set of enum values, each represented by its key.
+          Each key must match the key of an [AttributePlainEnumValue](ctp:api:type:AttributePlainEnumValue) in the Product Type.
   LocalizableEnumAttribute:
     description: |
       This type represents an attribute whose value is a localized enum.
@@ -96,6 +126,9 @@ types:
     properties:
       value:
         type: string
+        description: |
+          The key of the localized enum value.
+          Must match the key of an [AttributeLocalizedEnumValue](ctp:api:type:AttributeLocalizedEnumValue) in the Product Type.
   LocalizableEnumSetAttribute:
     description: |
       This type represents an attribute whose value is a localized enum.
@@ -105,6 +138,9 @@ types:
     properties:
       value:
         type: string[]
+        description: |
+          A set of localized enum values, each represented by its key.
+          Each key must match the key of an [AttributeLocalizedEnumValue](ctp:api:type:AttributeLocalizedEnumValue) in the Product Type.
   LocalizableTextAttribute:
     description: |
       This type represents an attribute whose value is a localized text.
@@ -113,6 +149,8 @@ types:
     properties:
       value:
         type: common.LocalizedString
+        description: |
+          A localized string.
   LocalizableTextSetAttribute:
     description: |
       This type represents an attribute whose value is a localized text.
@@ -121,6 +159,8 @@ types:
     properties:
       value:
         type: common.LocalizedString[]
+        description: |
+          A set of localized strings.
   MoneyAttribute:
     description: |
       This type represents an attribute whose value is a money object.
@@ -128,7 +168,9 @@ types:
     discriminatorValue: money
     properties:
       value:
-        type: common.TypedMoney
+        type: common.Money
+        description: |
+          A money value in cent precision format.
   MoneySetAttribute:
     description: |
       This type represents an attribute whose value is a set of money objects.
@@ -136,8 +178,9 @@ types:
     discriminatorValue: money-set
     properties:
       value:
-        type: common.TypedMoney[]
-        description:
+        type: common.Money[]
+        description: |
+          A set of money values in cent precision format.
   NumberAttribute:
     description: |
       This type represents an attribute whose value is a number.
@@ -146,6 +189,9 @@ types:
     properties:
       value:
         type: number
+        description: |
+          A number value.
+          Can be an integer or a floating-point number.
   NumberSetAttribute:
     description: |
       This type represents an attribute whose value is a set of numbers.
@@ -154,6 +200,9 @@ types:
     properties:
       value:
         type: number[]
+        description: |
+          A set of number values.
+          Each value can be an integer or a floating-point number.
   ReferenceAttribute:
     description: |
       This type represents an attribute whose value is a key reference.
@@ -172,6 +221,9 @@ types:
     properties:
       value:
         type: common.KeyReference[]
+        description: |
+          A set of references, each referencing a resource by key.
+          Each reference must match the key of an existing resource in the project.
   TextAttribute:
     description: |
       This type represents an attribute whose value is a string.
@@ -180,6 +232,8 @@ types:
     properties:
       value:
         type: string
+        description: |
+          A text value.
   TextSetAttribute:
     description: |
       This type represents an attribute whose value is a set of strings.
@@ -188,6 +242,8 @@ types:
     properties:
       value:
         type: string[]
+        description: |
+          A set of text values.
   TimeAttribute:
     description: |
       This type represents an attribute whose value is a time.
@@ -196,6 +252,10 @@ types:
     properties:
       value:
         type: time-only
+        description: |
+          A time value in the format `HH:mm:ss.SSS`.
+          The time zone is optional and defaults to UTC if not specified.
+          If the time zone is specified, it must be in the format `±HH:mm` or `Z` for UTC.
   TimeSetAttribute:
     description: |
       This type represents an attribute whose value is a set of times.
@@ -204,15 +264,19 @@ types:
     properties:
       value:
         type: time-only[]
+        description: |
+          A set of time values in the format `HH:mm:ss.SSS`.
+          The time zone is optional and defaults to UTC if not specified.
+          If the time zone is specified, it must be in the format `±HH:mm` or `Z` for UTC.
   ProductVariantImport:
     description: |
-      The data representation for a ProductVariant to be imported that is persisted as a [ProductVariant](ctp:api:type:ProductVariant) in the Project.
+      Represents the data used to import a ProductVariant. Once imported, this data is persisted as a [ProductVariant](ctp:api:type:ProductVariant) in the Project.
     type: common.ImportResource
     example: !include ../examples/product-variant-import.json
     properties:
       key:
         type: string
-        description: User-defined unique identifier. If a [ProductVariant](ctp:api:type:ProductVariant) with this `key` exists on the specified `product`, it will be updated with the imported data.
+        description: User-defined unique identifier. If a [ProductVariant](ctp:api:type:ProductVariant) with this `key` exists on the specified `product`, it is updated with the imported data.
       sku?:
         description: |
           Maps to `ProductVariant.sku`.
@@ -246,24 +310,20 @@ types:
         type: boolean
         default: true
         description: |
-          - Set to `false` to update both the [current and staged projections](/../api/projects/productProjections#current--staged) of the [Product](/../api/projects/products#product) with the new Product Variant data.
+          - Set to `false` to update both the [current and staged projections](/../api/projects/productProjections#current--staged) of the [Product](ctp:api:type:Product) with the new Product Variant data.
           - Leave empty or set to `true` to only update the staged projection.
       product:
         description: |
-          The [Product](ctp:api:type:ProductVariant) to which this Product Variant belongs. Maps to `ProductVariant.product`.
-          The Reference to the [Product](ctp:api:type:Product) with which the ProductVariant is associated.
-          If referenced Product does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the necessary Product is created.
+          The [Product](ctp:api:type:ProductVariant) containing this ProductVariant. If the referenced Product does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced Product is created.
         type: common.ProductKeyReference
   ProductVariantPatch:
     description: |
-      Representation for an update of a [ProductVariant](ctp:api:type:ProductVariant). Use this type to import updates for existing
-      [ProductVariants](ctp:api:type:ProductVariant) in a Project.
+      Represents the data used to update a [ProductVariant](ctp:api:type:ProductVariant).
     example: !include ../examples/product-variant-patch.json
     properties:
       productVariant:
         description: |
           Reference to the [ProductVariant](ctp:api:type:ProductVariant) to update.
-          If the referenced ProductVariant does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the necessary ProductVariant is created.
         type: common.ProductVariantKeyReference
       attributes?:
         description: |
@@ -271,7 +331,7 @@ types:
           - The referenced Attribute must be defined in an existing [ProductType](ctp:api:type:ProductType), or the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be `validationFailed`.
           - Setting the value of a non-required Attribute to `null` will remove the Attribute.
           - Attempting to set a `null` value to a required Attribute will make the import operation fail with an [InvalidOperation](ctp:import:type:InvalidOperation) error.
-          - Importing [LocalizableTextAttributes](ctp:import:type:LocalizableTextAttribute) or [LocalizableTextSetAttributes](ctp:import:type:LocalizableTextSetAttribute) follows an override pattern, meaning that omitted localized fields will be deleted, new fields will be created, and existing fields will be updated. You can also delete localized fields by setting their value to `null`.
+          - Importing [LocalizableTextAttributes](ctp:import:type:LocalizableTextAttribute) or [LocalizableTextSetAttributes](ctp:import:type:LocalizableTextSetAttribute) follows an override pattern, meaning that omitted localized fields will be deleted, new fields will be created, and existing fields will be updated. You can delete localized fields by setting their value to `null`.
         type: Attributes
       staged?:
         type: boolean
@@ -280,10 +340,12 @@ types:
           If `false`, the attribute changes are applied to both [current and staged projected representations](/projects/productProjections#current--staged) of the [Product](ctp:api:type:Product).
       product?:
         description: |
-          Reference to the [Product](/../api/projects/products#product) that contains the ProductVariant.
+          Reference to the [Product](ctp:api:type:Product) that contains the ProductVariant.
 
           We recommend to set this value to minimize concurrency errors.
           If set, this field is required for every ProductVariantPatch in the [ProductVariantPatchRequest](ctp:import:type:ProductVariantPatchRequest).
+
+          If the referenced Product does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced Product is created.
 
         type: common.ProductKeyReference
   Attributes:

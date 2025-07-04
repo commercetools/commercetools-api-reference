@@ -18,61 +18,61 @@ types:
     properties:
       key:
         type: string
-        description: User-defined unique identifier. If a [Product](ctp:api:type:Product) with this `key` exists, it will be updated with the imported data.
+        description: User-defined unique identifier. If a [Product](ctp:api:type:Product) with this `key` exists, it is updated with the imported data.
         pattern: ^[A-Za-z0-9_-]+$
         minLength: 2
         maxLength: 256
       productType:
         description: |
-          The `productType` of a [Product](ctp:api:type:Product).
-          Maps to `Product.productType`.
-          The Reference to the [ProductType](ctp:api:type:ProductType) with which the ProductDraft is associated.
-          If referenced ProductType does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the necessary ProductType is created.
+          Maps to `Product.productType`. If the referenced [ProductType](ctp:api:type:ProductType) does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced ProductType is created.
         type: common.ProductTypeKeyReference
       name:
         type: common.LocalizedString
-        description: ''
+        description: Maps to `ProductData.name`.
       slug:
         type: common.LocalizedString
-        description: |
-          Human-readable identifiers usually used as deep-link URL to the related product. Each slug must be unique across a project,
-          but a product can have the same slug for different languages. Allowed are alphabetic, numeric, underscore (_) and hyphen (-) characters.
+        description: Maps to `ProductData.slug`.
       description?:
         type: common.LocalizedString
         description: |
-          Maps to `Product.description`.
+          Maps to `ProductData.description`.
       categories?:
         description: |
-          The Reference to the [Categories](ctp:api:type:Category) with which the ProductDraft is associated.
-          If referenced Categories do not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the necessary Categories are created.
+          Maps to `ProductData.categories`. If the referenced [Categories](ctp:api:type:Category) do not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced Categories are created.
         type: common.CategoryKeyReference[]
       attributes?:
         type: product-variant-import.Attribute[]
       metaTitle?:
         type: common.LocalizedString
+        description: |
+          Maps to `ProductData.metaTitle`.
       metaDescription?:
         type: common.LocalizedString
+        description: |
+          Maps to `ProductData.metaDescription`.
       metaKeywords?:
         type: common.LocalizedString
+        description: |
+          Maps to `ProductData.metaKeywords`.
       masterVariant?:
         type: ProductVariantDraftImport
         description: |
-          The master Product variant.
-          Required if the `variants` array contains a Product Variant.
+          The master ProductVariant.
+          Required if `variants` contains at least one ProductVariant.
       variants?:
         type: ProductVariantDraftImport[]
-        description: An array of related Product Variants.
+        description: An array of related ProductVariants.
       taxCategory?:
         description: |
-          The Reference to the [TaxCategory](/projects/taxCategories#taxcategory) with which the ProductDraft is associated.
-          If referenced TaxCategory does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the necessary TaxCategory is created.
+          Maps to `Product.taxCategory`. If the referenced [TaxCategory](ctp:api:type:TaxCategory) does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced TaxCategory is created.
         type: common.TaxCategoryKeyReference
       searchKeywords?:
         type: product-import.SearchKeywords
+        description: |
+          Maps to `ProductData.searchKeywords`.
       state?:
         description: |
-          The Reference to the [State](/projects/states#state) with which the ProductDraft is associated.
-          If referenced State does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the necessary State is created.
+          Maps to `Product.state`. If the referenced [State](ctp:api:type:State) does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced State is created.
         type: common.StateKeyReference
       publish?:
         type: boolean
@@ -82,7 +82,7 @@ types:
       priceMode?:
         type: common.ProductPriceModeEnum
         description: |
-          Determines the type of Prices the API uses. If not provided, the existing `Product.priceMode` is not changed.
+          Maps to `Product.priceMode`. If not provided, the existing `Product.priceMode` is not changed.
   ProductVariantDraftImport:
     type: object
     description: |
@@ -90,16 +90,29 @@ types:
     properties:
       sku?:
         type: string
+        description: |
+          User-defined unique SKU of the Product Variant.
       key:
         type: string
+        description: |
+          User-defined unique identifier for the ProductVariant.
       prices?:
         type: PriceDraftImport[]
+        description: |
+          The Embedded Prices for the Product Variant.
+          Each Price must have its unique Price scope (with same currency, country, Customer Group, Channel, `validFrom` and `validUntil`).
       attributes?:
         type: product-variant-import.Attribute[]
+        description: |
+          Attributes according to the respective AttributeDefinition.
       images?:
         type: common.Image[]
+        description: |
+          Images for the Product Variant.
       assets?:
         type: common.Asset[]
+        description: |
+          Media assets for the Product Variant.
   PriceDraftImport:
     type: object
     description: |
@@ -107,24 +120,27 @@ types:
     properties:
       value:
         type: common.TypedMoney
-        description:
+        description: Money value of this Price.
       country?:
         type: common.CountryCode
+        description: Set this field if this Price is only valid for the specified country.
       customerGroup?:
         type: common.CustomerGroupKeyReference
-        description: References a customer group by key.
+        description: Set this field if this Price is only valid for the referenced [CustomerGroup](ctp:api:type:CustomerGroup). If the referenced CustomerGroup does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced CustomerGroup is created.
       channel?:
         type: common.ChannelKeyReference
-        description: References a channel by key.
+        description: Set this field if this Price is only valid for the referenced `ProductDistribution` [Channel](ctp:api:type:Channel). If the referenced Channel does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced Channel is created.
       validFrom?:
         type: datetime
+        description: Set this field if this Price is only valid from the specified date and time. Must be at least 1 ms earlier than `validUntil`.
       validUntil?:
         type: datetime
+        description: Set this field if this Price is only valid until the specified date and time. Must be at least 1 ms later than `validFrom`.
       custom?:
-        description: The custom fields for this category.
+        description: Custom Fields for the Embedded Price.
         type: custom-field.Custom
       discounted?:
-        description: Sets a discounted price from an external service.
+        description: Set this field to add a DiscountedPrice from an **external service**.
         type: common.DiscountedPrice
       tiers?:
         description: The tiered prices for this price.

@@ -8,12 +8,10 @@ uses:
 
 types:
   Custom:
-    description:
-      The representation to be sent to the server when creating a resource with
-      Custom Fields.
+    description: The representation to be sent to the server when creating a resource with Custom Fields.
     properties:
       type:
-        description: The type that provides the field definitions for this object.
+        description: The [Type](ctp:api:type:Type) that provides the field definitions for this object. If the referenced Type does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced Type is created.
         type: common.TypeKeyReference
       fields?:
         description: The Custom Fields of this object.
@@ -40,61 +38,162 @@ types:
     type: CustomField
     discriminatorValue: Boolean
     properties:
-      value: boolean
-  StringField:
-    description: A field with a string value.
+      value:
+        type: boolean
+        description: |
+          `true` or `false`
+  BooleanSetField:
+    description: A field with a boolean set value.
     type: CustomField
-    discriminatorValue: String
+    discriminatorValue: BooleanSet
     properties:
-      value: string
-  LocalizedStringField:
-    description: A field with a localized string value.
-    type: CustomField
-    discriminatorValue: LocalizedString
-    properties:
-      value: common.LocalizedString
-  EnumField:
-    description: A field with an enum value.
-    type: CustomField
-    discriminatorValue: Enum
-    properties:
-      value: string
-  LocalizedEnumField:
-    description: A field with a localized enum value.
-    type: CustomField
-    discriminatorValue: LocalizedEnum
-    properties:
-      value: string
-  NumberField:
-    description: A field with a number value.
-    type: CustomField
-    discriminatorValue: Number
-    properties:
-      value: number
-  MoneyField:
-    description: A field with a money value.
-    type: CustomField
-    discriminatorValue: Money
-    properties:
-      value: common.TypedMoney
+      value:
+        type: boolean[]
+        description: |
+          JSON array of boolean values without duplicates.
+          The order of items in the array is not fixed.
   DateField:
     description: A field with a date value.
     type: CustomField
     discriminatorValue: Date
     properties:
-      value: date-only
-  TimeField:
-    description: A field with a time value.
+      value:
+        type: date-only
+        description: |
+          A date in the format `YYYY-MM-DD`.
+  DateSetField:
+    description: A field with a date set value.
     type: CustomField
-    discriminatorValue: Time
+    discriminatorValue: DateSet
     properties:
-      value: time-only
+      value:
+        type: date-only[]
+        description: |
+          JSON array of date values in the format `YYYY-MM-DD` without duplicates.
+          The order of items in the array is not fixed.
   DateTimeField:
     description: A field with a date time value.
     type: CustomField
     discriminatorValue: DateTime
     properties:
-      value: datetime
+      value:
+        type: datetime
+        description: |
+          A date with time in the format `YYYY-MM-DDTHH:mm:ss.SSSZ`.
+          The time zone is optional and defaults to UTC if not specified.
+          If the time zone is specified, it must be in the format `±HH:mm` or `Z` for UTC.
+  DateTimeSetField:
+    description: A field with a date time set value.
+    type: CustomField
+    discriminatorValue: DateTimeSet
+    properties:
+      value:
+        type: datetime[]
+        description: |
+          JSON array of date time values in the format `YYYY-MM-DDTHH:mm:ss.SSSZ` without duplicates.
+          The time zone is optional and defaults to UTC if not specified.
+          If the time zone is specified, it must be in the format `±HH:mm` or `Z` for UTC.
+          The order of items in the array is not fixed.
+  EnumField:
+    description: A field with an enum value.
+    type: CustomField
+    discriminatorValue: Enum
+    properties:
+      value:
+        type: string
+        description: |
+          The key of the enum value.
+          Must be a `key` of one of the [CustomFieldEnumValues](ctp:api:type:CustomFieldEnumValue) defined in the [CustomFieldEnumType](ctp:api:type:CustomFieldEnumType).
+  EnumSetField:
+    description: A field with an enum set value.
+    type: CustomField
+    discriminatorValue: EnumSet
+    properties:
+      value:
+        type: string[]
+        description: |
+          JSON array of enum values, each represented by its key.
+          Each key must match the key of a [CustomFieldLocalizedEnumValue](ctp:api:type:CustomFieldEnumValue) in the [CustomFieldEnumType](ctp:api:type:CustomFieldEnumType).
+          The order of items in the array is not fixed.
+  LocalizedEnumField:
+    description: A field with a localized enum value.
+    type: CustomField
+    discriminatorValue: LocalizedEnum
+    properties:
+      value:
+        type: string
+        description: |
+          The key of the localized enum value.
+          Must match the key of a [CustomFieldLocalizedEnumValue](ctp:api:type:CustomFieldLocalizedEnumValue) in the [CustomFieldLocalizedEnumType](ctp:api:type:CustomFieldLocalizedEnumType).
+  LocalizedEnumSetField:
+    description: A field with a localized enum set value.
+    type: CustomField
+    discriminatorValue: LocalizedEnumSet
+    properties:
+      value:
+        type: string[]
+        description: |
+          JSON array of localized enum values, each represented by its key.
+          Each key must match the key of an [CustomFieldLocalizedEnumValue](ctp:api:type:CustomFieldLocalizedEnumValue) in the [CustomFieldLocalizedEnumType](ctp:api:type:CustomFieldLocalizedEnumType).
+          The order of items in the array is not fixed.
+  LocalizedStringField:
+    description: A field with a localized string value.
+    type: CustomField
+    discriminatorValue: LocalizedString
+    properties:
+      value:
+        type: common.LocalizedString
+        description: |
+          A localized string.
+  LocalizedStringSetField:
+    description: A field with a localized string set value.
+    type: CustomField
+    discriminatorValue: LocalizedStringSet
+    properties:
+      value:
+        type: common.LocalizedString[]
+        description: |
+          JSON array of localized strings.
+          The order of items in the array is not fixed.
+  MoneyField:
+    description: A field with a money value.
+    type: CustomField
+    discriminatorValue: Money
+    properties:
+      value:
+        type: common.Money
+        description: |
+          A money value in cent precision format.
+  MoneySetField:
+    description: A field with a money set value.
+    type: CustomField
+    discriminatorValue: MoneySet
+    properties:
+      value:
+        type: common.Money[]
+        description: |
+          JSON array of money values in cent precision format.
+          The order of items in the array is not fixed.
+  NumberField:
+    description: A field with a number value.
+    type: CustomField
+    discriminatorValue: Number
+    properties:
+      value:
+        type: number
+        description: |
+          A number value.
+          Can be an integer or a floating-point number.
+  NumberSetField:
+    description: A field with a number value.
+    type: CustomField
+    discriminatorValue: NumberSet
+    properties:
+      value:
+        type: number[]
+        description: |
+          JSON array of integer or floating-point number values.
+          The order of items in the array is not fixed.
   ReferenceField:
     description: A field with a reference value.
     type: CustomField
@@ -103,69 +202,55 @@ types:
       value:
         type: common.KeyReference
         description: References a resource by key
-  BooleanSetField:
-    description: A field with a boolean set value.
-    type: CustomField
-    discriminatorValue: BooleanSet
-    properties:
-      value: boolean[]
-  StringSetField:
-    description: A field with a string set value.
-    type: CustomField
-    discriminatorValue: StringSet
-    properties:
-      value: string[]
-  LocalizedStringSetField:
-    description: A field with a localized string set value.
-    type: CustomField
-    discriminatorValue: LocalizedStringSet
-    properties:
-      value: common.LocalizedString[]
-  EnumSetField:
-    description: A field with an enum set value.
-    type: CustomField
-    discriminatorValue: EnumSet
-    properties:
-      value: string[]
-  LocalizedEnumSetField:
-    description: A field with a localized enum set value.
-    type: CustomField
-    discriminatorValue: LocalizedEnumSet
-    properties:
-      value: string[]
-  NumberSetField:
-    description: A field with a number value.
-    type: CustomField
-    discriminatorValue: NumberSet
-    properties:
-      value: number[]
-  MoneySetField:
-    description: A field with a money set value.
-    type: CustomField
-    discriminatorValue: MoneySet
-    properties:
-      value: common.Money[]
-  DateSetField:
-    description: A field with a date set value.
-    type: CustomField
-    discriminatorValue: DateSet
-    properties:
-      value: date-only[]
-  TimeSetField:
-    description: A field with a time set value.
-    type: CustomField
-    discriminatorValue: TimeSet
-    properties:
-      value: time-only[]
-  DateTimeSetField:
-    description: A field with a date time set value.
-    type: CustomField
-    discriminatorValue: DateTimeSet
-    properties:
-      value: datetime[]
   ReferenceSetField:
     description: A field with a reference set value.
     type: CustomField
     discriminatorValue: ReferenceSet
     properties:
-      value: common.KeyReference[]
+      value:
+        type: common.KeyReference[]
+        description: |
+          JSON array of references, each referencing an existing resource by key.
+          The order of items in the array is not fixed.
+  StringField:
+    description: A field with a string value.
+    type: CustomField
+    discriminatorValue: String
+    properties:
+      value:
+        type: string
+        description: |
+          A text value.
+  StringSetField:
+    description: A field with a string set value.
+    type: CustomField
+    discriminatorValue: StringSet
+    properties:
+      value:
+        type: string[]
+        description: |
+          JSON array of strings.
+          The order of items in the array is not fixed.
+  TimeField:
+    description: A field with a time value.
+    type: CustomField
+    discriminatorValue: Time
+    properties:
+      value:
+        type: time-only
+        description: |
+          A time value in the format `HH:mm:ss.SSS`.
+          The time zone is optional and defaults to UTC if not specified.
+          If the time zone is specified, it must be in the format `±HH:mm` or `Z` for UTC.
+  TimeSetField:
+    description: A field with a time set value.
+    type: CustomField
+    discriminatorValue: TimeSet
+    properties:
+      value:
+        type: time-only[]
+        description: |
+          JSON array of time values in the format `HH:mm:ss.SSS`.
+          The time zone is optional and defaults to UTC if not specified.
+          If the time zone is specified, it must be in the format `±HH:mm` or `Z` for UTC.
+          The order of items in the array is not fixed.

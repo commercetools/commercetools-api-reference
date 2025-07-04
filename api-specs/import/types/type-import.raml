@@ -10,7 +10,7 @@ types:
   TypeTextInputHint:
     type: string
     description: |
-      Provides a visual representation type for this field. It is only relevant for string-based field types like [CustomFieldStringType](ctp:import:type:CustomFieldStringType) and [CustomFieldLocalizedStringType](ctp:import:type:CustomFieldLocalizedStringType).
+      Provides a visual representation type for this field. It is only relevant for string-based field types like [CustomFieldStringType](ctp:api:type:CustomFieldStringType) and [CustomFieldLocalizedStringType](ctp:api:type:CustomFieldLocalizedStringType).
     default: SingleLine
     enum:
       - SingleLine
@@ -81,7 +81,7 @@ types:
         [LineItem](ctp:api:type:LineItem) on [Cart](ctp:api:type:Cart) and [Order](ctp:api:type:Order), and on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem).
       order: |
         [Cart](ctp:api:type:Cart) and [Order](ctp:api:type:Order).
-        When a [Cart](ctp:api:type:Cart) is ordered, the [CustomFields](/projects/custom-fields#customfields) need to be copied to the [Order](ctp:api:type:Order).
+        When a [Cart](ctp:api:type:Cart) is ordered, the [CustomFields](ctp:api:type:CustomFields) need to be copied to the [Order](ctp:api:type:Order).
         For this reason, the Types for Carts are also valid for Orders, and hence both have the same identifier: `order`.
       order-edit: |
         [OrderEdit](ctp:api:type:OrderEdit)
@@ -96,12 +96,12 @@ types:
       payment-interface-interaction: |
         [InterfaceInteraction](ctp:api:type:PaymentAddInterfaceInteractionAction) on [Payment](ctp:api:type:Payment)
       product-price: |
-        [Embedded Price](/../api/types#price) on [ProductVariant](/../api/projects/products#productvariant)
+        [Embedded Price](/../api/types#price) on [ProductVariant](ctp:api:type:ProductVariant)
       product-selection: |
         [ProductSelection](ctp:api:type:ProductSelection)
       quote: |
         [Quote](ctp:api:type:Quote), [QuoteRequest](ctp:api:type:QuoteRequest) and [StagedQuote](ctp:api:type:StagedQuote).
-        When a [StagedQuote](ctp:api:type:StagedQuote) is created, the [CustomFields](/projects/custom-fields#customfields) will be copied from the [QuoteRequest](ctp:api:type:QuoteRequest) and when a [Quote](ctp:api:type:Quote) is created, the [CustomFields](/projects/custom-fields#customfields) will be copied from the [StagedQuote](ctp:api:type:StagedQuote).
+        When a [StagedQuote](ctp:api:type:StagedQuote) is created, the [CustomFields](ctp:api:type:CustomFields) will be copied from the [QuoteRequest](ctp:api:type:QuoteRequest) and when a [Quote](ctp:api:type:Quote) is created, the [CustomFields](ctp:api:type:CustomFields) will be copied from the [StagedQuote](ctp:api:type:StagedQuote).
         For this reason, the Types for Quotes are also valid for QuoteRequests and StagedQuotes, and hence all have the same identifier: `quote`.
       review: |
         [Review](ctp:api:type:Review)
@@ -114,18 +114,23 @@ types:
       shopping-list-text-line-item: |
         [TextLineItem](ctp:api:type:TextLineItem) on [ShoppingList](ctp:api:type:ShoppingList)
       standalone-price: |
-        [StandalonePrice](ctp:api:type:StandalonePrice))
+        [StandalonePrice](ctp:api:type:StandalonePrice)
       store: |
         [Store](ctp:api:type:Store)
       transaction: |
         [Transaction](ctp:api:type:Transaction) on [Payment](ctp:api:type:Payment)
 
   FieldType:
+    description: |
+      Defines the data type of a Custom Field. Maps to `Type.FieldDefinition.type`.
+      The `discriminator` is used to determine the type of the field.
     type: object
     discriminator: name
     properties:
       name:
         type: string
+        description: |
+          Name of the field type. Must be unique for a given [ResourceTypeId](ctp:import:type:ResourceTypeId). In case there is a FieldDefinition with the same `name` in another Type, both FieldDefinitions must have the same `type`. This value cannot be changed after the Type is imported.
 
   CustomFieldBooleanType:
     type: FieldType
@@ -214,6 +219,37 @@ types:
       - state
       - shipping-method
       - zone
+    (annotations.enumDescriptions):
+      associate-role: |
+        [AssociateRole](ctp:api:type:AssociateRole)
+      business-unit: |
+        [BusinessUnit](ctp:api:type:BusinessUnit)
+      cart: |
+        [Cart](ctp:api:type:Cart)
+      category: |
+        [Category](ctp:api:type:Category)
+      channel: |
+        [Channel](ctp:api:type:Channel)
+      customer: |
+        [Customer](ctp:api:type:Customer)
+      customer-group: |
+        [CustomerGroup](ctp:api:type:CustomerGroup)
+      key-value-document: |
+        [CustomObject](ctp:api:type:CustomObject)
+      order: |
+        [Order](ctp:api:type:Order)
+      product: |
+        [Product](ctp:api:type:Product)
+      product-type: |
+        [ProductType](ctp:api:type:ProductType)
+      review: |
+        [Review](ctp:api:type:Review)
+      state: |
+        [State](ctp:api:type:State)
+      shipping-method: |
+        [ShippingMethod](ctp:api:type:ShippingMethod)
+      zone: |
+        [Zone](ctp:api:type:Zone)
   CustomFieldSetType:
     type: FieldType
     description: Values of a SetType Custom Field are sets of values of the specified `elementType` (without duplicate elements).
@@ -256,13 +292,13 @@ types:
 
   TypeImport:
     description: |
-      The data representation for a Type to be imported that is persisted as a [Type](ctp:api:type:Type) in the Project.
+      Represents the data used to import a Type. Once imported, this data is persisted as a [Type](ctp:api:type:Type) in the Project.
     type: common.ImportResource
     example: !include ../examples/type-import.json
     properties:
       key:
         description: |
-          User-defined unique identifier for the Type. If a [Type](ctp:api:type:Type) with this `key` exists, it will be updated with the imported data.
+          User-defined unique identifier for the Type. If a [Type](ctp:api:type:Type) with this `key` exists, it is updated with the imported data.
         type: string
         pattern: ^[A-Za-z0-9_-]+$
         minLength: 2

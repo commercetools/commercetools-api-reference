@@ -10,13 +10,13 @@ uses:
 types:
   CategoryImport:
     description: |
-      The data representation for a Category to be imported that is persisted as a [Category](ctp:api:type:Category) in the Project.
+      Represents the data used to import a Category. Once imported, this data is persisted as a [Category](ctp:api:type:Category) in the Project.
     type: common.ImportResource
     example: !include ../examples/category-import.json
     properties:
       key:
         type: string
-        description: User-defined unique identifier. If a [Category](ctp:api:type:Category) with this `key` exists, it will be updated with the imported data.
+        description: User-defined unique identifier. If a [Category](ctp:api:type:Category) with this `key` exists, it is updated with the imported data.
         pattern: ^[A-Za-z0-9_-]+$
         minLength: 2
         maxLength: 256
@@ -26,8 +26,7 @@ types:
         type: common.LocalizedString
       slug:
         description: |
-          Maps to `Category.slug`.
-          Must match the pattern `[-a-zA-Z0-9_]{2,256}`.
+          Maps to `Category.slug`. Must match the pattern `^[A-Za-z0-9_-]{2,256}+$`.
         type: common.LocalizedString
       description?:
         description: |
@@ -35,9 +34,7 @@ types:
         type: common.LocalizedString
       parent?:
         description: |
-          Maps to `Category.parent`.
-          The Reference to the parent [Category](ctp:api:type:Category) with which the Category is associated.
-          If referenced Category does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the necessary Category is created.
+          Maps to `Category.parent`. If the referenced [Category](ctp:api:type:Category) does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced Category is created.
         type: common.CategoryKeyReference
       orderHint?:
         description: |
@@ -64,5 +61,5 @@ types:
           Maps to `Category.assets`.
         type: common.Asset[]
       custom?:
-        description: The custom fields for this Category.
+        description: Maps to `Category.custom`.
         type: custom-field.Custom

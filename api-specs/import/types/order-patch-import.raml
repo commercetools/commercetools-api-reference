@@ -24,73 +24,133 @@ types:
       quantity:
         type: number
         format: int64
+        description: |
+          Number of Line Items or Custom Line Items to return.
       lineItemId?:
         type: string
+        description: |
+          `id` of the [LineItem](ctp:api:type:LineItem) to return.
+
+          Required if Line Items are returned, to create a [LineItemReturnItem](ctp:api:type:LineItemReturnItem).
       customLineItemId?:
         type: string
+        description: |
+          `id` of the [CustomLineItem](ctp:api:type:CustomLineItem) to return.
+
+          Required if Custom Line Items are returned, to create a [CustomLineItemReturnItem](ctp:api:type:CustomLineItemReturnItem).
       comment?:
         type: string
+        description: |
+          User-defined description for the return.
       shipmentState:
         type: ReturnShipmentState
+        description: |
+          Shipment status of the item to be returned.
   ReturnInfo:
     properties:
       items:
         type: ReturnItemDraft[]
+        description: |
+          Information on the Line Items or Custom Line Items returned.
       returnTrackingId?:
         type: string
-        description: Maps to `ReturnInfo.returnTrackingId`
+        description: |
+          User-defined identifier to track the return.
       returnDate?:
         type: datetime
-        description: Maps to `ReturnInfo.returnDate`
+        description: |
+          Date and time (UTC) the return is initiated.
   DeliveryParcel:
     properties:
-      deliveryId: string
+      deliveryId:
+        type: string
+        description: Unique identifier of the Delivery.
       measurements?:
         type: order.ParcelMeasurements
+        description: |
+          Information about the dimensions of the Parcel.
       trackingData?:
         type: order.TrackingData
+        description: |
+          Shipment tracking information of the Parcel.
       items?:
         type: order.DeliveryItem[]
+        description: |
+          Line Items or Custom Line Items delivered in this Parcel.
   DeliveryParcelDraft:
     properties:
       measurements?:
         type: order.ParcelMeasurements
+        description: |
+          Information about the dimensions for the Parcel.
       trackingData?:
         type: order.TrackingData
+        description: |
+          Shipment tracking information for the Parcel.
       items?:
         type: order.DeliveryItem[]
+        description: |
+          Line Items or Custom Line Items delivered in this Parcel.
   DeliveryDraft:
     properties:
-      items: order.DeliveryItem[]
+      items:
+        type: order.DeliveryItem[]
+        description: |
+          Line Items or Custom Line Items to deliver. It can also be specified individually for each [Parcel](ctp:api:type:Parcel).
       address?:
         type: common.Address
-      parcels: DeliveryParcelDraft[]
+        description: |
+          Address to which the Parcels are delivered.
+      parcels:
+        type: DeliveryParcelDraft[]
+        description: |
+          Information regarding the appearance, content, and shipment of a parcel.
   DeliveryAddressDraft:
     properties:
-      deliveryId: string
+      deliveryId:
+        type: string
+        description: Unique identifier of the Delivery.
       address?:
         type: common.Address
+        description: Address to which Parcels are delivered.
   ParcelMeasurementDraft:
     properties:
-      parcelId: string
+      parcelId:
+        type: string
+        description: |
+          `id` of an existing [Parcel](ctp:api:type:Parcel).
       measurements?:
         type: order.ParcelMeasurements
+        description: |
+          Information about the dimensions of the Parcel.
   ParcelTrackingData:
     properties:
-      parcelId: string
+      parcelId:
+        type: string
+        description: |
+          `id` of an existing [Parcel](ctp:api:type:Parcel).
       trackingData?:
         type: order.TrackingData
+        description: |
+          Information that helps track a Parcel.
   ParcelItems:
     properties:
-      parcelId: string
+      parcelId:
+        type: string
+        description: |
+          `id` of an existing [Parcel](ctp:api:type:Parcel).
       items?:
         type: order.DeliveryItem[]
+        description: Items in the Parcel.
   RemoveDeliveryDraft:
     properties:
       id: string
   RemoveParcelFromDeliveryDraft:
     properties:
-      parcelId: string
+      parcelId:
+        type: string
+        description: |
+          `id` of the [Parcel](ctp:api:type:Parcel) to be removed from the Delivery.
   OrderField:
     description: |
       Order fields that needs to be added or updated.
@@ -133,14 +193,13 @@ types:
         type: ParcelItems[]
   OrderPatchImport:
     description: |
-      Representation for an update of an [Order](ctp:api:type:Order). Use this type to import updates for existing
-      [Orders](ctp:api:type:Order) in a Project.
+      Represents the data used to update an [Order](ctp:api:type:Order) in a Project.
     properties:
       orderNumber:
         description: |
-          Maps to `Order.orderNumber`, String that uniquely identifies an order, unique across a project.
+          User-defined unique identifier. If an [Order](ctp:api:type:Order) with this `orderNumber` exists, it is updated with the imported data.
         type: string
       fields:
         description: |
-          Each field referenced must be defined in an already existing order in the project or the import operation state is set to `validationFailed`.
+          Each field referenced must be defined in an existing [Order](ctp:api:type:Order) or the [ImportOperationState](ctp:import:type:ImportOperationState) is set to `validationFailed`.
         type: OrderField

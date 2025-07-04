@@ -63,6 +63,7 @@ uses:
   custom-field: types/custom-field.raml
   common: types/common.raml
   discount-code-import: types/discount-code-import.raml
+  product-selection-import: types/product-selection-import.raml
 
 resourceTypes:
   base:
@@ -156,18 +157,25 @@ traits:
           scopes:
             - manage_discount_codes:{projectKey}
             - view_discount_codes:{projectKey}
+  secured_by_manage_product_selections:
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - manage_product_selections:{projectKey}
+            - view_product_selections:{projectKey}
 
 /{projectKey}:
   displayName: Project
   uriParameters:
     projectKey:
-      description: The Project key.
+      description: |
+        `key` of the [Project](ctp:api:type:Project).
       type: string
   /import-containers:
     post:
-      displayName: Create a new Import Container.
+      displayName: Creates an Import Container in the Project.
       description: |
-        Creates a new Import Container.
+        Creates an Import Container in the Project.
 
         Generates the [ImportContainerCreated](/projects/events#import-container-created-event) Event.
       is:
@@ -205,7 +213,7 @@ traits:
           description: |
             See [Sorting](/../api/general-concepts#sorting).
           type: string[]
-      description: Retrieves all Import Containers of a given project key.
+      description: Retrieves all ImportContainers in the Project.
       is:
         - secured_by_view_import_containers
       responses:
@@ -218,10 +226,11 @@ traits:
       uriParameters:
         importContainerKey:
           (postman.paramName): import-container-key
-          description: The key of the Import Container.
+          description: |
+            `key` of the [ImportContainer](ctp:import:type:ImportContainer).
           type: string
       put:
-        description: Updates the Import Container given by the key.
+        description: Updates an [ImportContainer](ctp:import:type:ImportContainer) in the Project.
         is:
           - secured_by_manage_import_containers
         body:
@@ -229,7 +238,7 @@ traits:
           example: !include examples/import-container-update-draft-minimal.json
         responses:
           200:
-            description: The Import Container was successfully updated.
+            description: The [ImportContainer](ctp:import:type:ImportContainer) was successfully updated.
             body:
               type: import-container.ImportContainer
               example: !include examples/import-container-updated.json
@@ -241,7 +250,7 @@ traits:
               type: error.ErrorResponse
               example: !include examples/error-response-concurrent-modification.json
       get:
-        description: Retrieves the Import Container given by the key.
+        description: Retrieves an [ImportContainer](ctp:import:type:ImportContainer) with the provided `importContainerKey`.
         is:
           - secured_by_view_import_containers
         responses:
@@ -258,7 +267,7 @@ traits:
       delete:
         displayName: Delete an Import Container.
         description: |
-          Deletes the Import Container specified by the `importContainerKey`.
+          Deletes an Import Container in the Project.
 
           Generates the [ImportContainerDeleted](/projects/events#import-container-deleted-event) Event.
         is:
@@ -279,7 +288,7 @@ traits:
           is:
             - secured_by_view_import_containers
           description: |
-            Retrieves an [ImportSummary](ctp:import:type:ImportSummary) for the given Import Container. An [ImportSummary](ctp:import:type:ImportSummary) is calculated on demand.
+            Retrieves an [ImportSummary](ctp:import:type:ImportSummary) for the [ImportContainer](ctp:import:type:ImportContainer) with the provided `importContainerKey`.
           responses:
             200:
               body:
@@ -289,7 +298,7 @@ traits:
         type: base
         get:
           description: |
-            Retrieves all [ImportOperations](ctp:import:type:ImportOperation) of a given ImportContainer key.
+            Retrieves all ImportOperations within an [ImportContainer](ctp:import:type:ImportContainer).
           is:
             - secured_by_view_import_containers
           queryParameters:
@@ -314,11 +323,11 @@ traits:
               type: string[]
             resourceKey?:
               description: |
-                The key of the ImportOperation to retrieve.
+                `key` of the ImportOperation to retrieve.
               type: string
             state?:
               description: |
-                The state of the ImportOperations to retrieve.
+                `state` of the ImportOperations to retrieve.
               type: common.ProcessingState
             debug?:
               description: |
@@ -336,11 +345,11 @@ traits:
       uriParameters:
         id:
           description: |
-            The operation identifier
+            `id` of the [ImportOperation](ctp:import:type:ImportOperation).
           type: string
       get:
         description: |
-          Retrieves the [ImportOperation](ctp:import:type:ImportOperation) of a given ID.
+          Retrieves an ImportOperation with the provided `id`.
         is:
           - secured_by_view_import_containers
         responses:
@@ -361,11 +370,11 @@ traits:
         uriParameters:
           importContainerKey:
             (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description: Creates a request for creating new Categories or updating
-            existing ones.
+          description: Creates an Import Request for Categories.
           is:
             - secured_by_manage_products
           body:
@@ -387,12 +396,11 @@ traits:
         uriParameters:
           importContainerKey:
             (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description:
-            Creates a request for creating new Prices or updating existing
-            ones.
+          description: Creates an Import Request for Prices.
           is:
             - secured_by_manage_products
           body:
@@ -414,12 +422,11 @@ traits:
         uriParameters:
           importContainerKey:
             (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description:
-            Creates a request for creating new Standalone Prices or updating existing
-            ones.
+          description: Creates an Import Request for Standalone Prices.
           is:
             - secured_by_manage_standalone_prices
           body:
@@ -441,12 +448,11 @@ traits:
         uriParameters:
           importContainerKey:
             (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description:
-            Creates a request for creating new Products or updating existing
-            ones.
+          description: Creates an Import Request for Products.
           is:
             - secured_by_manage_products
           body:
@@ -473,7 +479,7 @@ traits:
             type: string
         post:
           description: |
-            Creates a request for creating new ProductDrafts or updating existing ones.
+            Creates an Import Request for Products.
           is:
             - secured_by_manage_products
           body:
@@ -495,12 +501,11 @@ traits:
         uriParameters:
           importContainerKey:
             (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description:
-            Creates a request for creating new ProductTypes or updating
-            existing ones.
+          description: Creates an Import Request for ProductTypes.
           is:
             - secured_by_manage_products
           body:
@@ -522,12 +527,11 @@ traits:
         uriParameters:
           importContainerKey:
             (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description:
-            Creates a request for creating new ProductVariants or updating
-            existing ones.
+          description: Creates an Import Request for ProductVariants.
           is:
             - secured_by_manage_products
           body:
@@ -549,11 +553,12 @@ traits:
         uriParameters:
           importContainerKey:
             (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
           description: |
-            Creates a new import request for Product Variant Patches.
+            Creates an Import Request for updating Product Variants.
             Returns an [InvalidField](ctp:import:type:InvalidFieldError) error if the [ProductVariantPatchRequest](ctp:import:type:ProductVariantPatchRequest) contains patches with and without the `product` field set.
           is:
             - secured_by_manage_products
@@ -576,10 +581,11 @@ traits:
         uriParameters:
           importContainerKey:
             (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description: Creates a request for creating new Orders.
+          description: Creates an Import Request for creating Orders.
           is:
             - secured_by_manage_orders
           body:
@@ -604,7 +610,7 @@ traits:
             description: The ImportContainer used to create the resource
             type: string
         post:
-          description: Creates a new import request for order patches
+          description: Creates an Import Request for updating Orders.
           is:
             - secured_by_manage_orders
           body:
@@ -626,12 +632,11 @@ traits:
         uriParameters:
           importContainerKey:
             (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description:
-            Creates a request for creating new Customers or updating existing
-            ones.
+          description: Creates an Import Request for Customers.
           is:
             - secured_by_manage_customers
           body:
@@ -653,12 +658,11 @@ traits:
         uriParameters:
           importContainerKey:
             (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description:
-            Creates a request for creating new Inventories or updating
-            existing ones.
+          description: Creates an Import Request for InventoryEntries.
           is:
             - secured_by_manage_products
           body:
@@ -680,11 +684,11 @@ traits:
         uriParameters:
           importContainerKey:
             (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description: Creates a request for creating new Type or updating
-            existing ones.
+          description: Creates an Import Request for Types.
           is:
             - secured_by_manage_types
           body:
@@ -706,17 +710,42 @@ traits:
         uriParameters:
           importContainerKey:
             (postman.paramName): import-container-key
-            description: The ImportContainer used to create the new resource
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description:
-            Creates a request for creating new Discount Codes or updating existing
-            ones.
+          description: Creates an Import Request for Discount Codes.
           is:
             - secured_by_manage_discount_codes
           body:
             type: import-request.DiscountCodeImportRequest
             example: !include examples/discount-code-import-request.json
+          responses:
+            201:
+              body:
+                type: import-request.ImportResponse
+                example: !include examples/import-response.json
+            400:
+              description: The request was invalid.
+              body:
+                type: error.ErrorResponse
+  /product-selections:
+    /import-containers:
+      /{importContainerKey}:
+        type: base
+        uriParameters:
+          importContainerKey:
+            (postman.paramName): import-container-key
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
+            type: string
+        post:
+          description: Creates an Import Request for Product Selections.
+          is:
+            - secured_by_manage_product_selections
+          body:
+            type: import-request.ProductSelectionImportRequest
+            example: !include examples/product-selection-import-request.json
           responses:
             201:
               body:
