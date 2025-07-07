@@ -1,0 +1,263 @@
+type:
+  baseDomain:
+    resourceType: BusinessUnit
+    resourceQueryType: BusinessUnitPagedQueryResponse
+    resourceDraft: BusinessUnitDraft
+    whereExample: 'name = "Some company"'
+    sortExample: createdAt asc
+(updateable): BusinessUnit
+(deleteable): BusinessUnit
+(createable): BusinessUnitDraft
+description: A Business Unit can represent a Company or a Division.
+get:
+  displayName: Query BusinessUnits in Store
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'view_business_units:{projectKey}',
+              'view_business_units:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../../examples/business-units.example.json
+head:
+  displayName: Check if BusinessUnit exists in Store by Query Predicate
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'view_business_units:{projectKey}',
+              'view_business_units:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  description: Checks if one or more BusinessUnits exist for the provided query predicate. Returns a `200 OK` status if any BusinessUnits match the query predicate, or a `404 Not Found` otherwise.
+  queryParameters:
+    where?:
+      type: QueryPredicate[]
+post:
+  displayName: Create BusinessUnit in Store
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'manage_business_units:{projectKey}',
+              'manage_business_units:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  body:
+    application/json:
+      example: !include ../../examples/business-unit-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../../examples/business-unit.example.json
+/key={key}:
+  (methodName): withKey
+  type:
+    baseResource:
+      uriParameterName: key
+      resourceType: BusinessUnit
+      resourceUpdateType: BusinessUnitUpdate
+  get:
+    displayName: Get BusinessUnit in Store by Key
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_business_units:{projectKey}',
+                'view_business_units:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/business-unit.example.json
+  head:
+    displayName: Check if BusinessUnit exists in Store by Key
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_business_units:{projectKey}',
+                'view_business_units:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: Checks if a BusinessUnit exists with the provided `key`. Returns a `200 OK` status if the BusinessUnit exists or a `404 Not Found` otherwise.
+  post:
+    displayName: Update BusinessUnit in Store by Key
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_business_units:{projectKey}',
+                'manage_business_units:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        example: !include ../../examples/business-unit-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/business-unit.example.json
+  delete:
+    displayName: Delete BusinessUnit in Store by Key
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_business_units:{projectKey}',
+                'manage_business_units:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/business-unit.example.json
+/{ID}:
+  (methodName): withId
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: BusinessUnit
+      resourceUpdateType: BusinessUnitUpdate
+  get:
+    displayName: Get BusinessUnit in Store by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_business_units:{projectKey}',
+                'view_business_units:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/business-unit.example.json
+  head:
+    displayName: Check if BusinessUnit exists in Store by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_business_units:{projectKey}',
+                'view_business_units:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: Checks if a BusinessUnit exists with the provided `id`. Returns a `200 OK` status if the BusinessUnit exists or a `404 Not Found` otherwise.
+  post:
+    displayName: Update BusinessUnit in Store by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_business_units:{projectKey}',
+                'manage_business_units:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        example: !include ../../examples/business-unit-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/business-unit.example.json
+  delete:
+    displayName: Delete BusinessUnit in Store by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_business_units:{projectKey}',
+                'manage_business_units:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/business-unit.example.json
+/key={key}/associates/{associateId}:
+  type: base
+  uriParameters:
+    key:
+      type: string
+      description: '`key` of the [BusinessUnit](ctp:api:type:BusinessUnit).'
+    associateId:
+      type: string
+      description: '`id` of the [Customer](ctp:api:type:Customer) acting as an Associate in the Business Unit.'
+  get:
+    displayName: Get Associate in BusinessUnit in Store by Key
+    description: |
+      Retrieves roles and permissions of an Associate in a Business Unit in a Store.
+    securedBy: [oauth_2_0: { scopes: ['view_business_units:{projectKey}'] }]
+    responses:
+      200:
+        body:
+          application/json:
+            type: BusinessUnitAssociateResponse
+            example: !include ../../examples/BusinessUnit/BusinessUnitAssociateResponseExample.json
+/{businessUnitId}/associates/{associateId}:
+  type: base
+  uriParameters:
+    businessUnitId:
+      type: string
+      description: '`id` of the [BusinessUnit](ctp:api:type:BusinessUnit).'
+    associateId:
+      type: string
+      description: '`id` of the [Customer](ctp:api:type:Customer) acting as an Associate in the Business Unit.'
+  get:
+    displayName: Get Associate in BusinessUnit in Store by ID
+    description: |
+      Retrieves roles and permissions of an Associate in a Business Unit in a Store.
+    securedBy: [oauth_2_0: { scopes: ['view_business_units:{projectKey}'] }]
+    responses:
+      200:
+        body:
+          application/json:
+            type: BusinessUnitAssociateResponse
+            example: !include ../../examples/BusinessUnit/BusinessUnitAssociateResponseExample.json

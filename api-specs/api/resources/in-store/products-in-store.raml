@@ -1,0 +1,282 @@
+/{productID}:
+  (methodName): withProductId
+  uriParameters:
+    productID:
+      type: string
+      description: |
+        `id` of the [Product](ctp:api:type:Product).
+  /product-tailoring:
+    type:
+      baseSubResource:
+        resourceType: ProductTailoring
+        resourceUpdateType: ProductTailoringUpdate
+    get:
+      displayName: Get ProductTailoring assigned to Product in Store by Product ID
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_products:{projectKey}',
+                  'view_products:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+      description: |
+        Gets the current or staged representation of a [Product Tailoring](ctp:api:type:ProductTailoring) by its Product ID in the specified [Store](ctp:api:type:Store).
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/product-tailoring.example.json
+              type: ProductTailoring
+    post:
+      displayName: Update ProductTailoring assigned to Product in Store by Product ID
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_products:{projectKey}',
+                  'manage_products:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+      description: |
+        Updates the current or staged representation of a [Product Tailoring](ctp:api:type:ProductTailoring) by its Product ID in the specified [Store](ctp:api:type:Store).
+      body:
+        application/json:
+          example: !include ../../examples/product-tailoring-update.example.json
+      responses:
+        200:
+          body:
+            application/json:
+              type: ProductTailoring
+              example: !include ../../examples/product-tailoring-updated.example.json
+    delete:
+      displayName: Delete ProductTailoring assigned to Product in Store
+      description: |
+        Generates the [ProductTailoringDeleted](ctp:api:type:ProductTailoringDeletedMessage) Message.
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_products:{projectKey}',
+                  'manage_products:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: ProductTailoring
+              example: !include ../../examples/product-tailoring.example.json
+    /images:
+      post:
+        displayName: Upload ProductTailoring image by Product ID
+        description: |
+          Uploads a JPEG, PNG and GIF file to a [ProductVariantTailoring](ctp:api:type:ProductVariantTailoring).
+          The maximum file size of the image is **10MB**.
+          Either `variant` or `sku` is required to update a specific ProductVariant.
+          If neither is provided, the image is uploaded to the Master Variant of the Product.
+
+          The response status code depends on the size of the original image.
+          If the image is small, the API responds with `200 OK`, and if the image is larger, it responds with `202 Accepted`.
+          The Product returned with a `202 Accepted` status code contains a `warnings` field with an [ImageProcessingOngoing](ctp:api:type:ImageProcessingOngoingWarning) Warning.
+
+          Produces the [ProductTailoringImageAdded](/projects/messages/product-catalog-messages#product-tailoring-image-added) Message.
+        queryParameters:
+          filename?:
+            type: string
+            default: 'img'
+            description: |
+              URL-encoded filename of the image when stored in the Content Delivery Network (CDN).
+              The filename is modified when uploaded to prevent filename conflicts.
+              If not provided, a random filename is generated.
+          variant?:
+            type: number
+            format: int64
+            description: |
+              The `id` of the [ProductVariantTailoring](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to.
+              It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
+          sku?:
+            type: string
+            description: |
+              The `sku` of the [ProductVariantTailoring](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to.
+              It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
+          staged?:
+            type: boolean
+            default: true
+            description: |
+              If `true`, only the staged ProductVariantTailoring is updated.
+              If `false`, both the current and staged ProductVariantTailoring are updated.
+        securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
+        body:
+          image/jpeg:
+            type: file
+          image/png:
+            type: file
+          image/gif:
+            type: file
+        headers:
+          Content-Type:
+            type: string
+            description: |
+              One of `image/jpeg`, `image/png`, or `image/gif`.
+        responses:
+          200:
+            body:
+              application/json:
+                type: ProductTailoring
+                example: !include ../../examples/product-tailoring.example.json
+          202:
+            body:
+              application/json:
+                type: ProductTailoring
+                example: !include ../../examples/product-tailoring-with-image-processing-warning.example.json
+/key={productKey}:
+  (methodName): withProductKey
+  uriParameters:
+    productKey:
+      type: string
+      description: |
+        `key` of the [Product](ctp:api:type:Product).
+  /product-tailoring:
+    type:
+      baseSubResource:
+        resourceType: ProductTailoring
+        resourceUpdateType: ProductTailoringUpdate
+    get:
+      displayName: Get ProductTailoring assigned to Product in Store by Product Key
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'view_products:{projectKey}',
+                  'view_products:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+      description: |
+        Gets the current or staged representation of a [Product Tailoring](ctp:api:type:ProductTailoring) by its Product key in the specified [Store](ctp:api:type:Store).
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/product-tailoring.example.json
+              type: ProductTailoring
+    post:
+      displayName: Update ProductTailoring assigned to Product in Store by Product Key
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_products:{projectKey}',
+                  'manage_products:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+      description: |
+        Updates the current or staged representation of a [Product Tailoring](ctp:api:type:ProductTailoring) by its Product key in the specified [Store](ctp:api:type:Store).
+      body:
+        application/json:
+          example: !include ../../examples/product-tailoring-update.example.json
+      responses:
+        200:
+          body:
+            application/json:
+              type: ProductTailoring
+              example: !include ../../examples/product-tailoring-updated.example.json
+    delete:
+      displayName: Delete ProductTailoring assigned to Product in Store by Product Key
+      description: |
+        Generates the [ProductTailoringDeleted](ctp:api:type:ProductTailoringDeletedMessage) Message.
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_products:{projectKey}',
+                  'manage_products:{projectKey}:{storeKey}',
+                ],
+            },
+        ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: ProductTailoring
+              example: !include ../../examples/product-tailoring.example.json
+    /images:
+      post:
+        displayName: Upload ProductTailoring image by Product Key
+        description: |
+          Uploads a JPEG, PNG and GIF file to a [ProductVariantTailoring](ctp:api:type:ProductVariantTailoring).
+          The maximum file size of the image is **10MB**.
+          Either `variant` or `sku` is required to update a specific ProductVariant.
+          If neither is provided, the image is uploaded to the Master Variant of the Product.
+
+          The response status code depends on the size of the original image.
+          If the image is small, the API responds with `200 OK`, and if the image is larger, it responds with `202 Accepted`.
+          The Product returned with a `202 Accepted` status code contains a `warnings` field with an [ImageProcessingOngoing](ctp:api:type:ImageProcessingOngoingWarning) Warning.
+
+          Produces the [ProductTailoringImageAdded](/projects/messages/product-catalog-messages#product-tailoring-image-added) Message.
+        queryParameters:
+          filename?:
+            type: string
+            default: 'img'
+            description: |
+              URL-encoded filename of the image when stored in the Content Delivery Network (CDN).
+              The filename is modified when uploaded to prevent filename conflicts.
+              If not provided, a random filename is generated.
+          variant?:
+            type: number
+            format: int64
+            description: |
+              The `id` of the [ProductVariantTailoring](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to.
+              It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
+          sku?:
+            type: string
+            description: |
+              The `sku` of the [ProductVariantTailoring](/projects/product-tailoring#productvarianttailoring) the image should be uploaded to.
+              It must correspond to an existing [ProductVariant](/projects/products#productvariant) in the Product.
+          staged?:
+            type: boolean
+            default: true
+            description: |
+              If `true`, only the staged ProductVariantTailoring is updated.
+              If `false`, both the current and staged ProductVariantTailoring are updated.
+        securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
+        body:
+          image/jpeg:
+            type: file
+          image/png:
+            type: file
+          image/gif:
+            type: file
+        headers:
+          Content-Type:
+            type: string
+            description: |
+              One of `image/jpeg`, `image/png`, or `image/gif`.
+        responses:
+          200:
+            body:
+              application/json:
+                type: ProductTailoring
+                example: !include ../../examples/product-tailoring.example.json
+          202:
+            body:
+              application/json:
+                type: ProductTailoring
+                example: !include ../../examples/product-tailoring-with-image-processing-warning.example.json

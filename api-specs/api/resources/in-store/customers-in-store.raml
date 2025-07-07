@@ -1,0 +1,379 @@
+type:
+  baseDomain:
+    resourceType: Customer
+    resourceQueryType: CustomerPagedQueryResponse
+    resourceDraft: CustomerDraft
+    whereExample: 'email = "email@example.com"'
+    sortExample: createdAt asc
+(updateable): Customer
+(deleteable): Customer
+(createable): CustomerDraft
+description: |
+  A Customer is a person purchasing products. Carts, Orders,
+  Comments and Reviews can be associated to a Customer.
+get:
+  displayName: Query Customers in Store
+  securedBy:
+    - oauth_2_0:
+        scopes:
+          - 'view_customers:{projectKey}'
+          - 'view_customers:{projectKey}:{storeKey}'
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../../examples/customers.example.json
+head:
+  displayName: Check if Customers exist in Store by Query Predicate
+  securedBy:
+    - oauth_2_0:
+        scopes:
+          - 'view_customers:{projectKey}'
+          - 'view_customers:{projectKey}:{storeKey}'
+  description: Checks if one or more Customers exist for the provided query predicate. Returns a `200 OK` status if any Customers match the query predicate, or [Not Found](/../api/errors#404-not-found) otherwise.
+  queryParameters:
+    where?:
+      type: QueryPredicate[]
+post:
+  displayName: Create (sign up) Customer in Store
+  securedBy:
+    - oauth_2_0:
+        scopes:
+          - 'manage_customers:{projectKey}'
+          - 'manage_customers:{projectKey}:{storeKey}'
+  description: |
+    When using this endpoint, if omitted, the Customer `stores` field is set to the [Store](ctp:api:type:Store) specified in the path parameter.
+
+    If the `anonymousCart` field is set on the [CustomerDraft](ctp:api:type:CustomerDraft), then the newly created Customer will be assigned to that [Cart](ctp:api:type:Cart).
+    Similarly, if the `anonymousId` field is set, the Customer will be set on all [Carts](ctp:api:type:Cart), [Orders](ctp:api:type:Order), [ShoppingLists](ctp:api:type:ShoppingList) and [Payments](ctp:api:type:Payment) with the same `anonymousId`.
+    If a Cart with a `store` field specified, the `store` field must reference the same [Store](ctp:api:type:Store) specified in the `{storeKey}` path parameter.
+
+    Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message. Simultaneously creating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.
+  body:
+    application/json:
+      example: !include ../../examples/customer-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../../examples/customer-sign-in-result.example.json
+          type: CustomerSignInResult
+/password-token={passwordToken}:
+  (methodName): withPasswordToken
+  type:
+    baseResource:
+      uriParameterName: passwordToken
+      resourceType: Customer
+  get:
+    displayName: Get Customer in Store by password token
+    description: |
+      Use this method to retrieve a Store-specific Customer's details by using the password reset token during their [password reset process](/../api/customers-overview#customer-password-reset).
+
+      If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'view_customers:{projectKey}'
+            - 'view_customers:{projectKey}:{storeKey}'
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json
+      400:
+        description: An [ExpiredCustomerPasswordToken](ctp:api:type:ExpiredCustomerPasswordTokenError) error is returned as the provided token has expired.
+      404:
+        description: The provided token is invalid or does not exist.
+/email-token={emailToken}:
+  (methodName): withEmailToken
+  type:
+    baseResource:
+      uriParameterName: emailToken
+      resourceType: Customer
+  get:
+    displayName: Get Customer in Store by email token
+    description: |
+      Use this method to retrieve a Store-specific Customer's details by using the email token during their [email verification process](/../api/customers-overview#customer-email-verification).
+
+      If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'view_customers:{projectKey}'
+            - 'view_customers:{projectKey}:{storeKey}'
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json
+      400:
+        description: An [ExpiredCustomerEmailToken](ctp:api:type:ExpiredCustomerEmailTokenError) error is returned as the provided token has expired.
+      404:
+        description: The provided token is invalid or does not exist.
+/email-token:
+  type: base
+  post:
+    displayName: Create email token for Customer in Store
+    description: |
+      Use this method to create an email token for a Store-specific Customer during their [email verification process](/../api/customers-overview#customer-email-verification).
+
+      If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+      Creating an email token for the Customer produces the [CustomerEmailTokenCreated](ctp:api:type:CustomerEmailTokenCreatedMessage) Message.
+      The Message will include the token's value, if the token's validity is 60 minutes or less.
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'manage_customers:{projectKey}'
+            - 'manage_customers:{projectKey}:{storeKey}'
+    body:
+      application/json:
+        example: !include ../../examples/Customer/CustomerCreateEmailToken.json
+        type: CustomerCreateEmailToken
+    responses:
+      200:
+        body:
+          application/json:
+            type: CustomerToken
+/email/confirm:
+  type: base
+  post:
+    displayName: Verify email of Customer in Store
+    description: |
+      Use this method to verify a Store-specific Customer's email during their [email verification process](/../api/customers-overview#customer-email-verification).
+
+      Verifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.
+
+      If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+      After the email is verified, all email tokens issued previously through the [email verification flow](/../api/projects/customers#email-verification-of-customer) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'manage_customers:{projectKey}'
+            - 'manage_customers:{projectKey}:{storeKey}'
+    body:
+      application/json:
+        example: !include ../../examples/Customer/CustomerEmailVerify.json
+        type: CustomerEmailVerify
+    responses:
+      200:
+        description: The email was verified.
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json
+            type: Customer
+      400:
+        description: An [ExpiredCustomerEmailToken](ctp:api:type:ExpiredCustomerEmailTokenError) error is returned as the provided token has expired.
+      404:
+        description: The provided token is invalid or does not exist.
+/password:
+  type: base
+  post:
+    displayName: Change password of Customer in Store
+    description: |
+      Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'manage_customers:{projectKey}'
+            - 'manage_customers:{projectKey}:{storeKey}'
+    body:
+      application/json:
+        example: !include ../../examples/Customer/CustomerChangePassword.json
+        type: CustomerChangePassword
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json
+            type: Customer
+/password/reset:
+  type: base
+  post:
+    displayName: Reset password of Customer in Store
+    description: |
+      Use this method to reset a Store-specific Customer's password during their [password reset process](/../api/customers-overview#customer-password-reset).
+
+      Resetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
+
+      After the password is reset, all password tokens issued previously through the [password reset flow](/../api/projects/customers#password-reset-of-customer) are invalidated. In addition, any access and refresh tokens issued previously through the [password flow](/../api/authorization#password-flow) and [refresh token flow](/../api/authorization#refresh-token-flow) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
+
+      If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), then this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'manage_customers:{projectKey}'
+            - 'manage_customers:{projectKey}:{storeKey}'
+    body:
+      application/json:
+        example: !include ../../examples/Customer/CustomerResetPassword.json
+        type: CustomerResetPassword
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json
+            type: Customer
+      400:
+        description: An [ExpiredCustomerPasswordToken](ctp:api:type:ExpiredCustomerPasswordTokenError) error is returned as the provided token has expired.
+      404:
+        description: The provided token is invalid or does not exist.
+/password-token:
+  type: base
+  post:
+    displayName: Create password reset token for Customer in Store
+    description: |
+      Use this method to create a password reset token for a Store-specific Customer during their [password reset process](/../api/customers-overview#customer-password-reset).
+
+      If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+      Creating a password reset token for the Customer produces the [CustomerPasswordTokenCreated](ctp:api:type:CustomerPasswordTokenCreatedMessage) Message.
+      The Message will include the token's value, if the token's validity is 60 minutes or less.
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'manage_customers:{projectKey}'
+            - 'manage_customers:{projectKey}:{storeKey}'
+    body:
+      application/json:
+        type: CustomerCreatePasswordResetToken
+        example: !include ../../examples/Customer/CustomerCreatePasswordResetToken.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: CustomerToken
+/key={key}:
+  (methodName): withKey
+  type:
+    baseResource:
+      uriParameterName: key
+      resourceType: Customer
+      resourceUpdateType: CustomerUpdate
+  get:
+    displayName: Get Customer in Store by Key
+    description: |
+      If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'view_customers:{projectKey}'
+            - 'view_customers:{projectKey}:{storeKey}'
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json
+  head:
+    displayName: Check if Customer exists in Store by Key
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'view_customers:{projectKey}'
+            - 'view_customers:{projectKey}:{storeKey}'
+    description: Checks if a Customer exists with the provided `key`. Returns a `200 OK` status if the Customer exists or a `404 Not Found` otherwise.
+  post:
+    displayName: Update Customer in Store by Key
+    description: |
+      If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+      Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'manage_customers:{projectKey}'
+            - 'manage_customers:{projectKey}:{storeKey}'
+    body:
+      application/json:
+        example: !include ../../examples/customer-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json
+  delete:
+    displayName: Delete Customer in Store by Key
+    description: |
+      Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.
+
+      If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+    is:
+      - dataErasure
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'manage_customers:{projectKey}'
+            - 'manage_customers:{projectKey}:{storeKey}'
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json
+/{ID}:
+  (methodName): withId
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: Customer
+      resourceUpdateType: CustomerUpdate
+  get:
+    displayName: Get Customer in Store by ID
+    description: |
+      If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'view_customers:{projectKey}'
+            - 'view_customers:{projectKey}:{storeKey}'
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json
+  head:
+    displayName: Check if Customer exists in Store by ID
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'view_customers:{projectKey}'
+            - 'view_customers:{projectKey}:{storeKey}'
+    description: Checks if a Customer exists with the provided `id`. Returns a `200 OK` status if the Customer exists or a `404 Not Found` otherwise.
+  post:
+    displayName: Update Customer in Store by ID
+    description: |
+      If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+      Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.
+
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'manage_customers:{projectKey}'
+            - 'manage_customers:{projectKey}:{storeKey}'
+    body:
+      application/json:
+        example: !include ../../examples/customer-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json
+  delete:
+    displayName: Delete Customer in Store by ID
+    description: |
+      Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.
+
+      If the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+    is:
+      - dataErasure
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'manage_customers:{projectKey}'
+            - 'manage_customers:{projectKey}:{storeKey}'
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json

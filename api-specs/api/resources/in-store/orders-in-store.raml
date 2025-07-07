@@ -1,0 +1,311 @@
+type:
+  baseDomain:
+    resourceType: Order
+    resourceQueryType: OrderPagedQueryResponse
+    resourceDraft: OrderFromCartDraft
+    whereExample: 'customerEmail = "john.doe@example.com"'
+    sortExample: createdAt asc
+(updateable): Order
+(deleteable): Order
+(createable): OrderFromCartDraft
+description:
+  An order can be created from a cart, usually after a checkout process has
+  been completed.
+get:
+  displayName: Query Orders in Store
+  description: Retrieves Orders in a [Store](ctp:api:type:Store).
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            ['view_orders:{projectKey}', 'view_orders:{projectKey}:{storeKey}'],
+        },
+    ]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../../examples/orders.example.json
+head:
+  displayName: Check if Order exists in Store by Query Predicate
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            ['view_orders:{projectKey}', 'view_orders:{projectKey}:{storeKey}'],
+        },
+    ]
+  description: Checks if one or more Orders exist for the provided query predicate in a [Store](ctp:api:type:Store). Returns a `200 OK` status if any Orders match the query predicate, or [Not Found](/../api/errors#404-not-found) otherwise.
+  queryParameters:
+    where?:
+      type: QueryPredicate[]
+post:
+  displayName: Create Order in Store
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'manage_orders:{projectKey}',
+              'manage_orders:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  description: |
+    Creates an Order from a Cart in a [Store](ctp:api:type:Store).
+    The Cart must have a shipping address and an active Shipping Method set.
+
+    The shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).
+
+    Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
+    If a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.
+    If you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.
+
+    Specific Error Codes:
+
+    - [OutOfStock](ctp:api:type:OutOfStockError)
+    - [PriceChanged](ctp:api:type:PriceChangedError)
+    - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
+    - [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)
+    - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+    - [InvalidOperation](ctp:api:type:InvalidOperationError)
+    - [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)
+    - [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)
+    - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
+  body:
+    application/json:
+      example: !include ../../examples/order-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../../examples/order.example.json
+/quotes:
+  (methodName): orderQuote
+  type: base
+  displayName: Order from Quote
+  post:
+    displayName: Create Order in Store from Quote
+    description: |
+
+      Creates an Order from a [Quote](ctp:api:type:Quote) in a [Store](ctp:api:type:Store). The referenced Quote must have the `Pending` [state](ctp:api:type:QuoteState) and must be valid (not past the `validTo` date); otherwise, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
+
+      Produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
+      Specific Error Codes:
+
+      - [OutOfStock](ctp:api:type:OutOfStockError)
+      - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+      - [InvalidOperation](ctp:api:type:InvalidOperationError)
+      - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_quotes:{projectKey}',
+                'manage_quotes:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        example: !include ../../examples/order-from-quote.example.json
+        type: OrderFromQuoteDraft
+    responses:
+      201:
+        body:
+          application/json:
+            example: !include ../../examples/order.example.json
+            type: Order
+/order-number={orderNumber}:
+  (methodName): withOrderNumber
+  uriParameters:
+    orderNumber:
+      type: string
+      description: '`orderNumber` of the [Order](ctp:api:type:Order). Should be provided in URL-encoded format.'
+  type:
+    baseResource:
+      uriParameterName: orderNumber
+      resourceType: Order
+      resourceUpdateType: OrderUpdate
+  get:
+    displayName: Get Order in Store by OrderNumber
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_orders:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: |
+      Retrieves an Order with the provided `orderNumber` in a [Store](ctp:api:type:Store).
+      If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/order.example.json
+  head:
+    displayName: Check if Order exists in Store by OrderNumber
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_orders:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: Checks if an Order exists with the provided `orderNumber` in a [Store](ctp:api:type:Store). Returns a `200 OK` status if the Order exists or [Not Found](/../api/errors#404-not-found) otherwise.
+  post:
+    displayName: Update Order in Store by OrderNumber
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_orders:{projectKey}',
+                'manage_orders:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: |
+      Updates an Order in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/orders#update-actions).
+      If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+    body:
+      application/json:
+        example: !include ../../examples/order-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/order.example.json
+  delete:
+    displayName: Delete Order in Store by OrderNumber
+    description: |
+      Deletes an Order in a [Store](ctp:api:type:Store).
+      If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+      Deleting an Order produces the [OrderDeleted](ctp:api:type:OrderDeletedMessage) Message.
+    is:
+      - dataErasure
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_orders:{projectKey}',
+                'manage_orders:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/order.example.json
+/{ID}:
+  (methodName): withId
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: Order
+      resourceUpdateType: OrderUpdate
+  get:
+    displayName: Get Order in Store by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_orders:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: |
+      Retrieves an Order with the provided `id` in a [Store](ctp:api:type:Store).
+      If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/order.example.json
+  head:
+    displayName: Check if Order exists in Store by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_orders:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: Checks if an Order exists with the provided `id` in a [Store](ctp:api:type:Store). Returns a `200 OK` status if the Order exists or [Not Found](/../api/errors#404-not-found) otherwise.
+  post:
+    displayName: Update Order in Store by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_orders:{projectKey}',
+                'manage_orders:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: |
+      Updates an Order in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/orders#update-actions).
+      If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+    body:
+      application/json:
+        example: !include ../../examples/order-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/order.example.json
+  delete:
+    displayName: Delete Order in Store by ID
+    description: |
+      Deletes an Order in a [Store](ctp:api:type:Store).
+      If the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.
+
+      Deleting an Order produces the [OrderDeleted](ctp:api:type:OrderDeletedMessage) Message.
+    is:
+      - dataErasure
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_orders:{projectKey}',
+                'manage_orders:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/order.example.json

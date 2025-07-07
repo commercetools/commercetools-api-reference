@@ -7,37 +7,6 @@ uses:
   annotations: ../annotationTypes/annotations.raml
 
 types:
-  StrategyEnum:
-    description: The strategy of the retention policy. Used to determine how the ImportContainer should be retained.
-    type: string
-    (annotations.beta): true
-    enum:
-      - ttl
-    (annotations.enumDescriptions):
-      ttl: Time to live
-  RetentionPolicy:
-    description: The retention policy of the ImportContainer. If not set, the ImportContainer does not expire.
-    discriminator: strategy
-    properties:
-      strategy:
-        type: StrategyEnum
-  TimeToLiveConfig:
-    type: object
-    (annotations.beta): true
-    properties:
-      timeToLive:
-        description: The time to live of the ImportContainer. Used to generate the `expiresAt` value of the ImportContainer. The lowest accepted value is `1h` and the highest accepted value is `30d`.
-        type: string
-        pattern: '^(?:(\d+)d|(\d+)h|(\d+)m)$'
-  TimeToLiveRetentionPolicy:
-    type: RetentionPolicy
-    description: Set a time to live retention policy for the ImportContainer.
-    (annotations.beta): true
-    discriminatorValue: ttl
-    properties:
-      config:
-        type: TimeToLiveConfig
-        description: The configuration of the time to live retention policy.
   ImportContainer:
     description: |
       Serves as the entry point of resources.
@@ -45,7 +14,9 @@ types:
     example: !include ../examples/import-container-minimal.json
     properties:
       key:
-        description: User-defined unique identifier for the ImportContainer.
+        description: |
+          User-defined unique identifier for the ImportContainer.
+          Keys can only contain alphanumeric characters (a-Z, 0-9), underscores and hyphens (_, -).
         type: string
       resourceType?:
         description: |
@@ -56,38 +27,27 @@ types:
         description: The version of the ImportContainer.
         type: number
         format: int64
-      retentionPolicy?:
-        type: RetentionPolicy
-        (annotations.beta): true
-        description: The retention policy of the ImportContainer.
       createdAt:
-        description: Date and time (UTC) the ImportContainer was initially created.
+        description: The time when the ImportContainer was created.
         type: datetime
       lastModifiedAt:
-        description: Date and time (UTC) the ImportContainer was last updated.
+        description: The last time when the ImportContainer was modified.
         type: datetime
-      expiresAt?:
-        type: datetime
-        (annotations.beta): true
-        description: Date and time (UTC) the ImportContainer is automatically deleted. Only present if a `retentionPolicy` is set. ImportContainers without `expiresAt` are permanent until [manually deleted](#delete-importcontainer).
   ImportContainerDraft:
     description: |
       The representation sent to the server when creating an [ImportContainer](#importcontainer).
     example: !include ../examples/import-container-draft-minimal.json
     properties:
       key:
-        description: User-defined unique identifier of the ImportContainer.
+        description: |
+          User-defined unique identifier of the ImportContainer.
+          Keys can only contain alphanumeric characters (a-Z, 0-9), underscores and hyphens (_, -).
         type: string
-        pattern: ^[a-zA-Z0-9_-]+$
       resourceType?:
         description: |
           The [resource type](#importresourcetype) to be imported.
           If not given, the ImportContainer is able to import all of the supported [ImportResourceTypes](#importresourcetype).
         type: common.ImportResourceType
-      retentionPolicy?:
-        type: RetentionPolicy
-        (annotations.beta): true
-        description: Set a retention policy to automatically delete the ImportContainer after a defined period.
   ImportContainerUpdateDraft:
     description: |
       The representation sent to the server when updating an Import Container.

@@ -1,0 +1,49 @@
+type: base
+uriParameters:
+  storeKey:
+    type: string
+    description: '`key` of the [Store](ctp:api:type:Store).'
+/business-units: !include /business-units-in-store.raml
+/cart-discounts: !include /cart-discounts-in-store.raml
+/carts: !include /carts-in-store.raml
+/customers: !include /customers-in-store.raml
+/me: !include /my-carts-orders-shoppinglists-in-store.raml
+/orders: !include /orders-in-store.raml
+/product-projections: !include /product-projections-in-store.raml
+/product-selection-assignments: !include /product-selection-assignments-in-store.raml
+/product-tailoring: !include /product-tailoring-in-store.raml
+/products: !include /products-in-store.raml
+/quote-requests: !include /quote-requests-in-store.raml
+/quotes: !include /quotes-in-store.raml
+/shipping-methods: !include /shipping-methods-in-store.raml
+/shopping-lists: !include /shopping-lists-in-store.raml
+/staged-quotes: !include /staged-quotes-in-store.raml
+/login:
+  type: base
+  description: Retrieves the authenticated customer.
+  post:
+    displayName: Authenticate (sign in) Customer in Store
+    description: |
+      Authenticates a Customer associated with a [Store](ctp:api:type:Store). For more information, see [Global versus Store-specific Customers](/../api/customers-overview#global-versus-store-specific-customers).
+
+      A Cart returned in the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) has any invalid Line Items removed and is [updated](/api/carts-orders-overview#update-a-cart) with the latest prices, taxes, and discounts. During these updates, the following errors can be returned: [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError) and [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError).
+
+      Triggers [Cart merge during sign-in](/../api/customers-overview#cart-merge-during-sign-in).
+
+      If the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error.
+
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'manage_customers:{projectKey}'
+            - 'manage_customers:{projectKey}:{storeKey}'
+    body:
+      application/json:
+        type: CustomerSignin
+        example: !include ../../examples/Customer/CustomerSignIn.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer-sign-in-result.example.json
+            type: CustomerSignInResult

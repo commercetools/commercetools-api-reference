@@ -1,0 +1,49 @@
+/matching-cart:
+  type: base
+  description: Get ShippingMethods for a cart in a store
+  get:
+    displayName: Get matching ShippingMethods for a Cart in Store
+    description: |
+      Retrieves the active ShippingMethods that can ship to the shipping address of the given Cart in a given [Store](ctp:api:type:Store).
+      Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
+      This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
+      If a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.
+    is:
+      - expandable
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'view_orders:{projectKey}'
+            - 'view_orders:{projectKey}:{storeKey}'
+            - 'manage_customers:{projectKey}:{storeKey}'
+            - 'view_shipping_methods:{projectKey}'
+            - 'manage_my_orders:{projectKey}'
+            - 'manage_my_orders:{projectKey}:{storeKey}'
+    queryParameters:
+      cartId:
+        type: string
+        description: |
+          ID of the Cart with a shipping address set.
+    responses:
+      200:
+        body:
+          application/json:
+            type: ShippingMethodPagedQueryResponse
+            example: !include ../../examples/shipping-methods.example.json
+  head:
+    displayName: Check if matching ShippingMethod exists for a Cart in Store
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - 'view_orders:{projectKey}'
+            - 'view_orders:{projectKey}:{storeKey}'
+            - 'manage_customers:{projectKey}:{storeKey}'
+            - 'view_shipping_methods:{projectKey}'
+            - 'manage_my_orders:{projectKey}'
+            - 'manage_my_orders:{projectKey}:{storeKey}'
+    queryParameters:
+      cartId:
+        type: string
+        description: |
+          ID of the Cart with a shipping address set.
+    description: Checks if an active ShippingMethod that can ship to the shipping address of the given Cart exists in the given [Store](ctp:api:type:Store). Returns a `200 OK` status if the ShippingMethod exists or a `404 Not Found` otherwise.
