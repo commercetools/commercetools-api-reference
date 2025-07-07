@@ -1403,42 +1403,6 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/ErrorObject'
-    StrategyEnum:
-      type: "string"
-      enum:
-        - ttl
-      x-beta: true
-      x-annotation-enumDescriptions:
-        ttl: "Time to live"
-    RetentionPolicy:
-      type: "object"
-      discriminator:
-        propertyName: strategy
-        mapping:
-          ttl: '#/components/schemas/TimeToLiveRetentionPolicy'
-      required:
-        - strategy
-      properties:
-        strategy:
-          $ref: '#/components/schemas/StrategyEnum'
-    TimeToLiveConfig:
-      type: "object"
-      required:
-        - timeToLive
-      properties:
-        timeToLive:
-          type: "string"
-    TimeToLiveRetentionPolicy:
-      allOf:
-        - $ref: '#/components/schemas/RetentionPolicy'
-        - type: "object"
-          required:
-            - config
-          properties:
-            strategy:
-              $ref: '#/components/schemas/StrategyEnum'
-            config:
-              $ref: '#/components/schemas/TimeToLiveConfig'
     ImportContainer:
       type: "object"
       required:
@@ -1454,15 +1418,10 @@ components:
         version:
           type: "number"
           format: "double"
-        retentionPolicy:
-          $ref: '#/components/schemas/RetentionPolicy'
         createdAt:
           type: "string"
           format: "datetime"
         lastModifiedAt:
-          type: "string"
-          format: "datetime"
-        expiresAt:
           type: "string"
           format: "datetime"
     ImportContainerDraft:
@@ -1474,8 +1433,6 @@ components:
           type: "string"
         resourceType:
           $ref: '#/components/schemas/ImportResourceType'
-        retentionPolicy:
-          $ref: '#/components/schemas/RetentionPolicy'
     ImportContainerUpdateDraft:
       type: "object"
       required:
