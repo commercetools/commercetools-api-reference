@@ -1,0 +1,121 @@
+type:
+  baseDomain:
+    resourceType: RecurringOrder
+    resourceQueryType: RecurringOrderPagedQueryResponse
+    resourceDraft: RecurringOrderDraft
+    whereExample: 'recurringOrderState = "Active"'
+    sortExample: createdAt asc
+(updateable): RecurringOrder
+(deleteable): RecurringOrder
+(createable): RecurringOrderDraft
+description: |
+  A Recurring Order can be created from an Order, usually after a checkout process has been completed or directly via the Recurring Orders API.
+get:
+  displayName: Query RecurringOrders
+  securedBy: [oauth_2_0: { scopes: ['view_recurring_orders:{projectKey}'] }]
+  description: |
+    Retrieves Recurring Orders in the Project.
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../examples/recurring-orders.example.json
+head:
+  displayName: Check if RecurringOrder exists by Query Predicate
+  securedBy: [oauth_2_0: { scopes: ['view_recurring_orders:{projectKey}'] }]
+  description: |
+    Checks if one or more Recurring Orders exist for the provided query predicate. Returns a `200 OK` status if any Recurring Orders match the query predicate, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+  queryParameters:
+    where?:
+      type: QueryPredicate[]
+post:
+  displayName: Create RecurringOrder
+  securedBy: [oauth_2_0: { scopes: ['manage_recurring_orders:{projectKey}'] }]
+  is:
+    - conflicting
+  description: |
+    Creates a Recurring Order in the Project.
+    The Cart is validated to ensure that it is convertible to an [Order](ctp:api:type:Order). If validation fails, an error is returned.
+
+    Produces the [RecurringOrderCreated](ctp:api:type:RecurringOrderCreatedMessage) message.
+
+    If a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Recurring Order creation may still successfully complete after the error is returned.
+    If you receive this error, you should verify the status of the Recurring Order by querying a unique identifier supplied during the creation request, such as the key.
+  body:
+    application/json:
+      example: !include ../examples/recurring-order-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../examples/recurring-order.example.json
+/{ID}:
+  (methodName): withId
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: RecurringOrder
+      resourceUpdateType: RecurringOrderUpdate
+  get:
+    displayName: Get RecurringOrder by ID
+    securedBy: [oauth_2_0: { scopes: ['view_recurring_orders:{projectKey}'] }]
+    description: |
+      Retrieves a Recurring Order with the provided `id`.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/recurring-order.example.json
+  head:
+    displayName: Check if RecurringOrder exists by ID
+    securedBy: [oauth_2_0: { scopes: ['view_recurring_orders:{projectKey}'] }]
+    description: |
+      Checks if a Recurring Order exists with the provided `id`. Returns a `200 OK` status if the Recurring Order exists, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+  post:
+    displayName: Update RecurringOrder by ID
+    securedBy: [oauth_2_0: { scopes: ['manage_recurring_orders:{projectKey}'] }]
+    description: |
+      Updates a Recurring Order using one or more [update actions](/../api/projects/recurring-orders#update-actions).
+    body:
+      application/json:
+        example: !include ../examples/recurring-order-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/recurring-order.example.json
+/key={key}:
+  (methodName): withKey
+  type:
+    baseResource:
+      uriParameterName: key
+      resourceType: RecurringOrder
+      resourceUpdateType: RecurringOrderUpdate
+  get:
+    displayName: Get RecurringOrder by Key
+    securedBy: [oauth_2_0: { scopes: ['view_recurring_orders:{projectKey}'] }]
+    description: |
+      Retrieves a Recurring Order with the provided `key`.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/recurring-order.example.json
+  head:
+    displayName: Check if RecurringOrder exists by Key
+    securedBy: [oauth_2_0: { scopes: ['view_recurring_orders:{projectKey}'] }]
+    description: |
+      Checks if a Recurring Order exists with the provided `key`. Returns a `200 OK` status if the Recurring Order exists, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+  post:
+    displayName: Update RecurringOrder by Key
+    securedBy: [oauth_2_0: { scopes: ['manage_recurring_orders:{projectKey}'] }]
+    description: |
+      Updates a Recurring Order using one or more [update actions](/../api/projects/recurring-orders#update-actions).
+    body:
+      application/json:
+        example: !include ../examples/recurring-order-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/recurring-order.example.json

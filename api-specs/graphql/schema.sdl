@@ -105,16 +105,19 @@ input AddBusinessUnitStore {
 }
 
 input AddCartCustomLineItem {
-  priceMode: CustomLineItemPriceMode = Standard
-  shippingDetails: ItemShippingDetailsDraft
-  custom: CustomFieldsDraft
-  quantity: Long
-  externalTaxRate: ExternalTaxRateDraft
-  taxCategory: ResourceIdentifierInput
-  slug: String!
-  money: BaseMoneyInput!
-  key: String
   name: [LocalizedStringItemInputType!]!
+  key: String
+  money: BaseMoneyInput!
+  slug: String!
+  externalTaxRate: ExternalTaxRateDraft
+  quantity: Long
+  custom: CustomFieldsDraft
+  shippingDetails: ItemShippingDetailsDraft
+  priceMode: CustomLineItemPriceMode
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: CustomLineItemRecurrenceInfoInputDraft
+  taxCategory: ResourceIdentifierInput
 }
 
 input AddCartCustomShippingMethod {
@@ -143,21 +146,24 @@ input AddCartItemShippingAddress {
 }
 
 input AddCartLineItem {
-  addedAt: DateTime
-  shippingDetails: ItemShippingDetailsDraft
-  inventoryMode: InventoryMode
-  externalTotalPrice: ExternalLineItemTotalPriceDraft
-  externalPrice: BaseMoneyInput
-  perMethodExternalTaxRate: [MethodExternalTaxRateDraft!] = []
-  externalTaxRate: ExternalTaxRateDraft
-  custom: CustomFieldsDraft
-  distributionChannel: ResourceIdentifierInput
-  supplyChannel: ResourceIdentifierInput
-  variantId: Int
-  quantity: Long
   key: String
-  sku: String
   productId: String
+  sku: String
+  quantity: Long
+  variantId: Int
+  supplyChannel: ResourceIdentifierInput
+  distributionChannel: ResourceIdentifierInput
+  custom: CustomFieldsDraft
+  shippingDetails: ItemShippingDetailsDraft
+  addedAt: DateTime
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: LineItemRecurrenceInfoInputDraft
+  externalTaxRate: ExternalTaxRateDraft
+  externalPrice: BaseMoneyInput
+  externalTotalPrice: ExternalLineItemTotalPriceDraft
+  perMethodExternalTaxRate: [MethodExternalTaxRateDraft!] = []
+  inventoryMode: InventoryMode
 }
 
 input AddCartPayment {
@@ -230,16 +236,19 @@ input AddMyBusinessUnitShippingAddressId {
 }
 
 input AddMyCartLineItem {
-  addedAt: DateTime
-  shippingDetails: ItemShippingDetailsDraft
-  custom: CustomFieldsDraft
-  distributionChannel: ResourceIdentifierInput
-  supplyChannel: ResourceIdentifierInput
-  variantId: Int
-  quantity: Long
-  sku: String
   key: String
   productId: String
+  sku: String
+  quantity: Long
+  variantId: Int
+  supplyChannel: ResourceIdentifierInput
+  distributionChannel: ResourceIdentifierInput
+  custom: CustomFieldsDraft
+  shippingDetails: ItemShippingDetailsDraft
+  addedAt: DateTime
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: LineItemRecurrenceInfoInputDraft
 }
 
 input AddMyPaymentTransaction {
@@ -390,16 +399,19 @@ input AddShoppingListTextLineItem {
 }
 
 input AddStagedOrderCustomLineItem {
-  priceMode: CustomLineItemPriceMode = Standard
-  shippingDetails: ItemShippingDetailsDraftType
-  custom: CustomFieldsDraft
-  quantity: Long
-  externalTaxRate: ExternalTaxRateDraft
-  taxCategory: ResourceIdentifierInput
-  slug: String!
-  money: BaseMoneyInput!
-  key: String
   name: [LocalizedStringItemInputType!]!
+  key: String
+  money: BaseMoneyInput!
+  slug: String!
+  externalTaxRate: ExternalTaxRateDraft
+  quantity: Long
+  custom: CustomFieldsDraft
+  priceMode: CustomLineItemPriceMode
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: CustomLineItemRecurrenceInfoInputDraft
+  shippingDetails: ItemShippingDetailsDraftType
+  taxCategory: ResourceIdentifierInput
 }
 
 type AddStagedOrderCustomLineItemOutput implements StagedOrderUpdateActionOutput {
@@ -447,21 +459,24 @@ type AddStagedOrderItemShippingAddressOutput implements StagedOrderUpdateActionO
 }
 
 input AddStagedOrderLineItem {
-  addedAt: DateTime
-  shippingDetails: ItemShippingDetailsDraftType
-  inventoryMode: InventoryMode
-  externalTotalPrice: ExternalLineItemTotalPriceDraft
-  externalPrice: BaseMoneyInput
-  perMethodExternalTaxRate: [MethodExternalTaxRateDraft!] = []
-  externalTaxRate: ExternalTaxRateDraft
-  custom: CustomFieldsDraft
-  distributionChannel: ResourceIdentifierInput
-  supplyChannel: ResourceIdentifierInput
-  variantId: Int
-  quantity: Long
   key: String
-  sku: String
   productId: String
+  sku: String
+  quantity: Long
+  variantId: Int
+  supplyChannel: ResourceIdentifierInput
+  distributionChannel: ResourceIdentifierInput
+  custom: CustomFieldsDraft
+  addedAt: DateTime
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: LineItemRecurrenceInfoInputDraft
+  externalTaxRate: ExternalTaxRateDraft
+  externalPrice: BaseMoneyInput
+  externalTotalPrice: ExternalLineItemTotalPriceDraft
+  perMethodExternalTaxRate: [MethodExternalTaxRateDraft!] = []
+  inventoryMode: InventoryMode
+  shippingDetails: ItemShippingDetailsDraftType
 }
 
 type AddStagedOrderLineItemOutput implements StagedOrderUpdateActionOutput {
@@ -673,22 +688,22 @@ enum AnonymousCartSignInMode {
 }
 
 type Applied implements OrderEditResult {
-  appliedAt: DateTime!
   excerptBeforeEdit: OrderExcerpt!
   excerptAfterEdit: OrderExcerpt!
   type: String!
+  appliedAt: DateTime!
 }
 
 input ApplyCartDeltaToCustomLineItemShippingDetailsTargets {
   customLineItemId: String
   customLineItemKey: String
-  targetsDelta: [ShippingTargetDraft!]!
+  targetsDelta: [ShippingTargetDraft!]
 }
 
 input ApplyCartDeltaToLineItemShippingDetailsTargets {
   lineItemId: String
-  targetsDelta: [ShippingTargetDraft!]!
   lineItemKey: String
+  targetsDelta: [ShippingTargetDraft!]
 }
 
 input ApplyStagedChanges {
@@ -861,6 +876,8 @@ type ApprovalRuleStatusSet implements MessagePayload {
 }
 
 input ApprovalRuleUpdateAction {
+  setCustomField: SetApprovalRuleCustomField
+  setCustomType: SetApprovalRuleCustomType
   setKey: SetApprovalRuleKey
   setName: SetApprovalRuleName
   setDescription: SetApprovalRuleDescription
@@ -868,8 +885,6 @@ input ApprovalRuleUpdateAction {
   setRequesters: SetApprovalRuleRequesters
   setStatus: SetApprovalRuleStatus
   setApprovers: SetApprovalRuleApprovers
-  setCustomField: SetApprovalRuleCustomField
-  setCustomType: SetApprovalRuleCustomType
 }
 
 input ApproveApprovalFlow {
@@ -1328,6 +1343,11 @@ input BaseSearchKeywordInput {
   custom: CustomSuggestTokenizerInput
 }
 
+type BestDeal implements DiscountTypeCombination {
+  type: String!
+  chosenDiscountType: ChosenDiscountType
+}
+
 "The `BigDecimal` scalar type represents signed fractional values with arbitrary precision."
 scalar BigDecimal
 
@@ -1609,8 +1629,8 @@ type BusinessUnitQueryResult {
 
 type BusinessUnitSearchConfiguration {
   status: BusinessUnitSearchStatus!
-  lastModifiedAt: DateTime!
   lastModifiedBy: Initiator
+  lastModifiedAt: DateTime!
 }
 
 enum BusinessUnitSearchStatus {
@@ -1699,6 +1719,7 @@ input BusinessUnitUpdateAction {
   addStore: AddBusinessUnitStore
   changeAddress: ChangeBusinessUnitAddress
   changeAssociate: ChangeBusinessUnitAssociate
+  changeAssociateMode: ChangeBusinessUnitAssociateMode
   changeName: ChangeBusinessUnitName
   changeParentUnit: ChangeBusinessUnitParentUnit
   changeStatus: ChangeBusinessUnitStatus
@@ -1717,7 +1738,6 @@ input BusinessUnitUpdateAction {
   setDefaultShippingAddress: SetBusinessUnitDefaultShippingAddress
   setStores: SetBusinessUnitStores
   setStoreMode: SetBusinessUnitStoreMode
-  changeAssociateMode: ChangeBusinessUnitAssociateMode
   changeApprovalRuleMode: ChangeBusinessUnitApprovalRuleMode
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
@@ -1803,12 +1823,9 @@ type CartCreated implements MessagePayload {
 "\nCart discounts are recalculated every time LineItems or CustomLineItems are added or removed from the Cart or an order is created from the cart.\n\nThe number of active cart discounts that do not require a discount code (isActive=true and requiresDiscountCode=false) is limited to 100.\n      "
 type CartDiscount implements Versioned & ReferenceExpandable {
   cartPredicate: String!
-  validFrom: DateTime
-  validUntil: DateTime
   stackingMode: StackingMode!
   isActive: Boolean!
   requiresDiscountCode: Boolean!
-  sortOrder: String!
   key: String
   discountGroupRef: Reference
   name(
@@ -1827,12 +1844,16 @@ type CartDiscount implements Versioned & ReferenceExpandable {
   descriptionAllLocales: [LocalizedString!]
   referenceRefs: [Reference!]!
   custom: CustomFieldsType
+  validFrom: DateTime
+  validUntil: DateTime
   storesRef: [KeyReference!]!
   stores: [Store!]!
+
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   discountGroup: DiscountGroup
   value: CartDiscountValue!
   target: CartDiscountTarget
+  sortOrder: String!
   id: String!
   version: Long!
   createdAt: DateTime!
@@ -1865,6 +1886,7 @@ input CartDiscountDraft {
   custom: CustomFieldsDraft
   key: String
   stores: [ResourceIdentifierInput!]
+
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   discountGroup: ResourceIdentifierInput
 }
@@ -1989,7 +2011,6 @@ input CartDiscountValueBaseMoneyInput {
   centAmount: Long
 }
 
-
 input CartDiscountValueInput {
   relative: RelativeDiscountValueInput
   absolute: AbsoluteDiscountValueInput
@@ -1997,25 +2018,6 @@ input CartDiscountValueInput {
   fixed: FixedPriceDiscountValueInput
   fixedCart: FixedPriceCartDiscountValueInput
   giftLineItem: GiftLineItemValueInput
-}
-
-"Chosen discount type for the cart as part of best deal"
-enum ChosenDiscountType {
-  CartDiscount
-  ProductDiscount
-}
-
-interface DiscountTypeCombination {
-  type: String!
-}
-
-type Stacking implements DiscountTypeCombination {
-  type: String!
-}
-
-type BestDeal implements DiscountTypeCombination {
-  type: String!
-  chosenDiscountType: ChosenDiscountType
 }
 
 input CartDraft {
@@ -2069,6 +2071,9 @@ enum CartOrigin {
 
   "The cart was created by our platform and belongs to a Quote."
   Quote
+
+  "The cart was created by the merchant as a recurring order."
+  RecurringOrder
 }
 
 "Fields to access carts. Includes direct access to a single cart and searching for carts."
@@ -2108,16 +2113,12 @@ enum CartState {
 }
 
 input CartUpdateAction {
-  addCustomLineItem: AddCartCustomLineItem
   addCustomShippingMethod: AddCartCustomShippingMethod
   addDiscountCode: AddCartDiscountCode
   addItemShippingAddress: AddCartItemShippingAddress
-  addLineItem: AddCartLineItem
   addPayment: AddCartPayment
   addShippingMethod: AddCartShippingMethod
   addShoppingList: AddCartShoppingList
-  applyDeltaToCustomLineItemShippingDetailsTargets: ApplyCartDeltaToCustomLineItemShippingDetailsTargets
-  applyDeltaToLineItemShippingDetailsTargets: ApplyCartDeltaToLineItemShippingDetailsTargets
   changeCustomLineItemMoney: ChangeCartCustomLineItemMoney
   changeCustomLineItemPriceMode: ChangeCartCustomLineItemPriceMode
   changeCustomLineItemQuantity: ChangeCartCustomLineItemQuantity
@@ -2179,6 +2180,17 @@ input CartUpdateAction {
   updateItemShippingAddress: UpdateCartItemShippingAddress
   freezeCart: FreezeCart
   unfreezeCart: UnfreezeCart
+  applyDeltaToLineItemShippingDetailsTargets: ApplyCartDeltaToLineItemShippingDetailsTargets
+  applyDeltaToCustomLineItemShippingDetailsTargets: ApplyCartDeltaToCustomLineItemShippingDetailsTargets
+  addLineItem: AddCartLineItem
+  addCustomLineItem: AddCartCustomLineItem
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setLineItemRecurrenceInfo: SetLineItemRecurrenceInfo
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setCustomLineItemRecurrenceInfo: SetCustomLineItemRecurrenceInfo
+
   changeLineItemQuantity: ChangeCartLineItemQuantity
 }
 
@@ -2194,8 +2206,8 @@ type CartsConfiguration {
   deleteDaysAfterLastModification: Int
   allowAddingUnpublishedProducts: Boolean!
   countryTaxRateFallbackEnabled: Boolean!
-  priceRoundingMode: RoundingMode!
   taxRoundingMode: RoundingMode!
+  priceRoundingMode: RoundingMode!
 }
 
 input CartsConfigurationInput {
@@ -2469,16 +2481,16 @@ input ChangeCartLineItemsOrder {
   lineItemOrder: [String!]!
 }
 
+input ChangeCartPriceRoundingMode {
+  priceRoundingMode: RoundingMode!
+}
+
 input ChangeCartTaxCalculationMode {
   taxCalculationMode: TaxCalculationMode!
 }
 
 input ChangeCartTaxMode {
   taxMode: TaxMode!
-}
-
-input ChangeCartPriceRoundingMode {
-  priceRoundingMode: RoundingMode!
 }
 
 input ChangeCartTaxRoundingMode {
@@ -2754,6 +2766,10 @@ input ChangeProjectSettingsOrderSearchStatus {
   status: OrderSearchStatus!
 }
 
+input ChangeProjectSettingsPriceRoundingMode {
+  priceRoundingMode: RoundingMode!
+}
+
 input ChangeProjectSettingsProductSearchIndexingEnabled {
   enabled: Boolean!
 }
@@ -2764,10 +2780,6 @@ input ChangeProjectSettingsShoppingListsConfiguration {
 
 input ChangeProjectSettingsTaxRoundingMode {
   taxRoundingMode: RoundingMode!
-}
-
-input ChangeProjectSettingsPriceRoundingMode {
-  priceRoundingMode: RoundingMode!
 }
 
 input ChangeQuoteCustomer {
@@ -2893,6 +2905,15 @@ type ChangeStagedOrderPaymentStateOutput implements StagedOrderUpdateActionOutpu
   paymentState: PaymentState!
 }
 
+input ChangeStagedOrderPriceRoundingMode {
+  priceRoundingMode: RoundingMode!
+}
+
+type ChangeStagedOrderPriceRoundingModeOutput implements StagedOrderUpdateActionOutput {
+  type: String!
+  priceRoundingMode: RoundingMode!
+}
+
 input ChangeStagedOrderShipmentState {
   shipmentState: ShipmentState!
 }
@@ -2918,15 +2939,6 @@ input ChangeStagedOrderTaxMode {
 type ChangeStagedOrderTaxModeOutput implements StagedOrderUpdateActionOutput {
   type: String!
   taxMode: TaxMode!
-}
-
-input ChangeStagedOrderPriceRoundingMode {
-  priceRoundingMode: RoundingMode!
-}
-
-type ChangeStagedOrderPriceRoundingModeOutput implements StagedOrderUpdateActionOutput {
-  type: String!
-  priceRoundingMode: RoundingMode!
 }
 
 input ChangeStagedOrderTaxRoundingMode {
@@ -3113,6 +3125,12 @@ input ChannelUpdateAction {
   setRoles: SetChannelRoles
 }
 
+"Chosen discount type for the cart as part of best deal"
+enum ChosenDiscountType {
+  CartDiscount
+  ProductDiscount
+}
+
 type ClassificationShippingRateInput implements ShippingRateInput {
   key: String!
   type: String!
@@ -3212,7 +3230,18 @@ input CountOnLineItemUnitsInput {
   predicate: String!
   minCount: Int = 1
   maxCount: Int
-  excludeCount: Int @deprecated(reason: "Please use 'triggerPattern' to exclude.")
+  excludeCount: Int
+}
+
+type Counter implements SkipConfiguration {
+  totalToSkip: Int!
+  skipped: Int!
+  lastSkippedAt: DateTime
+  type: String!
+}
+
+input CounterInputDraft {
+  totalToSkip: Int!
 }
 
 "[ISO 3166-1](http://en.wikipedia.org/wiki/ISO_3166-1) country code."
@@ -3247,6 +3276,7 @@ input CreateStandalonePrice {
   custom: CustomFieldsDraft
   discounted: DiscountedProductPriceValueInput
   active: Boolean! = true
+  recurrencePolicy: ResourceIdentifierInput
 }
 
 input CreateStore {
@@ -3367,6 +3397,9 @@ type CustomLineItem {
   custom: CustomFieldsType
   shippingDetails: ItemShippingDetails
   priceMode: CustomLineItemPriceMode!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: CustomLineItemRecurrenceInfo
 }
 
 input CustomLineItemDraft {
@@ -3380,6 +3413,9 @@ input CustomLineItemDraft {
   custom: CustomFieldsDraft
   shippingDetails: ItemShippingDetailsDraft
   priceMode: CustomLineItemPriceMode
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: CustomLineItemRecurrenceInfoInputDraft
 }
 
 type CustomLineItemDraftOutput {
@@ -3399,6 +3435,9 @@ type CustomLineItemDraftOutput {
     acceptLanguage: [Locale!]): String
   taxCategoryResId: ResourceIdentifier
   nameAllLocales: [LocalizedString!]!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: CustomLineItemRecurrenceInfoDraft
 }
 
 input CustomLineItemImportDraft {
@@ -3421,6 +3460,25 @@ enum CustomLineItemPriceMode {
 
   "This is the default mode."
   Standard
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type CustomLineItemRecurrenceInfo {
+  recurrencePolicy: RecurrencePolicy
+  recurrencePolicyRef: RecurrencePolicyRef!
+  expiresAt: DateTime
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type CustomLineItemRecurrenceInfoDraft {
+  recurrencePolicyRef: RecurrencePolicyReferenceIdentifier
+  expiresAt: DateTime
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input CustomLineItemRecurrenceInfoInputDraft {
+  recurrencePolicy: ResourceIdentifierInput!
+  expiresAt: DateTime
 }
 
 type CustomLineItemReturnItem implements ReturnItem {
@@ -3572,7 +3630,6 @@ type Customer implements Versioned & ReferenceExpandable {
   billingAddresses: [Address!]!
   storesRef: [KeyReference!]!
   stores: [Store!]!
-
   customerGroupAssignments: [CustomerGroupAssignment!]
   custom: CustomFieldsType
   id: String!
@@ -3895,8 +3952,8 @@ type CustomerQueryResult {
 
 type CustomerSearchConfiguration {
   status: CustomerSearchStatus!
-  lastModifiedAt: DateTime!
   lastModifiedBy: Initiator
+  lastModifiedAt: DateTime!
 }
 
 enum CustomerSearchStatus {
@@ -4083,6 +4140,15 @@ type DateType implements FieldType {
   name: String!
 }
 
+type DayOfMonthSchedule implements RecurrencePolicySchedule {
+  day: Int!
+  type: String!
+}
+
+input DayOfMonthScheduleInput {
+  day: Int!
+}
+
 type Delivery {
   id: String!
   key: String
@@ -4199,8 +4265,6 @@ type DiscountCode implements Versioned & ReferenceExpandable {
   maxApplicationsPerCustomer: Long
   cartPredicate: String
   applicationVersion: Long
-  validFrom: DateTime
-  validUntil: DateTime
   groups: [String!]!
   name(
     "String is defined for different locales. This argument specifies the desired locale."
@@ -4215,6 +4279,8 @@ type DiscountCode implements Versioned & ReferenceExpandable {
     "List of languages the client is able to understand, and which locale variant is preferred."
     acceptLanguage: [Locale!]): String
   cartDiscounts: [CartDiscount!]!
+  validFrom: DateTime
+  validUntil: DateTime
   referenceRefs: [Reference!]!
   nameAllLocales: [LocalizedString!]
   descriptionAllLocales: [LocalizedString!]
@@ -4277,10 +4343,10 @@ type DiscountCodeQueryResult {
 }
 
 enum DiscountCodeState {
+  ApplicationStoppedByGroupBestDeal
+
   "The discount code is active and none of the discounts were applied because the discount application was stopped by one discount that has the StackingMode of StopAfterThisDiscount defined"
   ApplicationStoppedByPreviousDiscount
-
-  ApplicationStoppedByGroupBestDeal
 
   "The discount code is active and it contains at least one active and valid CartDiscount. But its cart predicate does not match the cart or none of the contained active discount\u2019s cart predicates match the cart"
   DoesNotMatchCart
@@ -4341,14 +4407,6 @@ type DiscountGroup implements Versioned {
   lastModifiedBy: Initiator
 }
 
-"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-input DiscountGroupDraft {
-  key: String!
-  sortOrder: String!
-  name: [LocalizedStringItemInputType!]
-  description: [LocalizedStringItemInputType!]
-}
-
 type DiscountGroupCreated implements MessagePayload {
   discountGroup: DiscountGroup!
   type: String!
@@ -4359,17 +4417,18 @@ type DiscountGroupDeleted implements MessagePayload {
   type: String!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input DiscountGroupDraft {
+  key: String!
+  sortOrder: String!
+  name: [LocalizedStringItemInputType!]
+  description: [LocalizedStringItemInputType!]
+}
+
 type DiscountGroupKeySet implements MessagePayload {
   key: String!
   discountGroupId: String!
   oldKey: String
-  type: String!
-}
-
-type DiscountGroupSortOrderSet implements MessagePayload {
-  sortOrder: String!
-  discountGroupId: String!
-  oldSortOrder: String
   type: String!
 }
 
@@ -4388,6 +4447,13 @@ type DiscountGroupQueryResult {
   total: Long!
   exists: Boolean!
   results: [DiscountGroup!]!
+}
+
+type DiscountGroupSortOrderSet implements MessagePayload {
+  sortOrder: String!
+  discountGroupId: String!
+  oldSortOrder: String
+  type: String!
 }
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
@@ -5140,6 +5206,12 @@ type InterfaceInteractionsRawResult {
   results: [InterfaceInteractionsRaw!]!
 }
 
+enum IntervalUnit {
+  Days
+  Months
+  Weeks
+}
+
 "Inventory allows you to track stock quantity per SKU and optionally per supply channel"
 type InventoryEntry implements Versioned & ReferenceExpandable {
   sku: String!
@@ -5147,8 +5219,8 @@ type InventoryEntry implements Versioned & ReferenceExpandable {
   availableQuantity: Long!
   key: String
   restockableInDays: Int
-  expectedDelivery: DateTime
   supplyChannel: Channel
+  expectedDelivery: DateTime
   supplyChannelRef: Reference
   custom: CustomFieldsType
   id: String!
@@ -5238,7 +5310,7 @@ type ItemShippingDetails {
 }
 
 input ItemShippingDetailsDraft {
-  targets: [ShippingTargetDraft!]!
+  targets: [ShippingTargetDraft!]! = []
 }
 
 type ItemShippingDetailsDraftOutput {
@@ -5246,7 +5318,7 @@ type ItemShippingDetailsDraftOutput {
 }
 
 input ItemShippingDetailsDraftType {
-  targets: [ShippingTargetDraftType!]!
+  targets: [ShippingTargetDraftType!] = []
 }
 
 type ItemShippingTarget {
@@ -5348,6 +5420,9 @@ type LineItem {
   shippingDetails: ItemShippingDetails
   perMethodTaxRate: [MethodTaxRate!]!
   taxedPricePortions: [MethodTaxedPrice!]!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: LineItemRecurrenceInfo
 }
 
 input LineItemDraft {
@@ -5361,9 +5436,13 @@ input LineItemDraft {
   custom: CustomFieldsDraft
   shippingDetails: ItemShippingDetailsDraft
   addedAt: DateTime
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: LineItemRecurrenceInfoInputDraft
   externalTaxRate: ExternalTaxRateDraft
   externalPrice: BaseMoneyInput
   externalTotalPrice: ExternalLineItemTotalPriceDraft
+  perMethodExternalTaxRate: [MethodExternalTaxRateDraft!] = []
   inventoryMode: InventoryMode
 }
 
@@ -5383,6 +5462,9 @@ type LineItemDraftOutput {
   addedAt: DateTime
   distributionChannelResId: ResourceIdentifier
   supplyChannelResId: ResourceIdentifier
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: LineItemRecurrenceInfoDraft
 }
 
 input LineItemImportDraft {
@@ -5426,6 +5508,28 @@ enum LineItemPriceMode {
 
   "The price is selected form the product variant. This is the default mode."
   Platform
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type LineItemRecurrenceInfo {
+  recurrencePolicy: RecurrencePolicy
+  recurrencePolicyRef: RecurrencePolicyRef!
+  expiresAt: DateTime
+  priceSelectionMode: PriceSelectionMode!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type LineItemRecurrenceInfoDraft {
+  recurrencePolicyRef: RecurrencePolicyReferenceIdentifier
+  expiresAt: DateTime
+  priceSelectionMode: PriceSelectionMode!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input LineItemRecurrenceInfoInputDraft {
+  recurrencePolicy: ResourceIdentifierInput!
+  expiresAt: DateTime
+  priceSelectionMode: PriceSelectionMode!
 }
 
 type LineItemReturnItem implements ReturnItem {
@@ -5872,20 +5976,18 @@ type Mutation {
     "Queries with specified key"
     key: String): Category
   createChannel(draft: ChannelDraft!): Channel
-  updateChannel(version: Long!, actions: [ChannelUpdateAction!]!,
-
+  updateChannel(
     "Queries with specified ID"
     id: String,
 
     "Queries with specified key"
-    key: String): Channel
-  deleteChannel(version: Long!,
-
+    key: String, version: Long!, actions: [ChannelUpdateAction!]!): Channel
+  deleteChannel(
     "Queries with specified ID"
     id: String,
 
     "Queries with specified key"
-    key: String): Channel
+    key: String, version: Long!): Channel
   createOrUpdateCustomObject(draft: CustomObjectDraft!): CustomObject
   deleteCustomObject(version: Long,
 
@@ -6025,29 +6127,30 @@ type Mutation {
     key: String): ProductDiscount
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-    createDiscountGroup(
-      "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-      draft: DiscountGroupDraft!): DiscountGroup
+  createDiscountGroup(
+    "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+    draft: DiscountGroupDraft!): DiscountGroup
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   updateDiscountGroup(version: Long!,
-      "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-      actions: [DiscountGroupUpdateAction!]!,
-
-      "Queries with specified ID"
-      id: String,
-
-      "Queries with specified key"
-      key: String): DiscountGroup
 
     "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
-    deleteDiscountGroup(version: Long!,
+    actions: [DiscountGroupUpdateAction!]!,
 
-      "Queries with specified ID"
-      id: String,
+    "Queries with specified ID"
+    id: String,
 
-      "Queries with specified key"
-      key: String): DiscountGroup
+    "Queries with specified key"
+    key: String): DiscountGroup
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  deleteDiscountGroup(version: Long!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): DiscountGroup
   createAttributeGroup(draft: AttributeGroupDraft!): AttributeGroup
   updateAttributeGroup(version: Long!, actions: [AttributeGroupUpdateAction!]!,
 
@@ -6757,6 +6860,30 @@ type Mutation {
     key: String): AssociateRole
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  createRecurringOrder(draft: RecurringOrderDraft!): RecurringOrder
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  updateRecurringOrder(version: Long!, actions: [RecurringOrderUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): RecurringOrder
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  createRecurrencePolicy(draft: RecurrencePolicyDraft!): RecurrencePolicy
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  updateRecurrencePolicy(version: Long!, actions: [RecurrencePolicyUpdateAction!]!,
+
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): RecurrencePolicy
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   createPaymentMethod(draft: PaymentMethodDraft!): PaymentMethod
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
@@ -6849,10 +6976,8 @@ input MyCartDraft {
 input MyCartUpdateAction {
   addDiscountCode: AddCartDiscountCode
   addItemShippingAddress: AddCartItemShippingAddress
-  addLineItem: AddMyCartLineItem
   addPayment: AddCartPayment
   addShoppingList: AddCartShoppingList
-  applyDeltaToLineItemShippingDetailsTargets: ApplyCartDeltaToLineItemShippingDetailsTargets
   changeLineItemsOrder: ChangeCartLineItemsOrder
   changeTaxMode: ChangeMyCartTaxMode
   recalculate: RecalculateCart
@@ -6884,6 +7009,15 @@ input MyCartUpdateAction {
   setShippingCustomField: SetCartShippingCustomField
   setShippingCustomType: SetCartShippingCustomType
   updateItemShippingAddress: UpdateCartItemShippingAddress
+  applyDeltaToLineItemShippingDetailsTargets: ApplyCartDeltaToLineItemShippingDetailsTargets
+  applyDeltaToCustomLineItemShippingDetailsTargets: ApplyCartDeltaToCustomLineItemShippingDetailsTargets
+  addLineItem: AddMyCartLineItem
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setLineItemRecurrenceInfo: SetLineItemRecurrenceInfo
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  setCustomLineItemRecurrenceInfo: SetCustomLineItemRecurrenceInfo
   changeLineItemQuantity: ChangeCartLineItemQuantity
 }
 
@@ -6924,6 +7058,9 @@ input MyLineItemDraft {
   custom: CustomFieldsDraft
   shippingDetails: ItemShippingDetailsDraft
   addedAt: DateTime
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: LineItemRecurrenceInfoInputDraft
 }
 
 """
@@ -7100,7 +7237,6 @@ type Order implements Versioned & ReferenceExpandable {
   shippingInfo: ShippingInfo
   discountCodes: [DiscountCodeInfo!]!
   directDiscounts: [DirectDiscount!]!
-  discountTypeCombination: DiscountTypeCombination
   refusedGifts: [CartDiscount!]!
   refusedGiftsRefs: [Reference!]!
   paymentInfo: PaymentInfo
@@ -7116,6 +7252,7 @@ type Order implements Versioned & ReferenceExpandable {
   taxedShippingPrice: TaxedPrice
   shippingMode: ShippingMode!
   shippingCustomFields: CustomFieldsType
+  discountTypeCombination: DiscountTypeCombination
   completedAt: DateTime
   orderNumber: String
   orderState: OrderState!
@@ -7131,6 +7268,12 @@ type Order implements Versioned & ReferenceExpandable {
   cart: Cart
   quoteRef: Reference
   quote: Quote
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurringOrderRef: Reference
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurringOrder: RecurringOrder
   custom: CustomFieldsType
   id: String!
   version: Long!
@@ -7167,6 +7310,12 @@ input OrderCartCommand {
 
 type OrderCreated implements MessagePayload & OrderMessagePayload {
   order: Order!
+  type: String!
+}
+
+type OrderCreatedFromRecurringOrder implements MessagePayload & OrderMessagePayload {
+  order: Order
+  recurringOrderRef: Reference!
   type: String!
 }
 
@@ -7456,8 +7605,8 @@ type OrderReturnShipmentStateChanged implements MessagePayload & OrderMessagePay
 
 type OrderSearchConfiguration {
   status: OrderSearchStatus!
-  lastModifiedAt: DateTime!
   lastModifiedBy: Initiator
+  lastModifiedAt: DateTime!
 }
 
 enum OrderSearchStatus {
@@ -7987,6 +8136,12 @@ type PaymentMethodPaymentInterfaceSet implements MessagePayload {
   type: String!
 }
 
+type PaymentMethodPaymentMethodStatusSet implements MessagePayload {
+  status: PaymentMethodStatus!
+  oldStatus: PaymentMethodStatus!
+  type: String!
+}
+
 type PaymentMethodQueryResult {
   offset: Int!
   count: Int!
@@ -7999,12 +8154,6 @@ type PaymentMethodQueryResult {
 enum PaymentMethodStatus {
   Active
   Inactive
-}
-
-type PaymentMethodPaymentMethodStatusSet implements MessagePayload {
-  status: PaymentMethodStatus!
-  oldStatus: PaymentMethodStatus!
-  type: String!
 }
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
@@ -8175,6 +8324,14 @@ enum Permission {
   ViewOthersShoppingLists
 }
 
+enum Placement {
+  "The Order or Cart is placed in-store."
+  InStore
+
+  "The Order or Cart is placed online."
+  Online
+}
+
 type PlainEnumValue {
   key: String!
   label: String!
@@ -8236,6 +8393,15 @@ enum PriceMode {
 
   "The system looks up prices from Standalone Prices, stored separately from Products."
   Standalone
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum PriceSelectionMode {
+  "Every time a new order is created from this recurring order, we will update to the latest price available"
+  Dynamic
+
+  "The price will stay the same until the recurring order expires or is cancelled"
+  Fixed
 }
 
 input PriceSelectorInput {
@@ -8386,7 +8552,8 @@ type ProductData {
     acceptLanguage: [Locale!]): String
   metaDescriptionAllLocales: [LocalizedString!]
   masterVariant: ProductVariant!
-  variants(
+  variants(onlyMatching: Boolean,
+
     "Queries for products with specified SKUs"
     skus: [String!], isOnStock: Boolean,
 
@@ -8400,7 +8567,8 @@ type ProductData {
     stockChannelIds: [String!], hasImages: Boolean): [ProductVariant!]!
 
   "Fetch all variants, including the master variant in first position."
-  allVariants(
+  allVariants(onlyMatching: Boolean,
+
     "Queries for products with specified SKUs"
     skus: [String!], isOnStock: Boolean,
 
@@ -8433,8 +8601,6 @@ type ProductDeleted implements MessagePayload {
 "\nA product price can be discounted in two ways:\n\n* with a relative or an absolute product discount, which will be automatically applied to all prices in a product that match a discount predicate.\n  A relative discount reduces the matching price by a fraction (for example 10 % off). An absolute discount reduces the matching price by a fixed amount (for example 10\u20AC off). If more than one product discount matches a price, the discount sort order determines which one will be applied.\n* with an external product discount, which can then be used to explicitly set a discounted value on a particular product price.\n\nThe discounted price is stored in the discounted field of the Product Price.\n\nNote that when a discount is created, updated or removed it can take up to 15 minutes to update all the prices with the discounts.\n\nThe maximum number of ProductDiscounts that can be active at the same time is **200**.\n      "
 type ProductDiscount implements Versioned & ReferenceExpandable {
   predicate: String!
-  validFrom: DateTime
-  validUntil: DateTime
   isActive: Boolean!
   isValid: Boolean!
   sortOrder: String!
@@ -8454,6 +8620,8 @@ type ProductDiscount implements Versioned & ReferenceExpandable {
   referenceRefs: [Reference!]!
   nameAllLocales: [LocalizedString!]!
   descriptionAllLocales: [LocalizedString!]
+  validFrom: DateTime
+  validUntil: DateTime
   value: ProductDiscountValue!
   id: String!
   version: Long!
@@ -8546,10 +8714,12 @@ type ProductImageAdded implements MessagePayload {
 }
 
 """
-An input object used to define a ProductAttribute. You should pass `value` in the form of an escaped JSON.
+An input object used to define a ProductAttribute.
+
+The value should be passed in a form of escaped JSON.
 
 
-Here are a few examples for `value`:
+Examples for `value`:
 
 * FieldType `String`: `"\"This is a string\""`
 * FieldType `DateTimeType`: `"\"2018-10-12T14:00:00.000Z\""`
@@ -8561,10 +8731,10 @@ input ProductLevelAttributeInput {
   name: String!
 
   """
-  An input object used to define a ProductLevelAttribute. You should pass `value` in the form of an escaped JSON.
+  The value should be passed in a form of escaped JSON.
 
 
-  Here are a few examples for `value`:
+  Examples for `value`:
 
   * FieldType `String`: `"\"This is a string\""`
   * FieldType `DateTimeType`: `"\"2018-10-12T14:00:00.000Z\""`
@@ -8611,6 +8781,12 @@ type ProductPrice {
   discounted: DiscountedProductPriceValue
   tiers: [ProductPriceTier!]
   custom: CustomFieldsType
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrencePolicy: RecurrencePolicy
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrencePolicyRef: Reference
 }
 
 type ProductPriceAdded implements MessagePayload {
@@ -8682,6 +8858,7 @@ input ProductPriceDataInput {
   tiers: [ProductPriceTierInput!] = []
   custom: CustomFieldsDraft
   discounted: DiscountedProductPriceValueInput
+  recurrencePolicy: ResourceIdentifierInput
 }
 
 type ProductPriceDiscountUpdateMessagePayload {
@@ -8951,7 +9128,10 @@ type ProductSearchVariant {
   prices: [ProductPriceSearch!]
 
   "Returns a single price based on the price selection rules."
-  price(currency: Currency!, country: Country, customerGroupId: String, channelId: String, date: DateTime): ProductPriceSearch
+  price(currency: Currency!, country: Country, customerGroupId: String, channelId: String, date: DateTime, recurrencePolicyId: String, returnAllPricesByRecurrencePolicy: Boolean): ProductPriceSearch
+
+  "Returns all recurrence prices based on the price selection rules."
+  allRecurrencePrices(currency: Currency!, country: Country, customerGroupId: String, channelId: String, date: DateTime, recurrencePolicyId: String, returnAllPricesByRecurrencePolicy: Boolean): [ProductPriceSearch!]
   images: [ImageProductSearch!]!
   assets: [Asset!]!
   availability: ProductSearchVariantAvailabilityWithChannels
@@ -9424,9 +9604,9 @@ input ProductTailoringUpdateAction {
   setAssetSources: SetProductTailoringAssetSources
   setAssetTags: SetProductTailoringAssetTags
   setImages: SetProductTailoringImages
-  setDescription: SetProductTailoringDescription
   setAttribute: SetProductTailoringAttribute
   setAttributeInAllVariants: SetProductTailoringAttributeInAllVariants
+  setDescription: SetProductTailoringDescription
   setImageLabel: SetProductTailoringImageLabel
   setMetaAttributes: SetProductTailoringMetaAttributes
   setMetaDescription: SetProductTailoringMetaDescription
@@ -9575,7 +9755,10 @@ type ProductVariant {
   prices: [ProductPrice!]
 
   "Returns a single price based on the price selection rules."
-  price(currency: Currency!, country: Country, customerGroupId: String, customerGroupAssignmentIds: [String!], channelId: String, date: DateTime): ProductPrice
+  price(currency: Currency!, country: Country, customerGroupId: String, customerGroupAssignmentIds: [String!], channelId: String, date: DateTime, recurrencePolicyId: String, returnAllPricesByRecurrencePolicy: Boolean): ProductPrice
+
+  "Returns all recurrence prices based on the price selection rules."
+  allRecurrencePrices(currency: Currency!, country: Country, customerGroupId: String, channelId: String, date: DateTime, recurrencePolicyId: String, returnAllPricesByRecurrencePolicy: Boolean): [ProductPrice!]
   images: [Image!]!
   assets: [Asset!]!
   availability: ProductVariantAvailabilityWithChannels
@@ -9759,7 +9942,6 @@ type ProjectProjection {
   key: String!
   name: String!
   languages: [Locale!]!
-  createdAt: DateTime!
   trialUntil: YearMonth
   carts: CartsConfiguration!
   shoppingLists: ShoppingListsConfiguration!
@@ -9770,6 +9952,7 @@ type ProjectProjection {
   countries: [Country!]!
   currencies: [Currency!]!
   shippingRateInputType: ShippingRateInputType
+  createdAt: DateTime!
 }
 
 input ProjectSettingsUpdateAction {
@@ -9922,6 +10105,7 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): ProductDiscount
   productDiscounts(where: String, sort: [String!], limit: Int, offset: Int): ProductDiscountQueryResult!
+
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   discountGroup(
     "Queries with specified ID"
@@ -10130,6 +10314,27 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     "Queries with specified key"
     key: String): AssociateRole
   associateRoles(where: String, sort: [String!], limit: Int, offset: Int): AssociateRoleQueryResult!
+  recurringOrder(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): RecurringOrder
+  recurringOrders(where: String, sort: [String!], limit: Int, offset: Int): RecurringOrderQueryResult!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrencePolicy(
+    "Queries with specified ID"
+    id: String,
+
+    "Queries with specified key"
+    key: String): RecurrencePolicy
+
+  """
+  Recurrence policies are managed and queried through the Recurrence Policy API
+  and associated to a Price
+  """
+  recurrencePolicies(where: String, sort: [String!], limit: Int, offset: Int): RecurrencePolicyQueryResult!
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   paymentMethod(
@@ -10487,6 +10692,237 @@ type RawProductSearchAttribute {
 
 input RecalculateCart {
   updateProductData: Boolean = false
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type RecurrencePolicy implements Versioned {
+  id: String!
+  version: Long!
+  key: String!
+  name(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  nameAllLocales: [LocalizedString!]
+  description(
+    "String is defined for different locales. This argument specifies the desired locale."
+    locale: Locale,
+
+    "List of languages the client is able to understand, and which locale variant is preferred."
+    acceptLanguage: [Locale!]): String
+  descriptionAllLocales: [LocalizedString!]
+  schedule: RecurrencePolicySchedule!
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+input RecurrencePolicyDraft {
+  key: String!
+  name: [LocalizedStringItemInputType!]
+  description: [LocalizedStringItemInputType!]
+  schedule: RecurrencePolicyScheduleInput!
+}
+
+type RecurrencePolicyQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+  exists: Boolean!
+  results: [RecurrencePolicy!]!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type RecurrencePolicyRef {
+  typeId: String!
+  id: String!
+}
+
+type RecurrencePolicyReferenceIdentifier {
+  typeId: String!
+  id: String
+  key: String
+}
+
+interface RecurrencePolicySchedule {
+  type: String!
+}
+
+input RecurrencePolicyScheduleInput {
+  standard: StandardScheduleInput
+  dayOfMonth: DayOfMonthScheduleInput
+}
+
+input RecurrencePolicyUpdateAction {
+  setDescription: SetRecurrencePolicyDescription
+  setKey: SetRecurrencePolicyKey
+  setName: SetRecurrencePolicyName
+  setSchedule: SetRecurrencePolicySchedule
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type RecurringOrder implements Versioned {
+  key: String
+  recurringOrderState: RecurringOrderState!
+  cartRef: Reference!
+  cart: Cart
+  startsAt: DateTime!
+  resumesAt: DateTime
+  expiresAt: DateTime
+  lastOrderAt: DateTime
+  nextOrderAt: DateTime
+  skipConfiguration: SkipConfiguration
+  businessUnit: BusinessUnit
+  businessUnitRef: KeyReference
+  custom: CustomFieldsType
+  stateRef: Reference
+  state: State
+  originOrderRef: Reference
+  originOrder: Order
+  schedule: RecurrencePolicySchedule!
+  customerRef: Reference
+  customer: Customer
+  customerEmail: String
+  id: String!
+  version: Long!
+  createdAt: DateTime!
+  lastModifiedAt: DateTime!
+  createdBy: Initiator
+  lastModifiedBy: Initiator
+}
+
+input RecurringOrderActiveInput {
+  resumesAt: DateTime
+}
+
+input RecurringOrderCanceledInput {
+  reason: String
+}
+
+type RecurringOrderCreated implements MessagePayload {
+  recurringOrder: RecurringOrder!
+  type: String!
+}
+
+type RecurringOrderCustomFieldAdded implements MessagePayload {
+  name: String!
+  value: Json!
+  type: String!
+}
+
+type RecurringOrderCustomFieldChanged implements MessagePayload {
+  name: String!
+  value: Json!
+  previousValue: Json
+  type: String!
+}
+
+type RecurringOrderCustomFieldRemoved implements MessagePayload {
+  name: String!
+  type: String!
+}
+
+type RecurringOrderCustomTypeRemoved implements MessagePayload {
+  previousTypeId: String
+  type: String!
+}
+
+type RecurringOrderCustomTypeSet implements MessagePayload {
+  customFields: CustomFieldsType!
+  previousTypeId: String
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input RecurringOrderDraft {
+  key: String
+  custom: CustomFieldsDraft
+  cart: ResourceIdentifierInput!
+  cartVersion: Long!
+  startsAt: DateTime!
+  expiresAt: DateTime
+  state: ResourceIdentifierInput
+  recurringOrderState: RecurringOrderState
+}
+
+input RecurringOrderExpiredInput {
+  dummy: String
+}
+
+type RecurringOrderKeySet implements MessagePayload {
+  key: String
+  oldKey: String
+  type: String!
+}
+
+input RecurringOrderPausedInput {
+  dummy: String
+}
+
+type RecurringOrderQueryResult {
+  offset: Int!
+  count: Int!
+  total: Long!
+  exists: Boolean!
+  results: [RecurringOrder!]!
+}
+
+type RecurringOrderScheduleSet implements MessagePayload {
+  recurrencePolicySchedule: RecurrencePolicySchedule!
+  oldRecurrencePolicySchedule: RecurrencePolicySchedule!
+  type: String!
+}
+
+type RecurringOrderStartsAtSet implements MessagePayload {
+  startsAt: DateTime!
+  oldStartsAt: DateTime!
+  type: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum RecurringOrderState {
+  Active
+  Canceled
+  Expired
+  Failed
+  Paused
+}
+
+type RecurringOrderStateChanged implements MessagePayload {
+  recurringOrderState: RecurringOrderState!
+  oldRecurringOrderState: RecurringOrderState!
+  type: String!
+}
+
+input RecurringOrderStateDraft {
+  active: RecurringOrderActiveInput
+  paused: RecurringOrderPausedInput
+  canceled: RecurringOrderCanceledInput
+  expired: RecurringOrderExpiredInput
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type RecurringOrderStateTransition implements MessagePayload {
+  force: Boolean!
+  state: State
+  oldState: State
+  stateRef: Reference!
+  oldStateRef: Reference
+  type: String!
+}
+
+input RecurringOrderUpdateAction {
+  setKey: SetRecurringOrderKey
+  setOrderSkipConfiguration: SetRecurringOrderOrderSkipConfiguration
+  setCustomField: SetRecurringOrderCustomField
+  setCustomType: SetRecurringOrderCustomType
+  setRecurringOrderState: SetRecurringOrderState
+  setSchedule: SetRecurringOrderSchedule
+  setStartsAt: SetRecurringOrderStartsAt
+  transitionState: TransitionRecurringOrderState
 }
 
 type Reference {
@@ -11208,8 +11644,8 @@ type SearchIndexingConfiguration {
 
 type SearchIndexingConfigurationValues {
   status: SearchIndexingStatus
-  lastModifiedAt: DateTime
   lastModifiedBy: Initiator
+  lastModifiedAt: DateTime
 }
 
 enum SearchIndexingStatus {
@@ -11298,6 +11734,18 @@ input SetApprovalRuleApprovers {
   approvers: ApproverHierarchyDraft!
 }
 
+input SetApprovalRuleCustomField {
+  name: String!
+  value: String
+}
+
+input SetApprovalRuleCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
 input SetApprovalRuleDescription {
   description: String
 }
@@ -11320,18 +11768,6 @@ input SetApprovalRuleRequesters {
 
 input SetApprovalRuleStatus {
   status: ApprovalRuleStatus!
-}
-
-input SetApprovalRuleCustomField {
-  name: String!
-  value: String
-}
-
-input SetApprovalRuleCustomType {
-  fields: [CustomFieldInput!]
-  type: ResourceIdentifierInput
-  typeKey: String
-  typeId: String
 }
 
 input SetAssociateRoleCustomField {
@@ -11831,6 +12267,15 @@ input SetChannelRoles {
   roles: [ChannelRole!]!
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetCustomLineItemRecurrenceInfo {
+  customLineItemId: String!
+  customLineItemKey: String
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: CustomLineItemRecurrenceInfoInputDraft
+}
+
 input SetCustomerAddressCustomField {
   name: String!
   value: String
@@ -12047,6 +12492,14 @@ input SetInventoryEntryRestockableInDays {
 
 input SetInventoryEntrySupplyChannel {
   supplyChannel: ResourceIdentifierInput
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetLineItemRecurrenceInfo {
+  lineItemId: String!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrenceInfo: LineItemRecurrenceInfoInputDraft
 }
 
 input SetMyBusinessUnitAddressCustomField {
@@ -12921,6 +13374,55 @@ input SetQuoteRequestCustomType {
   type: ResourceIdentifierInput
   typeKey: String
   typeId: String
+}
+
+input SetRecurrencePolicyDescription {
+  description: [LocalizedStringItemInputType!]
+}
+
+input SetRecurrencePolicyKey {
+  key: String!
+}
+
+input SetRecurrencePolicyName {
+  name: [LocalizedStringItemInputType!]
+}
+
+input SetRecurrencePolicySchedule {
+  schedule: RecurrencePolicyScheduleInput!
+}
+
+input SetRecurringOrderCustomField {
+  name: String!
+  value: String
+}
+
+input SetRecurringOrderCustomType {
+  fields: [CustomFieldInput!]
+  type: ResourceIdentifierInput
+  typeKey: String
+  typeId: String
+}
+
+input SetRecurringOrderKey {
+  key: String
+}
+
+input SetRecurringOrderOrderSkipConfiguration {
+  skipConfigurationInputDraft: SkipConfigurationInputDraft
+  updatedExpiresAt: DateTime
+}
+
+input SetRecurringOrderSchedule {
+  recurrencePolicy: ResourceIdentifierInput!
+}
+
+input SetRecurringOrderStartsAt {
+  startsAt: DateTime!
+}
+
+input SetRecurringOrderState {
+  recurringOrderState: RecurringOrderStateDraft!
 }
 
 input SetReviewAuthorName {
@@ -14240,7 +14742,6 @@ input ShippingTargetDraft {
 }
 
 input ShippingTargetDraftType {
-  addressKey: String!
   quantity: Long!
   shippingMethodKey: String
 }
@@ -14294,7 +14795,6 @@ type ShoppingList implements Versioned & ReferenceExpandable {
 input ShoppingListDraft {
   name: [LocalizedStringItemInputType!]!
   description: [LocalizedStringItemInputType!]
-  businessUnit: ResourceIdentifierInput
   lineItems: [ShoppingListLineItemDraft!] = []
   textLineItems: [TextLineItemDraft!] = []
   custom: CustomFieldsDraft
@@ -14323,7 +14823,6 @@ type ShoppingListLineItem {
   variantId: Int
   productTypeRef: Reference!
   productType: ProductTypeDefinition!
-  published: Boolean!
   quantity: Int!
   addedAt: DateTime!
   name(
@@ -14435,6 +14934,14 @@ input SimpleFieldTypeDraft {
   dummy: String
 }
 
+interface SkipConfiguration {
+  type: String!
+}
+
+input SkipConfigurationInputDraft {
+  Counter: CounterInputDraft
+}
+
 "Describes how this discount interacts with other discounts"
 enum StackingMode {
   "Default. Continue applying other matching discounts after applying this one."
@@ -14445,11 +14952,9 @@ enum StackingMode {
 }
 
 input StagedOrderUpdateAction {
-  addCustomLineItem: AddStagedOrderCustomLineItem
   addDelivery: AddStagedOrderDelivery
   addDiscountCode: AddStagedOrderDiscountCode
   addItemShippingAddress: AddStagedOrderItemShippingAddress
-  addLineItem: AddStagedOrderLineItem
   addParcelToDelivery: AddStagedOrderParcelToDelivery
   addPayment: AddStagedOrderPayment
   addReturnInfo: AddStagedOrderReturnInfo
@@ -14459,8 +14964,8 @@ input StagedOrderUpdateAction {
   changeLineItemQuantity: ChangeStagedOrderLineItemQuantity
   changeOrderState: ChangeStagedOrderOrderState
   changePaymentState: ChangeStagedOrderPaymentState
-  changeShipmentState: ChangeStagedOrderShipmentState
   changePriceRoundingMode: ChangeStagedOrderPriceRoundingMode
+  changeShipmentState: ChangeStagedOrderShipmentState
   changeTaxCalculationMode: ChangeStagedOrderTaxCalculationMode
   changeTaxMode: ChangeStagedOrderTaxMode
   changeTaxRoundingMode: ChangeStagedOrderTaxRoundingMode
@@ -14537,6 +15042,8 @@ input StagedOrderUpdateAction {
   transitionState: TransitionStagedOrderState
   updateItemShippingAddress: UpdateStagedOrderItemShippingAddress
   updateSyncInfo: UpdateStagedOrderSyncInfo
+  addLineItem: AddStagedOrderLineItem
+  addCustomLineItem: AddStagedOrderCustomLineItem
 }
 
 interface StagedOrderUpdateActionOutput {
@@ -14650,23 +15157,64 @@ StandalonePrices are managed and queried through the StandalonePrices API
 and associated to a ProductVariant through the sku field.
 """
 type StandalonePrice implements Versioned {
+  "Unique identifier of the StandalonePrice."
   id: String!
+
+  "Current version of the StandalonePrice."
   version: Long!
+
+  "User-defined unique identifier of the StandalonePrice."
   key: String
+
+  "SKU of the ProductVariant to which this Price is associated."
   sku: String!
+
+  "Money value of this Price."
   value: BaseMoney!
+
+  "Country for which this Price is valid."
   country: Country
+
+  "CustomerGroup Reference for which this Price is valid."
   customerGroupRef: Reference
   customerGroup: CustomerGroup
+
+  "Product distribution Channel for which this Price is valid."
   channelRef: Reference
   channel: Channel
+
+  "Date from which the Price is valid."
   validFrom: DateTime
+
+  "Date until the Price is valid."
   validUntil: DateTime
+
+  """
+  Price tiers if any are defined.
+  If `discounted` is present, the tiered Price is ignored for a Product Variant.
+  """
   tiers: [ProductPriceTier!]
+
+  "Set if a matching ProductDiscount exists."
   discounted: DiscountedProductPriceValue
+
+  "Staged changes of the StandalonePrice. Only present if the StandalonePrice has some changes staged."
   staged: StagedStandalonePrice
+
+  "Custom Fields for the StandalonePrice."
   custom: CustomFieldsType
+
+  """
+  If set to `true`, the StandalonePrice is considered during Product price selection.
+  If set to `false`, the StandalonePrice is not considered during Product price selection and any associated Line Items in a Cart cannot be ordered.
+  """
   active: Boolean!
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrencePolicyRef: Reference
+
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  recurrencePolicy: RecurrencePolicy
   createdAt: DateTime!
   lastModifiedAt: DateTime!
   createdBy: Initiator
@@ -14783,6 +15331,17 @@ type StandalonePriceValueChanged implements MessagePayload {
   type: String!
 }
 
+type StandardSchedule implements RecurrencePolicySchedule {
+  value: Int!
+  intervalUnit: IntervalUnit!
+  type: String!
+}
+
+input StandardScheduleInput {
+  value: Int!
+  intervalUnit: IntervalUnit!
+}
+
 "[State](https://docs.commercetools.com/api/projects/states)"
 type State implements Versioned & ReferenceExpandable {
   id: String!
@@ -14844,6 +15403,7 @@ enum StateType {
   ProductState
   QuoteRequestState
   QuoteState
+  RecurringOrderState
   ReviewState
   StagedQuoteState
 }
@@ -15045,7 +15605,6 @@ enum SubscriptionHealthStatus {
   ConfigurationError
   ConfigurationErrorDeliveryStopped
   Healthy
-  TemporaryError
   ManuallySuspended
 }
 
@@ -15447,6 +16006,11 @@ input TransitionQuoteRequestState {
 }
 
 input TransitionQuoteState {
+  state: ResourceIdentifierInput!
+  force: Boolean = false
+}
+
+input TransitionRecurringOrderState {
   state: ResourceIdentifierInput!
   force: Boolean = false
 }
