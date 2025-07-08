@@ -19,14 +19,17 @@ types:
       ExternalAuth: If set, the `password` field is optional for the Customer.
   CustomerAddress:
     description: |
-      Different from [Address](/types#address) in that `key` is required and `id` is not supported.
+      Different from [Address](ctp:api:type:Address) in that `key` is required and `id` is not supported.
     example: !include ../examples/customer-address.json
     properties:
       key:
         description: |
           User-defined identifier for the address.
-          Must follow the pattern `[a-zA-Z0-9_\-]{2,256}` and must be unique per customer.
+          Must be unique per customer.
         type: string
+        pattern: ^[a-zA-Z0-9_\-]{2,256}$
+        minLength: 2
+        maxLength: 256
       country:
         type: common.CountryCode
         description: |
@@ -124,13 +127,13 @@ types:
         type: custom-field.Custom
   CustomerImport:
     description: |
-      The data representation for a Customer to be imported that is persisted as a [Customer](ctp:api:type:Customer) in the Project.
+      Represents the data used to import a Customer. Once imported, this data is persisted as a [Customer](ctp:api:type:Customer) in the Project.
     type: common.ImportResource
     example: !include ../examples/customer-import.json
     properties:
       key:
         type: string
-        description: User-defined unique identifier. If a [Customer](ctp:api:type:Customer) with this `key` exists, it will be updated with the imported data.
+        description: User-defined unique identifier. If a [Customer](ctp:api:type:Customer) with this `key` exists, it is updated with the imported data.
         pattern: ^[A-Za-z0-9_-]+$
         minLength: 2
         maxLength: 256
@@ -144,11 +147,11 @@ types:
         type: string
       password?:
         description: |
-          Required when `authenticationMode` is set to `Password`. Maps to `Customer.password`.
+          Maps to `Customer.password`. Required when `authenticationMode` is set to `Password`.
         type: string
       stores?:
         description: |
-          The References to the Stores with which the Customer is associated. If referenced Stores do not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the necessary Stores are created.
+          Maps to `Customer.stores`. If the referenced [Stores](ctp:api:type:Store) do not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced Stores are created.
         type: common.StoreKeyReference[]
       firstName?:
         description: |
@@ -192,8 +195,7 @@ types:
         type: boolean
       customerGroup?:
         description: |
-          The Reference to the [CustomerGroup](ctp:api:type:CustomerGroup) with which the Customer is associated.
-          If referenced CustomerGroup does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the necessary CustomerGroup is created.
+          Maps to `Customer.customerGroup`. If the referenced [CustomerGroup](ctp:api:type:CustomerGroup) does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced CustomerGroup is created.
         type: common.CustomerGroupKeyReference
       addresses?:
         description: |
@@ -201,19 +203,19 @@ types:
         type: CustomerAddress[]
       defaultBillingAddress?:
         description: |
-          The index of the address in the addresses array. The `defaultBillingAddressId` of the customer will be set to the ID of that address.
+          Index of the address in the `addresses` array to use as the default billing address. The `defaultBillingAddressId` of the Customer will be set to the `id` of that address.
         type: integer
       billingAddresses?:
         description: |
-          The indices of the billing addresses in the addresses array. The `billingAddressIds` of the customer will be set to the IDs of that addresses.
+          Indices of the billing addresses in the `addresses` array. The `billingAddressIds` of the Customer will be set to the `id` of these addresses.
         type: integer[]
       defaultShippingAddress?:
         description: |
-          The index of the address in the addresses array. The `defaultShippingAddressId` of the customer will be set to the ID of that address.
+          The index of the address in the `addresses` array. The `defaultShippingAddressId` of the Customer will be set to the `id` of that address.
         type: integer
       shippingAddresses?:
         description: |
-          The indices of the shipping addresses in the addresses array. The `shippingAddressIds` of the customer will be set to the IDs of that addresses.
+          Indices of the shipping addresses in the `addresses` array. The `shippingAddressIds` of the Customer will be set to the `id` of these addresses.
         type: integer[]
       locale?:
         description: |
@@ -222,7 +224,7 @@ types:
         pattern: ^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\d{3}))?$
       custom?:
         description: |
-          The Custom Fields for this Customer.
+          Maps to `Customer.custom`.
         type: custom-field.Custom
       authenticationMode?:
         description: |

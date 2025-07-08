@@ -1,0 +1,94 @@
+#%RAML 1.0 Library
+usage: Product Selection import types.
+(annotations.package): product-selections
+
+uses:
+  common: common.raml
+  custom-field: custom-field.raml
+  annotations: ../annotationTypes/annotations.raml
+
+types:
+  VariantSelectionType:
+    description: |
+      Defines how variants are selected for the product.
+    type: string
+    enum:
+      - includeOnly
+      - includeAllExcept
+    (annotations.enumDescriptions):
+      includeOnly: Only the specified SKUs are included.
+      includeAllExcept: All variants except the specified SKUs are included.
+
+  VariantSelection:
+    description: |
+      Variant selection specifying how variants are included or excluded.
+    type: object
+    properties:
+      type:
+        type: VariantSelectionType
+        description: Type of variant selection.
+      skus?:
+        type: array
+        items: string
+        description: |
+          List of SKUs to include or exclude.
+
+  VariantExclusion:
+    description: |
+      Defines which Variants of the Product will be excluded from the Product Selection. If not supplied all Variants are deemed to be excluded.
+    type: object
+    properties:
+      skus?:
+        type: array
+        items: string
+        description: |
+          List of SKUs to be excluded.
+
+  ProductSelectionAssignment:
+    description: |
+      An assignment of a product and either variantSelection or variantExclusion (not both).
+    type: object
+    properties:
+      product:
+        description: Reference to the Product by key.
+        type: common.ProductKeyReference
+      variantSelection?:
+        description: Variant selection specifying included SKUs.
+        type: VariantSelection
+      variantExclusion?:
+        description: Variant exclusion specifying excluded SKUs.
+        type: VariantExclusion
+    additionalProperties: false
+
+  ProductSelectionMode:
+    description: |
+      Product Selections can have the following modes:
+      - `Individual`: Products must be explicitly assigned.
+      - `IndividualExclusion`: Products are included unless explicitly excluded.
+    type: string
+    enum:
+      - Individual
+      - IndividualExclusion
+
+  ProductSelectionImport:
+    description: |
+      Represents the data used to import a ProductSelection. Once imported, this data is persisted as a [ProductSelection](ctp:api:type:ProductSelection) in the Project.
+    type: common.ImportResource
+    properties:
+      key:
+        type: string
+        description: User-defined unique identifier. If an [ProductSelection](ctp:api:type:ProductSelection) with this `key` exists, it is updated with the imported data.
+      name:
+        type: common.LocalizedString
+        description: Maps to `ProductSelection.name`.
+      mode?:
+        type: ProductSelectionMode
+        default: Individual
+        description: Maps to `ProductSelection.mode`.
+      custom?:
+        type: custom-field.Custom
+        description: Maps to `ProductSelection.custom`.
+      assignments?:
+        type: array
+        items: ProductSelectionAssignment
+        description: List of product assignments.

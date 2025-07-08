@@ -10,57 +10,56 @@ uses:
 types:
   StandalonePriceImport:
     description: |
-      The data representation for a Standalone Price to be imported that is persisted as a [Standalone Price](ctp:api:type:StandalonePrice)) in the Project.
+      Represents the data used to import a StandalonePrice. Once imported, this data is persisted as a [StandalonePrice](ctp:api:type:StandalonePrice)) in the Project.
     type: common.ImportResource
     example: !include ../examples/standalone-price-import.json
     properties:
       key:
         description: |
-          User-defined unique identifier for the Standalone Price. If a [StandalonePrice](ctp:api:type:StandalonePrice)) with this `key` exists, it will be updated with the imported data.
+          User-defined unique identifier for the StandalonePrice. If a [StandalonePrice](ctp:api:type:StandalonePrice)) with this `key` exists, it is updated with the imported data.
         type: string
         pattern: ^[A-Za-z0-9_-]+$
         minLength: 2
         maxLength: 256
       sku:
         description: |
-          Identifies the ProductVariant to which this Standalone Price is associated. This value is not validated to exist in Product Variants.
+          Maps to `StandalonePrice.sku`. This value is not validated to exist in Product Variants.
         type: string
       value:
         description: |
-          Sets the money value of this Price.
+          Maps to `StandalonePrice.value`.
         type: common.TypedMoney
       country?:
         description: |
-          Sets the country for this Price, if the Price does not yet have a country.
-
-          The country cannot be updated. Attempting to update the an existing country will result in an [InvalidFieldsUpdate](/import-export/error#invalidfieldsupdateerror) error.
+          Maps to `StandalonePrice.country`. This value cannot be updated. Attempting to update this value will result in an [InvalidFieldsUpdate](/import-export/error#invalidfieldsupdateerror) error.
         type: common.CountryCode
       customerGroup?:
         description: |
-          Sets the CustomerGroup for this Price, if the Price does not yet have a CustomerGroup.
+          Maps to `StandalonePrice.customerGroup`. If the referenced [CustomerGroup](ctp:api:type:CustomerGroup) does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced CustomerGroup is created.
 
-          The CustomerGroup cannot be updated. Attempting to update an existing CustomerGroup will result in an [InvalidFieldsUpdate](/import-export/error#invalidfieldsupdateerror) error.
+          This value cannot be updated. Attempting to update this value will result in an [InvalidFieldsUpdate](/import-export/error#invalidfieldsupdateerror) error.
         type: common.CustomerGroupKeyReference
       channel?:
         description: |
-          Sets the product distribution Channel for this Price, if the Price does not yet have a Channel.
+          Maps to `StandalonePrice.channel`. If the referenced [Channel](ctp:api:type:Channel) does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced Channel is created.
 
-          The Channel cannot be updated. Attempting to update an existing Channel will result in an [InvalidFieldsUpdate](/import-export/error#invalidfieldsupdateerror) error.
+          This value cannot be updated. Attempting to update this value will result in an [InvalidFieldsUpdate](/import-export/error#invalidfieldsupdateerror) error.
         type: common.ChannelKeyReference
       validFrom?:
         description: |
-          Sets the date from which the Price is valid.
+          Maps to `StandalonePrice.validFrom`.
         type: datetime
       validUntil?:
         description: |
-          Sets the date until the Price is valid.
+          Maps to `StandalonePrice.validUntil`.
         type: datetime
       tiers?:
-        description: Sets price tiers.
+        description: |
+          Maps to `StandalonePrice.tiers`.
         type: common.PriceTier[]
       discounted?:
         description: Sets a discounted price for this Price that is different from the base price with value.
         type: common.DiscountedPrice
       custom?:
-        description: Custom Fields for the StandalonePrice.
+        description: Maps to `StandalonePrice.custom`.
         type: custom-field.Custom
