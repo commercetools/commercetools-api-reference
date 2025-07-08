@@ -203,6 +203,7 @@ interface CustomLineItem [[CustomLineItem.svg]]  {
     custom: [[CustomFields.svg CustomFields]]
     shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
     priceMode: [[CustomLineItemPriceMode.svg CustomLineItemPriceMode]]
+    recurrenceInfo: [[CustomLineItemRecurrenceInfo.svg CustomLineItemRecurrenceInfo]]
 }
 interface LineItem [[LineItem.svg]]  {
     id: String
@@ -231,6 +232,7 @@ interface LineItem [[LineItem.svg]]  {
     custom: [[CustomFields.svg CustomFields]]
     addedAt: DateTime
     lastModifiedAt: DateTime
+    recurrenceInfo: [[LineItemRecurrenceInfo.svg LineItemRecurrenceInfo]]
 }
 interface Shipping [[Shipping.svg]]  {
     shippingKey: String
@@ -325,6 +327,7 @@ interface Price [[Price.svg]]  {
     discounted: [[DiscountedPrice.svg DiscountedPrice]]
     tiers: [[PriceTier.svg List<PriceTier>]]
     custom: [[CustomFields.svg CustomFields]]
+    recurrencePolicy: [[RecurrencePolicyReference.svg RecurrencePolicyReference]]
 }
 interface QueryPrice [[QueryPrice.svg]]  {
     id: String
@@ -613,6 +616,21 @@ interface ProductPriceCustomFieldsSetMessage [[ProductPriceCustomFieldsSetMessag
     customField: [[CustomFields.svg CustomFields]]
     oldTypeId: String
 }
+interface RecurringOrderCustomTypeSetMessage [[RecurringOrderCustomTypeSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    customFields: [[CustomFields.svg CustomFields]]
+    previousTypeId: String
+}
 interface StoreCreatedMessage [[StoreCreatedMessage.svg]]  {
     id: String
     version: Long
@@ -693,6 +711,11 @@ interface ProductPriceCustomFieldsSetMessagePayload [[ProductPriceCustomFieldsSe
     customField: [[CustomFields.svg CustomFields]]
     oldTypeId: String
 }
+interface RecurringOrderCustomTypeSetMessagePayload [[RecurringOrderCustomTypeSetMessagePayload.svg]]  {
+    type: String
+    customFields: [[CustomFields.svg CustomFields]]
+    previousTypeId: String
+}
 interface StoreCreatedMessagePayload [[StoreCreatedMessagePayload.svg]]  {
     type: String
     name: [[LocalizedString.svg LocalizedString]]
@@ -768,6 +791,7 @@ interface Order [[Order.svg]]  {
     origin: [[CartOrigin.svg CartOrigin]]
     cart: [[CartReference.svg CartReference]]
     quote: [[QuoteReference.svg QuoteReference]]
+    recurringOrder: [[RecurringOrderReference.svg RecurringOrderReference]]
     orderState: [[OrderState.svg OrderState]]
     shipmentState: [[ShipmentState.svg ShipmentState]]
     paymentState: [[PaymentState.svg PaymentState]]
@@ -927,6 +951,31 @@ interface Quote [[Quote.svg]]  {
     purchaseOrderNumber: String
     businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
 }
+interface RecurringOrder [[RecurringOrder.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    cart: [[CartReference.svg CartReference]]
+    originOrder: [[OrderReference.svg OrderReference]]
+    startsAt: DateTime
+    resumesAt: DateTime
+    expiresAt: DateTime
+    lastOrderAt: DateTime
+    nextOrderAt: DateTime
+    skipConfiguration: [[SkipConfiguration.svg SkipConfiguration]]
+    store: [[StoreKeyReference.svg StoreKeyReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    state: [[StateReference.svg StateReference]]
+    recurringOrderState: [[RecurringOrderState.svg RecurringOrderState]]
+    schedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    customerEmail: String
+    custom: [[CustomFields.svg CustomFields]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+}
 interface Review [[Review.svg]]  {
     id: String
     version: Long
@@ -1050,6 +1099,7 @@ interface StandalonePrice [[StandalonePrice.svg]]  {
     custom: [[CustomFields.svg CustomFields]]
     staged: [[StagedStandalonePrice.svg StagedStandalonePrice]]
     active: Boolean
+    recurrencePolicy: [[RecurrencePolicyReference.svg RecurrencePolicyReference]]
 }
 interface Store [[Store.svg]]  {
     id: String
@@ -1102,6 +1152,7 @@ CustomFields --> PaymentInteractionAddedMessage #green;text:green : "interaction
 CustomFields --> PaymentMethodCustomTypeSetMessage #green;text:green : "customFields"
 CustomFields --> PaymentMethodInfoCustomTypeSetMessage #green;text:green : "customFields"
 CustomFields --> ProductPriceCustomFieldsSetMessage #green;text:green : "customField"
+CustomFields --> RecurringOrderCustomTypeSetMessage #green;text:green : "customFields"
 CustomFields --> StoreCreatedMessage #green;text:green : "custom"
 CustomFields --> BusinessUnitAddressCustomTypeSetMessagePayload #green;text:green : "customFields"
 CustomFields --> BusinessUnitCustomTypeSetMessagePayload #green;text:green : "customFields"
@@ -1114,6 +1165,7 @@ CustomFields --> PaymentInteractionAddedMessagePayload #green;text:green : "inte
 CustomFields --> PaymentMethodCustomTypeSetMessagePayload #green;text:green : "customFields"
 CustomFields --> PaymentMethodInfoCustomTypeSetMessagePayload #green;text:green : "customFields"
 CustomFields --> ProductPriceCustomFieldsSetMessagePayload #green;text:green : "customField"
+CustomFields --> RecurringOrderCustomTypeSetMessagePayload #green;text:green : "customFields"
 CustomFields --> StoreCreatedMessagePayload #green;text:green : "custom"
 CustomFields --> OrderEdit #green;text:green : "custom"
 CustomFields --> Delivery #green;text:green : "custom"
@@ -1128,6 +1180,7 @@ CustomFields --> Transaction #green;text:green : "custom"
 CustomFields --> ProductSelection #green;text:green : "custom"
 CustomFields --> QuoteRequest #green;text:green : "custom"
 CustomFields --> Quote #green;text:green : "custom"
+CustomFields --> RecurringOrder #green;text:green : "custom"
 CustomFields --> Review #green;text:green : "custom"
 CustomFields --> ShippingMethod #green;text:green : "custom"
 CustomFields --> ShoppingList #green;text:green : "custom"

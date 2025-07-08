@@ -1,0 +1,61 @@
+@startuml
+
+hide methods
+enum RecurringOrderState {
+    ACTIVE
+    PAUSED
+    EXPIRED
+    CANCELED
+    FAILED
+}
+interface RecurringOrderStateChangedMessage [[RecurringOrderStateChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    state: [[RecurringOrderState.svg RecurringOrderState]]
+    oldState: [[RecurringOrderState.svg RecurringOrderState]]
+}
+interface RecurringOrderStateChangedMessagePayload [[RecurringOrderStateChangedMessagePayload.svg]]  {
+    type: String
+    state: [[RecurringOrderState.svg RecurringOrderState]]
+    oldState: [[RecurringOrderState.svg RecurringOrderState]]
+}
+interface RecurringOrder [[RecurringOrder.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    cart: [[CartReference.svg CartReference]]
+    originOrder: [[OrderReference.svg OrderReference]]
+    startsAt: DateTime
+    resumesAt: DateTime
+    expiresAt: DateTime
+    lastOrderAt: DateTime
+    nextOrderAt: DateTime
+    skipConfiguration: [[SkipConfiguration.svg SkipConfiguration]]
+    store: [[StoreKeyReference.svg StoreKeyReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    state: [[StateReference.svg StateReference]]
+    recurringOrderState: [[RecurringOrderState.svg RecurringOrderState]]
+    schedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    customerEmail: String
+    custom: [[CustomFields.svg CustomFields]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+}
+RecurringOrderState --> RecurringOrderStateChangedMessage #green;text:green : "state"
+RecurringOrderState --> RecurringOrderStateChangedMessage #green;text:green : "oldState"
+RecurringOrderState --> RecurringOrderStateChangedMessagePayload #green;text:green : "state"
+RecurringOrderState --> RecurringOrderStateChangedMessagePayload #green;text:green : "oldState"
+RecurringOrderState --> RecurringOrder #green;text:green : "recurringOrderState"
+@enduml

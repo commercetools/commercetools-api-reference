@@ -1,0 +1,90 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface RecurrencePolicySchedule [[RecurrencePolicySchedule.svg]]  {
+    type: String
+}
+
+
+interface DayOfMonthSchedule [[DayOfMonthSchedule.svg]]  {
+    type: String
+    day: Integer
+}
+interface StandardSchedule [[StandardSchedule.svg]]  {
+    type: String
+    value: Long
+    intervalUnit: [[IntervalUnit.svg IntervalUnit]]
+}
+interface RecurringOrderScheduleSetMessage [[RecurringOrderScheduleSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    recurrencePolicySchedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+    oldRecurrencePolicySchedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+}
+interface RecurringOrderScheduleSetMessagePayload [[RecurringOrderScheduleSetMessagePayload.svg]]  {
+    type: String
+    recurrencePolicySchedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+    oldRecurrencePolicySchedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+}
+interface RecurrencePolicy [[RecurrencePolicy.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    schedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+}
+interface RecurringOrder [[RecurringOrder.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    cart: [[CartReference.svg CartReference]]
+    originOrder: [[OrderReference.svg OrderReference]]
+    startsAt: DateTime
+    resumesAt: DateTime
+    expiresAt: DateTime
+    lastOrderAt: DateTime
+    nextOrderAt: DateTime
+    skipConfiguration: [[SkipConfiguration.svg SkipConfiguration]]
+    store: [[StoreKeyReference.svg StoreKeyReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    state: [[StateReference.svg StateReference]]
+    recurringOrderState: [[RecurringOrderState.svg RecurringOrderState]]
+    schedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    customerEmail: String
+    custom: [[CustomFields.svg CustomFields]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+}
+RecurrencePolicySchedule --> DayOfMonthSchedule #blue;text:blue : "type : dayOfMonth"
+RecurrencePolicySchedule --> StandardSchedule #blue;text:blue : "type : standard"
+RecurrencePolicySchedule --> RecurringOrderScheduleSetMessage #green;text:green : "recurrencePolicySchedule"
+RecurrencePolicySchedule --> RecurringOrderScheduleSetMessage #green;text:green : "oldRecurrencePolicySchedule"
+RecurrencePolicySchedule --> RecurringOrderScheduleSetMessagePayload #green;text:green : "recurrencePolicySchedule"
+RecurrencePolicySchedule --> RecurringOrderScheduleSetMessagePayload #green;text:green : "oldRecurrencePolicySchedule"
+RecurrencePolicySchedule --> RecurrencePolicy #green;text:green : "schedule"
+RecurrencePolicySchedule --> RecurringOrder #green;text:green : "schedule"
+@enduml

@@ -50,6 +50,7 @@ interface Order [[Order.svg]] extends BaseResource {
     origin: [[CartOrigin.svg CartOrigin]]
     cart: [[CartReference.svg CartReference]]
     quote: [[QuoteReference.svg QuoteReference]]
+    recurringOrder: [[RecurringOrderReference.svg RecurringOrderReference]]
     orderState: [[OrderState.svg OrderState]]
     shipmentState: [[ShipmentState.svg ShipmentState]]
     paymentState: [[PaymentState.svg PaymentState]]
@@ -111,6 +112,7 @@ interface StagedOrder [[StagedOrder.svg]] extends Order {
     origin: [[CartOrigin.svg CartOrigin]]
     cart: [[CartReference.svg CartReference]]
     quote: [[QuoteReference.svg QuoteReference]]
+    recurringOrder: [[RecurringOrderReference.svg RecurringOrderReference]]
     orderState: [[OrderState.svg OrderState]]
     shipmentState: [[ShipmentState.svg ShipmentState]]
     paymentState: [[PaymentState.svg PaymentState]]
@@ -131,6 +133,21 @@ interface OrderPagedQueryResponse [[OrderPagedQueryResponse.svg]]  {
     count: Long
     total: Long
     results: [[Order.svg List<Order>]]
+}
+interface OrderCreatedFromRecurringOrderMessage [[OrderCreatedFromRecurringOrderMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    order: [[Order.svg Order]]
+    recurringOrderRef: [[RecurringOrderReference.svg RecurringOrderReference]]
 }
 interface OrderCreatedMessage [[OrderCreatedMessage.svg]]  {
     id: String
@@ -174,6 +191,11 @@ interface OrderImportedMessage [[OrderImportedMessage.svg]]  {
     resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
     order: [[Order.svg Order]]
 }
+interface OrderCreatedFromRecurringOrderMessagePayload [[OrderCreatedFromRecurringOrderMessagePayload.svg]]  {
+    type: String
+    order: [[Order.svg Order]]
+    recurringOrderRef: [[RecurringOrderReference.svg RecurringOrderReference]]
+}
 interface OrderCreatedMessagePayload [[OrderCreatedMessagePayload.svg]]  {
     type: String
     order: [[Order.svg Order]]
@@ -193,9 +215,11 @@ interface OrderReference [[OrderReference.svg]]  {
 }
 
 Order --> OrderPagedQueryResponse #green;text:green : "results"
+Order --> OrderCreatedFromRecurringOrderMessage #green;text:green : "order"
 Order --> OrderCreatedMessage #green;text:green : "order"
 Order --> OrderDeletedMessage #green;text:green : "order"
 Order --> OrderImportedMessage #green;text:green : "order"
+Order --> OrderCreatedFromRecurringOrderMessagePayload #green;text:green : "order"
 Order --> OrderCreatedMessagePayload #green;text:green : "order"
 Order --> OrderDeletedMessagePayload #green;text:green : "order"
 Order --> OrderImportedMessagePayload #green;text:green : "order"

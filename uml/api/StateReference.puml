@@ -151,6 +151,22 @@ interface QuoteStateTransitionMessage [[QuoteStateTransitionMessage.svg]]  {
     oldState: [[StateReference.svg StateReference]]
     force: Boolean
 }
+interface RecurringOrderStateTransitionMessage [[RecurringOrderStateTransitionMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    state: [[StateReference.svg StateReference]]
+    oldState: [[StateReference.svg StateReference]]
+    force: Boolean
+}
 interface ReviewStateTransitionMessage [[ReviewStateTransitionMessage.svg]]  {
     id: String
     version: Long
@@ -232,6 +248,12 @@ interface QuoteStateTransitionMessagePayload [[QuoteStateTransitionMessagePayloa
     oldState: [[StateReference.svg StateReference]]
     force: Boolean
 }
+interface RecurringOrderStateTransitionMessagePayload [[RecurringOrderStateTransitionMessagePayload.svg]]  {
+    type: String
+    state: [[StateReference.svg StateReference]]
+    oldState: [[StateReference.svg StateReference]]
+    force: Boolean
+}
 interface ReviewStateTransitionMessagePayload [[ReviewStateTransitionMessagePayload.svg]]  {
     type: String
     oldState: [[StateReference.svg StateReference]]
@@ -293,6 +315,7 @@ interface Order [[Order.svg]]  {
     origin: [[CartOrigin.svg CartOrigin]]
     cart: [[CartReference.svg CartReference]]
     quote: [[QuoteReference.svg QuoteReference]]
+    recurringOrder: [[RecurringOrderReference.svg RecurringOrderReference]]
     orderState: [[OrderState.svg OrderState]]
     shipmentState: [[ShipmentState.svg ShipmentState]]
     paymentState: [[PaymentState.svg PaymentState]]
@@ -475,6 +498,31 @@ interface QuoteDraft [[QuoteDraft.svg]]  {
     state: [[StateReference.svg StateReference]]
     custom: [[CustomFieldsDraft.svg CustomFieldsDraft]]
 }
+interface RecurringOrder [[RecurringOrder.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    cart: [[CartReference.svg CartReference]]
+    originOrder: [[OrderReference.svg OrderReference]]
+    startsAt: DateTime
+    resumesAt: DateTime
+    expiresAt: DateTime
+    lastOrderAt: DateTime
+    nextOrderAt: DateTime
+    skipConfiguration: [[SkipConfiguration.svg SkipConfiguration]]
+    store: [[StoreKeyReference.svg StoreKeyReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    state: [[StateReference.svg StateReference]]
+    recurringOrderState: [[RecurringOrderState.svg RecurringOrderState]]
+    schedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    customerEmail: String
+    custom: [[CustomFields.svg CustomFields]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+}
 interface Review [[Review.svg]]  {
     id: String
     version: Long
@@ -537,6 +585,8 @@ StateReference --> QuoteRequestStateTransitionMessage #green;text:green : "state
 StateReference --> QuoteRequestStateTransitionMessage #green;text:green : "oldState"
 StateReference --> QuoteStateTransitionMessage #green;text:green : "state"
 StateReference --> QuoteStateTransitionMessage #green;text:green : "oldState"
+StateReference --> RecurringOrderStateTransitionMessage #green;text:green : "state"
+StateReference --> RecurringOrderStateTransitionMessage #green;text:green : "oldState"
 StateReference --> ReviewStateTransitionMessage #green;text:green : "oldState"
 StateReference --> ReviewStateTransitionMessage #green;text:green : "newState"
 StateReference --> StagedQuoteStateTransitionMessage #green;text:green : "state"
@@ -553,6 +603,8 @@ StateReference --> QuoteRequestStateTransitionMessagePayload #green;text:green :
 StateReference --> QuoteRequestStateTransitionMessagePayload #green;text:green : "oldState"
 StateReference --> QuoteStateTransitionMessagePayload #green;text:green : "state"
 StateReference --> QuoteStateTransitionMessagePayload #green;text:green : "oldState"
+StateReference --> RecurringOrderStateTransitionMessagePayload #green;text:green : "state"
+StateReference --> RecurringOrderStateTransitionMessagePayload #green;text:green : "oldState"
 StateReference --> ReviewStateTransitionMessagePayload #green;text:green : "oldState"
 StateReference --> ReviewStateTransitionMessagePayload #green;text:green : "newState"
 StateReference --> StagedQuoteStateTransitionMessagePayload #green;text:green : "state"
@@ -567,6 +619,7 @@ StateReference --> QuoteRequest #green;text:green : "state"
 StateReference --> QuoteRequestDraft #green;text:green : "state"
 StateReference --> Quote #green;text:green : "state"
 StateReference --> QuoteDraft #green;text:green : "state"
+StateReference --> RecurringOrder #green;text:green : "state"
 StateReference --> Review #green;text:green : "state"
 StateReference --> StagedQuote #green;text:green : "state"
 StateReference --> StagedQuoteDraft #green;text:green : "state"

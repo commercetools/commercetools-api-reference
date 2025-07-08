@@ -17451,6 +17451,13 @@ paths:
           schema:
             type: "string"
           explode: true
+        - name: priceRecurrencePolicy
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
         - name: localeProjection
           in: query
           required: false
@@ -17593,6 +17600,13 @@ paths:
               type: "string"
           explode: true
         - name: priceChannel
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
+        - name: priceRecurrencePolicy
           in: query
           required: false
           style: form
@@ -25344,7 +25358,7 @@ paths:
 
         The shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).
 
-        Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+        Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message. If the Order is created from a Recurring Order schedule, the [OrderCreatedFromRecurringOrder](ctp:api:type:OrderCreatedFromRecurringOrderMessage) Message is generated.
 
         If a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.
         If you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.
@@ -28255,6 +28269,13 @@ paths:
           schema:
             type: "string"
           explode: true
+        - name: priceRecurrencePolicy
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
         - name: localeProjection
           in: query
           required: false
@@ -28455,6 +28476,13 @@ paths:
               type: "string"
           explode: true
         - name: priceChannel
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
+        - name: priceRecurrencePolicy
           in: query
           required: false
           style: form
@@ -28743,6 +28771,13 @@ paths:
           schema:
             type: "string"
           explode: true
+        - name: priceRecurrencePolicy
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
         - name: localeProjection
           in: query
           required: false
@@ -28915,6 +28950,13 @@ paths:
               type: "string"
           explode: true
         - name: priceChannel
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
+        - name: priceRecurrencePolicy
           in: query
           required: false
           style: form
@@ -30773,6 +30815,13 @@ paths:
           schema:
             type: "string"
           explode: true
+        - name: priceRecurrencePolicy
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
         - name: expand
           in: query
           required: false
@@ -30932,6 +30981,13 @@ paths:
           schema:
             type: "string"
           explode: true
+        - name: priceRecurrencePolicy
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
         - name: expand
           in: query
           required: false
@@ -31021,6 +31077,13 @@ paths:
               type: "string"
           explode: true
         - name: priceChannel
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
+        - name: priceRecurrencePolicy
           in: query
           required: false
           style: form
@@ -31130,6 +31193,13 @@ paths:
           schema:
             type: "string"
           explode: true
+        - name: priceRecurrencePolicy
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
         - name: expand
           in: query
           required: false
@@ -31210,6 +31280,13 @@ paths:
               type: "string"
           explode: true
         - name: priceChannel
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
+        - name: priceRecurrencePolicy
           in: query
           required: false
           style: form
@@ -31464,6 +31541,13 @@ paths:
           schema:
             type: "string"
           explode: true
+        - name: priceRecurrencePolicy
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
         - name: expand
           in: query
           required: false
@@ -31569,6 +31653,13 @@ paths:
           schema:
             type: "string"
           explode: true
+        - name: priceRecurrencePolicy
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
         - name: expand
           in: query
           required: false
@@ -31649,6 +31740,13 @@ paths:
               type: "string"
           explode: true
         - name: priceChannel
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "string"
+          explode: true
+        - name: priceRecurrencePolicy
           in: query
           required: false
           style: form
@@ -32937,6 +33035,886 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Quote'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/recurrence-policies:
+    description: |-
+      A Recurrence Policy is a configuration of a schedule.
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurrencePoliciesGet
+      description: |-
+        Retrieves Recurrence Policies in the Project.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+        - name: sort
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Sort'
+          explode: true
+        - name: limit
+          x-annotation-default: 20
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: offset
+          x-annotation-default: 0
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: withTotal
+          x-annotation-default: true
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+        - name: /^var[.][a-zA-Z0-9]+$/
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurrencePolicyPagedQueryResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurrencePoliciesHead
+      description: |-
+        Checks if one or more Recurrence Policies exist for the provided query predicate. Returns a `200 OK` status if any Recurrence Policies match the query predicate, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+      parameters:
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurrencePoliciesPost
+      description: |-
+        Creates a Recurrence Policy in the Project.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecurrencePolicyDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurrencePolicy'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/recurrence-policies/key={key}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurrencePoliciesKeyByKeyGet
+      description: |-
+        Retrieves a Recurrence Policy with the provided `key`.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurrencePolicy'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurrencePoliciesKeyByKeyHead
+      description: |-
+        Checks if a Recurrence Policy exists with the provided `key`. Returns a `200 OK` status if the Recurrence Policy exists, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurrencePoliciesKeyByKeyPost
+      description: |-
+        Updates a Recurrence Policy using one or more [update actions](/../api/projects/recurrence-policies#update-actions).
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecurrencePolicyUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurrencePolicy'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/recurrence-policies/{ID}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurrencePoliciesByIDGet
+      description: |-
+        Retrieves a Recurrence Policy with the provided `id`.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurrencePolicy'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurrencePoliciesByIDHead
+      description: |-
+        Checks if a Recurrence Policy exists with the provided `id`. Returns a `200 OK` status if the Recurrence Policy exists, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurrencePoliciesByIDPost
+      description: |-
+        Updates a Recurrence Policy using one or more [update actions](/../api/projects/recurrence-policies#update-actions).
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecurrencePolicyUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurrencePolicy'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/recurring-orders:
+    description: |-
+      A Recurring Order can be created from an Order, usually after a checkout process has been completed or directly via the Recurring Orders API.
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurringOrdersGet
+      description: |-
+        Retrieves Recurring Orders in the Project.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+        - name: sort
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Sort'
+          explode: true
+        - name: limit
+          x-annotation-default: 20
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: offset
+          x-annotation-default: 0
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: withTotal
+          x-annotation-default: true
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+        - name: /^var[.][a-zA-Z0-9]+$/
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringOrderPagedQueryResponse'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurringOrdersHead
+      description: |-
+        Checks if one or more Recurring Orders exist for the provided query predicate. Returns a `200 OK` status if any Recurring Orders match the query predicate, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+      parameters:
+        - name: where
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/QueryPredicate'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurringOrdersPost
+      description: |-
+        Creates a Recurring Order in the Project.
+        The Cart is validated to ensure that it is convertible to an [Order](ctp:api:type:Order). If validation fails, an error is returned.
+
+        Produces the [RecurringOrderCreated](ctp:api:type:RecurringOrderCreatedMessage) message.
+
+        If a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Recurring Order creation may still successfully complete after the error is returned.
+        If you receive this error, you should verify the status of the Recurring Order by querying a unique identifier supplied during the creation request, such as the key.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecurringOrderDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringOrder'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/recurring-orders/key={key}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurringOrdersKeyByKeyGet
+      description: |-
+        Retrieves a Recurring Order with the provided `key`.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringOrder'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurringOrdersKeyByKeyHead
+      description: |-
+        Checks if a Recurring Order exists with the provided `key`. Returns a `200 OK` status if the Recurring Order exists, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurringOrdersKeyByKeyPost
+      description: |-
+        Updates a Recurring Order using one or more [update actions](/../api/projects/recurring-orders#update-actions).
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecurringOrderUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringOrder'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/recurring-orders/{ID}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurringOrdersByIDGet
+      description: |-
+        Retrieves a Recurring Order with the provided `id`.
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringOrder'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    head:
+      security:
+        - oauth_2_0:
+            - "view_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurringOrdersByIDHead
+      description: |-
+        Checks if a Recurring Order exists with the provided `id`. Returns a `200 OK` status if the Recurring Order exists, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
+      responses:
+        "200":
+          description: |-
+            200
+          content: {}
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurringOrdersByIDPost
+      description: |-
+        Updates a Recurring Order using one or more [update actions](/../api/projects/recurring-orders#update-actions).
+      parameters:
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecurringOrderUpdate'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringOrder'
 
         "409":
           $ref: '#/components/responses/conflicting_409'
@@ -39265,6 +40243,8 @@ components:
               "view_quotes:{projectKey}": ""
               "manage_attribute_groups:{projectKey}": ""
               "view_attribute_groups:{projectKey}": ""
+              "manage_recurring_orders:{projectKey}": ""
+              "view_recurring_orders:{projectKey}": ""
 
 
   schemas:
@@ -42614,11 +43594,13 @@ components:
         - Customer
         - Merchant
         - Quote
+        - RecurringOrder
       x-annotation-package: "Cart"
       x-annotation-enumDescriptions:
         Customer: "Cart was created by a Customer.nnThis is the default value.n"
         Merchant: "Cart was created by a merchant on behalf of a Customer.n"
         Quote: "Cart was created as part of a Quote.n"
+        RecurringOrder: "Cart was created as part of a Recurring Order.n"
     CartPagedQueryResponse:
       type: "object"
       required:
@@ -42748,6 +43730,7 @@ components:
           setCustomField: '#/components/schemas/CartSetCustomFieldAction'
           setCustomLineItemCustomField: '#/components/schemas/CartSetCustomLineItemCustomFieldAction'
           setCustomLineItemCustomType: '#/components/schemas/CartSetCustomLineItemCustomTypeAction'
+          setCustomLineItemRecurrenceInfo: '#/components/schemas/CartSetCustomLineItemRecurrenceInfoAction'
           setCustomLineItemShippingDetails: '#/components/schemas/CartSetCustomLineItemShippingDetailsAction'
           setCustomLineItemTaxAmount: '#/components/schemas/CartSetCustomLineItemTaxAmountAction'
           setCustomLineItemTaxRate: '#/components/schemas/CartSetCustomLineItemTaxRateAction'
@@ -42766,6 +43749,7 @@ components:
           setLineItemDistributionChannel: '#/components/schemas/CartSetLineItemDistributionChannelAction'
           setLineItemInventoryMode: '#/components/schemas/CartSetLineItemInventoryModeAction'
           setLineItemPrice: '#/components/schemas/CartSetLineItemPriceAction'
+          setLineItemRecurrenceInfo: '#/components/schemas/CartSetLineItemRecurrenceInfoAction'
           setLineItemShippingDetails: '#/components/schemas/CartSetLineItemShippingDetailsAction'
           setLineItemSupplyChannel: '#/components/schemas/CartSetLineItemSupplyChannelAction'
           setLineItemTaxAmount: '#/components/schemas/CartSetLineItemTaxAmountAction'
@@ -42871,6 +43855,8 @@ components:
           $ref: '#/components/schemas/ItemShippingDetails'
         priceMode:
           $ref: '#/components/schemas/CustomLineItemPriceMode'
+        recurrenceInfo:
+          $ref: '#/components/schemas/CustomLineItemRecurrenceInfo'
     CustomLineItemDraft:
       type: "object"
       required:
@@ -42899,6 +43885,8 @@ components:
           $ref: '#/components/schemas/ItemShippingDetailsDraft'
         priceMode:
           $ref: '#/components/schemas/CustomLineItemPriceMode'
+        recurrenceInfo:
+          $ref: '#/components/schemas/CustomLineItemRecurrenceInfoDraft'
     CustomLineItemPriceMode:
       type: "string"
       enum:
@@ -43273,6 +44261,8 @@ components:
         lastModifiedAt:
           type: "string"
           format: "datetime"
+        recurrenceInfo:
+          $ref: '#/components/schemas/LineItemRecurrenceInfo'
     LineItemDraft:
       type: "object"
       properties:
@@ -43311,6 +44301,8 @@ components:
           $ref: '#/components/schemas/ItemShippingDetailsDraft'
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
+        recurrenceInfo:
+          $ref: '#/components/schemas/LineItemRecurrenceInfoDraft'
     LineItemMode:
       type: "string"
       enum:
@@ -43709,6 +44701,8 @@ components:
               $ref: '#/components/schemas/CustomFieldsDraft'
             priceMode:
               $ref: '#/components/schemas/CustomLineItemPriceMode'
+            recurrenceInfo:
+              $ref: '#/components/schemas/CustomLineItemRecurrenceInfoDraft'
     CartAddCustomShippingMethodAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -43803,6 +44797,8 @@ components:
               $ref: '#/components/schemas/InventoryMode'
             shippingDetails:
               $ref: '#/components/schemas/ItemShippingDetailsDraft'
+            recurrenceInfo:
+              $ref: '#/components/schemas/LineItemRecurrenceInfoDraft'
             custom:
               $ref: '#/components/schemas/CustomFieldsDraft'
     CartAddPaymentAction:
@@ -44228,6 +45224,19 @@ components:
               $ref: '#/components/schemas/TypeResourceIdentifier'
             fields:
               $ref: '#/components/schemas/FieldContainer'
+    CartSetCustomLineItemRecurrenceInfoAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            customLineItemId:
+              type: "string"
+            customLineItemKey:
+              type: "string"
+            recurrenceInfo:
+              $ref: '#/components/schemas/CustomLineItemRecurrenceInfoDraft'
     CartSetCustomLineItemShippingDetailsAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -44463,6 +45472,19 @@ components:
               type: "string"
             externalPrice:
               $ref: '#/components/schemas/Money'
+    CartSetLineItemRecurrenceInfoAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            lineItemId:
+              type: "string"
+            lineItemKey:
+              type: "string"
+            recurrenceInfo:
+              $ref: '#/components/schemas/LineItemRecurrenceInfoDraft'
     CartSetLineItemShippingDetailsAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -45968,6 +46990,8 @@ components:
             $ref: '#/components/schemas/PriceTier'
         custom:
           $ref: '#/components/schemas/CustomFields'
+        recurrencePolicy:
+          $ref: '#/components/schemas/RecurrencePolicyReference'
     PriceDraft:
       type: "object"
       required:
@@ -45997,6 +47021,8 @@ components:
             $ref: '#/components/schemas/PriceTierDraft'
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
+        recurrencePolicy:
+          $ref: '#/components/schemas/RecurrencePolicyResourceIdentifier'
     PriceTier:
       type: "object"
       required:
@@ -46082,6 +47108,8 @@ components:
           product-type: '#/components/schemas/ProductTypeReference'
           quote: '#/components/schemas/QuoteReference'
           quote-request: '#/components/schemas/QuoteRequestReference'
+          recurrence-policy: '#/components/schemas/RecurrencePolicyReference'
+          recurring-order: '#/components/schemas/RecurringOrderReference'
           review: '#/components/schemas/ReviewReference'
           shipping-method: '#/components/schemas/ShippingMethodReference'
           shopping-list: '#/components/schemas/ShoppingListReference'
@@ -46134,6 +47162,8 @@ components:
         - product-type
         - quote
         - quote-request
+        - recurrence-policy
+        - recurring-order
         - review
         - shipping-method
         - shopping-list
@@ -46188,6 +47218,8 @@ components:
         product-type: "References a [ProductType](ctp:api:type:ProductType).n"
         quote: "References a [Quote](ctp:api:type:Quote).n"
         quote-request: "References a [QuoteRequest](ctp:api:type:QuoteRequest).n"
+        recurring-order: "References a [RecurringOrder](ctp:api:type:RecurringOrder).n"
+        recurrence-policy: "References a [RecurrencePolicy](ctp:api:type:RecurrencePolicy).n"
         review: "References a [Review](ctp:api:type:Review).n"
         shipping-method: "References a [ShippingMethod](ctp:api:type:ShippingMethod).n"
         shopping-list: "References a [ShoppingList](ctp:api:type:ShoppingList).n"
@@ -46225,6 +47257,8 @@ components:
           product-type: '#/components/schemas/ProductTypeResourceIdentifier'
           quote-request: '#/components/schemas/QuoteRequestResourceIdentifier'
           quote: '#/components/schemas/QuoteResourceIdentifier'
+          recurrence-policy: '#/components/schemas/RecurrencePolicyResourceIdentifier'
+          recurring-order: '#/components/schemas/RecurringOrderResourceIdentifier'
           review: '#/components/schemas/ReviewResourceIdentifier'
           shipping-method: '#/components/schemas/ShippingMethodResourceIdentifier'
           shopping-list: '#/components/schemas/ShoppingListResourceIdentifier'
@@ -52143,12 +53177,14 @@ components:
           setBusinessUnit: '#/components/schemas/MyCartSetBusinessUnitAction'
           setCountry: '#/components/schemas/MyCartSetCountryAction'
           setCustomField: '#/components/schemas/MyCartSetCustomFieldAction'
+          setCustomLineItemRecurrenceInfo: '#/components/schemas/MyCartSetCustomLineItemRecurrenceInfoAction'
           setCustomType: '#/components/schemas/MyCartSetCustomTypeAction'
           setCustomerEmail: '#/components/schemas/MyCartSetCustomerEmailAction'
           setDeleteDaysAfterLastModification: '#/components/schemas/MyCartSetDeleteDaysAfterLastModificationAction'
           setLineItemCustomField: '#/components/schemas/MyCartSetLineItemCustomFieldAction'
           setLineItemCustomType: '#/components/schemas/MyCartSetLineItemCustomTypeAction'
           setLineItemDistributionChannel: '#/components/schemas/MyCartSetLineItemDistributionChannelAction'
+          setLineItemRecurrenceInfo: '#/components/schemas/MyCartSetLineItemRecurrenceInfoAction'
           setLineItemShippingDetails: '#/components/schemas/MyCartSetLineItemShippingDetailsAction'
           setLineItemSupplyChannel: '#/components/schemas/MyCartSetLineItemSupplyChannelAction'
           setLocale: '#/components/schemas/MyCartSetLocaleAction'
@@ -52347,6 +53383,8 @@ components:
           $ref: '#/components/schemas/ChannelResourceIdentifier'
         shippingDetails:
           $ref: '#/components/schemas/ItemShippingDetailsDraft'
+        recurrenceInfo:
+          $ref: '#/components/schemas/LineItemRecurrenceInfoDraft'
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
     MyOrderFromCartDraft:
@@ -52896,6 +53934,8 @@ components:
               $ref: '#/components/schemas/ChannelResourceIdentifier'
             shippingDetails:
               $ref: '#/components/schemas/ItemShippingDetailsDraft'
+            recurrenceInfo:
+              $ref: '#/components/schemas/LineItemRecurrenceInfoDraft'
             custom:
               $ref: '#/components/schemas/CustomFieldsDraft'
     MyCartAddPaymentAction:
@@ -53074,6 +54114,19 @@ components:
               type: "string"
             value:
               {}
+    MyCartSetCustomLineItemRecurrenceInfoAction:
+      allOf:
+        - $ref: '#/components/schemas/MyCartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            customLineItemId:
+              type: "string"
+            customLineItemKey:
+              type: "string"
+            recurrenceInfo:
+              $ref: '#/components/schemas/CustomLineItemRecurrenceInfoDraft'
     MyCartSetCustomTypeAction:
       allOf:
         - $ref: '#/components/schemas/MyCartUpdateAction'
@@ -53149,6 +54202,19 @@ components:
               type: "string"
             distributionChannel:
               $ref: '#/components/schemas/ChannelResourceIdentifier'
+    MyCartSetLineItemRecurrenceInfoAction:
+      allOf:
+        - $ref: '#/components/schemas/MyCartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            lineItemId:
+              type: "string"
+            lineItemKey:
+              type: "string"
+            recurrenceInfo:
+              $ref: '#/components/schemas/LineItemRecurrenceInfoDraft'
     MyCartSetLineItemShippingDetailsAction:
       allOf:
         - $ref: '#/components/schemas/MyCartUpdateAction'
@@ -58496,6 +59562,17 @@ components:
               QuoteRequestStateTransition: '#/components/schemas/QuoteRequestStateTransitionMessage'
               QuoteStateChanged: '#/components/schemas/QuoteStateChangedMessage'
               QuoteStateTransition: '#/components/schemas/QuoteStateTransitionMessage'
+              RecurringOrderCreated: '#/components/schemas/RecurringOrderCreatedMessage'
+              RecurringOrderCustomFieldAdded: '#/components/schemas/RecurringOrderCustomFieldAddedMessage'
+              RecurringOrderCustomFieldChanged: '#/components/schemas/RecurringOrderCustomFieldChangedMessage'
+              RecurringOrderCustomFieldRemoved: '#/components/schemas/RecurringOrderCustomFieldRemovedMessage'
+              RecurringOrderCustomTypeRemoved: '#/components/schemas/RecurringOrderCustomTypeRemovedMessage'
+              RecurringOrderCustomTypeSet: '#/components/schemas/RecurringOrderCustomTypeSetMessage'
+              RecurringOrderKeySet: '#/components/schemas/RecurringOrderKeySetMessage'
+              RecurringOrderScheduleSet: '#/components/schemas/RecurringOrderScheduleSetMessage'
+              RecurringOrderStartsAtSet: '#/components/schemas/RecurringOrderStartsAtSetMessage'
+              RecurringOrderStateChanged: '#/components/schemas/RecurringOrderStateChangedMessage'
+              RecurringOrderStateTransition: '#/components/schemas/RecurringOrderStateTransitionMessage'
               ReviewCreated: '#/components/schemas/ReviewCreatedMessage'
               ReviewRatingSet: '#/components/schemas/ReviewRatingSetMessage'
               ReviewStateTransition: '#/components/schemas/ReviewStateTransitionMessage'
@@ -58682,6 +59759,45 @@ components:
               $ref: '#/components/schemas/BusinessUnitKeyReference'
             oldbusinessUnit:
               $ref: '#/components/schemas/BusinessUnitKeyReference'
+    OrderCreatedFromRecurringOrderMessage:
+      allOf:
+        - $ref: '#/components/schemas/OrderMessage'
+        - type: "object"
+          required:
+            - order
+            - recurringOrderRef
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            order:
+              $ref: '#/components/schemas/Order'
+            recurringOrderRef:
+              $ref: '#/components/schemas/RecurringOrderReference'
     OrderCreatedMessage:
       allOf:
         - $ref: '#/components/schemas/OrderMessage'
@@ -63671,6 +64787,425 @@ components:
               $ref: '#/components/schemas/StateReference'
             force:
               type: "boolean"
+    RecurringOrderCreatedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - order
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            order:
+              $ref: '#/components/schemas/RecurringOrder'
+    RecurringOrderCustomFieldAddedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - name
+            - value
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            name:
+              type: "string"
+            value:
+              {}
+    RecurringOrderCustomFieldChangedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - name
+            - value
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            name:
+              type: "string"
+            value:
+              {}
+            previousValue:
+              {}
+    RecurringOrderCustomFieldRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - name
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            name:
+              type: "string"
+    RecurringOrderCustomTypeRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            previousTypeId:
+              type: "string"
+    RecurringOrderCustomTypeSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - customFields
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            customFields:
+              $ref: '#/components/schemas/CustomFields'
+            previousTypeId:
+              type: "string"
+    RecurringOrderKeySetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            key:
+              type: "string"
+            oldKey:
+              type: "string"
+    RecurringOrderScheduleSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - oldRecurrencePolicySchedule
+            - recurrencePolicySchedule
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            recurrencePolicySchedule:
+              $ref: '#/components/schemas/RecurrencePolicySchedule'
+            oldRecurrencePolicySchedule:
+              $ref: '#/components/schemas/RecurrencePolicySchedule'
+    RecurringOrderStartsAtSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - oldStartsAt
+            - startsAt
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            startsAt:
+              type: "string"
+              format: "datetime"
+            oldStartsAt:
+              type: "string"
+              format: "datetime"
+    RecurringOrderStateChangedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - state
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            state:
+              $ref: '#/components/schemas/RecurringOrderState'
+            oldState:
+              $ref: '#/components/schemas/RecurringOrderState'
+    RecurringOrderStateTransitionMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - force
+            - state
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            state:
+              $ref: '#/components/schemas/StateReference'
+            oldState:
+              $ref: '#/components/schemas/StateReference'
+            force:
+              type: "boolean"
     ReturnInfoAddedMessage:
       allOf:
         - $ref: '#/components/schemas/OrderMessage'
@@ -66803,6 +68338,17 @@ components:
           QuoteRequestStateTransition: '#/components/schemas/QuoteRequestStateTransitionMessagePayload'
           QuoteStateChanged: '#/components/schemas/QuoteStateChangedMessagePayload'
           QuoteStateTransition: '#/components/schemas/QuoteStateTransitionMessagePayload'
+          RecurringOrderCreated: '#/components/schemas/RecurringOrderCreatedMessagePayload'
+          RecurringOrderCustomFieldAdded: '#/components/schemas/RecurringOrderCustomFieldAddedMessagePayload'
+          RecurringOrderCustomFieldChanged: '#/components/schemas/RecurringOrderCustomFieldChangedMessagePayload'
+          RecurringOrderCustomFieldRemoved: '#/components/schemas/RecurringOrderCustomFieldRemovedMessagePayload'
+          RecurringOrderCustomTypeRemoved: '#/components/schemas/RecurringOrderCustomTypeRemovedMessagePayload'
+          RecurringOrderCustomTypeSet: '#/components/schemas/RecurringOrderCustomTypeSetMessagePayload'
+          RecurringOrderKeySet: '#/components/schemas/RecurringOrderKeySetMessagePayload'
+          RecurringOrderScheduleSet: '#/components/schemas/RecurringOrderScheduleSetMessagePayload'
+          RecurringOrderStartsAtSet: '#/components/schemas/RecurringOrderStartsAtSetMessagePayload'
+          RecurringOrderStateChanged: '#/components/schemas/RecurringOrderStateChangedMessagePayload'
+          RecurringOrderStateTransition: '#/components/schemas/RecurringOrderStateTransitionMessagePayload'
           ReviewCreated: '#/components/schemas/ReviewCreatedMessagePayload'
           ReviewRatingSet: '#/components/schemas/ReviewRatingSetMessagePayload'
           ReviewStateTransition: '#/components/schemas/ReviewStateTransitionMessagePayload'
@@ -66863,6 +68409,20 @@ components:
               $ref: '#/components/schemas/BusinessUnitKeyReference'
             oldbusinessUnit:
               $ref: '#/components/schemas/BusinessUnitKeyReference'
+    OrderCreatedFromRecurringOrderMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/OrderMessagePayload'
+        - type: "object"
+          required:
+            - order
+            - recurringOrderRef
+          properties:
+            type:
+              type: "string"
+            order:
+              $ref: '#/components/schemas/Order'
+            recurringOrderRef:
+              $ref: '#/components/schemas/RecurringOrderReference'
     OrderCreatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/OrderMessagePayload'
@@ -68707,6 +70267,157 @@ components:
               $ref: '#/components/schemas/StateReference'
             force:
               type: "boolean"
+    RecurringOrderCreatedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - order
+          properties:
+            type:
+              type: "string"
+            order:
+              $ref: '#/components/schemas/RecurringOrder'
+    RecurringOrderCustomFieldAddedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - name
+            - value
+          properties:
+            type:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+    RecurringOrderCustomFieldChangedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - name
+            - value
+          properties:
+            type:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+            previousValue:
+              {}
+    RecurringOrderCustomFieldRemovedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - name
+          properties:
+            type:
+              type: "string"
+            name:
+              type: "string"
+    RecurringOrderCustomTypeRemovedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            previousTypeId:
+              type: "string"
+    RecurringOrderCustomTypeSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - customFields
+          properties:
+            type:
+              type: "string"
+            customFields:
+              $ref: '#/components/schemas/CustomFields'
+            previousTypeId:
+              type: "string"
+    RecurringOrderKeySetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            key:
+              type: "string"
+            oldKey:
+              type: "string"
+    RecurringOrderMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+    RecurringOrderScheduleSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - oldRecurrencePolicySchedule
+            - recurrencePolicySchedule
+          properties:
+            type:
+              type: "string"
+            recurrencePolicySchedule:
+              $ref: '#/components/schemas/RecurrencePolicySchedule'
+            oldRecurrencePolicySchedule:
+              $ref: '#/components/schemas/RecurrencePolicySchedule'
+    RecurringOrderStartsAtSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - oldStartsAt
+            - startsAt
+          properties:
+            type:
+              type: "string"
+            startsAt:
+              type: "string"
+              format: "datetime"
+            oldStartsAt:
+              type: "string"
+              format: "datetime"
+    RecurringOrderStateChangedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - state
+          properties:
+            type:
+              type: "string"
+            state:
+              $ref: '#/components/schemas/RecurringOrderState'
+            oldState:
+              $ref: '#/components/schemas/RecurringOrderState'
+    RecurringOrderStateTransitionMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - force
+            - state
+          properties:
+            type:
+              type: "string"
+            state:
+              $ref: '#/components/schemas/StateReference'
+            oldState:
+              $ref: '#/components/schemas/StateReference'
+            force:
+              type: "boolean"
     ReturnInfoAddedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/OrderMessagePayload'
@@ -69556,6 +71267,8 @@ components:
               $ref: '#/components/schemas/CartReference'
             quote:
               $ref: '#/components/schemas/QuoteReference'
+            recurringOrder:
+              $ref: '#/components/schemas/RecurringOrderReference'
             orderState:
               $ref: '#/components/schemas/OrderState'
             shipmentState:
@@ -69786,6 +71499,8 @@ components:
               $ref: '#/components/schemas/CustomLineItemPriceMode'
             custom:
               $ref: '#/components/schemas/CustomFieldsDraft'
+            recurrenceInfo:
+              $ref: '#/components/schemas/CustomLineItemRecurrenceInfoDraft'
     StagedOrderAddDeliveryAction:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
@@ -69869,6 +71584,8 @@ components:
               $ref: '#/components/schemas/ItemShippingDetailsDraft'
             custom:
               $ref: '#/components/schemas/CustomFieldsDraft'
+            recurrenceInfo:
+              $ref: '#/components/schemas/LineItemRecurrenceInfoDraft'
     StagedOrderAddParcelToDeliveryAction:
       allOf:
         - $ref: '#/components/schemas/StagedOrderUpdateAction'
@@ -71751,6 +73468,8 @@ components:
               $ref: '#/components/schemas/CartReference'
             quote:
               $ref: '#/components/schemas/QuoteReference'
+            recurringOrder:
+              $ref: '#/components/schemas/RecurringOrderReference'
             orderState:
               $ref: '#/components/schemas/OrderState'
             shipmentState:
@@ -77398,6 +79117,10 @@ components:
           $ref: '#/components/schemas/ScopedPrice'
         scopedPriceDiscounted:
           type: "boolean"
+        recurrencePrices:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Price'
     ProductVariantAvailability:
       type: "object"
       properties:
@@ -79380,6 +81103,683 @@ components:
     QuoteTransitionStateAction:
       allOf:
         - $ref: '#/components/schemas/QuoteUpdateAction'
+        - type: "object"
+          required:
+            - state
+          properties:
+            action:
+              type: "string"
+            state:
+              $ref: '#/components/schemas/StateResourceIdentifier'
+            force:
+              type: "boolean"
+    DayOfMonthSchedule:
+      allOf:
+        - $ref: '#/components/schemas/RecurrencePolicySchedule'
+        - type: "object"
+          required:
+            - day
+            - type
+          properties:
+            type:
+              type: "string"
+            day:
+              type: "integer"
+              format: "int32"
+    DayOfMonthScheduleDraft:
+      allOf:
+        - $ref: '#/components/schemas/RecurrencePolicyScheduleDraft'
+        - type: "object"
+          required:
+            - day
+            - type
+          properties:
+            type:
+              type: "string"
+            day:
+              type: "integer"
+              format: "int32"
+    IntervalUnit:
+      type: "string"
+      enum:
+        - Days
+        - Weeks
+        - Months
+      x-annotation-package: "RecurrencePolicy"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Days: "Use to set a daily schedule."
+        Weeks: "Use to set a weekly schedule."
+        Months: "Use to set a monthly schedule."
+    RecurrencePolicy:
+      allOf:
+        - $ref: '#/components/schemas/BaseResource'
+        - type: "object"
+          required:
+            - createdAt
+            - id
+            - key
+            - lastModifiedAt
+            - schedule
+            - version
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            key:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+            schedule:
+              $ref: '#/components/schemas/RecurrencePolicySchedule'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+    RecurrencePolicyDraft:
+      type: "object"
+      required:
+        - key
+        - schedule
+      properties:
+        key:
+          type: "string"
+        name:
+          $ref: '#/components/schemas/LocalizedString'
+        description:
+          $ref: '#/components/schemas/LocalizedString'
+        schedule:
+          $ref: '#/components/schemas/RecurrencePolicyScheduleDraft'
+    RecurrencePolicyPagedQueryResponse:
+      type: "object"
+      required:
+        - count
+        - limit
+        - offset
+        - results
+      properties:
+        limit:
+          type: "integer"
+          format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
+        count:
+          type: "integer"
+          format: "int64"
+        total:
+          type: "integer"
+          format: "int64"
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/RecurrencePolicy'
+    RecurrencePolicyReference:
+      allOf:
+        - $ref: '#/components/schemas/Reference'
+        - type: "object"
+          required:
+            - id
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            obj:
+              $ref: '#/components/schemas/RecurrencePolicy'
+    RecurrencePolicyResourceIdentifier:
+      allOf:
+        - $ref: '#/components/schemas/ResourceIdentifier'
+        - type: "object"
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            key:
+              type: "string"
+    RecurrencePolicySchedule:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          dayOfMonth: '#/components/schemas/DayOfMonthSchedule'
+          standard: '#/components/schemas/StandardSchedule'
+      required:
+        - type
+      properties:
+        type:
+          type: "string"
+    RecurrencePolicyScheduleDraft:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          standard: '#/components/schemas/StandardScheduleDraft'
+      required:
+        - type
+      properties:
+        type:
+          type: "string"
+    RecurrencePolicyUpdate:
+      type: "object"
+      required:
+        - actions
+        - version
+      properties:
+        version:
+          type: "integer"
+          format: "int64"
+        actions:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/RecurrencePolicyUpdateAction'
+    RecurrencePolicyUpdateAction:
+      type: "object"
+      discriminator:
+        propertyName: action
+        mapping:
+          setDescription: '#/components/schemas/RecurrencePolicySetDescriptionAction'
+          setKey: '#/components/schemas/RecurrencePolicySetKeyAction'
+          setName: '#/components/schemas/RecurrencePolicySetNameAction'
+          setSchedule: '#/components/schemas/RecurrencePolicySetScheduleAction'
+      required:
+        - action
+      properties:
+        action:
+          type: "string"
+    StandardSchedule:
+      allOf:
+        - $ref: '#/components/schemas/RecurrencePolicySchedule'
+        - type: "object"
+          required:
+            - intervalUnit
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "integer"
+              format: "int64"
+            intervalUnit:
+              $ref: '#/components/schemas/IntervalUnit'
+    StandardScheduleDraft:
+      allOf:
+        - $ref: '#/components/schemas/RecurrencePolicyScheduleDraft'
+        - type: "object"
+          required:
+            - intervalUnit
+            - value
+          properties:
+            type:
+              type: "string"
+            value:
+              type: "integer"
+              format: "int64"
+            intervalUnit:
+              $ref: '#/components/schemas/IntervalUnit'
+    RecurrencePolicySetDescriptionAction:
+      allOf:
+        - $ref: '#/components/schemas/RecurrencePolicyUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+    RecurrencePolicySetKeyAction:
+      allOf:
+        - $ref: '#/components/schemas/RecurrencePolicyUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            key:
+              type: "string"
+    RecurrencePolicySetNameAction:
+      allOf:
+        - $ref: '#/components/schemas/RecurrencePolicyUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+    RecurrencePolicySetScheduleAction:
+      allOf:
+        - $ref: '#/components/schemas/RecurrencePolicyUpdateAction'
+        - type: "object"
+          required:
+            - schedule
+          properties:
+            action:
+              type: "string"
+            schedule:
+              $ref: '#/components/schemas/RecurrencePolicyScheduleDraft'
+    Counter:
+      allOf:
+        - $ref: '#/components/schemas/SkipConfiguration'
+        - type: "object"
+          required:
+            - skipped
+            - totalToSkip
+          properties:
+            type:
+              type: "string"
+            totalToSkip:
+              type: "integer"
+              format: "int32"
+            skipped:
+              type: "integer"
+              format: "int32"
+            lastSkippedAt:
+              type: "string"
+              format: "datetime"
+    CounterDraft:
+      allOf:
+        - $ref: '#/components/schemas/SkipConfigurationDraft'
+        - type: "object"
+          required:
+            - totalToSkip
+          properties:
+            type:
+              type: "string"
+            totalToSkip:
+              type: "integer"
+              format: "int32"
+    CustomLineItemRecurrenceInfo:
+      type: "object"
+      required:
+        - recurrencePolicy
+      properties:
+        recurrencePolicy:
+          $ref: '#/components/schemas/RecurrencePolicyReference'
+    CustomLineItemRecurrenceInfoDraft:
+      type: "object"
+      required:
+        - recurrencePolicy
+      properties:
+        recurrencePolicy:
+          $ref: '#/components/schemas/RecurrencePolicyResourceIdentifier'
+    LineItemRecurrenceInfo:
+      type: "object"
+      required:
+        - priceSelectionMode
+        - recurrencePolicy
+      properties:
+        recurrencePolicy:
+          $ref: '#/components/schemas/RecurrencePolicyReference'
+        priceSelectionMode:
+          $ref: '#/components/schemas/PriceSelectionMode'
+    LineItemRecurrenceInfoDraft:
+      type: "object"
+      required:
+        - priceSelectionMode
+        - recurrencePolicy
+      properties:
+        recurrencePolicy:
+          $ref: '#/components/schemas/RecurrencePolicyResourceIdentifier'
+        priceSelectionMode:
+          $ref: '#/components/schemas/PriceSelectionMode'
+    PriceSelectionMode:
+      type: "string"
+      enum:
+        - Fixed
+        - Dynamic
+      x-annotation-package: "RecurringOrder"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Fixed: "The price set when the [Recurring Order](ctp:api:type:RecurringOrder) was
+         created is used for each subsequent order.n"
+        Dynamic: "The price is updated each time a new Order is created.n"
+    RecurringOrder:
+      allOf:
+        - $ref: '#/components/schemas/BaseResource'
+        - type: "object"
+          required:
+            - cart
+            - createdAt
+            - id
+            - lastModifiedAt
+            - originOrder
+            - recurringOrderState
+            - schedule
+            - startsAt
+            - version
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            key:
+              type: "string"
+            cart:
+              $ref: '#/components/schemas/CartReference'
+            originOrder:
+              $ref: '#/components/schemas/OrderReference'
+            startsAt:
+              type: "string"
+              format: "datetime"
+            resumesAt:
+              type: "string"
+              format: "datetime"
+            expiresAt:
+              type: "string"
+              format: "datetime"
+            lastOrderAt:
+              type: "string"
+              format: "datetime"
+            nextOrderAt:
+              type: "string"
+              format: "datetime"
+            skipConfiguration:
+              $ref: '#/components/schemas/SkipConfiguration'
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            businessUnit:
+              $ref: '#/components/schemas/BusinessUnitKeyReference'
+            state:
+              $ref: '#/components/schemas/StateReference'
+            recurringOrderState:
+              $ref: '#/components/schemas/RecurringOrderState'
+            schedule:
+              $ref: '#/components/schemas/RecurrencePolicySchedule'
+            customer:
+              $ref: '#/components/schemas/CustomerReference'
+            customerEmail:
+              type: "string"
+            custom:
+              $ref: '#/components/schemas/CustomFields'
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+    RecurringOrderActive:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderStateDraft'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            resumesAt:
+              type: "string"
+              format: "datetime"
+    RecurringOrderCanceled:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderStateDraft'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            reason:
+              type: "string"
+    RecurringOrderDraft:
+      type: "object"
+      required:
+        - cart
+        - cartVersion
+        - startsAt
+      properties:
+        key:
+          type: "string"
+        cart:
+          $ref: '#/components/schemas/CartResourceIdentifier'
+        cartVersion:
+          type: "integer"
+          format: "int64"
+        startsAt:
+          type: "string"
+          format: "datetime"
+        state:
+          $ref: '#/components/schemas/StateResourceIdentifier'
+        custom:
+          $ref: '#/components/schemas/CustomFieldsDraft'
+    RecurringOrderExpired:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderStateDraft'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+    RecurringOrderPagedQueryResponse:
+      type: "object"
+      required:
+        - count
+        - limit
+        - offset
+        - results
+      properties:
+        limit:
+          type: "integer"
+          format: "int64"
+        offset:
+          type: "integer"
+          format: "int64"
+        count:
+          type: "integer"
+          format: "int64"
+        total:
+          type: "integer"
+          format: "int64"
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/RecurringOrder'
+    RecurringOrderPaused:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderStateDraft'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+    RecurringOrderReference:
+      allOf:
+        - $ref: '#/components/schemas/Reference'
+        - type: "object"
+          required:
+            - id
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            obj:
+              $ref: '#/components/schemas/RecurringOrder'
+    RecurringOrderResourceIdentifier:
+      allOf:
+        - $ref: '#/components/schemas/ResourceIdentifier'
+        - type: "object"
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            key:
+              type: "string"
+    RecurringOrderState:
+      type: "string"
+      enum:
+        - Active
+        - Paused
+        - Expired
+        - Canceled
+        - Failed
+      x-annotation-package: "RecurringOrder"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Active: "The default state of a new RecurringOrder.n"
+        Paused: "Indicates that the RecurringOrder is paused.n"
+        Expired: "Indicates that the RecurringOrder has expired.n"
+        Canceled: "Indicates that the RecurringOrder is canceled.n"
+        Failed: "Indicates that the process of creating new orders has failed. The field `failure`
+         stores the error encountered (inventory unavailable, etc). New orders will not
+         be created until the issue is fixed.n"
+    RecurringOrderStateDraft:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          active: '#/components/schemas/RecurringOrderActive'
+          canceled: '#/components/schemas/RecurringOrderCanceled'
+          expired: '#/components/schemas/RecurringOrderExpired'
+          paused: '#/components/schemas/RecurringOrderPaused'
+      required:
+        - type
+      properties:
+        type:
+          type: "string"
+    RecurringOrderUpdate:
+      type: "object"
+      required:
+        - actions
+        - version
+      properties:
+        version:
+          type: "integer"
+          format: "int64"
+        actions:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/RecurringOrderUpdateAction'
+    RecurringOrderUpdateAction:
+      type: "object"
+      discriminator:
+        propertyName: action
+        mapping:
+          setCustomField: '#/components/schemas/RecurringOrderSetCustomFieldAction'
+          setCustomType: '#/components/schemas/RecurringOrderSetCustomTypeAction'
+          setKey: '#/components/schemas/RecurringOrderSetKeyAction'
+          setOrderSkipConfiguration: '#/components/schemas/RecurringOrderSetOrderSkipConfigurationAction'
+          setSchedule: '#/components/schemas/RecurringOrderSetScheduleAction'
+          setStartsAt: '#/components/schemas/RecurringOrderSetStartsAtAction'
+          setRecurringOrderState: '#/components/schemas/RecurringOrderSetStateAction'
+          transitionState: '#/components/schemas/RecurringOrderTransitionStateAction'
+      required:
+        - action
+      properties:
+        action:
+          type: "string"
+    SkipConfiguration:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          counter: '#/components/schemas/Counter'
+      required:
+        - type
+      properties:
+        type:
+          type: "string"
+    SkipConfigurationDraft:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          counter: '#/components/schemas/CounterDraft'
+      required:
+        - type
+      properties:
+        type:
+          type: "string"
+    RecurringOrderSetCustomFieldAction:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderUpdateAction'
+        - type: "object"
+          required:
+            - name
+          properties:
+            action:
+              type: "string"
+            name:
+              type: "string"
+            value:
+              {}
+    RecurringOrderSetCustomTypeAction:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            type:
+              $ref: '#/components/schemas/TypeResourceIdentifier'
+            fields:
+              $ref: '#/components/schemas/FieldContainer'
+    RecurringOrderSetKeyAction:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            key:
+              type: "string"
+    RecurringOrderSetOrderSkipConfigurationAction:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            skipConfiguration:
+              $ref: '#/components/schemas/SkipConfigurationDraft'
+            updatedExpiresAt:
+              type: "string"
+              format: "datetime"
+    RecurringOrderSetScheduleAction:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderUpdateAction'
+        - type: "object"
+          required:
+            - recurrencePolicy
+          properties:
+            action:
+              type: "string"
+            recurrencePolicy:
+              $ref: '#/components/schemas/RecurrencePolicyResourceIdentifier'
+    RecurringOrderSetStartsAtAction:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderUpdateAction'
+        - type: "object"
+          required:
+            - startsAt
+          properties:
+            action:
+              type: "string"
+            startsAt:
+              type: "string"
+              format: "datetime"
+    RecurringOrderSetStateAction:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderUpdateAction'
+        - type: "object"
+          required:
+            - recurringOrderState
+          properties:
+            action:
+              type: "string"
+            recurringOrderState:
+              $ref: '#/components/schemas/RecurringOrderStateDraft'
+    RecurringOrderTransitionStateAction:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderUpdateAction'
         - type: "object"
           required:
             - state
@@ -81611,6 +84011,8 @@ components:
               $ref: '#/components/schemas/StagedStandalonePrice'
             active:
               type: "boolean"
+            recurrencePolicy:
+              $ref: '#/components/schemas/RecurrencePolicyReference'
     StandalonePriceDraft:
       type: "object"
       required:
@@ -81643,6 +84045,8 @@ components:
           $ref: '#/components/schemas/DiscountedPriceDraft'
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
+        recurrencePolicy:
+          $ref: '#/components/schemas/RecurrencePolicyResourceIdentifier'
         staged:
           $ref: '#/components/schemas/StagedPriceDraft'
         active:
@@ -82016,6 +84420,7 @@ components:
       type: "string"
       enum:
         - OrderState
+        - RecurringOrderState
         - LineItemState
         - ProductState
         - ReviewState
@@ -82026,6 +84431,7 @@ components:
       x-annotation-package: "State"
       x-annotation-enumDescriptions:
         OrderState: "Used by [Orders](ctp:api:type:Order)."
+        RecurringOrderState: "Used by [RecurringOrders](ctp:api:type:RecurringOrder)."
         LineItemState: "Used by [LineItems](ctp:api:type:LineItem) and [CustomLineItems](ctp:api:type:CustomLineItem)
          in [Carts](ctp:api:type:Cart) and [Orders](ctp:api:type:Order), with the `builtin`
          field always set to `true` by default. In addition, the `initial` field is set
@@ -82654,6 +85060,8 @@ components:
         - product-type
         - quote
         - quote-request
+        - recurrence-policy
+        - recurring-order
         - review
         - shipping-method
         - shopping-list
@@ -82705,6 +85113,8 @@ components:
         quote: "Changes to [Quotes](ctp:api:type:Quote).n"
         quote-request: "Changes to [QuoteRequests](ctp:api:type:QuoteRequest).n"
         review: "Changes to [Reviews](ctp:api:type:Review).n"
+        recurrence-policy: "Changes to [RecurrencePolicies](ctp:api:type:RecurrencePolicy).n"
+        recurring-order: "Changes to [RecurringOrders](ctp:api:type:RecurringOrder).n"
         shipping-method: "Changes to [ShippingMethods](ctp:api:type:ShippingMethod).n"
         shopping-list: "Changes to [ShoppingLists](ctp:api:type:ShoppingList).n"
         staged-quote: "Changes to [StagedQuotes](ctp:api:type:StagedQuote).n"
@@ -83934,6 +86344,7 @@ components:
         - product-tailoring
         - quote
         - review
+        - recurring-order
         - shipping
         - shipping-method
         - shopping-list
@@ -83989,6 +86400,7 @@ components:
          are also valid for QuoteRequests and StagedQuotes, and hence all have the same
          identifier: `quote`.n"
         review: "[Review](ctp:api:type:Review)n"
+        recurring-order: "[RecurringOrder](ctp:api:type:RecurringOrder)n"
         shipping: "[Shipping](ctp:api:type:Shipping)n"
         shipping-method: "[ShippingMethod](ctp:api:type:ShippingMethod)n"
         shopping-list: "[ShoppingList](ctp:api:type:ShoppingList)n"

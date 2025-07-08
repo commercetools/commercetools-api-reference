@@ -343,6 +343,7 @@ interface Order [[Order.svg]] extends BaseResource {
     origin: [[CartOrigin.svg CartOrigin]]
     cart: [[CartReference.svg CartReference]]
     quote: [[QuoteReference.svg QuoteReference]]
+    recurringOrder: [[RecurringOrderReference.svg RecurringOrderReference]]
     orderState: [[OrderState.svg OrderState]]
     shipmentState: [[ShipmentState.svg ShipmentState]]
     paymentState: [[PaymentState.svg PaymentState]]
@@ -589,6 +590,43 @@ interface QuoteRequest [[QuoteRequest.svg]] extends BaseResource {
     cart: [[CartReference.svg CartReference]]
     businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
 }
+interface RecurrencePolicy [[RecurrencePolicy.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    name: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    schedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+}
+interface RecurringOrder [[RecurringOrder.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    cart: [[CartReference.svg CartReference]]
+    originOrder: [[OrderReference.svg OrderReference]]
+    startsAt: DateTime
+    resumesAt: DateTime
+    expiresAt: DateTime
+    lastOrderAt: DateTime
+    nextOrderAt: DateTime
+    skipConfiguration: [[SkipConfiguration.svg SkipConfiguration]]
+    store: [[StoreKeyReference.svg StoreKeyReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    state: [[StateReference.svg StateReference]]
+    recurringOrderState: [[RecurringOrderState.svg RecurringOrderState]]
+    schedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    customerEmail: String
+    custom: [[CustomFields.svg CustomFields]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+}
 interface Review [[Review.svg]] extends BaseResource {
     id: String
     version: Long
@@ -690,6 +728,7 @@ interface StagedOrder [[StagedOrder.svg]] extends Order {
     origin: [[CartOrigin.svg CartOrigin]]
     cart: [[CartReference.svg CartReference]]
     quote: [[QuoteReference.svg QuoteReference]]
+    recurringOrder: [[RecurringOrderReference.svg RecurringOrderReference]]
     orderState: [[OrderState.svg OrderState]]
     shipmentState: [[ShipmentState.svg ShipmentState]]
     paymentState: [[PaymentState.svg PaymentState]]
@@ -743,6 +782,7 @@ interface StandalonePrice [[StandalonePrice.svg]] extends BaseResource {
     custom: [[CustomFields.svg CustomFields]]
     staged: [[StagedStandalonePrice.svg StagedStandalonePrice]]
     active: Boolean
+    recurrencePolicy: [[RecurrencePolicyReference.svg RecurrencePolicyReference]]
 }
 interface State [[State.svg]] extends BaseResource {
     id: String
@@ -3773,6 +3813,170 @@ interface QuoteStateTransitionMessage [[QuoteStateTransitionMessage.svg]]  {
     oldState: [[StateReference.svg StateReference]]
     force: Boolean
 }
+interface RecurringOrderCreatedMessage [[RecurringOrderCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    order: [[RecurringOrder.svg RecurringOrder]]
+}
+interface RecurringOrderCustomFieldAddedMessage [[RecurringOrderCustomFieldAddedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    name: String
+    value: [[Object.svg Object]]
+}
+interface RecurringOrderCustomFieldChangedMessage [[RecurringOrderCustomFieldChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    name: String
+    value: [[Object.svg Object]]
+    previousValue: [[Object.svg Object]]
+}
+interface RecurringOrderCustomFieldRemovedMessage [[RecurringOrderCustomFieldRemovedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    name: String
+}
+interface RecurringOrderCustomTypeRemovedMessage [[RecurringOrderCustomTypeRemovedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    previousTypeId: String
+}
+interface RecurringOrderCustomTypeSetMessage [[RecurringOrderCustomTypeSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    customFields: [[CustomFields.svg CustomFields]]
+    previousTypeId: String
+}
+interface RecurringOrderKeySetMessage [[RecurringOrderKeySetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    key: String
+    oldKey: String
+}
+interface RecurringOrderScheduleSetMessage [[RecurringOrderScheduleSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    recurrencePolicySchedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+    oldRecurrencePolicySchedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+}
+interface RecurringOrderStartsAtSetMessage [[RecurringOrderStartsAtSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    startsAt: DateTime
+    oldStartsAt: DateTime
+}
+interface RecurringOrderStateChangedMessage [[RecurringOrderStateChangedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    state: [[RecurringOrderState.svg RecurringOrderState]]
+    oldState: [[RecurringOrderState.svg RecurringOrderState]]
+}
+interface RecurringOrderStateTransitionMessage [[RecurringOrderStateTransitionMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    state: [[StateReference.svg StateReference]]
+    oldState: [[StateReference.svg StateReference]]
+    force: Boolean
+}
 interface ReviewCreatedMessage [[ReviewCreatedMessage.svg]]  {
     id: String
     version: Long
@@ -4456,6 +4660,17 @@ BaseResource --> QuoteRequestStateChangedMessage #blue;text:blue : "type : Quote
 BaseResource --> QuoteRequestStateTransitionMessage #blue;text:blue : "type : QuoteRequestStateTransition"
 BaseResource --> QuoteStateChangedMessage #blue;text:blue : "type : QuoteStateChanged"
 BaseResource --> QuoteStateTransitionMessage #blue;text:blue : "type : QuoteStateTransition"
+BaseResource --> RecurringOrderCreatedMessage #blue;text:blue : "type : RecurringOrderCreated"
+BaseResource --> RecurringOrderCustomFieldAddedMessage #blue;text:blue : "type : RecurringOrderCustomFieldAdded"
+BaseResource --> RecurringOrderCustomFieldChangedMessage #blue;text:blue : "type : RecurringOrderCustomFieldChanged"
+BaseResource --> RecurringOrderCustomFieldRemovedMessage #blue;text:blue : "type : RecurringOrderCustomFieldRemoved"
+BaseResource --> RecurringOrderCustomTypeRemovedMessage #blue;text:blue : "type : RecurringOrderCustomTypeRemoved"
+BaseResource --> RecurringOrderCustomTypeSetMessage #blue;text:blue : "type : RecurringOrderCustomTypeSet"
+BaseResource --> RecurringOrderKeySetMessage #blue;text:blue : "type : RecurringOrderKeySet"
+BaseResource --> RecurringOrderScheduleSetMessage #blue;text:blue : "type : RecurringOrderScheduleSet"
+BaseResource --> RecurringOrderStartsAtSetMessage #blue;text:blue : "type : RecurringOrderStartsAtSet"
+BaseResource --> RecurringOrderStateChangedMessage #blue;text:blue : "type : RecurringOrderStateChanged"
+BaseResource --> RecurringOrderStateTransitionMessage #blue;text:blue : "type : RecurringOrderStateTransition"
 BaseResource --> ReviewCreatedMessage #blue;text:blue : "type : ReviewCreated"
 BaseResource --> ReviewRatingSetMessage #blue;text:blue : "type : ReviewRatingSet"
 BaseResource --> ReviewStateTransitionMessage #blue;text:blue : "type : ReviewStateTransition"

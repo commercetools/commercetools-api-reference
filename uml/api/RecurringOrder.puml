@@ -1,0 +1,79 @@
+@startuml
+
+hide empty fields
+hide empty methods
+legend
+|= |= line |
+|<back:black>   </back>| inheritance |
+|<back:green>   </back>| property reference |
+|<back:blue>   </back>| discriminated class |
+endlegend
+interface RecurringOrder [[RecurringOrder.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    key: String
+    cart: [[CartReference.svg CartReference]]
+    originOrder: [[OrderReference.svg OrderReference]]
+    startsAt: DateTime
+    resumesAt: DateTime
+    expiresAt: DateTime
+    lastOrderAt: DateTime
+    nextOrderAt: DateTime
+    skipConfiguration: [[SkipConfiguration.svg SkipConfiguration]]
+    store: [[StoreKeyReference.svg StoreKeyReference]]
+    businessUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    state: [[StateReference.svg StateReference]]
+    recurringOrderState: [[RecurringOrderState.svg RecurringOrderState]]
+    schedule: [[RecurrencePolicySchedule.svg RecurrencePolicySchedule]]
+    customer: [[CustomerReference.svg CustomerReference]]
+    customerEmail: String
+    custom: [[CustomFields.svg CustomFields]]
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+}
+interface BaseResource [[BaseResource.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+}
+
+
+interface RecurringOrderPagedQueryResponse [[RecurringOrderPagedQueryResponse.svg]]  {
+    limit: Long
+    offset: Long
+    count: Long
+    total: Long
+    results: [[RecurringOrder.svg List<RecurringOrder>]]
+}
+interface RecurringOrderCreatedMessage [[RecurringOrderCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    order: [[RecurringOrder.svg RecurringOrder]]
+}
+interface RecurringOrderCreatedMessagePayload [[RecurringOrderCreatedMessagePayload.svg]]  {
+    type: String
+    order: [[RecurringOrder.svg RecurringOrder]]
+}
+interface RecurringOrderReference [[RecurringOrderReference.svg]]  {
+    typeId: [[ReferenceTypeId.svg ReferenceTypeId]]
+    id: String
+    obj: [[RecurringOrder.svg RecurringOrder]]
+}
+
+RecurringOrder --> RecurringOrderPagedQueryResponse #green;text:green : "results"
+RecurringOrder --> RecurringOrderCreatedMessage #green;text:green : "order"
+RecurringOrder --> RecurringOrderCreatedMessagePayload #green;text:green : "order"
+RecurringOrder --> RecurringOrderReference #green;text:green : "obj"
+@enduml
