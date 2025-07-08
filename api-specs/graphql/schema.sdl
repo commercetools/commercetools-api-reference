@@ -3238,7 +3238,7 @@ input CountOnLineItemUnitsInput {
   predicate: String!
   minCount: Int = 1
   maxCount: Int
-  excludeCount: Int
+  excludeCount: Int @deprecated(reason: "Please use 'triggerPattern' to exclude.")
 }
 
 type Counter implements SkipConfiguration {
@@ -8330,14 +8330,6 @@ enum Permission {
   ViewOthersQuoteRequests
   ViewOthersQuotes
   ViewOthersShoppingLists
-}
-
-enum Placement {
-  "The Order or Cart is placed in-store."
-  InStore
-
-  "The Order or Cart is placed online."
-  Online
 }
 
 type PlainEnumValue {
@@ -14750,6 +14742,7 @@ input ShippingTargetDraft {
 }
 
 input ShippingTargetDraftType {
+  addressKey: String!
   quantity: Long!
   shippingMethodKey: String
 }
@@ -14803,6 +14796,7 @@ type ShoppingList implements Versioned & ReferenceExpandable {
 input ShoppingListDraft {
   name: [LocalizedStringItemInputType!]!
   description: [LocalizedStringItemInputType!]
+  businessUnit: ResourceIdentifierInput
   lineItems: [ShoppingListLineItemDraft!] = []
   textLineItems: [TextLineItemDraft!] = []
   custom: CustomFieldsDraft
@@ -14828,6 +14822,7 @@ type ShoppingListLineItem {
   id: String!
   key: String
   productId: String!
+  published: Boolean!
   variantId: Int
   productTypeRef: Reference!
   productType: ProductTypeDefinition!
@@ -15614,6 +15609,7 @@ enum SubscriptionHealthStatus {
   ConfigurationErrorDeliveryStopped
   Healthy
   ManuallySuspended
+  TemporaryError
 }
 
 input SubscriptionUpdateAction {
