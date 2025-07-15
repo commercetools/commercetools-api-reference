@@ -1,0 +1,264 @@
+type:
+  baseDomain:
+    resourceType: CartDiscount
+    resourceQueryType: CartDiscountPagedQueryResponse
+    resourceDraft: CartDiscountDraft
+    whereExample: isActive = true
+    sortExample: createdAt asc
+get:
+  displayName: Query CartDiscounts in Store
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'view_orders:{projectKey}',
+              'view_orders:{projectKey}:{storeKey}',
+              'view_cart_discounts:{projectKey}',
+              'view_cart_discounts:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../../examples/cart-discounts.example.json
+head:
+  displayName: Check if CartDiscount exists in Store by Query Predicate
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'view_orders:{projectKey}',
+              'view_orders:{projectKey}:{storeKey}',
+              'view_cart_discounts:{projectKey}',
+              'view_cart_discounts:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  description: Checks if one or more CartDiscounts exist for the provided query predicate. Returns a `200` status if any CartDiscounts match the query predicate, or a `404` status otherwise.
+  queryParameters:
+    where?:
+      type: QueryPredicate[]
+post:
+  displayName: Create CartDiscount in Store
+  description: |
+    When using the endpoint, the Store specified in the path and the Stores specified in the payload's `stores` field are added to the CartDiscount.
+
+    Creating a Cart Discount produces the [CartDiscountCreated](ctp:api:type:CartDiscountCreatedMessage) Message.
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'manage_orders:{projectKey}',
+              'manage_orders:{projectKey}:{storeKey}',
+              'manage_cart_discounts:{projectKey}',
+              'manage_cart_discounts:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  body:
+    application/json:
+      example: !include ../../examples/cart-discount-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../../examples/cart-discount.example.json
+/key={key}:
+  (methodName): withKey
+  type:
+    baseResource:
+      uriParameterName: key
+      resourceType: CartDiscount
+      resourceUpdateType: CartDiscountUpdate
+  get:
+    displayName: Get CartDiscount in Store by Key
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_orders:{projectKey}:{storeKey}',
+                'view_cart_discounts:{projectKey}',
+                'view_cart_discounts:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            type: CartDiscount
+            example: !include ../../examples/cart-discount.example.json
+  head:
+    displayName: Check if CartDiscount exists in Store by Key
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_orders:{projectKey}:{storeKey}',
+                'view_cart_discounts:{projectKey}',
+                'view_cart_discounts:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: Checks if a CartDiscount exists with the provided `key`. Returns a `200` status if the CartDiscount exists, or a `404` status otherwise.
+  post:
+    displayName: Update CartDiscount in Store by Key
+    description: |
+      To update a CartDiscount, you must have permissions for all Stores the CartDiscount is associated with, except when [removing a Store](ctp:api:type:CartDiscountRemoveStoreAction).
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_orders:{projectKey}',
+                'manage_orders:{projectKey}:{storeKey}',
+                'manage_cart_discounts:{projectKey}',
+                'manage_cart_discounts:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        example: !include ../../examples/cart-discount-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: CartDiscount
+            example: !include ../../examples/cart-discount.example.json
+  delete:
+    displayName: Delete CartDiscount in Store by Key
+    description: |
+      To delete a CartDiscount, specify the `manage_cart_discounts:{projectKey}:{storeKey}` scope for all Stores associated with the CartDiscount.
+
+      Deleting a Cart Discount produces the [CartDiscountDeleted](ctp:api:type:CartDiscountDeletedMessage) Message.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_orders:{projectKey}',
+                'manage_orders:{projectKey}:{storeKey}',
+                'manage_cart_discounts:{projectKey}',
+                'manage_cart_discounts:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            type: CartDiscount
+            example: !include ../../examples/cart-discount.example.json
+/{ID}:
+  (methodName): withId
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: CartDiscount
+      resourceUpdateType: CartDiscountUpdate
+  get:
+    displayName: Get CartDiscount in Store by ID
+    description: |
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_orders:{projectKey}:{storeKey}',
+                'view_cart_discounts:{projectKey}',
+                'view_cart_discounts:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            type: CartDiscount
+            example: !include ../../examples/cart-discount.example.json
+  head:
+    displayName: Check if CartDiscount exists in Store by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_orders:{projectKey}',
+                'view_orders:{projectKey}:{storeKey}',
+                'view_cart_discounts:{projectKey}',
+                'view_cart_discounts:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: Checks if a CartDiscount exists with the provided `id`. Returns a `200` status if the CartDiscount exists, or a `404` status otherwise.
+  post:
+    displayName: Update CartDiscount in Store by ID
+    description: |
+      To update a CartDiscount, you must have permissions for all Stores the CartDiscount is associated with, except when [removing a Store](ctp:api:type:CartDiscountRemoveStoreAction).
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_orders:{projectKey}',
+                'manage_orders:{projectKey}:{storeKey}',
+                'manage_cart_discounts:{projectKey}',
+                'manage_cart_discounts:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        example: !include ../../examples/cart-discount-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: CartDiscount
+            example: !include ../../examples/cart-discount.example.json
+  delete:
+    displayName: Delete CartDiscount in Store by ID
+    description: |
+      To delete a CartDiscount, specify the `manage_cart_discounts:{projectKey}:{storeKey}` scope for all Stores associated with the CartDiscount.
+
+      Deleting a Cart Discount produces the [CartDiscountDeleted](ctp:api:type:CartDiscountDeletedMessage) Message.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_orders:{projectKey}',
+                'manage_orders:{projectKey}:{storeKey}',
+                'manage_cart_discounts:{projectKey}',
+                'manage_cart_discounts:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            type: CartDiscount
+            example: !include ../../examples/cart-discount.example.json

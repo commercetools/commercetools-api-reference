@@ -1,0 +1,76 @@
+type:
+  baseDomain:
+    resourceType: ProductTailoring
+    resourceQueryType: ProductTailoringPagedQueryResponse
+    resourceDraft: ProductTailoringInStoreDraft
+    resourceUpdateType: ProductTailoringUpdate
+    sortExample: createdAt asc
+(updateable): ProductTailoring
+(createable): ProductTailoringInStoreDraft
+description: A Product Tailoring holds tailored data of Product in the Store.
+get:
+  displayName: Query ProductTailoring in Store
+  is:
+    - expandable
+    - query:
+        whereExample: 'product(id in ("c89f4753-050d-44af-9411-0a941e745c6e"))'
+  securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
+  description: |
+    Queries Product Tailoring in a specific [Store](ctp:api:type:Store).
+
+  queryParameters:
+    limit:
+      type: number
+      format: int32
+      required: false
+      description: |
+        Number of [results requested](/../api/general-concepts#limit).
+      default: 20
+      minimum: 0
+      maximum: 500
+    offset:
+      type: number
+      format: int32
+      required: false
+      description: |
+        Number of [elements skipped](/../api/general-concepts#offset).
+      default: 0
+      maximum: 10000
+    withTotal:
+      type: boolean
+      default: false
+      required: false
+      description: |
+        Controls the calculation of the [total](/../api/general-concepts#total) number of query results. Set to `true` to get the [total](/general-concepts#total) number of query results. This may impact query performance.
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../../examples/product-tailoring-list.example.json
+          type: ProductTailoringPagedQueryResponse
+post:
+  displayName: Create ProductTailoring in Store
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'manage_products:{projectKey}',
+              'manage_products:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  description: |
+    Creates a [ProductTailoring](ctp:api:type:ProductTailoring) in the [Store](ctp:api:type:Store) specified by `storeKey`.
+    When using this endpoint the ProductTailoring's `store` field is always set to the [Store](ctp:api:type:Store) specified in the path parameter.
+
+    Generates the [ProductTailoringCreated](ctp:api:type:ProductTailoringCreatedMessage) Message.
+  body:
+    application/json:
+      example: !include ../../examples/product-tailoring-in-store-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../../examples/product-tailoring.example.json

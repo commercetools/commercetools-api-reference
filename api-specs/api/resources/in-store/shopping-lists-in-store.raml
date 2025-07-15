@@ -1,0 +1,301 @@
+type:
+  baseDomain:
+    resourceType: ShoppingList
+    resourceQueryType: ShoppingListPagedQueryResponse
+    resourceDraft: ShoppingListDraft
+    whereExample: 'key = "my-shopping-list"'
+    sortExample: createdAt asc
+description: |
+  shopping-lists e.g. for wishlist support
+get:
+  displayName: Query ShoppingLists in Store
+  description: Retrieves ShoppingLists in a [Store](ctp:api:type:Store).
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'view_shopping_lists:{projectKey}',
+              'view_shopping_lists:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  queryParameters:
+    expand:
+      description: |
+        *Limitation: `expand=lineItems[0].variant` and `expand=lineItems[0].productSlug` are not supported.*
+      type: Expansion[]
+      required: false
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../../examples/shopping-lists.example.json
+head:
+  displayName: Check if ShoppingList exists in Store by Query Predicate
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'view_shopping_lists:{projectKey}',
+              'view_shopping_lists:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  description: Checks if one or more ShoppingLists exist for the provided query predicate in a [Store](ctp:api:type:Store). Returns a `200` status if any ShoppingLists match the query predicate or, or a `404` status otherwise.
+  queryParameters:
+    where?:
+      type: QueryPredicate[]
+post:
+  displayName: Create ShoppingList in Store
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'manage_shopping_lists:{projectKey}',
+              'manage_shopping_lists:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  queryParameters:
+    expand:
+      description: |
+        *Limitation: `expand=lineItems[0].variant` and `expand=lineItems[0].productSlug` are not supported.*
+      type: Expansion[]
+      required: false
+  body:
+    application/json:
+      example: !include ../../examples/shopping-list-create.example.json
+  description: |
+    Creates a ShoppingList in a [Store](ctp:api:type:Store).
+    When using this endpoint, the `store` field of a ShoppingList is always set to the [Store](ctp:api:type:Store) specified in the path parameter.
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../../examples/shopping-list.example.json
+/key={key}:
+  (methodName): withKey
+  type:
+    baseResource:
+      uriParameterName: key
+      resourceType: ShoppingList
+      resourceUpdateType: ShoppingListUpdate
+  get:
+    displayName: Get ShoppingList in Store by Key
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_shopping_lists:{projectKey}',
+                'view_shopping_lists:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    queryParameters:
+      expand:
+        description: |
+          When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+        type: Expansion[]
+        required: false
+    description: |
+      Retrieves a ShoppingList with the provided `key` in a [Store](ctp:api:type:Store).
+      If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+      the [ResourceNotFound](/errors#404-not-found-1) error is returned.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/shopping-list.example.json
+  head:
+    displayName: Check if ShoppingList exists in Store by Key
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_shopping_lists:{projectKey}',
+                'view_shopping_lists:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: Checks if a ShoppingList exists with the provided `key` in a [Store](ctp:api:type:Store). Returns a `200` status if the ShoppingList exists, or a `404` status otherwise.
+  post:
+    displayName: Update ShoppingList in Store by Key
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_shopping_lists:{projectKey}',
+                'manage_shopping_lists:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    queryParameters:
+      expand:
+        description: |
+          When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+        type: Expansion[]
+        required: false
+    description: |
+      Updates a ShoppingList in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/shoppingLists#update-actions).
+      If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+      the [ResourceNotFound](/errors#404-not-found-1) error is returned.
+    body:
+      application/json:
+        example: !include ../../examples/shopping-list-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/shopping-list.example.json
+  delete:
+    displayName: Delete ShoppingList in Store by Key
+    is:
+      - dataErasure
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_shopping_lists:{projectKey}',
+                'manage_shopping_lists:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    queryParameters:
+      expand:
+        description: |
+          When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+        type: Expansion[]
+        required: false
+    description: |
+      Deletes a ShoppingList in a [Store](ctp:api:type:Store).
+      If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+      the [ResourceNotFound](/errors#404-not-found-1) error is returned.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/shopping-list.example.json
+/{ID}:
+  (methodName): withId
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: ShoppingList
+      resourceUpdateType: ShoppingListUpdate
+  get:
+    displayName: Get ShoppingList in Store by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_shopping_lists:{projectKey}',
+                'view_shopping_lists:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    queryParameters:
+      expand:
+        description: |
+          When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+        type: Expansion[]
+        required: false
+    description: |
+      Retrieves a ShoppingList with the provided `id` in a [Store](ctp:api:type:Store).
+      If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+      the [ResourceNotFound](/errors#404-not-found-1) error is returned.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/shopping-list.example.json
+  head:
+    displayName: Check if ShoppingList exists in Store by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_shopping_lists:{projectKey}',
+                'view_shopping_lists:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: Checks if a ShoppingList exists with the provided `id` in a [Store](ctp:api:type:Store). Returns a `200` status if the ShoppingList exists, or a `404` status otherwise.
+  post:
+    displayName: Update ShoppingList in Store by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_shopping_lists:{projectKey}',
+                'manage_shopping_lists:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    queryParameters:
+      expand:
+        description: |
+          When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+        type: Expansion[]
+        required: false
+    body:
+      application/json:
+        example: !include ../../examples/shopping-list-update.example.json
+    description: |
+      Updates a ShoppingList in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/shoppingLists#update-actions).
+      If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+      the [ResourceNotFound](/errors#404-not-found-1) error is returned.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/shopping-list.example.json
+  delete:
+    displayName: Delete ShoppingList in Store by ID
+    is:
+      - dataErasure
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_shopping_lists:{projectKey}',
+                'manage_shopping_lists:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    queryParameters:
+      expand:
+        description: |
+          When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+        type: Expansion[]
+        required: false
+    description: |
+      Deletes a ShoppingList in a [Store](ctp:api:type:Store).
+      If a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,
+      the [ResourceNotFound](/errors#404-not-found-1) error is returned.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/shopping-list.example.json

@@ -1,0 +1,1115 @@
+/carts:
+  type:
+    baseDomain:
+      resourceType: Cart
+      resourceQueryType: CartPagedQueryResponse
+      resourceDraft: MyCartDraft
+      whereExample: 'customerEmail = "john.doe@example.com"'
+      sortExample: createdAt asc
+  (updateable): Cart
+  (deleteable): Cart
+  (createable): MyCartDraft
+  description: A shopping cart holds product variants and can be ordered.
+  get:
+    displayName: Query My Carts in Store
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'manage_my_orders:{projectKey}:{storeKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    description: |
+      Retrieves Carts for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store).
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/carts.example.json
+  head:
+    displayName: Check if My Cart exists in Store by Query Predicate
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'manage_my_orders:{projectKey}:{storeKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    description: |
+      Checks if a Cart exists for a Store that matches the given Query Predicate, and contains a matching `customerId` or `anonymousId`. Returns a `200` status if any Carts match these conditions, or a `404` status otherwise.
+    queryParameters:
+      where?:
+        type: QueryPredicate[]
+  post:
+    displayName: Create My Cart in Store
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'manage_my_orders:{projectKey}:{storeKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    description: |
+
+      Creates a Cart in a Store for the Customer or anonymous user. The `customerId` or `anonymousId` field on the Cart is automatically set based on the [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
+      The `store` field in the created [Cart](ctp:api:type:Cart) is set to the Store specified by the `storeKey` path parameter.
+
+      Specific Error Codes:
+
+      - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
+      - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
+      - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+      - [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)
+      - [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)
+
+    body:
+      application/json:
+        example: !include ../../examples/cart-create.example.json
+    responses:
+      201:
+        body:
+          application/json:
+            example: !include ../../examples/cart.example.json
+  /{ID}:
+    (methodName): withId
+    type:
+      baseResource:
+        uriParameterName: ID
+        resourceType: Cart
+        resourceUpdateType: MyCartUpdate
+    get:
+      displayName: Get My Cart in Store by ID
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_orders:{projectKey}',
+                  'manage_my_orders:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      description: |
+        Returns a Cart for a given `id` in a Store. Returns a `200` status if the Cart exists.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Cart exists in the Store for the given `id`.
+        - If the Cart exists but does not belong to a Store, or the Cart's `store` field references a different Store.
+        - If the Cart exists but does not have either a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/cart.example.json
+    head:
+      displayName: Check if My Cart exists in Store by ID
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_orders:{projectKey}',
+                  'manage_my_orders:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+    post:
+      displayName: Update My Cart in Store by ID
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_orders:{projectKey}',
+                  'manage_my_orders:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      description: |
+        Updates the Cart for a given `id` in a Store. Returns a `200` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Cart exists in the Store for the given `id`.
+        - If the Cart exists but does not belong to a Store, or the Cart's `store` field references a different Store.
+        - If the Cart exists but does not have either a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
+      body:
+        application/json:
+          example: !include ../../examples/cart-update.example.json
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/cart.example.json
+    delete:
+      displayName: Delete My Cart in Store by ID
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_orders:{projectKey}',
+                  'manage_my_orders:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      description: |
+        Deletes the Cart for a given `id` in a Store. Returns a `200` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Cart exists in the Store for the given `id`.
+        - If the Cart exists in the Project but does not belong to a Store, or the Cart's `store` field references a different Store.
+        - If the Cart exists in the Project but does not have either a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/cart.example.json
+/orders:
+  type:
+    baseDomain:
+      resourceType: Order
+      resourceQueryType: OrderPagedQueryResponse
+      resourceDraft: MyOrderFromCartDraft
+      whereExample: 'customerEmail = "john.doe@example.com"'
+      sortExample: createdAt asc
+  description:
+    An order can be created from a order, usually after a checkout process has
+    been completed.
+  get:
+    displayName: Query My Orders in Store
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'manage_my_orders:{projectKey}:{storeKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    description: |
+      Retrieves Orders in a [Store](ctp:api:type:Store) for the authenticated Customer or anonymous user.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no Orders exist that match the provided query predicate.
+      - If an Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/orders.example.json
+  head:
+    displayName: Check if My Order exists in Store by Query Predicate
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'manage_my_orders:{projectKey}:{storeKey}',
+                'customer:{customerId}',
+                'anonymous_id:{anonymousId}',
+              ],
+          },
+      ]
+    description: |
+      Checks if one or more Orders exist for the provided query predicate in a [Store](ctp:api:type:Store) for the authenticated Customer or anonymous user. Returns a `200` status if successful.
+
+      A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
+
+      - If no Orders exist in the Store that match the Query Predicate.
+      - If an Order matches the Query Predicate, but no `store` is specified, or the `store` field references a different Store.
+      - If an Order matches the Query Predicate, but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
+    queryParameters:
+      where?:
+        type: QueryPredicate[]
+  post:
+    is:
+      - conflicting
+    displayName: Create My Order in Store from Cart
+    description: |
+
+      Creates an Order from a Cart in a [Store](ctp:api:type:Store) for the Customer or anonymous user. The `customerId` or `anonymousId` field on the Order is automatically set based on the [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
+      The Cart must have a shipping address and an active Shipping Method set.
+
+      When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
+
+      If the Cart's `customerId` does not match the [customer:{id}](/scopes#composable-commerce-oauth) scope, or the `anonymousId` does not match the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+
+      Creating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.
+
+      Specific Error Codes:
+
+      - [AssociateMissingPermission](ctp:api:type:AssociateMissingPermissionError)
+      - [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)
+      - [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)
+      - [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)
+      - [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)
+      - [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)
+      - [OutOfStock](ctp:api:type:OutOfStockError)
+      - [PriceChanged](ctp:api:type:PriceChangedError)
+      - [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'manage_my_orders:{projectKey}:{storeKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        example: !include ../../examples/my-order-create.example.json
+    responses:
+      201:
+        body:
+          application/json:
+            example: !include ../../examples/order.example.json
+  /{ID}:
+    (methodName): withId
+    type:
+      baseResource:
+        uriParameterName: ID
+        resourceType: Order
+    get:
+      displayName: Get My Order in Store by ID
+      description: |
+        Retrieves an Order with the provided `id` in a [Store](ctp:api:type:Store) for the authenticated Customer or anonymous user. Returns a `200` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Orders exists in the Store with the provided `id`.
+        - If an Order exists but does not have a `store` specified, or the `store` field references a different Store.
+        - If an Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_orders:{projectKey}',
+                  'manage_my_orders:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/order.example.json
+    head:
+      displayName: Check if My Order exists in Store by ID
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_orders:{projectKey}',
+                  'manage_my_orders:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      description: |
+        Checks if an Order exists with the provided `id` in a [Store](ctp:api:type:Store) for the authenticated Customer or anonymous user. Returns a `200` status if successful.
+
+        A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
+
+        - If no Order exists in the Store with the provided `id`.
+        - If an Order exists but does not have a `store` specified, or the `store` field references a different Store.
+        - If an Order exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
+/active-cart:
+  type: base
+  get:
+    displayName: Get My active Cart in Store
+    description: |
+      Retrieves the Customer's most recently modified [active Cart](ctp:api:type:CartState) in a Store. Returns a `200` status if successful.
+
+      Carts with `Merchant` or `Quote` [CartOrigin](ctp:api:type:CartOrigin) are ignored.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no active Cart exists.
+      - If an active Cart exists but does not have a `store` specified, or the `store` field references a different Store.
+      - If an active Cart exists but does not have a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
+    is:
+      - expandable
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'manage_my_orders:{projectKey}:{storeKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            type: Cart
+            example: !include ../../examples/cart.example.json
+  head:
+    displayName: Check if active Cart exists in Store
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_orders:{projectKey}',
+                'manage_my_orders:{projectKey}:{storeKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    description: |
+      Checks if an active Cart exists in a Store. Returns `200 OK` status if successful.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no active Cart exists in a Store.
+      - If an active Cart exists but does not have a `store` specified, or the `store` field references a different Store.
+      - If an active Cart exists but does not contain a `customerId` that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope, or `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
+/shopping-lists:
+  type:
+    baseDomain:
+      resourceType: ShoppingList
+      resourceQueryType: ShoppingListPagedQueryResponse
+      resourceDraft: MyShoppingListDraft
+      whereExample: 'key = "my-shopping-list"'
+      sortExample: createdAt asc
+  description: |
+    shopping-lists e.g. for wishlist support
+  get:
+    displayName: Query My ShoppingLists in Store
+    description: |
+      Retrieves ShoppingLists for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). Returns `200 OK` status if successful.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no ShoppingLists exist in a Store.
+      - If a ShoppingList exists but does not have a `store` specified, or the `store` field references a different Store.
+      - If a ShoppingList exists in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_shopping_lists:{projectKey}',
+                'manage_my_shopping_lists:{projectKey}:{storeKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    queryParameters:
+      expand:
+        description: |
+          When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+        type: Expansion[]
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/shopping-lists.example.json
+  head:
+    displayName: Check if My ShoppingList exists in Store by Query Predicate
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_shopping_lists:{projectKey}',
+                'manage_my_shopping_lists:{projectKey}:{storeKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    description: |
+      Checks if one or more ShoppingLists exist for the provided query predicate for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). Returns `200 OK` status if successful.
+
+      A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
+
+      - If no ShoppingLists exist for the provided query predicate in a Store.
+      - If a ShoppingList matches the query predicate but does not have a `store` specified, or the `store` field references a different Store.
+      - If a ShoppingList exists in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+
+    queryParameters:
+      where?:
+        type: QueryPredicate[]
+  post:
+    displayName: Create My ShoppingList in Store
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_shopping_lists:{projectKey}',
+                'manage_my_shopping_lists:{projectKey}:{storeKey}',
+                'customer_id:{id}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    queryParameters:
+      expand:
+        description: |
+          When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+        type: Expansion[]
+        required: false
+    body:
+      application/json:
+        example: !include ../../examples/shopping-list-create.example.json
+    description: |
+
+      Creates a ShoppingList for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). The `customer` or `anonymousId` field on the ShoppingList is automatically set based on the given [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
+
+      When using this endpoint, the `store` field of a ShoppingList is always set to the Store specified in the path parameter.
+    responses:
+      201:
+        body:
+          application/json:
+            example: !include ../../examples/shopping-list.example.json
+  /key={key}:
+    (methodName): withKey
+    type:
+      baseResource:
+        uriParameterName: key
+        resourceType: ShoppingList
+        resourceUpdateType: MyShoppingListUpdate
+    get:
+      displayName: Get My ShoppingList in Store by Key
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'manage_my_shopping_lists:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      queryParameters:
+        expand:
+          description: |
+            When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+          type: Expansion[]
+          required: false
+      description: |
+        Retrieves a ShoppingList with the provided `key` for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). Returns `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList matches the provided `key` in a Store.
+        - If a ShoppingList matches the provided `key` but does not have a `store` specified, or the `store` field references a different Store.
+        - If a ShoppingList matches the provided `key` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope,
+            or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/shopping-list.example.json
+    head:
+      displayName: Check if My ShoppingList exists in Store by Key
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'manage_my_shopping_lists:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      description: |
+        Checks if a ShoppingList exists with the provided `key` for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). Returns a `200` status if successful.
+
+        A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
+
+        - If no ShoppingList exists that matches the provided `key` in a Store.
+        - If a ShoppingList matches the provided `key` but does not have a `store` specified, or the `store` field references a different Store.
+        - If a ShoppingList matches the provided `key` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+
+    post:
+      displayName: Update My ShoppingList in Store by Key
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'manage_my_shopping_lists:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      queryParameters:
+        expand:
+          description: |
+            When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+          type: Expansion[]
+          required: false
+      body:
+        application/json:
+          example: !include ../../examples/shopping-list-update.example.json
+      description: |
+        Updates a ShoppingList for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/me-shoppingLists#update-actions). Returns a `200` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList matches the provided `key` in a Store.
+        - If a ShoppingList matches the provided `key` but does not have a `store` specified, or the `store` field references a different Store.
+        - If a ShoppingList matches the provided `key` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/shopping-list.example.json
+    delete:
+      displayName: Delete My ShoppingList in Store by Key
+      is:
+        - dataErasure
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'manage_my_shopping_lists:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      queryParameters:
+        expand:
+          description: |
+            When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+          type: Expansion[]
+          required: false
+      description: |
+        Deletes a ShoppingList in a [Store](ctp:api:type:Store). Returns a `200` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList matches the provided `key` in a Store.
+        - If a ShoppingList matches the provided `key` but does not have a `store` specified, or the `store` field references a different Store.
+        - If a ShoppingList matches the provided `key` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/shopping-list.example.json
+  /{ID}:
+    (methodName): withId
+    type:
+      baseResource:
+        uriParameterName: ID
+        resourceType: ShoppingList
+        resourceUpdateType: MyShoppingListUpdate
+    get:
+      displayName: Get My ShoppingList in Store by ID
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}:{storeKey}',
+                  'manage_my_shopping_lists:{projectKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      queryParameters:
+        expand:
+          description: |
+            When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+          type: Expansion[]
+          required: false
+      description: |
+        Retrieves a ShoppingList with the provided `id` for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). Returns `200 OK` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList matches the provided `id` in a Store.
+        - If a ShoppingList matches the provided `id` but does not have a `store` specified, or the `store` field references a different Store.
+        - If a ShoppingList matches the provided `id` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/shopping-list.example.json
+    head:
+      displayName: Check if My ShoppingList exists in Store by ID
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}:{storeKey}',
+                  'manage_my_shopping_lists:{projectKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      description: |
+        Checks if a ShoppingList exists with the provided `id` for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store). Returns a `200` status if successful.
+
+        A [Not Found](/../api/errors#404-not-found) error is returned in the following scenarios:
+
+        - If no ShoppingList matches the provided `id` in a Store.
+        - If a ShoppingList matches the provided `id` but does not have a `store` specified, or the `store` field references a different Store.
+        - If a ShoppingList matches the provided `id` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+
+    post:
+      displayName: Update My ShoppingList in Store by ID
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'manage_my_shopping_lists:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      queryParameters:
+        expand:
+          description: |
+            When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+          type: Expansion[]
+          required: false
+      body:
+        application/json:
+          example: !include ../../examples/shopping-list-update.example.json
+      description: |
+        Updates a ShoppingList for the authenticated Customer or anonymous user in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/me-shoppingLists#update-actions). Returns a `200` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList matches the provided `id` in a Store.
+        - If a ShoppingList matches the provided `id` but does not have a `store` specified, or the `store` field references a different Store.
+        - If a ShoppingList matches the provided `id` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/shopping-list.example.json
+    delete:
+      displayName: Delete My ShoppingList in Store by ID
+      is:
+        - dataErasure
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_shopping_lists:{projectKey}',
+                  'manage_my_shopping_lists:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                  'anonymous_id:{id}',
+                ],
+            },
+        ]
+      queryParameters:
+        expand:
+          description: |
+            When expanding `variant` and `productSlug` on [ShoppingListLineItem](ctp:api:type:ShoppingListLineItem), [expand the entire array](/general-concepts#reference-expansion). You cannot expand a single element (for example, `expand=lineItems[0].variant` is not supported).
+          type: Expansion[]
+          required: false
+      description: |
+        Deletes a ShoppingList in a [Store](ctp:api:type:Store). Returns a `200` status if successful.
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no ShoppingList matches the provided `id` in a Store.
+        - If a ShoppingList matches the provided `id` but does not have a `store` specified, or the `store` field references a different Store.
+        - If a ShoppingList matches the provided `id` in a Store but does not contain either an `anonymousId` that matches the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, or a `customer` with `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/shopping-list.example.json
+get:
+  displayName: Get My Customer in Store
+  is:
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+    - expandable
+    - query:
+        whereExample: 'customerEmail = "email@example.com"'
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'manage_my_profile:{projectKey}',
+              'manage_my_profile:{projectKey}:{storeKey}',
+              'customer_id:{id}',
+            ],
+        },
+    ]
+  description: |
+    Returns a Customer for a given Query Predicate in a [Store](ctp:api:type:Store). Returns a `200` status if successful.
+
+    A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+    - If no Customer exists in the Store for the given Query Predicate.
+    - If a Customer exists in the Store for the given Query Predicate, but does not have an `id` value that matches the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+    - If a Customer exists for the given Query Predicate but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
+
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../../examples/customer.example.json
+          type: Customer
+post:
+  displayName: Update My Customer in Store
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'manage_my_profile:{projectKey}',
+              'manage_my_profile:{projectKey}:{storeKey}',
+              'customer_id:{id}',
+            ],
+        },
+    ]
+  description: |
+    Updates the Customer in a [Store](ctp:api:type:Store). Returns a `200` status if successful.
+
+    A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+    - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+    - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
+
+  body:
+    application/json:
+      example: !include ../../examples/customer-update.example.json
+      type: MyCustomerUpdate
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../../examples/customer-update-response.example.json
+          type: Customer
+delete:
+  displayName: Delete My Customer in Store
+  is:
+    - versioned
+    - conflicting
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'manage_my_profile:{projectKey}',
+              'manage_my_profile:{projectKey}:{storeKey}',
+              'customer_id:{id}',
+            ],
+        },
+    ]
+  description: |
+    Deletes the Customer in a [Store](ctp:api:type:Store). Returns a `200` status if successful.
+
+    A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+    - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+    - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
+
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../../examples/customer.example.json
+          type: Customer
+/email/confirm:
+  type: base
+  post:
+    displayName: Verify email of My Customer in Store
+    description: |
+      This is the last step in the [email verification process of a Customer](/../api/projects/customers#email-verification-of-customer-in-store). Returns a `200` status if successful.
+
+      After the email is verified, all email tokens issued previously through the [email verification flow](/../api/projects/customers#email-verification-of-customer) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+      - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_profile:{projectKey}',
+                'manage_my_profile:{projectKey}:{storeKey}',
+                'customer_id:{id}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        example: !include ../../examples/Customer/CustomerEmailVerify.json
+        type: MyCustomerEmailVerify
+    responses:
+      200:
+        description: The email was verified.
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json
+            type: Customer
+      400:
+        description: An [ExpiredCustomerEmailToken](ctp:api:type:ExpiredCustomerEmailToken) error is returned as the provided token is has expired.
+      404:
+        description: The provided token is invalid or does not exist.
+/password:
+  type: base
+  post:
+    displayName: Change password of My Customer in Store
+    description: |
+      Changing the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.  Returns a `200` status if successful.
+
+      A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+      - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+      - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
+
+    is:
+      - conflicting
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_profile:{projectKey}',
+                'manage_my_profile:{projectKey}:{storeKey}',
+                'customer_id:{id}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        example: !include ../../examples/Customer/MyCustomerChangePassword.json
+        type: MyCustomerChangePassword
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer.example.json
+            type: Customer
+  /reset:
+    type: base
+    post:
+      displayName: Reset password of My Customer in Store
+      description: |
+        This is the last step in the [password reset process of the authenticated Customer](/../api/projects/customers#password-reset-of-customer-in-store).
+
+        Resetting a password produces the Customer [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.
+
+        After the password is reset, all password tokens issued previously through the [password reset flow](/../api/projects/customers#password-reset-of-customer) are invalidated. In addition, any access and refresh tokens issued previously through the [password flow](/../api/authorization#password-flow) and [refresh token flow](/../api/authorization#refresh-token-flow) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).
+
+        A [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned in the following scenarios:
+
+        - If no Customer exists with the `id` specified in the [customer:{id}](/scopes#composable-commerce-oauth) scope.
+        - If the Customer exists but is associated with a different Store than what is specified in the `manage_my_profile:{projectKey}:{storeKey}` scope.
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_my_profile:{projectKey}',
+                  'manage_my_profile:{projectKey}:{storeKey}',
+                  'customer_id:{id}',
+                ],
+            },
+        ]
+      body:
+        application/json:
+          example: !include ../../examples/Customer/CustomerResetPassword.json
+          type: MyCustomerResetPassword
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ../../examples/customer.example.json
+              type: Customer
+        400:
+          description: An [ExpiredCustomerPasswordToken](ctp:api:type:ExpiredCustomerPasswordTokenError) error is returned as the provided token has expired.
+        404:
+          description: The provided token is invalid or does not exist.
+/signup:
+  type: base
+  post:
+    displayName: Create (sign up) My Customer in Store
+    description: |
+
+      If used with an optional [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly created Customer.
+
+      If omitted in the request body, the [Customer](ctp:api:type:Customer) `stores` field is set to the [Store](ctp:api:type:Store) specified in the path parameter.
+
+      A Cart returned in the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) has any invalid Line Items removed and is [updated](/api/carts-orders-overview#update-a-cart) with the latest prices, taxes, and discounts. During these updates, the following errors can be returned: [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError) and [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError).
+
+      Creating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_profile:{projectKey}',
+                'manage_my_profile:{projectKey}:{storeKey}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        example: !include ../../examples/customer-create.example.json
+        type: MyCustomerDraft
+    responses:
+      201:
+        body:
+          application/json:
+            example: !include ../../examples/customer-sign-in-result.example.json
+            type: CustomerSignInResult
+/login:
+  type: base
+  post:
+    displayName: Authenticate (sign in) My Customer in Store
+    description: |
+
+      Retrieves the authenticated Customer (that matches the given email/password pair) if they are part of a specific [Store](ctp:api:type:Store).
+
+      If used with an optional [access token for an anonymous session](ctp:api:type:AnonymousSession), all Orders and Carts that belong to the `anonymousId` are assigned to the newly logged-in Customer.
+
+      - If the Customer does not have a Cart, the most recently modified anonymous cart becomes the Customer's Cart.
+      - If the Customer already has a Cart, the most recently modified anonymous cart is handled according to [AnonymousCartSignInMode](ctp:api:type:AnonymousCartSignInMode).
+
+      A Cart returned in the [CustomerSignInResult](ctp:api:type:CustomerSignInResult) has any invalid Line Items removed and is [updated](/api/carts-orders-overview#update-a-cart) with the latest prices, taxes, and discounts. During these updates, the following errors can be returned: [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError) and [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError).
+
+      If an account with the given credentials is not found, an [InvalidCredentials](ctp:api:type:InvalidCredentialsError) error is returned.
+
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_my_profile:{projectKey}',
+                'manage_my_profile:{projectKey}:{storeKey}',
+                'anonymous_id:{id}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        type: MyCustomerSignin
+        example: !include ../../examples/Customer/MyCustomerSignIn.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/customer-sign-in-result.example.json
+            type: CustomerSignInResult
