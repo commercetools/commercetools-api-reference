@@ -33806,6 +33806,64 @@ paths:
           $ref: '#/components/responses/errorable_502'
         "503":
           $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurringOrdersKeyByKeyDelete
+      description: |-
+        Deletes a Recurring Order in the Project.
+      parameters:
+        - name: dataErasure
+          x-annotation-default: false
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringOrder'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
   /{projectKey}/recurring-orders/{ID}:
     parameters:
       - name: projectKey
@@ -33907,6 +33965,64 @@ paths:
             schema:
               $ref: '#/components/schemas/RecurringOrderUpdate'
 
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringOrder'
+
+        "409":
+          $ref: '#/components/responses/conflicting_409'
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_recurring_orders:{projectKey}"
+      operationId: ByProjectKeyRecurringOrdersByIDDelete
+      description: |-
+        Deletes a Recurring Order in the Project.
+      parameters:
+        - name: dataErasure
+          x-annotation-default: false
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+        - name: version
+          in: query
+          required: true
+          style: form
+          schema:
+            type: "number"
+            format: "double"
+          explode: true
+        - name: expand
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              $ref: '#/components/schemas/Expansion'
+          explode: true
       responses:
         "200":
           description: |-
@@ -59620,6 +59736,7 @@ components:
               RecurringOrderCustomFieldRemoved: '#/components/schemas/RecurringOrderCustomFieldRemovedMessage'
               RecurringOrderCustomTypeRemoved: '#/components/schemas/RecurringOrderCustomTypeRemovedMessage'
               RecurringOrderCustomTypeSet: '#/components/schemas/RecurringOrderCustomTypeSetMessage'
+              RecurringOrderDeleted: '#/components/schemas/RecurringOrderDeletedMessage'
               RecurringOrderKeySet: '#/components/schemas/RecurringOrderKeySetMessage'
               RecurringOrderScheduleSet: '#/components/schemas/RecurringOrderScheduleSetMessage'
               RecurringOrderStartsAtSet: '#/components/schemas/RecurringOrderStartsAtSetMessage'
@@ -65063,6 +65180,42 @@ components:
               $ref: '#/components/schemas/CustomFields'
             previousTypeId:
               type: "string"
+    RecurringOrderDeletedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - recurringOrder
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            recurringOrder:
+              $ref: '#/components/schemas/RecurringOrder'
     RecurringOrderKeySetMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -68396,6 +68549,7 @@ components:
           RecurringOrderCustomFieldRemoved: '#/components/schemas/RecurringOrderCustomFieldRemovedMessagePayload'
           RecurringOrderCustomTypeRemoved: '#/components/schemas/RecurringOrderCustomTypeRemovedMessagePayload'
           RecurringOrderCustomTypeSet: '#/components/schemas/RecurringOrderCustomTypeSetMessagePayload'
+          RecurringOrderDeleted: '#/components/schemas/RecurringOrderDeletedMessagePayload'
           RecurringOrderKeySet: '#/components/schemas/RecurringOrderKeySetMessagePayload'
           RecurringOrderScheduleSet: '#/components/schemas/RecurringOrderScheduleSetMessagePayload'
           RecurringOrderStartsAtSet: '#/components/schemas/RecurringOrderStartsAtSetMessagePayload'
@@ -70393,6 +70547,17 @@ components:
               $ref: '#/components/schemas/CustomFields'
             previousTypeId:
               type: "string"
+    RecurringOrderDeletedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - recurringOrder
+          properties:
+            type:
+              type: "string"
+            recurringOrder:
+              $ref: '#/components/schemas/RecurringOrder'
     RecurringOrderKeySetMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'

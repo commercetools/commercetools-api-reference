@@ -1,0 +1,45 @@
+meta {
+  name: Delete RecurringOrder by ID
+  type: http
+  seq: 427
+}
+
+delete {
+  url: {{apiUrl}}/{{project-key}}/recurring-orders/{{recurring-order-id}}?version={{recurring-order-version}}
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~dataErasure: 
+  version: {{recurring-order-version}}
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("recurring-order-id", data.results[0].id); 
+          bru.setEnvVar("recurring-order-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("recurring-order-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("recurring-order-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("recurring-order-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("recurring-order-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
