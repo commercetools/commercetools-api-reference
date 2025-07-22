@@ -93,7 +93,10 @@ types: !include types/types.raml
 resourceTypes:
   base:
     get:
-      description: The `view_audit_log:{projectKey}` scope is required, and depending on the [resource type](ctp:history:type:ChangeHistoryResourceType) queried, their respective scopes must be granted.
+      description: |
+        The `view_audit_log:{projectKey}` scope is required, and depending on the [resource type](ctp:history:type:ChangeHistoryResourceType) queried, their respective scopes must be granted.
+
+        If the request exceeds the rate limit, a [TooManyRequests](ctp:history:type:TooManyRequestsError) error is returned.
       responses:
         200:
           body:
@@ -101,6 +104,19 @@ resourceTypes:
               type: RecordPagedQueryResponse
               example: !include examples/RecordPagedQueryResponse.json
           description: Records of the resource under query.
+          headers:
+            X-RateLimit-Limit:
+              description: |
+                Indicates the total number of tokens available when fully replenished.
+              type: string
+            X-RateLimit-Remaining:
+              description: |
+                Indicates the number of tokens available after the current query is completed.
+              type: string
+            X-RateLimit-Request-Cost:
+              description: |
+                Indicates the number of tokens used by the current query.
+              type: string
         400:
           body:
             application/json:
@@ -128,13 +144,24 @@ resourceTypes:
           description:
             Forbidden. Indicates that the authenticated client is not allowed to
             perform the request.
+        429:
+          body:
+            application/json:
+              type: ErrorResponse
+              example: !include examples/TooManyRequests.json
+          description: Too Many Requests. Indicates that the client has exceeded the API rate limit. Reduce the date range and resource types in your query to minimize the token usage, or retry the request after some time (indicated in the `Retry-After` header).
+          headers:
+            Retry-After:
+              description: |
+                The wait time, in seconds, before you can retry the request.
+              type: string
         500:
           body:
             application/json:
               type: ErrorResponse
               example: !include examples/InternalServerError.json
           description:
-            Internal Server Error. A 500 indicates that a request failed due to
+            Internal Server Error. A 500 indicates that the request failed due to
             a server-side problem that needs to be resolved before subsequent
             requests can succeed. It either indicates a temporary unavailability
             or permanent server-side problem that needs to be reported and
