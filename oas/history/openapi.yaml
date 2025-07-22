@@ -44,6 +44,8 @@ paths:
       operationId: ByProjectKeyGet
       description: |-
         The `view_audit_log:{projectKey}` scope is required, and depending on the [resource type](ctp:history:type:ChangeHistoryResourceType) queried, their respective scopes must be granted.
+
+        If the request exceeds the rate limit, a [TooManyRequests](ctp:history:type:TooManyRequestsError) error is returned.
       parameters:
         - name: resourceTypes
           in: query
@@ -228,9 +230,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+        "429":
+          description: |-
+            Too Many Requests. Indicates that the client has exceeded the API rate limit. Reduce the date range and resource types in your query to minimize the token usage, or retry the request after some time (indicated in the `Retry-After` header).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
         "500":
           description: |-
-            Internal Server Error. A 500 indicates that a request failed due to a server-side problem that needs to be resolved before subsequent requests can succeed. It either indicates a temporary unavailability or permanent server-side problem that needs to be reported and resolved.
+            Internal Server Error. A 500 indicates that the request failed due to a server-side problem that needs to be resolved before subsequent requests can succeed. It either indicates a temporary unavailability or permanent server-side problem that needs to be reported and resolved.
           content:
             application/json:
               schema:
@@ -315,6 +325,8 @@ paths:
       operationId: ByProjectKeyByResourceTypeGet
       description: |-
         The `view_audit_log:{projectKey}` scope is required, and depending on the [resource type](ctp:history:type:ChangeHistoryResourceType) queried, their respective scopes must be granted.
+
+        If the request exceeds the rate limit, a [TooManyRequests](ctp:history:type:TooManyRequestsError) error is returned.
       parameters:
         - name: date.from
           x-annotation-default: 24
@@ -483,9 +495,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+        "429":
+          description: |-
+            Too Many Requests. Indicates that the client has exceeded the API rate limit. Reduce the date range and resource types in your query to minimize the token usage, or retry the request after some time (indicated in the `Retry-After` header).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
         "500":
           description: |-
-            Internal Server Error. A 500 indicates that a request failed due to a server-side problem that needs to be resolved before subsequent requests can succeed. It either indicates a temporary unavailability or permanent server-side problem that needs to be reported and resolved.
+            Internal Server Error. A 500 indicates that the request failed due to a server-side problem that needs to be resolved before subsequent requests can succeed. It either indicates a temporary unavailability or permanent server-side problem that needs to be reported and resolved.
           content:
             application/json:
               schema:
@@ -545,6 +565,8 @@ paths:
       operationId: ByProjectKeyByResourceTypeByIDGet
       description: |-
         The `view_audit_log:{projectKey}` scope is required, and depending on the [resource type](ctp:history:type:ChangeHistoryResourceType) queried, their respective scopes must be granted.
+
+        If the request exceeds the rate limit, a [TooManyRequests](ctp:history:type:TooManyRequestsError) error is returned.
       parameters:
         - name: date.from
           x-annotation-default: 24
@@ -706,9 +728,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+        "429":
+          description: |-
+            Too Many Requests. Indicates that the client has exceeded the API rate limit. Reduce the date range and resource types in your query to minimize the token usage, or retry the request after some time (indicated in the `Retry-After` header).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
         "500":
           description: |-
-            Internal Server Error. A 500 indicates that a request failed due to a server-side problem that needs to be resolved before subsequent requests can succeed. It either indicates a temporary unavailability or permanent server-side problem that needs to be reported and resolved.
+            Internal Server Error. A 500 indicates that the request failed due to a server-side problem that needs to be resolved before subsequent requests can succeed. It either indicates a temporary unavailability or permanent server-side problem that needs to be reported and resolved.
           content:
             application/json:
               schema:
@@ -970,6 +1000,18 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/ErrorObject'
+    TooManyRequestsError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
     ModifiedBy:
       type: "object"
       required:
@@ -1686,7 +1728,7 @@ components:
           items:
             {}
         extensions:
-          type: "object"
+          $ref: '#/components/schemas/GraphQLErrorObject'
     GraphQLErrorLocation:
       type: "object"
       required:
@@ -1699,10 +1741,35 @@ components:
         column:
           type: "integer"
           format: "int64"
+    GraphQLTooManyRequestsError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
+          additionalProperties:
+            type: "string"
     GraphQLVariablesMap:
       type: "object"
       required:
         - //
+      additionalProperties:
+        type: "string"
+    GraphQLErrorObject:
+      type: "object"
+      discriminator:
+        propertyName: code
+        mapping:
+          TooManyRequests: '#/components/schemas/GraphQLTooManyRequestsError'
+      required:
+        - //
+        - code
+      properties:
+        code:
+          type: "string"
       additionalProperties:
         type: "string"
     AddAddressChange:
