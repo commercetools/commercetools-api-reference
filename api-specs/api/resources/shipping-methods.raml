@@ -23,6 +23,7 @@ get:
             ],
         },
     ]
+  description: Retrieves all ShippingMethods in the Project.
   responses:
     200:
       body:
@@ -30,6 +31,7 @@ get:
           example: !include ../examples/shipping-methods.example.json
 head:
   displayName: Check if ShippingMethod exists by Query Predicate
+  description: Checks if one or more ShippingMethods exist for the provided query predicate. Returns a `200 OK` status if any ShippingMethods match the query predicate or a [Not Found](/../api/errors#404-not-found) error otherwise.
   securedBy:
     [
       oauth_2_0:
@@ -42,12 +44,12 @@ head:
             ],
         },
     ]
-  description: Checks if one or more ShippingMethods exist for the provided query predicate. Returns a `200` status if any ShippingMethods match the query predicate, or a `404` status otherwise.
   queryParameters:
     where?:
       type: QueryPredicate[]
 post:
   displayName: Create ShippingMethod
+  description: Creates a ShippingMethod in the Project.
   securedBy:
     [
       oauth_2_0:
@@ -76,6 +78,7 @@ post:
       resourceUpdateType: ShippingMethodUpdate
   get:
     displayName: Get ShippingMethod by Key
+    description: Retrieves a ShippingMethod with the provided `key`.
     securedBy:
       [
         oauth_2_0:
@@ -95,6 +98,7 @@ post:
             example: !include ../examples/shipping-method.example.json
   head:
     displayName: Check if ShippingMethod exists by Key
+    description: Checks if a ShippingMethod exists with the provided `key`. Returns a `200 OK` status if the ShippingMethod exists or a [Not Found](/../api/errors#404-not-found) error otherwise.
     securedBy:
       [
         oauth_2_0:
@@ -107,9 +111,9 @@ post:
               ],
           },
       ]
-    description: Checks if a ShippingMethod exists with the provided `key`. Returns a `200` status if the ShippingMethod exists, or a `404` status otherwise.
   post:
     displayName: Update ShippingMethod by Key
+    description: Updates a ShippingMethod in the Project using one or more [update actions](/../api/projects/shippingMethods#update-actions).
     securedBy:
       [
         oauth_2_0:
@@ -131,6 +135,7 @@ post:
             example: !include ../examples/shipping-method.example.json
   delete:
     displayName: Delete ShippingMethod by Key
+    description: Deletes a ShippingMethod in the Project.
     securedBy:
       [
         oauth_2_0:
@@ -149,13 +154,14 @@ post:
             example: !include ../examples/shipping-method.example.json
 /matching-cart:
   type: base
-  description: Get ShippingMethods for a Cart
+  description: Get matching ShippingMethods for a Cart
   get:
-    displayName: Get ShippingMethods for a Cart
+    displayName: Get matching ShippingMethods for a Cart
     description: |
-      Retrieves the active ShippingMethods that can ship to the shipping address of the given Cart.
-      Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
-      This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
+      Retrieves the active ShippingMethods that can ship to the shipping address of the provided Cart.
+
+      Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`. This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
+
       If a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.
     is:
       - expandable
@@ -184,6 +190,7 @@ post:
             example: !include ../examples/shipping-methods.example.json
   head:
     displayName: Check if matching ShippingMethod exists for a Cart
+    description: Checks if an active ShippingMethod exists for the provided Cart. Returns a `200 OK` status if the ShippingMethod exists or a [Not Found](/../api/errors#404-not-found) error otherwise.
     securedBy:
       [
         oauth_2_0:
@@ -201,17 +208,17 @@ post:
         type: string
         description: |
           ID of the Cart with a shipping address set.
-    description: Checks if an active ShippingMethod exists for the given Cart. If a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array. Returns a `200` status if the ShippingMethod exists, or a `404` status otherwise.
 /matching-cart-location:
   type: base
-  description: Get ShippingMethods for a Cart and Location
+  description: Get matching ShippingMethods for a Cart and Location
   get:
-    displayName: Get ShippingMethods for a Cart and Location
+    displayName: Get matching ShippingMethods for a Cart and Location
     description: |
-      Retrieves the active ShippingMethods that can ship to the given [Location](ctp:api:type:Location)
-      with a `predicate` that matches the given Cart.
-      Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`.
-      This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
+      Retrieves the active ShippingMethods that can ship to the provided [Location](ctp:api:type:Location)
+      with a `predicate` that matches the provided Cart.
+
+      Each ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`. This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).
+
       If a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.
     is:
       - expandable
@@ -248,6 +255,7 @@ post:
             example: !include ../examples/shipping-methods.example.json
   head:
     displayName: Check if matching ShippingMethod exists for a Cart and Location
+    description: Checks if an active ShippingMethod that can ship to the provided [Location](ctp:api:type:Location) exists for the provided Cart. Returns a `200 OK` status if the ShippingMethod exists or a [Not Found](/../api/errors#404-not-found) error otherwise.
     securedBy:
       [
         oauth_2_0:
@@ -273,15 +281,16 @@ post:
         type: string
         description: |
           ID of the Cart.
-    description: Checks if an active ShippingMethod that can ship to the given [Location](ctp:api:type:Location) exists for the given Cart. Returns a `200` status if the ShippingMethod exists, or a `404` status otherwise.
 /matching-orderedit:
   type: base
-  description: Get ShippingMethods for an Order Edit
+  description: Get matching ShippingMethods for an OrderEdit
   get:
-    displayName: Get ShippingMethods for an Order Edit
+    displayName: Get matching ShippingMethods for an OrderEdit
     description: |
-      Retrieves the active ShippingMethods that can ship to the given [Location](ctp:api:type:Location) for an [OrderEdit](ctp:api:type:OrderEdit).
+      Retrieves the active ShippingMethods that can ship to the provided [Location](ctp:api:type:Location) for an [OrderEdit](ctp:api:type:OrderEdit).
+
       If a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.
+
       If the OrderEdit preview cannot be generated, an [EditPreviewFailed](ctp:api:type:EditPreviewFailedError) error is returned.
     securedBy:
       [
@@ -314,6 +323,7 @@ post:
             example: !include ../examples/shipping-methods.example.json
   head:
     displayName: Check if matching ShippingMethod exists for an Order Edit
+    description: Checks if an active ShippingMethod that can ship to the provided [Location](ctp:api:type:Location) exists for the provided [OrderEdit](ctp:api:type:OrderEdit). Returns a `200 OK` status if the ShippingMethod exists or a [Not Found](/../api/errors#404-not-found) error otherwise.
     securedBy:
       [
         oauth_2_0:
@@ -337,19 +347,22 @@ post:
         type: string
         description: |
           Name of the state, for example, Colorado.
-    description: Checks if an active ShippingMethod that can ship to the given [Location](ctp:api:type:Location) exists for the given [OrderEdit](ctp:api:type:OrderEdit). Returns a `200` status if the ShippingMethod exists, or a `404` status otherwise.
 /matching-location:
   type: base
-  description: Get ShippingMethods for a Location
+  description: Get matching ShippingMethods for a Location
   get:
-    displayName: Get ShippingMethods for a Location
+    displayName: Get matching ShippingMethods for a Location
     description: |
-      Retrieves the active ShippingMethods that can ship to the given [Location](/projects/zones#location).
-      ShippingMethods that have a `predicate` defined are automatically disqualified.
-      If the `currency` parameter is given, then the ShippingMethods must also have a rate defined in the specified currency.
-      Each ShippingMethod contains at least one ShippingRate with the flag `isMatching` set to `true`.
-      If the `currency` parameter is given, exactly one ShippingRate will contain it.
-      If a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.
+      Retrieves the active ShippingMethods that can ship to the provided [Location](/projects/zones#location).
+
+      The following applies:
+
+      - ShippingMethods that have a `predicate` defined are automatically disqualified.
+      - If the `currency` parameter is provided, then the ShippingMethods must also have a rate defined in the specified currency.
+      - Each ShippingMethod contains at least one ShippingRate with the flag `isMatching` set to `true`.
+      - If the `currency` parameter is provided, exactly one ShippingRate will contain it.
+      - If a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.
+
     is:
       - expandable
       - sortable
@@ -386,6 +399,7 @@ post:
             example: !include ../examples/shipping-methods.example.json
   head:
     displayName: Check if matching ShippingMethod exists for a Location
+    description: Checks if an active ShippingMethod that can ship to the provided [Location](ctp:api:type:Location) exists. Returns a `200 OK` status if the ShippingMethod exists or a [Not Found](/../api/errors#404-not-found) error otherwise.
     securedBy:
       [
         oauth_2_0:
@@ -411,7 +425,6 @@ post:
         type: string
         description: |
           The currency code compliant to [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
-    description: Checks if an active ShippingMethod that can ship to the given [Location](ctp:api:type:Location) exists. Returns a `200` status if the ShippingMethod exists, or a `404` status otherwise.
 /{ID}:
   (methodName): withId
   type:
@@ -421,6 +434,7 @@ post:
       resourceUpdateType: ShippingMethodUpdate
   get:
     displayName: Get ShippingMethod by ID
+    description: Retrieves a ShippingMethod with the provided `id`.
     securedBy:
       [
         oauth_2_0:
@@ -440,6 +454,7 @@ post:
             example: !include ../examples/shipping-method.example.json
   head:
     displayName: Check if ShippingMethod exists by ID
+    description: Checks if a ShippingMethod exists with the provided `id`. Returns a `200 OK` status if the ShippingMethod exists or a [Not Found](/../api/errors#404-not-found) error otherwise.
     securedBy:
       [
         oauth_2_0:
@@ -452,9 +467,9 @@ post:
               ],
           },
       ]
-    description: Checks if a ShippingMethod exists with the provided `id`. Returns a `200` status if the ShippingMethod exists, or a `404` status otherwise.
   post:
     displayName: Update ShippingMethod by ID
+    description: Updates a ShippingMethod in the Project using one or more [update actions](/../api/projects/shippingMethods#update-actions).
     securedBy:
       [
         oauth_2_0:
@@ -476,6 +491,7 @@ post:
             example: !include ../examples/shipping-method.example.json
   delete:
     displayName: Delete ShippingMethod by ID
+    description: Deletes a ShippingMethod in the Project.
     securedBy:
       [
         oauth_2_0:
