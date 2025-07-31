@@ -20958,6 +20958,10 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyInventoryPost
       description: |-
+        Creates an InventoryEntry in the Project.
+
+        If quantity limits are provided, existing Line Items that reference a Product Variant with an SKU that matches the Inventory Entry can be affected. For more information, see [Quantity limits](/../api/carts-orders-overview#quantity-limits).
+
         Produces the [InventoryEntryCreated](ctp:api:type:InventoryEntryCreatedMessage) Message.
       parameters:
         - name: expand
@@ -52995,6 +52999,12 @@ components:
             availableQuantity:
               type: "integer"
               format: "int64"
+            minCartQuantity:
+              type: "integer"
+              format: "int32"
+            maxCartQuantity:
+              type: "integer"
+              format: "int32"
             restockableInDays:
               type: "integer"
               format: "int64"
@@ -53018,6 +53028,12 @@ components:
         quantityOnStock:
           type: "integer"
           format: "int64"
+        minCartQuantity:
+          type: "integer"
+          format: "int32"
+        maxCartQuantity:
+          type: "integer"
+          format: "int32"
         restockableInDays:
           type: "integer"
           format: "int64"
@@ -53074,6 +53090,7 @@ components:
           setCustomField: '#/components/schemas/InventoryEntrySetCustomFieldAction'
           setCustomType: '#/components/schemas/InventoryEntrySetCustomTypeAction'
           setExpectedDelivery: '#/components/schemas/InventoryEntrySetExpectedDeliveryAction'
+          setInventoryLimits: '#/components/schemas/InventoryEntrySetInventoryLimitsAction'
           setKey: '#/components/schemas/InventoryEntrySetKeyAction'
           setRestockableInDays: '#/components/schemas/InventoryEntrySetRestockableInDaysAction'
           setSupplyChannel: '#/components/schemas/InventoryEntrySetSupplyChannelAction'
@@ -53176,6 +53193,19 @@ components:
             expectedDelivery:
               type: "string"
               format: "datetime"
+    InventoryEntrySetInventoryLimitsAction:
+      allOf:
+        - $ref: '#/components/schemas/InventoryEntryUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            minCartQuantity:
+              type: "integer"
+              format: "int64"
+            maxCartQuantity:
+              type: "integer"
+              format: "int64"
     InventoryEntrySetKeyAction:
       allOf:
         - $ref: '#/components/schemas/InventoryEntryUpdateAction'
