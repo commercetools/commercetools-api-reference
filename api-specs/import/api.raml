@@ -44,26 +44,27 @@ uses:
   postman: annotationTypes/postman.raml
 
   error: types/error.raml
+  common: types/common.raml
+  custom-field: types/custom-field.raml
   import-operation: types/import-operation.raml
   import-container: types/import-container.raml
   import-summary: types/import-summary.raml
   import-request: types/import-request.raml
-  price-import: types/price-import.raml
-  standalone-price-import: types/standalone-price-import.raml
-  product-import: types/product-import.raml
-  product-draft-import: types/product-draft-import.raml
-  product-type-import: types/product-type-import.raml
-  product-variant-import: types/product-variant-import.raml
+  business-unit-import: types/business-unit-import.raml
   category-import: types/category-import.raml
   customer-import: types/customer-import.raml
+  discount-code-import: types/discount-code-import.raml
+  inventory-import: types/inventory-import.raml
   order-import: types/order-import.raml
   order-patch-import: types/order-patch-import.raml
-  inventory-import: types/inventory-import.raml
-  type-import: types/type-import.raml
-  custom-field: types/custom-field.raml
-  common: types/common.raml
-  discount-code-import: types/discount-code-import.raml
+  price-import: types/price-import.raml
+  product-draft-import: types/product-draft-import.raml
+  product-import: types/product-import.raml
   product-selection-import: types/product-selection-import.raml
+  product-type-import: types/product-type-import.raml
+  product-variant-import: types/product-variant-import.raml
+  standalone-price-import: types/standalone-price-import.raml
+  type-import: types/type-import.raml
 
 resourceTypes:
   base:
@@ -163,6 +164,12 @@ traits:
           scopes:
             - manage_product_selections:{projectKey}
             - view_product_selections:{projectKey}
+  secured_by_manage_business_units:
+    securedBy:
+      - oauth_2_0:
+          scopes:
+            - manage_project:{projectKey}
+            - manage_business_units:{projectKey}
 
 /{projectKey}:
   displayName: Project
@@ -746,6 +753,32 @@ traits:
           body:
             type: import-request.ProductSelectionImportRequest
             example: !include examples/product-selection-import-request.json
+          responses:
+            201:
+              body:
+                type: import-request.ImportResponse
+                example: !include examples/import-response.json
+            400:
+              description: The request was invalid.
+              body:
+                type: error.ErrorResponse
+  /business-units:
+    /import-containers:
+      /{importContainerKey}:
+        type: base
+        uriParameters:
+          importContainerKey:
+            (postman.paramName): import-container-key
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
+            type: string
+        post:
+          description: Creates an Import Request for Business Units.
+          is:
+            - secured_by_manage_business_units
+          body:
+            type: import-request.BusinessUnitImportRequest
+            example: !include examples/business-units-import-request.json
           responses:
             201:
               body:

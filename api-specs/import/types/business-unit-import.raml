@@ -1,0 +1,170 @@
+#%RAML 1.0 Library
+usage: Business Unit import types.
+(annotations.package): business-units
+
+uses:
+  common: common.raml
+  custom-field: custom-field.raml
+  annotations: ../annotationTypes/annotations.raml
+
+types:
+  AssociateRoleInheritanceMode:
+    description: |
+      Determines whether the AssociateRoleAssignment can be inherited by child Business Units.
+    type: string
+    enum: [Enabled, Disabled]
+
+  BusinessUnitStatus:
+    description: Indicates whether the Business Unit can be used.
+    type: string
+    enum: [Active, Inactive]
+
+  BusinessUnitAssociateMode:
+    enum:
+      - Explicit
+      - ExplicitAndFromParent
+    (annotations.enumDescriptions):
+      Explicit: |
+        All Associates of a Business Unit must be explicitly assigned. The Business Unit cannot inherit Associates from a parent.
+      ExplicitAndFromParent: |
+        Associates of a Business Unit can be assigned explicitly and inherited from a parent.
+    default: ExplicitAndFromParent
+
+  BusinessUnitApprovalRuleMode:
+    description: |
+      Determines whether a Business Unit can inherit [Approval Rules](/projects/approval-rules) from a parent. Only Business Units of type `Division` can use `ExplicitAndFromParent`.
+    enum:
+      - Explicit
+      - ExplicitAndFromParent
+    (annotations.enumDescriptions):
+      Explicit: |
+        Approval Rules of a Business Unit must be explicitly assigned. The Business Unit cannot inherit Approval Rules from a parent.
+      ExplicitAndFromParent: |
+        Approval Rules of a Business Unit are inherited from a parent and can also be explicitly assigned.
+
+  BusinessUnitStoreMode:
+    type: string
+    description: |
+      Defines whether the Stores of the Business Unit are set directly on the Business Unit or are inherited from its parent unit.
+    enum:
+      - Explicit
+      - FromParent
+    (annotations.enumDescriptions):
+      Explicit: |
+        Stores are defined on the Business Unit.
+      FromParent: |
+        Stores are inherited from the closest parent in the hierarchy that has Stores defined.
+
+  BusinessUnitType:
+    description: Defines the type of the Business Unit.
+    type: string
+    enum: [Company, Division]
+
+  AssociateRoleAssignmentDraft:
+    description: The role of an Associate in a Business Unit.
+    properties:
+      associateRole:
+        type: common.AssociateRoleKeyReference
+        description: The role to assign to the Associate.
+      inheritance:
+        type: AssociateRoleInheritanceMode
+        description: |
+          Determines whether the AssociateRole is inherited. If `Disabled`, the AssociateRole is not inherited from a parent Business Unit.
+
+  AssociateDraft:
+    description: Draft for an Associate in a Business Unit.
+    properties:
+      customer:
+        type: common.CustomerKeyReference
+        description: The Customer to be part of the Business Unit.
+      associateRoleAssignments:
+        type: AssociateRoleAssignmentDraft[]
+        description: The roles to assign to the Associate.
+
+  BusinessUnitImport:
+    description: |
+      Represents the data used to import a BusinessUnit. Can be of type [Company](ctp:api:type:Company) or [Division](ctp:api:type:Division).
+    type: object
+    discriminator: unitType
+    properties:
+      unitType:
+        type: BusinessUnitType
+        description: The type of Business Unit.
+      key:
+        type: string
+        description: User-defined unique identifier. If a [BusinessUnit](ctp:api:type:BusinessUnit) with this `key` exists, it is updated with the imported data.
+        pattern: ^[A-Za-z0-9_-]+$
+        minLength: 2
+        maxLength: 256
+      name:
+        type: string
+        description: The name of the Business Unit.
+      status?:
+        type: BusinessUnitStatus
+        description: The status of the Business Unit.
+      contactEmail?:
+        type: string
+        description: The contact email address for the Business Unit.
+      associates?:
+        type: AssociateDraft[]
+        description: List of Associates to be assigned to the Business Unit.
+      addresses?:
+        type: common.Address[]
+        description: The addresses for the Business Unit.
+      shippingAddresses?:
+        type: integer[]
+        description: |
+          The indices of the shipping addresses in the `addresses` array.
+      defaultShippingAddress?:
+        type: integer
+        description: |
+          The index of the default shipping address in the `addresses` array.
+      billingAddresses?:
+        type: integer[]
+        description: |
+          The indices of the billing addresses in the `addresses` array.
+      defaultBillingAddress?:
+        type: integer
+        description: |
+          The index of the default billing address in the `addresses` array.
+      stores?:
+        type: common.StoreKeyReference[]
+        description: The Stores of the Business Unit.
+      custom?:
+        type: custom-field.Custom
+        description: Custom fields for the Business Unit.
+
+  CompanyBusinessUnitImport:
+    description: Represents a [Company](ctp:api:type:Company), the top-level of a business.
+    type: BusinessUnitImport
+    example: !include ../examples/business-units-company-import.json
+    discriminatorValue: Company
+    properties:
+      storeMode?:
+        type: BusinessUnitStoreMode
+        default: Explicit
+
+  DivisionBusinessUnitImport:
+    description: Represents a [Division](ctp:api:type:Division), a sub-unit of a [Company](ctp:api:type:Company) or another Division.
+    type: BusinessUnitImport
+    example: !include ../examples/business-units-division-import.json
+    discriminatorValue: Division
+    properties:
+      storeMode?:
+        type: BusinessUnitStoreMode
+        default: FromParent
+        description: |
+          If `Explicit`, the `stores` field cannot be empty and the Business Unit is explicitly associated with the given Stores. If `FromParent`, the Business Unit inherits the Stores from its parent.
+      parentUnit:
+        type: common.BusinessUnitKeyReference
+        description: The parent Business Unit of this Division.
+      associateMode?:
+        type: BusinessUnitAssociateMode
+        default: ExplicitAndFromParent
+        description: |
+          If `Explicit`, Associates are not inherited from the parent. If `ExplicitAndFromParent`, Associates are inherited from the parent.
+      approvalRuleMode?:
+        type: BusinessUnitApprovalRuleMode
+        default: ExplicitAndFromParent
+        description: |
+          If `Explicit`, approval rules are not inherited from the parent. If `ExplicitAndFromParent`, approval rules are inherited from the parent.
