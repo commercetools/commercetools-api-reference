@@ -10796,6 +10796,8 @@ paths:
       description: |-
         Creates a DiscountGroup in the Project.
         This request generates the [DiscountGroupCreated](ctp:api:type:DiscountGroupCreatedMessage) Message.
+
+        If the [limit](/../api/limits#discount-groups) for active Discount Groups has been reached, a [MaxDiscountGroupsReached](ctp:api:type:MaxDiscountGroupsReachedError) error is returned.
       parameters:
         - name: expand
           in: query
@@ -49237,6 +49239,7 @@ components:
           required:
             - createdAt
             - id
+            - isActive
             - key
             - lastModifiedAt
             - sortOrder
@@ -49261,6 +49264,8 @@ components:
               $ref: '#/components/schemas/LocalizedString'
             sortOrder:
               type: "string"
+            isActive:
+              type: "boolean"
             lastModifiedBy:
               $ref: '#/components/schemas/LastModifiedBy'
             createdBy:
@@ -49279,6 +49284,8 @@ components:
           $ref: '#/components/schemas/LocalizedString'
         sortOrder:
           type: "string"
+        isActive:
+          type: "boolean"
     DiscountGroupPagedQueryResponse:
       type: "object"
       required:
@@ -49346,6 +49353,7 @@ components:
         propertyName: action
         mapping:
           setDescription: '#/components/schemas/DiscountGroupSetDescriptionAction'
+          setIsActive: '#/components/schemas/DiscountGroupSetIsActiveAction'
           setKey: '#/components/schemas/DiscountGroupSetKeyAction'
           setName: '#/components/schemas/DiscountGroupSetNameAction'
           setSortOrder: '#/components/schemas/DiscountGroupSetSortOrderAction'
@@ -49363,6 +49371,17 @@ components:
               type: "string"
             description:
               $ref: '#/components/schemas/LocalizedString'
+    DiscountGroupSetIsActiveAction:
+      allOf:
+        - $ref: '#/components/schemas/DiscountGroupUpdateAction'
+        - type: "object"
+          required:
+            - isActive
+          properties:
+            action:
+              type: "string"
+            isActive:
+              type: "boolean"
     DiscountGroupSetKeyAction:
       allOf:
         - $ref: '#/components/schemas/DiscountGroupUpdateAction'
@@ -49946,6 +49965,7 @@ components:
           LockedField: '#/components/schemas/LockedFieldError'
           MatchingPriceNotFound: '#/components/schemas/MatchingPriceNotFoundError'
           MaxCartDiscountsReached: '#/components/schemas/MaxCartDiscountsReachedError'
+          MaxDiscountGroupsReached: '#/components/schemas/MaxDiscountGroupsReachedError'
           MaxResourceLimitExceeded: '#/components/schemas/MaxResourceLimitExceededError'
           MaxStoreReferencesReached: '#/components/schemas/MaxStoreReferencesReachedError'
           MissingRoleOnChannel: '#/components/schemas/MissingRoleOnChannelError'
@@ -50411,6 +50431,20 @@ components:
           additionalProperties:
             type: "string"
     MaxCartDiscountsReachedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    MaxDiscountGroupsReachedError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
@@ -51414,6 +51448,7 @@ components:
           LockedField: '#/components/schemas/GraphQLLockedFieldError'
           MatchingPriceNotFound: '#/components/schemas/GraphQLMatchingPriceNotFoundError'
           MaxCartDiscountsReached: '#/components/schemas/GraphQLMaxCartDiscountsReachedError'
+          MaxDiscountGroupsReached: '#/components/schemas/GraphQLMaxDiscountGroupsReachedError'
           MaxResourceLimitExceeded: '#/components/schemas/GraphQLMaxResourceLimitExceededError'
           MaxStoreReferencesReached: '#/components/schemas/GraphQLMaxStoreReferencesReachedError'
           MissingRoleOnChannel: '#/components/schemas/GraphQLMissingRoleOnChannelError'
@@ -51776,6 +51811,17 @@ components:
           additionalProperties:
             type: "string"
     GraphQLMaxCartDiscountsReachedError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLMaxDiscountGroupsReachedError:
       allOf:
         - $ref: '#/components/schemas/GraphQLErrorObject'
         - type: "object"
@@ -59565,6 +59611,42 @@ components:
               type: "string"
             resourceUserProvidedIdentifiers:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
+    DiscountGroupIsActiveSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            isActive:
+              type: "boolean"
+            oldIsActive:
+              type: "boolean"
     DiscountGroupKeySetMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -59926,6 +60008,7 @@ components:
               DiscountCodeKeySet: '#/components/schemas/DiscountCodeKeySetMessage'
               DiscountGroupCreated: '#/components/schemas/DiscountGroupCreatedMessage'
               DiscountGroupDeleted: '#/components/schemas/DiscountGroupDeletedMessage'
+              DiscountGroupIsActiveSet: '#/components/schemas/DiscountGroupIsActiveSetMessage'
               DiscountGroupKeySet: '#/components/schemas/DiscountGroupKeySetMessage'
               DiscountGroupSortOrderSet: '#/components/schemas/DiscountGroupSortOrderSetMessage'
               InventoryEntryCreated: '#/components/schemas/InventoryEntryCreatedMessage'
@@ -68611,6 +68694,17 @@ components:
           properties:
             type:
               type: "string"
+    DiscountGroupIsActiveSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            isActive:
+              type: "boolean"
+            oldIsActive:
+              type: "boolean"
     DiscountGroupKeySetMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -68820,6 +68914,7 @@ components:
           DiscountCodeKeySet: '#/components/schemas/DiscountCodeKeySetMessagePayload'
           DiscountGroupCreated: '#/components/schemas/DiscountGroupCreatedMessagePayload'
           DiscountGroupDeleted: '#/components/schemas/DiscountGroupDeletedMessagePayload'
+          DiscountGroupIsActiveSet: '#/components/schemas/DiscountGroupIsActiveSetMessagePayload'
           DiscountGroupKeySet: '#/components/schemas/DiscountGroupKeySetMessagePayload'
           DiscountGroupSortOrderSet: '#/components/schemas/DiscountGroupSortOrderSetMessagePayload'
           InventoryEntryCreated: '#/components/schemas/InventoryEntryCreatedMessagePayload'
