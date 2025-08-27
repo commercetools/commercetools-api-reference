@@ -4336,18 +4336,46 @@ type DiscountCodeDeleted implements MessagePayload {
 }
 
 input DiscountCodeDraft {
+  """
+  User-defined unique identifier for the DiscountCode that can be added to the Cart to apply the related CartDiscounts.
+  It cannot be modified after the DiscountCode is created.
+  """
   code: String!
+
+  "Name of the DiscountCode."
   name: [LocalizedStringItemInputType!]
+
+  "User-defined unique identifier for the DiscountCode."
   key: String
+
+  "The description of the DiscountCode."
   description: [LocalizedStringItemInputType!]
+
+  "Specify what CartDiscounts the API applies when you add the DiscountCode to the Cart."
   cartDiscounts: [ResourceIdentifierInput!]!
+
+  "Only active DiscountCodes can be applied to the Cart."
   isActive: Boolean = true
+
+  "Number of times the DiscountCode can be applied. If not set, the DiscountCode can be applied any number of times."
   maxApplications: Long
+
+  "Number of times the DiscountCode can be applied per Customer. If not set, the DiscountCode can be applied any number of times."
   maxApplicationsPerCustomer: Long
+
+  "DiscountCode can only be applied to Carts that match this predicate."
   cartPredicate: String
+
+  "Custom Fields for the DiscountCode."
   custom: CustomFieldsDraft
+
+  "Date and time (UTC) from which the DiscountCode is effective. Must be earlier than `validUntil`."
   validFrom: DateTime
+
+  "Date and time (UTC) until which the DiscountCode is effective. Must be later than `validFrom`."
   validUntil: DateTime
+
+  "Groups to which the DiscountCode will belong to."
   groups: [String!] = []
 }
 
@@ -4416,6 +4444,7 @@ type DiscountGroup implements Versioned {
   version: Long!
   key: String!
   sortOrder: String!
+  isActive: Boolean!
   name(
     "String is defined for different locales. This argument specifies the desired locale."
     locale: Locale,
@@ -4451,7 +4480,14 @@ input DiscountGroupDraft {
   key: String!
   sortOrder: String!
   name: [LocalizedStringItemInputType!]
+  isActive: Boolean = true
   description: [LocalizedStringItemInputType!]
+}
+
+type DiscountGroupIsActiveSet implements MessagePayload {
+  isActive: Boolean!
+  discountGroupId: String!
+  type: String!
 }
 
 type DiscountGroupKeySet implements MessagePayload {
@@ -4490,6 +4526,7 @@ input DiscountGroupUpdateAction {
   setKey: SetDiscountGroupKey
   setSortOrder: SetDiscountGroupSortOrder
   setName: SetDiscountGroupName
+  setIsActive: SetDiscountGroupIsActive
   setDescription: SetDiscountGroupDescription
 }
 
@@ -8677,14 +8714,34 @@ type ProductDiscount implements Versioned & ReferenceExpandable {
 }
 
 input ProductDiscountDraft {
+  "Type of Discount and its corresponding value."
   value: ProductDiscountValueInput!
+
+  "A valid ProductDiscount Predicate."
   predicate: String!
+
+  """
+  Decimal value between 0 and 1 (passed as String literal) that defines the order of ProductDiscounts to apply in case more than one is applicable and active. A ProductDiscount with a higher `sortOrder` is prioritized.
+  The value must be **unique** among all ProductDiscounts in the Project.
+  """
   sortOrder: String!
+
+  "Name of the ProductDiscount."
   name: [LocalizedStringItemInputType!]!
+
+  "Description of the ProductDiscount."
   description: [LocalizedStringItemInputType!]
+
+  "Date and time (UTC) from which the Discount is effective."
   validFrom: DateTime
+
+  "Date and time (UTC) until which the Discount is effective."
   validUntil: DateTime
+
+  "Set to `true` to activate the ProductDiscount, set to `false` to deactivate it (even though the `predicate` matches)."
   isActive: Boolean = true
+
+  "User-defined unique identifier for the ProductDiscount."
   key: String
 }
 
@@ -12514,6 +12571,11 @@ input SetDiscountGroupDescription {
 }
 
 "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SetDiscountGroupIsActive {
+  isActive: Boolean!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
 input SetDiscountGroupKey {
   key: String!
 }
@@ -14821,8 +14883,8 @@ input ShippingTargetDraft {
 }
 
 input ShippingTargetDraftType {
-  addressKey: String!
   quantity: Long!
+  addressKey: String!
   shippingMethodKey: String
 }
 
