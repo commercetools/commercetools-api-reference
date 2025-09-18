@@ -54042,6 +54042,8 @@ components:
           type: "string"
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
+        interfaceId:
+          type: "string"
     ReplicaMyCartDraft:
       type: "object"
       required:
@@ -60036,6 +60038,7 @@ components:
               PaymentStatusInterfaceCodeSet: '#/components/schemas/PaymentStatusInterfaceCodeSetMessage'
               PaymentStatusStateTransition: '#/components/schemas/PaymentStatusStateTransitionMessage'
               PaymentTransactionAdded: '#/components/schemas/PaymentTransactionAddedMessage'
+              PaymentTransactionInterfaceIdSet: '#/components/schemas/PaymentTransactionInterfaceIdSetMessage'
               PaymentTransactionStateChanged: '#/components/schemas/PaymentTransactionStateChangedMessage'
               ProductAddedToCategory: '#/components/schemas/ProductAddedToCategoryMessage'
               ProductCreated: '#/components/schemas/ProductCreatedMessage'
@@ -63011,6 +63014,46 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             transaction:
               $ref: '#/components/schemas/Transaction'
+    PaymentTransactionInterfaceIdSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - transactionId
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            transactionId:
+              type: "string"
+            newInterfaceId:
+              type: "string"
+            oldInterfaceId:
+              type: "string"
     PaymentTransactionStateChangedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -68936,6 +68979,7 @@ components:
           PaymentStatusInterfaceCodeSet: '#/components/schemas/PaymentStatusInterfaceCodeSetMessagePayload'
           PaymentStatusStateTransition: '#/components/schemas/PaymentStatusStateTransitionMessagePayload'
           PaymentTransactionAdded: '#/components/schemas/PaymentTransactionAddedMessagePayload'
+          PaymentTransactionInterfaceIdSet: '#/components/schemas/PaymentTransactionInterfaceIdSetMessagePayload'
           PaymentTransactionStateChanged: '#/components/schemas/PaymentTransactionStateChangedMessagePayload'
           ProductAddedToCategory: '#/components/schemas/ProductAddedToCategoryMessagePayload'
           ProductCreated: '#/components/schemas/ProductCreatedMessagePayload'
@@ -70010,6 +70054,21 @@ components:
               type: "string"
             transaction:
               $ref: '#/components/schemas/Transaction'
+    PaymentTransactionInterfaceIdSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - transactionId
+          properties:
+            type:
+              type: "string"
+            transactionId:
+              type: "string"
+            newInterfaceId:
+              type: "string"
+            oldInterfaceId:
+              type: "string"
     PaymentTransactionStateChangedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -76081,6 +76140,7 @@ components:
           setStatusInterfaceText: '#/components/schemas/PaymentSetStatusInterfaceTextAction'
           setTransactionCustomField: '#/components/schemas/PaymentSetTransactionCustomFieldAction'
           setTransactionCustomType: '#/components/schemas/PaymentSetTransactionCustomTypeAction'
+          setTransactionInterfaceId: '#/components/schemas/PaymentSetTransactionInterfaceIdAction'
           transitionState: '#/components/schemas/PaymentTransitionStateAction'
       required:
         - action
@@ -76110,6 +76170,8 @@ components:
           $ref: '#/components/schemas/TransactionState'
         custom:
           $ref: '#/components/schemas/CustomFields'
+        interfaceId:
+          type: "string"
     TransactionDraft:
       type: "object"
       required:
@@ -76129,6 +76191,8 @@ components:
           $ref: '#/components/schemas/TransactionState'
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
+        interfaceId:
+          type: "string"
     TransactionState:
       type: "string"
       enum:
@@ -76480,6 +76544,19 @@ components:
               $ref: '#/components/schemas/TypeResourceIdentifier'
             fields:
               $ref: '#/components/schemas/FieldContainer'
+    PaymentSetTransactionInterfaceIdAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentUpdateAction'
+        - type: "object"
+          required:
+            - transactionId
+          properties:
+            action:
+              type: "string"
+            transactionId:
+              type: "string"
+            interfaceId:
+              type: "string"
     PaymentTransitionStateAction:
       allOf:
         - $ref: '#/components/schemas/PaymentUpdateAction'
