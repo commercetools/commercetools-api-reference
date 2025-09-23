@@ -1,0 +1,29 @@
+#%RAML 1.0 DataType
+(package): Search
+(beta): true
+type: SearchQueryExpressionValue
+displayName: SearchFuzzyValue
+properties:
+  value:
+    type: any
+    description: |
+      The search term to find fuzzy matches for. If multiple terms are provided (separated by whitespace), the fuzziness level is applied to each term individually.
+  level:
+    type: number
+    format: int8
+    minimum: 0
+    maximum: 2
+    description: |
+      The maximum fuzziness level desired for the search term. Allowed values are `0`, `1`, and `2`. The API automatically adjusts the effective fuzziness level based on the length of the search term if it exceeds the maximum allowed for the given string length according to the following rules:
+
+      * Terms with 1-2 characters: 0 (exact match)
+      * Terms with 3-5 characters: 1 (up to one difference is allowed)
+      * Terms with more than 5 characters: 2 (up to two differences are allowed)
+  language?:
+    type: Locale
+    description: |
+      Language of the localized value. Must be provided when the field is of type `localizedTextField`. The provided Locale must be one of the Project's languages.
+  mustMatch?:
+    type: SearchMatchType
+    description: |
+      Controls whether all of the provided terms must match (`all`, default) or any of those (`any`).
