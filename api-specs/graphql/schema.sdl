@@ -9125,6 +9125,15 @@ type ProductProjectionMessagePayload {
   reviewRatingStatistics: ReviewRatingStatistics
 }
 
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductPagedSearchResponse {
+  total: Long!
+  offset: Int
+  limit: Int
+  results: [ProductSearchResult!]!
+  facets: [ProductSearchFacetResult!]!
+}
+
 type ProductProjectionSearchResult {
   offset: Int!
   count: Int!
@@ -9321,6 +9330,137 @@ type ProductSelectionSetting {
   productSelectionRef: Reference!
   productSelection: ProductSelection
   active: Boolean!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ProductSearchFacetCountExpressionInput {
+  name: String!
+  scope: ProductSearchFacetScopeEnum = all
+  filter: SearchQueryInput
+  level: ProductSearchFacetCountLevelEnum = products
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum ProductSearchFacetCountLevelEnum {
+  "ProductSearchFacetCountLevelEnum 'products' type."
+  products
+
+  "ProductSearchFacetCountLevelEnum 'variants' type."
+  variants
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum ProductSearchFacetDistinctBucketSortBy {
+  "ProductSearchFacetDistinctBucketSortBy 'count' type."
+  count
+
+  "ProductSearchFacetDistinctBucketSortBy 'key' type."
+  key
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ProductSearchFacetDistinctBucketSortExpressionInput {
+  by: ProductSearchFacetDistinctBucketSortBy!
+  order: SearchSortOrder
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ProductSearchFacetDistinctExpressionInput {
+  name: String!
+  scope: ProductSearchFacetScopeEnum
+  filter: SearchQueryInput
+  level: ProductSearchFacetCountLevelEnum
+  field: String!
+  includes: [String!]
+  sort: ProductSearchFacetDistinctBucketSortExpressionInput
+  limit: Int
+  language: String
+  fieldType: SearchFieldType
+  missing: String
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ProductSearchFacetExpressionInput {
+  count: ProductSearchFacetCountExpressionInput
+  distinct: ProductSearchFacetDistinctExpressionInput
+  ranges: ProductSearchFacetRangesExpressionInput
+  stats: ProductSearchFacetStatsExpressionInput
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ProductSearchFacetRangesExpressionInput {
+  name: String!
+  scope: ProductSearchFacetScopeEnum
+  filter: SearchQueryInput
+  level: ProductSearchFacetCountLevelEnum
+  field: String!
+  ranges: [ProductSearchFacetRangesFacetRangeInput!]!
+  language: String
+  fieldType: SearchFieldType
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ProductSearchFacetRangesFacetRangeInput {
+  from: String
+  to: String
+  key: String
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+interface ProductSearchFacetResult {
+  name: String!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductSearchFacetResultBucket implements ProductSearchFacetResult {
+  name: String!
+  buckets: [ProductSearchFacetResultBucketEntry!]!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductSearchFacetResultBucketEntry {
+  key: String!
+  count: Int!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductSearchFacetResultCount implements ProductSearchFacetResult {
+  name: String!
+  value: Long!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductSearchFacetResultStats implements ProductSearchFacetResult {
+  name: String!
+  min: Json!
+  max: Json!
+  mean: Json
+  sum: Json
+  count: Long!
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum ProductSearchFacetScopeEnum {
+  "ProductSearchFacetScopeEnum 'all' type."
+  all
+
+  "ProductSearchFacetScopeEnum 'query' type."
+  query
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input ProductSearchFacetStatsExpressionInput {
+  name: String!
+  scope: ProductSearchFacetScopeEnum
+  filter: SearchQueryInput
+  field: String!
+  fieldType: SearchFieldType
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+type ProductSearchResult {
+  id: String!
+  product: Product!
 }
 
 input ProductSelectionSettingDraft {
@@ -10399,6 +10539,8 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   paymentMethods(where: String, sort: [String!], limit: Int, offset: Int): PaymentMethodQueryResult!
   productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
+  "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+  productsSearch(query: SearchQueryInput, postFilter: SearchQueryInput, sort: [SearchSortingInput!], limit: Int, offset: Int, markMatchingVariants: Boolean, facets: [ProductSearchFacetExpressionInput!]): ProductPagedSearchResponse
 }
 
 type QueryLimitsProjection {
@@ -11772,6 +11914,265 @@ type SearchKeywordsProductSearch {
 type SearchLimitsProjection {
   maxTextSize: Limit!
 }
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SearchAnyValueExpressionInput {
+  field: String!
+  boost: Float
+  fieldType: SearchFieldType
+  gte: Float
+  value: SearchValueType!
+  language: String
+  caseInsensitive: Boolean
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SearchDateRangeExpressionInput {
+  field: String!
+  boost: Float
+  fieldType: SearchFieldType
+  gte: Date
+  gt: Date
+  lte: Date
+  lt: Date
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SearchDateTimeRangeExpressionInput {
+  field: String!
+  boost: Float
+  fieldType: SearchFieldType
+  gte: DateTime
+  gt: DateTime
+  lte: DateTime
+  lt: DateTime
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SearchExistsInput {
+  field: String!
+  boost: Float
+  fieldType: SearchFieldType
+  language: String
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum SearchFieldType {
+  "Field type for boolean values."
+  boolean
+
+  "Field type for text values."
+  text
+
+  "Field type for localized text values."
+  ltext
+
+  "Field type for enum values."
+  enum
+
+  "Field type for localized enum values."
+  lenum
+
+  "Field type for number values."
+  number
+
+  "Field type for money values."
+  money
+
+  "Field type for date values."
+  date
+
+  "Field type for datetime values."
+  datetime
+
+  "Field type for time values."
+  time
+
+  "Field type for reference values."
+  reference
+
+  "Field type for set of boolean values."
+  set_boolean
+
+  "Field type for set of text values."
+  set_text
+
+  "Field type for set of localized text values."
+  set_ltext
+
+  "Field type for set of enum values."
+  set_enum
+
+  "Field type for set of localized enum values."
+  set_lenum
+
+  "Field type for set of number values."
+  set_number
+
+  "Field type for set of money values."
+  set_money
+
+  "Field type for set of date values."
+  set_date
+
+  "Field type for set of datetime values."
+  set_datetime
+
+  "Field type for set of time values."
+  set_time
+
+  "Field type for set of reference values."
+  set_reference
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SearchFilterExpressionInput {
+  range: SearchQueryRangeExpressionInput
+  fullText: SearchFullTextExpressionInput
+  fullTextPrefix: SearchFullTextPrefixInput
+  exists: SearchExistsInput
+  prefix: SearchAnyValueExpressionInput
+  wildcard: SearchAnyValueExpressionInput
+  exact: SearchAnyValueExpressionInput
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SearchFullTextExpressionInput {
+  field: String!
+  boost: Float
+  fieldType: SearchFieldType
+  value: String!
+  language: String
+  mustMatch: SearchMatchType
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SearchFullTextPrefixInput {
+  field: String!
+  boost: Float
+  fieldType: SearchFieldType
+  value: String!
+  language: String
+  mustMatch: SearchMatchType
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SearchFuzzyExpressionInput {
+  field: String!
+  boost: Float
+  fieldType: SearchFieldType
+  value: String!
+  level: Int!
+  language: String
+  mustMatch: SearchMatchType
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SearchLongRangeExpressionInput {
+  field: String!
+  boost: Float
+  fieldType: SearchFieldType
+  gte: Long
+  gt: Long
+  lte: Long
+  lt: Long
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+enum SearchMatchType {
+  "Any match type."
+  any
+
+  "All match type."
+  all
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SearchNumberRangeExpressionInput {
+  field: String!
+  boost: Float
+  fieldType: SearchFieldType
+  gte: Float
+  gt: Float
+  lte: Float
+  lt: Float
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SearchQueryInput {
+  and: [SearchQueryInput!]
+  or: [SearchQueryInput!]
+  not: [SearchQueryInput!]
+  filter: [SearchFilterExpressionInput!]
+  range: SearchQueryRangeExpressionInput
+  fullText: SearchFullTextExpressionInput
+  fullTextPrefix: SearchFullTextPrefixInput
+  exists: SearchExistsInput
+  prefix: SearchAnyValueExpressionInput
+  wildcard: SearchAnyValueExpressionInput
+  exact: SearchAnyValueExpressionInput
+  fuzzy: SearchFuzzyExpressionInput
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
+input SearchQueryRangeExpressionInput {
+  date: SearchDateRangeExpressionInput
+  datetime: SearchDateTimeRangeExpressionInput
+  time: SearchTimeRangeExpressionInput
+  long: SearchLongRangeExpressionInput
+  float: SearchNumberRangeExpressionInput
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production.
+https://docs.commercetools.com/api/contract#public-beta"
+enum SearchSortMode {
+  "Minimum value."
+  min
+
+  "Maximum value."
+  max
+
+  "Average value."
+  avg
+
+  "Sum value."
+  sum
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production.
+https://docs.commercetools.com/api/contract#public-beta"
+enum SearchSortOrder {
+  "Ascending order."
+  asc
+
+  "Descending order."
+  desc
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production.
+https://docs.commercetools.com/api/contract#public-beta"
+input SearchSortingInput {
+  field: String!
+  language: String
+  order: SearchSortOrder!
+  mode: SearchSortMode
+  fieldType: SearchFieldType
+  filter: SearchFilterExpressionInput
+}
+
+"BETA: This feature can be subject to change and should be used carefully in production.
+https://docs.commercetools.com/api/contract#public-beta"
+input SearchTimeRangeExpressionInput {
+  field: String!
+  boost: Float
+  fieldType: SearchFieldType
+  gte: Time
+  gt: Time
+  lte: Time
+  lt: Time
+}
+
+scalar SearchValueType
 
 "In order to decide which of the matching items will actually be discounted"
 enum SelectionMode {
