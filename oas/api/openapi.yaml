@@ -80990,6 +80990,24 @@ components:
       x-annotation-enumDescriptions:
         Activated: "indicates that the Customer Search feature is fully operational."
         Deactivated: "indicates that the Customer Search feature is currently not active."
+    DiscountCombinationMode:
+      type: "string"
+      enum:
+        - BestDeal
+        - Stacking
+      x-annotation-package: "Project"
+      x-annotation-enumDescriptions:
+        BestDeal: "Either Product Discounts or Cart Discounts are chosen based on best deal
+         for the customer. Only one type applies per Cart."
+        Stacking: "Product Discounts and Cart Discounts are both applied to the Cart, potentially
+         increasing the total discount."
+    DiscountsConfiguration:
+      type: "object"
+      required:
+        - discountCombinationMode
+      properties:
+        discountCombinationMode:
+          $ref: '#/components/schemas/DiscountCombinationMode'
     ExternalOAuth:
       type: "object"
       required:
@@ -81028,6 +81046,7 @@ components:
         - countries
         - createdAt
         - currencies
+        - discounts
         - key
         - languages
         - messages
@@ -81072,6 +81091,8 @@ components:
           $ref: '#/components/schemas/SearchIndexingConfiguration'
         businessUnits:
           $ref: '#/components/schemas/BusinessUnitConfiguration'
+        discounts:
+          $ref: '#/components/schemas/DiscountsConfiguration'
     ProjectUpdate:
       type: "object"
       required:
@@ -81107,6 +81128,7 @@ components:
           changeShoppingListsConfiguration: '#/components/schemas/ProjectChangeShoppingListsConfigurationAction'
           changeTaxRoundingMode: '#/components/schemas/ProjectChangeTaxRoundingModeAction'
           setMyBusinessUnitAssociateRoleOnCreation: '#/components/schemas/ProjectSetBusinessUnitAssociateRoleOnCreationAction'
+          setDiscountsConfiguration: '#/components/schemas/ProjectSetDiscountsConfigurationAction'
           setExternalOAuth: '#/components/schemas/ProjectSetExternalOAuthAction'
           setShippingRateInputType: '#/components/schemas/ProjectSetShippingRateInputTypeAction'
       required:
@@ -81365,6 +81387,17 @@ components:
               type: "string"
             associateRole:
               $ref: '#/components/schemas/AssociateRoleResourceIdentifier'
+    ProjectSetDiscountsConfigurationAction:
+      allOf:
+        - $ref: '#/components/schemas/ProjectUpdateAction'
+        - type: "object"
+          required:
+            - discountsConfiguration
+          properties:
+            action:
+              type: "string"
+            discountsConfiguration:
+              $ref: '#/components/schemas/DiscountsConfiguration'
     ProjectSetExternalOAuthAction:
       allOf:
         - $ref: '#/components/schemas/ProjectUpdateAction'
