@@ -197,6 +197,9 @@ jobs:
       - name: "Calculate diff (History)"
         run: rmf-codegen diff -f ${{ matrix.diffFormat }} -o ./changes_history.md commercetools-api-reference-previous/api-specs/history/api.raml commercetools-api-reference/api-specs/history/api.raml
 
+      - name: "Calculate diff (Checkout)"
+        run: rmf-codegen diff -f ${{ matrix.diffFormat }} -o ./changes_checkout.md commercetools-api-reference-previous/api-specs/checkout/api.raml commercetools-api-reference/api-specs/checkout/api.raml
+
       - name: 'TS changesets'
         if: ${{ matrix.language == 'typescript' }}
         run: |
@@ -227,6 +230,15 @@ jobs:
             cat ./changes_history.md >> ./commercetools-sdk/.changeset/changes_history.md
             echo "" >> ./commercetools-sdk/.changeset/changes_history.md
           fi
+          if [ -f ./changes_checkout.md ]; then
+            echo "---" > ./commercetools-sdk/.changeset/changes_checkout.md
+            echo '"@commercetools/checkout-sdk": minor' >> ./commercetools-sdk/.changeset/changes_checkout.md
+            echo "---"  >> ./commercetools-sdk/.changeset/changes_checkout.md
+            echo "**Checkout changes**" >> ./commercetools-sdk/.changeset/changes_checkout.md
+            echo "" >> ./commercetools-sdk/.changeset/changes_checkout.md
+            cat ./changes_checkout.md >> ./commercetools-sdk/.changeset/changes_checkout.md
+            echo "" >> ./commercetools-sdk/.changeset/changes_checkout.md
+          fi
 
       - name: 'Create change file'
         run: |
@@ -246,6 +258,12 @@ jobs:
             echo "**History changes**" >> ./changes.md
             echo "" >> ./changes.md
             cat ./changes_history.md >> ./changes.md
+            echo "" >> ./changes.md
+          fi
+          if [ -f ./changes_checkout.md ]; then
+            echo "**Checkout changes**" >> ./changes.md
+            echo "" >> ./changes.md
+            cat ./changes_checkout.md >> ./changes.md
             echo "" >> ./changes.md
           fi
           if [ -f ./changes.md ]; then
