@@ -1,0 +1,2030 @@
+openapi: "3.0.0"
+info:
+  title: Checkout API
+  version: "v1"
+
+servers:
+  - url: https://checkout.{region}.commercetools.com
+    variables:
+      region:
+        default: europe-west1.gcp
+        enum:
+         - europe-west1.gcp
+         - us-central1.gcp
+         - australia-southeast1.gcp
+        description: |
+          [Region](ctp:checkout:type:Region) in which the Checkout application is [hosted](/hosts-and-authorization).
+
+
+paths:
+  /{projectKey}/payment-intents/{paymentId}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: paymentId
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_checkout_payment_intents:{projectKey}"
+            - "manage_projects:{projectKey}"
+      operationId: ByProjectKeyPaymentIntentsByPaymentIdPost
+      description: |-
+        Specific Error Codes:
+        - [MultipleActionsNotAllowed](ctp:checkout:type:MultipleActionsNotAllowedError)
+        - [RequiredField](ctp:checkout:type:RequiredFieldError)
+        - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentIntent'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/any'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/null'
+
+  /{projectKey}/transactions:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_checkout_transactions:{projectKey}"
+            - "manage_projects:{projectKey}"
+      operationId: ByProjectKeyTransactionsPost
+      description: |-
+        Creates a Transaction on Checkout. Specific Error Codes:
+        - [InvalidInput](ctp:checkout:type:InvalidInputError)
+        - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+        - [ConnectorFailed](ctp:checkout:type:ConnectorFailedError)
+        - [PaymentFailure](ctp:checkout:type:PaymentFailureError)
+        - [RequiredField](ctp:checkout:type:RequiredFieldError)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/null'
+
+  /{projectKey}/transactions/key={key}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_checkout_transactions:{projectKey}"
+            - "manage_projects:{projectKey}"
+      operationId: ByProjectKeyTransactionsKeyByKeyGet
+      description: |-
+        Returns a Transaction with a given `key`. Specific Error Codes:
+        - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+        - [GeneralError](ctp:checkout:type:GeneralError)
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/null'
+
+  /{projectKey}/transactions/{id}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_checkout_transactions:{projectKey}"
+            - "manage_projects:{projectKey}"
+      operationId: ByProjectKeyTransactionsByIdGet
+      description: |-
+        Returns a Transaction with a given `id`. Specific Error Codes:
+        - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+        - [GeneralError](ctp:checkout:type:GeneralError)
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/null'
+
+
+components:
+
+  securitySchemes:
+    oauth_2_0:
+      type: oauth2
+      description: |
+        HTTP API authorization uses [OAuth2](http://tools.ietf.org/html/rfc6750){:target="_blank"}.
+
+        Clients must obtain an access token from the auth service using one of
+        the authorization flows described below, before they are able to make authorized requests
+        to other commercetools services. On successful completion of an authorization flow,
+        a client will be given an `access_token`, which they need to include in requests
+        to authorized service endpoints via the HTTP `Authorization` header like this:
+
+      flows:
+          clientCredentials:
+            tokenUrl: https://auth.europe-west1.gcp.commercetools.com/oauth/token
+            scopes:
+              "manage_project:{projectKey}": ""
+              "view_connectors:{projectKey}": ""
+              "manage_connectors:{projectKey}": ""
+              "view_deployments:{projectKey}": ""
+              "manage_deployments:{projectKey}": ""
+
+
+  schemas:
+    ApplicationReference:
+      allOf:
+        - $ref: '#/components/schemas/Reference'
+        - type: "object"
+          required:
+            - id
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+    ApplicationResourceIdentifier:
+      allOf:
+        - $ref: '#/components/schemas/ResourceIdentifier'
+        - type: "object"
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            key:
+              type: "string"
+    CartReference:
+      allOf:
+        - $ref: '#/components/schemas/Reference'
+        - type: "object"
+          required:
+            - id
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+    CartResourceIdentifier:
+      allOf:
+        - $ref: '#/components/schemas/ResourceIdentifier'
+        - type: "object"
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            key:
+              type: "string"
+    OrderReference:
+      allOf:
+        - $ref: '#/components/schemas/Reference'
+        - type: "object"
+          required:
+            - id
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+    OrderResourceIdentifier:
+      allOf:
+        - $ref: '#/components/schemas/ResourceIdentifier'
+        - type: "object"
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            key:
+              type: "string"
+    PaymentReference:
+      allOf:
+        - $ref: '#/components/schemas/Reference'
+        - type: "object"
+          required:
+            - id
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+    PaymentResourceIdentifier:
+      allOf:
+        - $ref: '#/components/schemas/ResourceIdentifier'
+        - type: "object"
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            key:
+              type: "string"
+    Reference:
+      type: "object"
+      discriminator:
+        propertyName: typeId
+        mapping:
+          application: '#/components/schemas/ApplicationReference'
+          cart: '#/components/schemas/CartReference'
+          order: '#/components/schemas/OrderReference'
+          payment-integration: '#/components/schemas/PaymentIntegrationReference'
+          payment: '#/components/schemas/PaymentReference'
+      required:
+        - id
+        - typeId
+      properties:
+        typeId:
+          $ref: '#/components/schemas/ReferenceTypeId'
+        id:
+          type: "string"
+    ReferenceTypeId:
+      type: "string"
+      enum:
+        - cart
+        - order
+        - payment
+        - application
+        - payment-integration
+      x-annotation-package: "Common"
+      x-annotation-enumDescriptions:
+        cart: "References a [Cart](/../api/projects/carts#cart).n"
+        order: "References an [Order](/../api/projects/orders#order).n"
+        payment: "References a [Payment](/../api/projects/payments#payment).n"
+        application: "References an [Application](/connectors-and-applications#applications).n"
+        payment-integration: "References a [Payment Integration](/connectors-and-applications#payment-integrations).n"
+    ResourceIdentifier:
+      type: "object"
+      discriminator:
+        propertyName: typeId
+        mapping:
+          application: '#/components/schemas/ApplicationResourceIdentifier'
+          cart: '#/components/schemas/CartResourceIdentifier'
+          order: '#/components/schemas/OrderResourceIdentifier'
+          payment-integration: '#/components/schemas/PaymentIntegrationResourceIdentifier'
+          payment: '#/components/schemas/PaymentResourceIdentifier'
+      required:
+        - typeId
+      properties:
+        typeId:
+          $ref: '#/components/schemas/ReferenceTypeId'
+        id:
+          type: "string"
+        key:
+          type: "string"
+    Amount:
+      type: "object"
+      required:
+        - centAmount
+        - currencyCode
+      properties:
+        centAmount:
+          type: "integer"
+          format: "int32"
+        currencyCode:
+          type: "string"
+    Region:
+      type: "string"
+      enum:
+        - europe-west1.gcp
+        - us-central1.gcp
+        - australia-southeast1.gcp
+      x-annotation-package: "Common"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        europe-west1.gcp: "for Europe (Google Cloud, Belgium)n"
+        us-central1.gcp: "for North America (Google Cloud, Iowa)n"
+        australia-southeast1.gcp: "for Australia (Google Cloud, Sydney)n"
+    ConnectorFailedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    ErrorObject:
+      type: "object"
+      discriminator:
+        propertyName: code
+        mapping:
+          ConnectorFailed: '#/components/schemas/ConnectorFailedError'
+          General: '#/components/schemas/GeneralError'
+          InvalidInput: '#/components/schemas/InvalidInputError'
+          InvalidJsonInput: '#/components/schemas/InvalidJsonInputError'
+          MultipleActionsNotAllowed: '#/components/schemas/MultipleActionsNotAllowedError'
+          PaymentFailure: '#/components/schemas/PaymentFailureError'
+          RequiredField: '#/components/schemas/RequiredFieldError'
+          ResourceNotFound: '#/components/schemas/ResourceNotFoundError'
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: "string"
+        message:
+          type: "string"
+    GeneralError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    InvalidInputError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    InvalidJsonInputError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - detailedErrorMessage
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            detailedErrorMessage:
+              type: "string"
+    MultipleActionsNotAllowedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    PaymentFailureError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    RequiredFieldError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - field
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            field:
+              type: "string"
+    ResourceNotFoundError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    PaymentIntegrationReference:
+      allOf:
+        - $ref: '#/components/schemas/Reference'
+        - type: "object"
+          required:
+            - id
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+    PaymentIntegrationResourceIdentifier:
+      allOf:
+        - $ref: '#/components/schemas/ResourceIdentifier'
+        - type: "object"
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            key:
+              type: "string"
+    PaymentIntent:
+      type: "object"
+      required:
+        - actions
+      properties:
+        actions:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PaymentIntentAction'
+    PaymentIntentAction:
+      type: "object"
+      discriminator:
+        propertyName: action
+        mapping:
+          cancelPayment: '#/components/schemas/PaymentIntentCancelAction'
+          capturePayment: '#/components/schemas/PaymentIntentCaptureAction'
+          refundPayment: '#/components/schemas/PaymentIntentRefundAction'
+          reversePayment: '#/components/schemas/PaymentIntentReverseAction'
+      required:
+        - action
+      properties:
+        action:
+          $ref: '#/components/schemas/PaymentIntentOperation'
+    PaymentIntentCancelAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntentAction'
+        - type: "object"
+          properties:
+            action:
+              $ref: '#/components/schemas/PaymentIntentOperation'
+            merchantReference:
+              type: "string"
+    PaymentIntentCaptureAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntentAction'
+        - type: "object"
+          required:
+            - amount
+          properties:
+            action:
+              $ref: '#/components/schemas/PaymentIntentOperation'
+            amount:
+              $ref: '#/components/schemas/Amount'
+            merchantReference:
+              type: "string"
+    PaymentIntentOperation:
+      type: "string"
+      enum:
+        - capturePayment
+        - refundPayment
+        - cancelPayment
+        - reversePayment
+      x-annotation-package: "PaymentIntents"
+      x-annotation-enumDescriptions:
+        capturePayment: "[Captures](ctp:checkout:type:PaymentIntentCaptureAction) the given
+         [Payment](/../api/projects/payments#payment) amount.n"
+        refundPayment: "[Refunds](ctp:checkout:type:PaymentIntentRefundAction) the given Payment
+         amount.n"
+        cancelPayment: "[Cancels](ctp:checkout:type:PaymentIntentCancelAction) an authorized
+         Payment.n"
+        reversePayment: "[Reverses](ctp:checkout:type:PaymentIntentReverseAction) a Payment.n"
+    PaymentIntentRefundAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntentAction'
+        - type: "object"
+          required:
+            - amount
+          properties:
+            action:
+              $ref: '#/components/schemas/PaymentIntentOperation'
+            amount:
+              $ref: '#/components/schemas/Amount'
+            transactionId:
+              type: "string"
+            merchantReference:
+              type: "string"
+    PaymentIntentReverseAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntentAction'
+        - type: "object"
+          properties:
+            action:
+              $ref: '#/components/schemas/PaymentIntentOperation'
+            merchantReference:
+              type: "string"
+    AddDiscountCodeError:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    ApplicationDeactivated:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    BadInputData:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    CartEmptiedDuringCheckout:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    CartEmpty:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    CartNotFound:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    CartWithExistingPayment:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    CheckoutCancelled:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    CheckoutCompleted:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    CheckoutLoaded:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    CheckoutStarted:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    ConnectorError:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    DeprecatedFields:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    DiscountCodeNotApplicable:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    ErrorLoadingAllPaymentIntegrations:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    ExpiredSession:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    ExternalTermsAndConditionsPending:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    FailedToRefreshSession:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    GiftCardBalanceError:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    GiftCardBalanceRemoved:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    GiftCardBalanceStarted:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    GiftCardBalanceSuccess:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    GiftCardRedeemError:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    GiftCardRedeemStarted:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    GiftCardRedeemSuccess:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    InitError:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    InitTimeout:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    InvalidLocale:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    InvalidMode:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    Message:
+      type: "object"
+      discriminator:
+        propertyName: code
+        mapping:
+          checkout_cancelled: '#/components/schemas/CheckoutCancelled'
+          checkout_loaded: '#/components/schemas/CheckoutLoaded'
+          checkout_started: '#/components/schemas/CheckoutStarted'
+          error_loading_all_payment_integrations: '#/components/schemas/ErrorLoadingAllPaymentIntegrations'
+          expired_session: '#/components/schemas/ExpiredSession'
+          external_terms_and_conditions_pending: '#/components/schemas/ExternalTermsAndConditionsPending'
+          failed_to_refresh_session: '#/components/schemas/FailedToRefreshSession'
+          gift_card_balance_error: '#/components/schemas/GiftCardBalanceError'
+          gift_card_balance_removed: '#/components/schemas/GiftCardBalanceRemoved'
+          gift_card_balance_started: '#/components/schemas/GiftCardBalanceStarted'
+          gift_card_redeem_error: '#/components/schemas/GiftCardRedeemError'
+          gift_card_redeem_started: '#/components/schemas/GiftCardRedeemStarted'
+          gift_card_redeem_success: '#/components/schemas/GiftCardRedeemSuccess'
+          init_error: '#/components/schemas/InitError'
+          init_timeout: '#/components/schemas/InitTimeout'
+          invalid_mode: '#/components/schemas/InvalidMode'
+          multiple_vendor_button_containers: '#/components/schemas/MultipleVendorButtonContainers'
+          no_payment_integrations: '#/components/schemas/NoPaymentIntegrations'
+          order_verification_started: '#/components/schemas/OrderVerificationStarted'
+          order_verification_timeout: '#/components/schemas/OrderVerificationTimeout'
+          payment_validation_passed: '#/components/schemas/PaymentValidationPassed'
+          payment_validation_started: '#/components/schemas/PaymentValidationStarted'
+          shipping_method_does_not_match_cart: '#/components/schemas/ShippingMethodDoesNotMatchCart'
+      required:
+        - code
+        - correlationId
+        - message
+        - severity
+      properties:
+        code:
+          type: "string"
+        severity:
+          type: "string"
+        message:
+          type: "string"
+        correlationId:
+          type: "string"
+    MultipleVendorButtonContainers:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    NoPaymentIntegrations:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    NoShippingMethods:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    NonOrderableCartError:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    NotApplicableDiscountCodeRemoved:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    OrderCreated:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    OrderCreationError:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    OrderVerificationRetryError:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    OrderVerificationStarted:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    OrderVerificationTimeout:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    PaymentCancelled:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              $ref: '#/components/schemas/PaymentReference'
+    PaymentFailed:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              $ref: '#/components/schemas/PaymentReference'
+    PaymentIntegrationLoaded:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    PaymentIntegrationLoading:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    PaymentIntegrationLoadingError:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    PaymentIntegrationNotAvailable:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    PaymentIntegrationSelected:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    PaymentIntegrationSelectionConfirmation:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    PaymentIntegrationSelectionConfirmationFailed:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    PaymentIntegrationsReceived:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    PaymentStarted:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    PaymentValidationFailed:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              $ref: '#/components/schemas/PaymentReference'
+    PaymentValidationPassed:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    PaymentValidationStarted:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    ProjectIsDeactivated:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    RemoveDiscountCodeError:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    ResponseMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - correlationId
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    SetShippingAddressError:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    ShippingAddressMissingError:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    ShippingMethodDoesNotMatchCart:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+    ShippingMethodSelected:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    ShippingMethodSelectionConfirmation:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    UnavailableLocale:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    UnsupportedCountry:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    UpdatedFields:
+      allOf:
+        - $ref: '#/components/schemas/ResponseMessage'
+        - type: "object"
+          required:
+            - code
+            - correlationId
+            - message
+            - payload
+            - severity
+          properties:
+            code:
+              type: "string"
+            severity:
+              type: "string"
+            message:
+              type: "string"
+            correlationId:
+              type: "string"
+            payload:
+              type: "object"
+    Transaction:
+      type: "object"
+      required:
+        - application
+        - createdAt
+        - id
+        - lastModifiedAt
+        - transactionItems
+        - transactionStatus
+        - version
+      properties:
+        id:
+          type: "string"
+        key:
+          type: "string"
+        version:
+          type: "integer"
+          format: "int32"
+        application:
+          $ref: '#/components/schemas/ApplicationResourceIdentifier'
+        transactionItems:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/TransactionItem'
+        cart:
+          $ref: '#/components/schemas/CartReference'
+        transactionStatus:
+          $ref: '#/components/schemas/TransactionStatus'
+        order:
+          $ref: '#/components/schemas/OrderReference'
+        createdAt:
+          type: "string"
+          format: "datetime"
+        lastModifiedAt:
+          type: "string"
+          format: "datetime"
+    TransactionDraft:
+      type: "object"
+      required:
+        - application
+        - cart
+        - transactionItems
+      properties:
+        key:
+          type: "string"
+        application:
+          $ref: '#/components/schemas/ApplicationResourceIdentifier'
+        transactionItems:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/TransactionItemDraft'
+        cart:
+          $ref: '#/components/schemas/CartResourceIdentifier'
+    TransactionError:
+      type: "object"
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: "string"
+        message:
+          type: "string"
+    TransactionItem:
+      type: "object"
+      required:
+        - paymentIntegration
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        payment:
+          $ref: '#/components/schemas/PaymentReference'
+        paymentIntegration:
+          $ref: '#/components/schemas/PaymentIntegrationReference'
+    TransactionItemDraft:
+      type: "object"
+      required:
+        - paymentIntegration
+      properties:
+        paymentIntegration:
+          $ref: '#/components/schemas/PaymentIntegrationResourceIdentifier'
+        amount:
+          $ref: '#/components/schemas/Amount'
+    TransactionState:
+      type: "string"
+      enum:
+        - Initial
+        - Pending
+        - Completed
+        - Failed
+      x-annotation-package: "Transaction"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Initial: "The Transaction has started. The [Connector](/connectors-and-applications#payment-connectors)
+         is requesting the PSP or gift card management system to execute the payment for
+         the [Cart](/../api/projects/carts).n"
+        Pending: "The Transaction is in progress. The PSP or gift card management system is
+         processing the payment.n"
+        Completed: "The Transaction completed successfully. The PSP or gift card management
+         system processed the payment and Checkout created an [Order](/../api/projects/orders)
+         from the Cart.n"
+        Failed: "The Transaction failed.n"
+    TransactionStatus:
+      type: "object"
+      required:
+        - state
+      properties:
+        state:
+          $ref: '#/components/schemas/TransactionState'
+        errors:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/TransactionError'

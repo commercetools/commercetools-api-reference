@@ -1,0 +1,65 @@
+meta {
+  name: post ByProjectKeyTransactions
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/transactions
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "key" : "transaction-key",
+    "application" : {
+      "typeId" : "application",
+      "id" : "a84d4fe7-ae82-4c3f-8c6c-435e54204fdd"
+    },
+    "cart" : {
+      "typeId" : "cart",
+      "id" : "a0e60229-441c-44b0-952b-981a67cbd8c4"
+    },
+    "transactionItems" : [ {
+      "paymentIntegration" : {
+        "typeId" : "payment-integration",
+        "id" : "4c24762b-87df-4bd3-898a-bafed913a9ca"
+      },
+      "amount" : {
+        "centAmount" : 1000,
+        "currencyCode" : "EUR"
+      }
+    } ]
+  }
+}  
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("transaction-id", data.results[0].id); 
+          bru.setEnvVar("transaction-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("transaction-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("transaction-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("transaction-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("transaction-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
