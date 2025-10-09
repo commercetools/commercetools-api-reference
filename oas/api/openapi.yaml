@@ -6632,6 +6632,56 @@ paths:
           $ref: '#/components/responses/errorable_502'
         "503":
           $ref: '#/components/responses/errorable_503'
+  /{projectKey}/carts/customer-id={customerId}/merge:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_orders:{projectKey}"
+      operationId: ByProjectKeyCartsCustomerIdByCustomerIdMergePost
+      description: |-
+        Merges items from an anonymous Cart into the most recently modified active Cart of a Customer. If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+
+        For more information, see [Merge behavior](/../api/carts-orders-overview#merge-behavior).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MergeCartDraft'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
   /{projectKey}/carts/key={key}:
     parameters:
       - name: projectKey
@@ -13236,6 +13286,64 @@ paths:
           $ref: '#/components/responses/errorable_401'
         "403":
           $ref: '#/components/responses/errorable_403'
+        "500":
+          $ref: '#/components/responses/errorable_500'
+        "502":
+          $ref: '#/components/responses/errorable_502'
+        "503":
+          $ref: '#/components/responses/errorable_503'
+  /{projectKey}/in-store/key={storeKey}/carts/customer-id={customerId}/merge:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: storeKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_orders:{projectKey}"
+            - "manage_orders:{projectKey}:{storeKey}"
+      operationId: ByProjectKeyInStoreKeyByStoreKeyCartsCustomerIdByCustomerIdMergePost
+      description: |-
+        Merges items from an anonymous Cart into the most recently modified active Cart of a Customer. If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+
+        If the Cart exists in the Project but does not have a `store` specified, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+
+        For more information, see [Merge behavior](/../api/carts-orders-overview#merge-behavior).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MergeCartDraft'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+        "400":
+          $ref: '#/components/responses/errorable_400'
+        "401":
+          $ref: '#/components/responses/errorable_401'
+        "403":
+          $ref: '#/components/responses/errorable_403'
+        "404":
+          $ref: '#/components/responses/errorable_404'
         "500":
           $ref: '#/components/responses/errorable_500'
         "502":
@@ -43939,6 +44047,17 @@ components:
           format: "int64"
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
+    CartMergeMode:
+      type: "string"
+      enum:
+        - MergeWithExistingCustomerCart
+        - UseAsNewActiveCustomerCart
+      x-annotation-package: "Cart"
+      x-annotation-enumDescriptions:
+        MergeWithExistingCustomerCart: "Merges the anonymous Cart with the existing Customer
+         Cart. Line Items from the anonymous Cart are added to the Customer Cart.n"
+        UseAsNewActiveCustomerCart: "Uses the anonymous Cart as the new active Customer Cart,
+         replacing the existing one.n"
     CartOrigin:
       type: "string"
       enum:
@@ -44696,6 +44815,17 @@ components:
          new price with the `externalTotalPrice` field.nIf the `externalTotalPrice` field
          is not given in the update actions, the external price is unset and the price
          mode is set to `Platform`.n"
+    MergeCartDraft:
+      type: "object"
+      properties:
+        anonymousCart:
+          $ref: '#/components/schemas/CartResourceIdentifier'
+        mergeMode:
+          $ref: '#/components/schemas/CartMergeMode'
+        updateProductData:
+          type: "boolean"
+        anonymousId:
+          type: "string"
     MethodExternalTaxRateDraft:
       type: "object"
       required:

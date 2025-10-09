@@ -1,0 +1,52 @@
+meta {
+  name: Merge Cart
+  type: http
+  seq: 229
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/carts/customer-id={{customer-id}}/merge
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "anonymousCart" : {
+      "typeId" : "cart",
+      "id" : "7c2e2694-aefe-43d7-888e-6a99514b4bea"
+    },
+    "mergeMode" : "MergeWithExistingCustomerCart",
+    "updateProductData" : false
+  }
+}  
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("merge-id", data.results[0].id); 
+          bru.setEnvVar("merge-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("merge-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("merge-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("merge-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("merge-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
