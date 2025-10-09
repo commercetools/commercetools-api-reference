@@ -1,0 +1,27 @@
+#%RAML 1.0 DataType
+(package): Cart
+displayName: MergeCartDraft
+type: object
+description: |
+  Used for merging an anonymous Cart with a Customer Cart with the [Merge Cart](ctp:api:endpoint:/{projectKey}/carts/customer-id={customerId}/merge:POST) and [Merge Cart in Store](ctp:api:endpoint:/{projectKey}/in-store/key={storeKey}/carts/customer-id={customerId}/merge:POST) endpoints. Either `anonymousCart` or `anonymousId` is required.
+properties:
+  anonymousCart?:
+    type: CartResourceIdentifier
+    description: |
+      [ResourceIdentifier](ctp:api:type:ResourceIdentifier) to the anonymous [Cart](ctp:api:type:Cart) to be merged. Required if `anonymousId` is not provided.
+  mergeMode?:
+    type: CartMergeMode
+    description: |
+      Determines how to merge the anonymous Cart with the existing Customer Cart.
+    default: MergeWithExistingCustomerCart
+  updateProductData?:
+    type: boolean
+    description: |
+      - If `true`, the [LineItem](ctp:api:type:LineItem) Product data (`name`, `variant`, and `productType`) of the returned Cart will be updated.
+      - If `false`, only the prices, discounts, and tax rates will be updated.
+    default: false
+  anonymousId?:
+    type: string
+    description: |
+      Assigns the Customer to the [Carts](ctp:api:type:Cart) that have the same `anonymousId`. Required if `anonymousCart` is not provided.
+      If both `anonymousCart` and `anonymousId` are provided, this value must match the `anonymousId` of the anonymous [Cart](ctp:api:type:Cart) otherwise, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.

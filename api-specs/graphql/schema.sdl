@@ -2057,6 +2057,22 @@ type CartLimitsProjection {
   total: CartLimitWithCurrent!
 }
 
+enum CartMergeMode {
+  """
+  `LineItem`s of the anonymous cart will be copied to the customer’s active cart that has been modified most recently.
+
+  The `CartState` of the anonymous cart gets changed to `Merged` while the `CartState` of the customer’s cart remains `Active`.
+
+  `CustomLineItems` and `CustomFields` of the anonymous cart will not be copied to the customers cart.
+
+  If a `LineItem` in the anonymous cart matches an existing line item in the customer’s cart (same product ID and variant ID), the maximum quantity of both LineItems is used as the new quantity. In that case `CustomFields` on the `LineItem` of the anonymous cart will not be in the resulting `LineItem`.
+  """
+  MergeWithExistingCustomerCart
+
+  "The anonymous cart is used as new active customer cart. No `LineItem`s get merged."
+  UseAsNewActiveCustomerCart
+}
+
 enum CartOrigin {
   "The cart was created by the customer. This is the default value"
   Customer
@@ -5825,6 +5841,13 @@ interface MeQueryInterface implements CartQueryInterface & ActiveCartInterface &
   shoppingLists(where: String, sort: [String!], limit: Int, offset: Int): ShoppingListQueryResult!
 }
 
+input MergeCartDraft {
+  anonymousCart: ResourceIdentifierInput
+  mergeMode: CartMergeMode = MergeWithExistingCustomerCart
+  anonymousId: String
+  updateProductData: Boolean = false
+}
+
 type Message implements Versioned & ReferenceExpandable {
   id: String!
   type: String!
@@ -6441,6 +6464,11 @@ type Mutation {
 
     "Create/modify entity as an associate in business-unit."
     asAssociate: AsAssociateArgument): Cart
+
+  mergeCart(customerId: String!, draft: MergeCartDraft!,
+
+    "The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions."
+    storeKey: KeyReferenceInput): Cart
 
   "BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta"
   createMyCart(draft: MyCartDraft!,

@@ -104,6 +104,30 @@ post:
     displayName: Check if Cart exists by Customer ID
     securedBy: [oauth_2_0: { scopes: ['view_orders:{projectKey}'] }]
     description: Checks if a Cart exists for a Customer. Returns a `200` status if the Cart exists, or a `404` status otherwise.
+/customer-id={customerId}/merge:
+  type: base
+  uriParameters:
+    customerId:
+      type: string
+      description: '`customerId` of the Customer.'
+  post:
+    displayName: Merge Cart
+    securedBy: [oauth_2_0: { scopes: ['manage_orders:{projectKey}'] }]
+    description: |
+      Merges items from an anonymous Cart into the most recently modified active Cart of a Customer. If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+
+      For more information, see [Merge behavior](/../api/carts-orders-overview#merge-behavior).
+
+    body:
+      application/json:
+        type: MergeCartDraft
+        example: !include ../examples/cart-merge.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: Cart
+            example: !include ../examples/cart.example.json
 /key={key}:
   (methodName): withKey
   type:

@@ -117,6 +117,42 @@ post:
           },
       ]
     description: Checks if one or more Carts exist for a Customer in a [Store](ctp:api:type:Store). Returns a `200` status if the Cart exists, or a `404` status otherwise.
+/customer-id={customerId}/merge:
+  type: base
+  uriParameters:
+    customerId:
+      type: string
+      description: '`customerId` of the Customer.'
+  post:
+    displayName: Merge Cart in Store
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_orders:{projectKey}',
+                'manage_orders:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    description: |
+      Merges items from an anonymous Cart into the most recently modified active Cart of a Customer. If no active Cart exists, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+
+      If the Cart exists in the Project but does not have a `store` specified, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+
+      For more information, see [Merge behavior](/../api/carts-orders-overview#merge-behavior).
+
+    body:
+      application/json:
+        type: MergeCartDraft
+        example: !include ../../examples/cart-merge.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: Cart
+            example: !include ../../examples/cart.example.json
 /key={key}:
   (methodName): withKey
   type:
