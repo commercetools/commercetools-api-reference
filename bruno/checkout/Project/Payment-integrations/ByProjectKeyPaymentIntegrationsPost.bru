@@ -1,0 +1,80 @@
+meta {
+  name: Create Payment Integration
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/payment-integrations
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "type" : "card",
+    "status" : "Active",
+    "name" : "Credit Card via Adyen",
+    "application" : {
+      "id" : "bc95d35a-8cc1-484c-b207-bd8c55a55a28",
+      "typeId" : "application"
+    },
+    "connectorDeployment" : {
+      "id" : "cb0ad988-cc50-4829-83ad-777993d0ddd5",
+      "typeId" : "deployment"
+    },
+    "predicate" : "country='DE'",
+    "componentType" : "Component",
+    "sortingInfo" : {
+      "priority" : 1
+    },
+    "displayInfo" : {
+      "label" : {
+        "en" : "Credit Cards"
+      },
+      "logoUrl" : {
+        "en" : "https://mylogourl.com/logo.svg"
+      },
+      "description" : {
+        "en" : "Pay securely with Credit Cards"
+      },
+      "payButtonText" : {
+        "en" : "Pay with cards"
+      }
+    },
+    "automatedReversalConfiguration" : {
+      "status" : "Active",
+      "predicate" : "country='DE'"
+    }
+  }
+}  
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("payment-integration-id", data.results[0].id); 
+          bru.setEnvVar("payment-integration-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("payment-integration-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("payment-integration-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("payment-integration-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("payment-integration-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

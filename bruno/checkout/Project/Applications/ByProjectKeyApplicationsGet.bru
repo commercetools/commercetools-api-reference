@@ -1,0 +1,46 @@
+meta {
+  name: Query Applications
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{apiUrl}}/{{project-key}}/applications
+  body: none
+  auth: inherit
+}
+
+
+query {
+  ~sort: 
+  ~limit: 
+  ~offset: 
+  ~withTotal: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("application-id", data.results[0].id); 
+          bru.setEnvVar("application-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("application-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("application-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("application-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("application-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

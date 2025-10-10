@@ -17,6 +17,519 @@ servers:
 
 
 paths:
+  /{projectKey}/applications:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_checkout_applications:{projectKey}"
+      operationId: ByProjectKeyApplicationsGet
+      description: |-
+        Retrieves Applications
+      parameters:
+        - name: sort
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
+        - name: limit
+          x-annotation-default: 20
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "integer"
+            format: "int32"
+          explode: true
+        - name: offset
+          x-annotation-default: 0
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "integer"
+            format: "int32"
+          explode: true
+        - name: withTotal
+          x-annotation-default: true
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApplication'
+
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_checkout_applications:{projectKey}"
+      operationId: ByProjectKeyApplicationsPost
+      description: |-
+        Creates a new [Application](ctp:checkout:type:Application).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/applications/key={key}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_checkout_applications:{projectKey}"
+      operationId: ByProjectKeyApplicationsKeyByKeyGet
+      description: |-
+        Retrieves an [Application](ctp:checkout:type:Application) with a given `key`.
+        Specific Error Codes:
+        - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+        - [GeneralError](ctp:checkout:type:GeneralError)
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_checkout_applications:{projectKey}"
+      operationId: ByProjectKeyApplicationsKeyByKeyPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationUpdateActions'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+
+    head:
+      security:
+        - oauth_2_0:
+            - "view_checkout_applications:{projectKey}"
+      operationId: ByProjectKeyApplicationsKeyByKeyHead
+      description: |-
+        Checks if an [Application](ctp:checkout:type:Application) with a given `key` exists. Returns `200 OK` if the Application exists, or `404 Not Found` if it doesn't. Specific Error Codes:
+        - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+        - [GeneralError](ctp:checkout:type:GeneralError)
+      responses:
+        "200":
+          description: |-
+            Application exists
+          content: {}
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_checkout_applications:{projectKey}"
+      operationId: ByProjectKeyApplicationsKeyByKeyDelete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Application'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+
+  /{projectKey}/applications/{id}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_checkout_applications:{projectKey}"
+      operationId: ByProjectKeyApplicationsByIdGet
+      description: |-
+        Retrieves an [Application](ctp:checkout:type:Application) by a given `id`.
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+
+    head:
+      security:
+        - oauth_2_0:
+            - "view_checkout_applications:{projectKey}"
+      operationId: ByProjectKeyApplicationsByIdHead
+      description: |-
+        Checks if an [Application](/applications-api#application) with a given `id` exists. Returns `200 OK` if the Application exists, or `404 Not Found` if it doesn't. Specific Error Codes:
+        - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+        - [GeneralError](ctp:checkout:type:GeneralError)
+      responses:
+        "200":
+          description: |-
+            Application exists
+          content: {}
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_checkout_applications:{projectKey}"
+      operationId: ByProjectKeyApplicationsByIdPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationUpdateActions'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_checkout_applications:{projectKey}"
+      operationId: ByProjectKeyApplicationsByIdDelete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Application'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+
+  /{projectKey}/payment-integrations:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_checkout_payment_integrations:{projectKey}"
+      operationId: ByProjectKeyPaymentIntegrationsGet
+      description: |-
+        Retrieves Payment Integrations in a [Project](ctp:api:type:Project).
+
+        The results are [paginated](/../api/general-concepts#pagination).
+      parameters:
+        - name: sort
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "array"
+            items:
+              type: "string"
+          explode: true
+        - name: limit
+          x-annotation-default: 20
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "integer"
+            format: "int32"
+          explode: true
+        - name: offset
+          x-annotation-default: 0
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "integer"
+            format: "int32"
+          explode: true
+        - name: withTotal
+          x-annotation-default: true
+          in: query
+          required: false
+          style: form
+          schema:
+            type: "boolean"
+          explode: true
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPaymentIntegration'
+
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_checkout_payment_integrations:{projectKey}"
+      operationId: ByProjectKeyPaymentIntegrationsPost
+      description: |-
+        Creates a new PaymentIntegration.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentIntegrationDraft'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntegration'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{projectKey}/payment-integrations/key={key}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_checkout_payment_integrations:{projectKey}"
+      operationId: ByProjectKeyPaymentIntegrationsKeyByKeyGet
+      description: |-
+        Retrieves Payment Integrations in a [Project](ctp:api:type:Project) with a given `key`. Specific Error Codes:
+        - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+        - [GeneralError](ctp:checkout:type:GeneralError)
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntegration'
+
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_checkout_payment_integrations:{projectKey}"
+      operationId: ByProjectKeyPaymentIntegrationsKeyByKeyPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentIntegrationUpdateActions'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntegration'
+
+    head:
+      security:
+        - oauth_2_0:
+            - "view_checkout_payment_integrations:{projectKey}"
+      operationId: ByProjectKeyPaymentIntegrationsKeyByKeyHead
+      description: |-
+        Checks if a PaymentIntegration with a given `key` exists. Returns `200 OK` if the PaymentIntegration exists, or `404 Not Found` if it doesn't. Specific Error Codes:
+        - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+        - [GeneralError](ctp:checkout:type:GeneralError)
+      responses:
+        "200":
+          description: |-
+            PaymentIntegration exists
+          content: {}
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_checkout_payment_integrations:{projectKey}"
+      operationId: ByProjectKeyPaymentIntegrationsKeyByKeyDelete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentIntegration'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntegration'
+
+  /{projectKey}/payment-integrations/{id}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: "string"
+    get:
+      security:
+        - oauth_2_0:
+            - "view_checkout_payment_integrations:{projectKey}"
+      operationId: ByProjectKeyPaymentIntegrationsByIdGet
+      description: |-
+        Retrieves Payment Integrations in a [Project](ctp:api:type:Project) with a given `id`.
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntegration'
+
+    head:
+      security:
+        - oauth_2_0:
+            - "view_checkout_payment_integrations:{projectKey}"
+      operationId: ByProjectKeyPaymentIntegrationsByIdHead
+      description: |-
+        Checks if a PaymentIntegration with a given `id` exists. Returns `200 OK` if the PaymentIntegration exists, or `404 Not Found` if it doesn't. Specific Error Codes:
+        - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+        - [GeneralError](ctp:checkout:type:GeneralError)
+      responses:
+        "200":
+          description: |-
+            PaymentIntegration exists
+          content: {}
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_checkout_payment_integrations:{projectKey}"
+      operationId: ByProjectKeyPaymentIntegrationsByIdPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentIntegrationUpdateActions'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntegration'
+
+    delete:
+      security:
+        - oauth_2_0:
+            - "manage_checkout_payment_integrations:{projectKey}"
+      operationId: ByProjectKeyPaymentIntegrationsByIdDelete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentIntegration'
+
+      responses:
+        "200":
+          description: |-
+            200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntegration'
+
   /{projectKey}/payment-intents/{paymentId}:
     parameters:
       - name: projectKey
@@ -61,7 +574,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/null'
+                $ref: '#/components/schemas/ErrorResponse'
 
   /{projectKey}/transactions:
     parameters:
@@ -104,7 +617,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/null'
+                $ref: '#/components/schemas/ErrorResponse'
 
   /{projectKey}/transactions/key={key}:
     parameters:
@@ -143,7 +656,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/null'
+                $ref: '#/components/schemas/ErrorResponse'
 
   /{projectKey}/transactions/{id}:
     parameters:
@@ -182,7 +695,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/null'
+                $ref: '#/components/schemas/ErrorResponse'
 
 
 components:
@@ -211,6 +724,177 @@ components:
 
 
   schemas:
+    AllowedOrigins:
+      type: "object"
+      required:
+        - allowAll
+      properties:
+        allowAll:
+          type: "boolean"
+        origins:
+          type: "array"
+          items:
+            type: "string"
+    Application:
+      type: "object"
+      required:
+        - allowedOrigins
+        - countries
+        - createdAt
+        - id
+        - key
+        - lastModifiedAt
+        - mode
+        - name
+        - paymentsConfiguration
+        - version
+      properties:
+        id:
+          type: "string"
+        version:
+          type: "integer"
+          format: "int32"
+        key:
+          type: "string"
+        status:
+          $ref: '#/components/schemas/ApplicationStatus'
+        name:
+          type: "string"
+        description:
+          type: "string"
+        logo:
+          $ref: '#/components/schemas/ApplicationLogo'
+        countries:
+          type: "array"
+          items:
+            type: "string"
+        allowedOrigins:
+          $ref: '#/components/schemas/AllowedOrigins'
+        mode:
+          $ref: '#/components/schemas/ApplicationMode'
+        paymentsConfiguration:
+          $ref: '#/components/schemas/PaymentsConfiguration'
+        agreements:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ApplicationAgreement'
+        discountsConfiguration:
+          $ref: '#/components/schemas/DiscountsConfiguration'
+        createdAt:
+          type: "string"
+          format: "datetime"
+        createdBy:
+          $ref: '#/components/schemas/CreatedBy'
+        lastModifiedAt:
+          type: "string"
+          format: "datetime"
+        lastModifiedBy:
+          $ref: '#/components/schemas/LastModifiedBy'
+    ApplicationAgreement:
+      type: "object"
+      required:
+        - id
+        - name
+        - status
+        - text
+        - type
+      properties:
+        id:
+          type: "string"
+        name:
+          type: "string"
+        type:
+          $ref: '#/components/schemas/ApplicationAgreementType'
+        status:
+          $ref: '#/components/schemas/ApplicationAgreementStatus'
+        text:
+          $ref: '#/components/schemas/LocalizedString'
+    ApplicationAgreementDraft:
+      type: "object"
+      required:
+        - name
+        - status
+        - text
+        - type
+      properties:
+        name:
+          type: "string"
+        type:
+          $ref: '#/components/schemas/ApplicationAgreementType'
+        status:
+          $ref: '#/components/schemas/ApplicationAgreementStatus'
+        text:
+          $ref: '#/components/schemas/LocalizedString'
+    ApplicationAgreementStatus:
+      type: "string"
+      enum:
+        - Active
+        - Inactive
+      x-annotation-package: "Application"
+      x-annotation-enumDescriptions:
+        Active: "The application agreement is active and can be used for processing payments."
+        Inactive: "The application agreement is inactive and cannot be used for processing
+         payments."
+    ApplicationAgreementType:
+      type: "string"
+      enum:
+        - Text
+        - MandatoryCheckbox
+      x-annotation-package: "Application"
+      x-annotation-enumDescriptions:
+        Text: "Display a 'text only' agreement without a checkbox."
+        MandatoryCheckbox: "Display an agreement text with a mandatory checkbox."
+    ApplicationDraft:
+      type: "object"
+      required:
+        - allowedOrigins
+        - countries
+        - key
+        - mode
+        - name
+        - paymentsConfiguration
+      properties:
+        key:
+          type: "string"
+        status:
+          $ref: '#/components/schemas/ApplicationStatus'
+        name:
+          type: "string"
+        description:
+          type: "string"
+        logo:
+          $ref: '#/components/schemas/ApplicationLogo'
+        countries:
+          type: "array"
+          items:
+            type: "string"
+        allowedOrigins:
+          $ref: '#/components/schemas/AllowedOrigins'
+        mode:
+          $ref: '#/components/schemas/ApplicationMode'
+        paymentsConfiguration:
+          $ref: '#/components/schemas/PaymentsConfiguration'
+        agreements:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ApplicationAgreement'
+        discountsConfiguration:
+          $ref: '#/components/schemas/DiscountsConfiguration'
+    ApplicationLogo:
+      type: "object"
+      properties:
+        url:
+          type: "string"
+    ApplicationMode:
+      type: "string"
+      enum:
+        - CompleteFlow
+        - PaymentOnly
+      x-annotation-package: "Application"
+      x-annotation-enumDescriptions:
+        CompleteFlow: "Checkout will manage all the steps of a checkout process including
+         shipping and billing address, shipping method, and payment."
+        PaymentOnly: "Checkout will display only the payment step."
     ApplicationReference:
       allOf:
         - $ref: '#/components/schemas/Reference'
@@ -233,6 +917,394 @@ components:
               type: "string"
             key:
               type: "string"
+    ApplicationStatus:
+      type: "string"
+      enum:
+        - Active
+        - Inactive
+      x-annotation-package: "Application"
+      x-annotation-enumDescriptions:
+        Active: "The application status is active and can be used for processing payments."
+        Inactive: "The application status is inactive and cannot be used for processing payments."
+    ApplicationUpdateAction:
+      type: "object"
+      discriminator:
+        propertyName: action
+        mapping:
+          addAllowedOrigin: '#/components/schemas/AddAllowedOriginUpdateAction'
+          addAgreement: '#/components/schemas/AddApplicationAgreementUpdateAction'
+          addCountry: '#/components/schemas/AddCountryUpdateAction'
+          removeAllowedOrigin: '#/components/schemas/RemoveAllowedOriginUpdateAction'
+          removeAgreement: '#/components/schemas/RemoveApplicationAgreementUpdateAction'
+          removeCountry: '#/components/schemas/RemoveCountryUpdateAction'
+          reorderAgreement: '#/components/schemas/ReorderApplicationAgreementUpdateAction'
+          setActivePaymentComponentType: '#/components/schemas/SetActivePaymentComponentTypeUpdateAction'
+          setAllowAllOrigins: '#/components/schemas/SetAllowAllOriginsUpdateAction'
+          setAllowedOrigins: '#/components/schemas/SetAllowedOriginsUpdateAction'
+          setAgreementName: '#/components/schemas/SetApplicationAgreementNameUpdateAction'
+          setAgreementStatus: '#/components/schemas/SetApplicationAgreementStatusUpdateAction'
+          setAgreementText: '#/components/schemas/SetApplicationAgreementTextUpdateAction'
+          setAgreementType: '#/components/schemas/SetApplicationAgreementTypeUpdateAction'
+          setAgreements: '#/components/schemas/SetApplicationAgreementsUpdateAction'
+          setApplicationLogo: '#/components/schemas/SetApplicationLogoUpdateAction'
+          setName: '#/components/schemas/SetApplicationNameUpdateAction'
+          setStatus: '#/components/schemas/SetApplicationStatusUpdateAction'
+          setCountries: '#/components/schemas/SetCountriesUpdateAction'
+          setDescription: '#/components/schemas/SetDescriptionUpdateAction'
+          setDiscountsConfiguration: '#/components/schemas/SetDiscountsConfigurationUpdateAction'
+          setPaymentReturnUrl: '#/components/schemas/SetPaymentReturnUrlUpdateAction'
+          setPaymentsConfiguration: '#/components/schemas/SetPaymentsConfigurationUpdateAction'
+      required:
+        - action
+      properties:
+        action:
+          type: "string"
+    ApplicationUpdateActions:
+      type: "object"
+      required:
+        - actions
+        - version
+      properties:
+        version:
+          type: "integer"
+          format: "int32"
+        actions:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ApplicationUpdateAction'
+    DiscountsConfiguration:
+      type: "object"
+      required:
+        - allowDiscounts
+      properties:
+        allowDiscounts:
+          type: "boolean"
+    PaginatedApplication:
+      type: "object"
+      required:
+        - count
+        - limit
+        - offset
+        - results
+        - total
+      properties:
+        limit:
+          type: "integer"
+          format: "int32"
+        offset:
+          type: "integer"
+          format: "int32"
+        count:
+          type: "integer"
+          format: "int32"
+        total:
+          type: "integer"
+          format: "int32"
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Application'
+    PaymentsConfiguration:
+      type: "object"
+      required:
+        - activePaymentComponentType
+      properties:
+        paymentReturnUrl:
+          type: "string"
+        activePaymentComponentType:
+          $ref: '#/components/schemas/PaymentComponentType'
+    AddAllowedOriginUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - origin
+          properties:
+            action:
+              type: "string"
+            origin:
+              type: "string"
+    AddApplicationAgreementUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - agreement
+          properties:
+            action:
+              type: "string"
+            agreement:
+              $ref: '#/components/schemas/ApplicationAgreementDraft'
+    AddCountryUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - country
+          properties:
+            action:
+              type: "string"
+            country:
+              type: "string"
+    RemoveAllowedOriginUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - origin
+          properties:
+            action:
+              type: "string"
+            origin:
+              type: "string"
+    RemoveApplicationAgreementUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - agreementId
+          properties:
+            action:
+              type: "string"
+            agreementId:
+              type: "string"
+    RemoveCountryUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - country
+          properties:
+            action:
+              type: "string"
+            country:
+              type: "string"
+    ReorderApplicationAgreementUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - agreementIds
+          properties:
+            action:
+              type: "string"
+            agreementIds:
+              type: "array"
+              items:
+                type: "string"
+    SetActivePaymentComponentTypeUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - activePaymentComponentType
+          properties:
+            action:
+              type: "string"
+            activePaymentComponentType:
+              $ref: '#/components/schemas/PaymentComponentType'
+    SetAllowAllOriginsUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - allowAll
+          properties:
+            action:
+              type: "string"
+            allowAll:
+              type: "boolean"
+    SetAllowedOriginsUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - allowedOrigins
+          properties:
+            action:
+              type: "string"
+            allowedOrigins:
+              $ref: '#/components/schemas/AllowedOrigins'
+    SetApplicationAgreementNameUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - agreementId
+            - name
+          properties:
+            action:
+              type: "string"
+            agreementId:
+              type: "string"
+            name:
+              type: "string"
+    SetApplicationAgreementStatusUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - agreementId
+            - status
+          properties:
+            action:
+              type: "string"
+            agreementId:
+              type: "string"
+            status:
+              $ref: '#/components/schemas/ApplicationAgreementStatus'
+    SetApplicationAgreementTextUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - agreementId
+            - text
+          properties:
+            action:
+              type: "string"
+            agreementId:
+              type: "string"
+            text:
+              $ref: '#/components/schemas/LocalizedString'
+    SetApplicationAgreementTypeUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - agreementId
+            - type
+          properties:
+            action:
+              type: "string"
+            agreementId:
+              type: "string"
+            type:
+              $ref: '#/components/schemas/ApplicationAgreementType'
+    SetApplicationAgreementsUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+          properties:
+            action:
+              type: "string"
+            agreements:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ApplicationAgreementDraft'
+    SetApplicationLogoUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - logo
+          properties:
+            action:
+              type: "string"
+            logo:
+              $ref: '#/components/schemas/ApplicationLogo'
+    SetApplicationNameUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - name
+          properties:
+            action:
+              type: "string"
+            name:
+              type: "string"
+    SetApplicationStatusUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - status
+          properties:
+            action:
+              type: "string"
+            status:
+              $ref: '#/components/schemas/ApplicationStatus'
+    SetCountriesUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - countries
+          properties:
+            action:
+              type: "string"
+            countries:
+              type: "array"
+              items:
+                type: "string"
+    SetDescriptionUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - description
+          properties:
+            action:
+              type: "string"
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+    SetDiscountsConfigurationUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - discountsConfiguration
+          properties:
+            action:
+              type: "string"
+            discountsConfiguration:
+              $ref: '#/components/schemas/DiscountsConfiguration'
+    SetPaymentReturnUrlUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+          properties:
+            action:
+              type: "string"
+            paymentReturnUrl:
+              type: "string"
+    SetPaymentsConfigurationUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationUpdateAction'
+        - type: "object"
+          required:
+            - action
+            - paymentsConfiguration
+          properties:
+            action:
+              type: "string"
+            paymentsConfiguration:
+              $ref: '#/components/schemas/PaymentsConfiguration'
     CartReference:
       allOf:
         - $ref: '#/components/schemas/Reference'
@@ -325,13 +1397,15 @@ components:
         - payment
         - application
         - payment-integration
+        - deployment
       x-annotation-package: "Common"
       x-annotation-enumDescriptions:
-        cart: "References a [Cart](/../api/projects/carts#cart).n"
-        order: "References an [Order](/../api/projects/orders#order).n"
-        payment: "References a [Payment](/../api/projects/payments#payment).n"
-        application: "References an [Application](/connectors-and-applications#applications).n"
-        payment-integration: "References a [Payment Integration](/connectors-and-applications#payment-integrations).n"
+        cart: "References a [Cart](ctp:api:type:Cart).n"
+        order: "References an [Order](ctp:api:type:Order).n"
+        payment: "References a [Payment](ctp:api:type:Payment).n"
+        application: "References an [Application](ctp:checkout:type:Application).n"
+        payment-integration: "References a [Payment Integration](ctp:checkout:type:PaymentIntegration).n"
+        deployment: "References a [Connector Deployment](ctp:checkout:type:ConnectorDeploymentReference).n"
     ResourceIdentifier:
       type: "object"
       discriminator:
@@ -362,6 +1436,48 @@ components:
           format: "int32"
         currencyCode:
           type: "string"
+    CreatedBy:
+      type: "object"
+      properties:
+        clientId:
+          type: "string"
+        externalUserId:
+          type: "string"
+        customer:
+          $ref: '#/components/schemas/Reference'
+        anonymousId:
+          type: "string"
+    LastModifiedBy:
+      type: "object"
+      properties:
+        clientId:
+          type: "string"
+        sessionId:
+          type: "string"
+        externalUserId:
+          type: "string"
+        anonymousId:
+          type: "string"
+        customer:
+          $ref: '#/components/schemas/Reference'
+        associate:
+          $ref: '#/components/schemas/Reference'
+        user:
+          $ref: '#/components/schemas/Reference'
+        isPlatformClient:
+          type: "boolean"
+    LocalizedString:
+      type: "object"
+      required:
+        - /^[a-z]{2}(-[A-Z]{2})?$/
+      additionalProperties:
+        type: "string"
+    LocalizedUrl:
+      type: "object"
+      required:
+        - /^https?://[^s/$.?#].[^s]*$/
+      additionalProperties:
+        type: "string"
     Region:
       type: "string"
       enum:
@@ -374,7 +1490,42 @@ components:
         europe-west1.gcp: "for Europe (Google Cloud, Belgium)n"
         us-central1.gcp: "for North America (Google Cloud, Iowa)n"
         australia-southeast1.gcp: "for Australia (Google Cloud, Sydney)n"
+    ConcurrentModificationError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - currentVersion
+            - expectedVersion
+            - message
+            - resourceId
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            resourceId:
+              type: "string"
+            expectedVersion:
+              type: "integer"
+              format: "int64"
+            currentVersion:
+              type: "integer"
+              format: "int64"
     ConnectorFailedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    DuplicateFieldWithConflictingResourceError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
@@ -391,14 +1542,23 @@ components:
       discriminator:
         propertyName: code
         mapping:
+          ConcurrentModification: '#/components/schemas/ConcurrentModificationError'
           ConnectorFailed: '#/components/schemas/ConnectorFailedError'
+          DuplicateFieldWithConflictingResource: '#/components/schemas/DuplicateFieldWithConflictingResourceError'
           General: '#/components/schemas/GeneralError'
+          InvalidField: '#/components/schemas/InvalidFieldError'
           InvalidInput: '#/components/schemas/InvalidInputError'
           InvalidJsonInput: '#/components/schemas/InvalidJsonInputError'
+          InvalidOperation: '#/components/schemas/InvalidOperationError'
+          MaxResourceLimitExceeded: '#/components/schemas/MaxResourceLimitExceededError'
+          MissingProjectKey: '#/components/schemas/MissingProjectKeyError'
           MultipleActionsNotAllowed: '#/components/schemas/MultipleActionsNotAllowedError'
           PaymentFailure: '#/components/schemas/PaymentFailureError'
+          ReferencedResourceNotFound: '#/components/schemas/ReferencedResourceNotFoundError'
           RequiredField: '#/components/schemas/RequiredFieldError'
           ResourceNotFound: '#/components/schemas/ResourceNotFoundError'
+          ServiceUnavailable: '#/components/schemas/ServiceUnavailableError'
+          SyntaxError: '#/components/schemas/SyntaxErrorError'
       required:
         - code
         - message
@@ -407,6 +1567,21 @@ components:
           type: "string"
         message:
           type: "string"
+    ErrorResponse:
+      type: "object"
+      required:
+        - message
+        - statusCode
+      properties:
+        statusCode:
+          type: "integer"
+          format: "int32"
+        message:
+          type: "string"
+        errors:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ErrorObject'
     GeneralError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -419,6 +1594,28 @@ components:
               type: "string"
             message:
               type: "string"
+    InvalidFieldError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - field
+            - invalidValue
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            field:
+              type: "string"
+            invalidValue:
+              {}
+            allowedValues:
+              type: "array"
+              items:
+                type: "string"
     InvalidInputError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -437,7 +1634,6 @@ components:
         - type: "object"
           required:
             - code
-            - detailedErrorMessage
             - message
           properties:
             code:
@@ -445,6 +1641,49 @@ components:
             message:
               type: "string"
             detailedErrorMessage:
+              type: "string"
+    InvalidOperationError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    MaxResourceLimitExceededError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - limit
+            - message
+            - resourceTypeId
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            limit:
+              type: "number"
+              format: "double"
+            resourceTypeId:
+              type: "string"
+    MissingProjectKeyError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
               type: "string"
     MultipleActionsNotAllowedError:
       allOf:
@@ -470,6 +1709,25 @@ components:
               type: "string"
             message:
               type: "string"
+    ReferencedResourceNotFoundError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+            - typeId
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            typeId:
+              type: "string"
+            id:
+              type: "string"
+            key:
+              type: "string"
     RequiredFieldError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -492,11 +1750,186 @@ components:
           required:
             - code
             - message
+            - resourceId
+            - resourceIdentifier
           properties:
             code:
               type: "string"
             message:
               type: "string"
+            resourceIdentifier:
+              type: "string"
+            resourceId:
+              type: "string"
+    ServiceUnavailableError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    SyntaxErrorError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+    AutomatedReversalConfiguration:
+      type: "object"
+      required:
+        - status
+      properties:
+        status:
+          type: "string"
+        predicate:
+          type: "string"
+    ConnectorDeploymentReference:
+      type: "object"
+      required:
+        - id
+        - typeId
+      properties:
+        id:
+          type: "string"
+        typeId:
+          type: "string"
+    DisplayInfo:
+      type: "object"
+      properties:
+        label:
+          $ref: '#/components/schemas/LocalizedString'
+        logoUrl:
+          $ref: '#/components/schemas/LocalizedUrl'
+        description:
+          $ref: '#/components/schemas/LocalizedString'
+        payButtonText:
+          $ref: '#/components/schemas/LocalizedString'
+    PaginatedPaymentIntegration:
+      type: "object"
+      required:
+        - count
+        - limit
+        - offset
+        - results
+        - total
+      properties:
+        limit:
+          type: "integer"
+          format: "int32"
+        offset:
+          type: "integer"
+          format: "int32"
+        count:
+          type: "integer"
+          format: "int32"
+        total:
+          type: "integer"
+          format: "int32"
+        results:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PaymentIntegration'
+    PaymentComponentType:
+      type: "string"
+      enum:
+        - Component
+        - DropIn
+      x-annotation-package: "PaymentIntegration"
+      x-annotation-enumDescriptions:
+        Component: "Each payment method component renders just a single payment method."
+        DropIn: "A component that renders all the payment methods."
+    PaymentIntegration:
+      type: "object"
+      required:
+        - application
+        - componentType
+        - connectorDeployment
+        - createdAt
+        - id
+        - lastModifiedAt
+        - name
+        - type
+        - version
+      properties:
+        id:
+          type: "string"
+        version:
+          type: "integer"
+          format: "int64"
+        key:
+          type: "string"
+        application:
+          $ref: '#/components/schemas/ApplicationReference'
+        status:
+          $ref: '#/components/schemas/PaymentIntegrationStatus'
+        type:
+          type: "string"
+        name:
+          type: "string"
+        predicate:
+          type: "string"
+        componentType:
+          $ref: '#/components/schemas/PaymentComponentType'
+        connectorDeployment:
+          $ref: '#/components/schemas/ConnectorDeploymentReference'
+        displayInfo:
+          $ref: '#/components/schemas/DisplayInfo'
+        sortingInfo:
+          $ref: '#/components/schemas/SortingInfo'
+        automatedReversalConfiguration:
+          $ref: '#/components/schemas/AutomatedReversalConfiguration'
+        createdAt:
+          type: "string"
+          format: "datetime"
+        createdBy:
+          $ref: '#/components/schemas/CreatedBy'
+        lastModifiedAt:
+          type: "string"
+          format: "datetime"
+        lastModifiedBy:
+          $ref: '#/components/schemas/LastModifiedBy'
+    PaymentIntegrationDraft:
+      type: "object"
+      required:
+        - application
+        - componentType
+        - connectorDeployment
+        - name
+        - type
+      properties:
+        key:
+          type: "string"
+        application:
+          $ref: '#/components/schemas/ApplicationReference'
+        status:
+          $ref: '#/components/schemas/PaymentIntegrationStatus'
+        type:
+          type: "string"
+        name:
+          type: "string"
+        predicate:
+          type: "string"
+        componentType:
+          $ref: '#/components/schemas/PaymentComponentType'
+        connectorDeployment:
+          $ref: '#/components/schemas/ConnectorDeploymentReference'
+        displayInfo:
+          $ref: '#/components/schemas/DisplayInfo'
+        sortingInfo:
+          $ref: '#/components/schemas/SortingInfo'
+        automatedReversalConfiguration:
+          $ref: '#/components/schemas/AutomatedReversalConfiguration'
     PaymentIntegrationReference:
       allOf:
         - $ref: '#/components/schemas/Reference'
@@ -518,6 +1951,215 @@ components:
             id:
               type: "string"
             key:
+              type: "string"
+    PaymentIntegrationStatus:
+      type: "string"
+      enum:
+        - Active
+        - Inactive
+      x-annotation-package: "PaymentIntegration"
+      x-annotation-enumDescriptions:
+        Active: "The Payment Integration is active and can be used for processing payments."
+        Inactive: "The Payment Integration is inactive and cannot be used for processing payments."
+    PaymentIntegrationType:
+      type: "string"
+      enum:
+        - Psp
+        - GiftCard
+      x-annotation-package: "PaymentIntegration"
+      x-annotation-enumDescriptions:
+        Psp: "The integration is with a Payment provider."
+        GiftCard: "The integration is with a Gift card provider."
+    SortingInfo:
+      type: "object"
+      required:
+        - priority
+      properties:
+        priority:
+          type: "integer"
+          format: "int32"
+    PaymentIntegrationUpdateAction:
+      type: "object"
+      discriminator:
+        propertyName: action
+        mapping:
+          setAutomatedReversalConfigurationPredicate: '#/components/schemas/SetAutomatedReversalConfigurationPredicateUpdateAction'
+          setAutomatedReversalConfigurationStatus: '#/components/schemas/SetAutomatedReversalConfigurationStatusUpdateAction'
+          setAutomatedReversalConfiguration: '#/components/schemas/SetAutomatedReversalConfigurationUpdateAction'
+          setConnectorDeployment: '#/components/schemas/SetConnectorDeploymentUpdateAction'
+          setDisplayInfoDescription: '#/components/schemas/SetDisplayInfoDescriptionUpdateAction'
+          setDisplayInfoLabel: '#/components/schemas/SetDisplayInfoLabelUpdateAction'
+          setDisplayInfoLogoUrl: '#/components/schemas/SetDisplayInfoLogoUrlUpdateAction'
+          setDisplayInfoPayButtonText: '#/components/schemas/SetDisplayInfoPayButtonTextUpdateAction'
+          setDisplayInfo: '#/components/schemas/SetDisplayInfoUpdateAction'
+          setKey: '#/components/schemas/SetKeyUpdateAction'
+          setName: '#/components/schemas/SetNameUpdateAction'
+          setPredicate: '#/components/schemas/SetPredicateUpdateAction'
+          setSortingInfo: '#/components/schemas/SetSortingInfoUpdateAction'
+          setStatus: '#/components/schemas/SetStatusUpdateAction'
+          setType: '#/components/schemas/SetTypeUpdateAction'
+      required:
+        - action
+      properties:
+        action:
+          type: "string"
+    PaymentIntegrationUpdateActions:
+      type: "object"
+      required:
+        - actions
+        - version
+      properties:
+        version:
+          type: "integer"
+          format: "int32"
+        actions:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+    SetAutomatedReversalConfigurationPredicateUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            predicate:
+              type: "string"
+    SetAutomatedReversalConfigurationStatusUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          required:
+            - status
+          properties:
+            action:
+              type: "string"
+            status:
+              type: "string"
+    SetAutomatedReversalConfigurationUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            automatedReversalConfiguration:
+              $ref: '#/components/schemas/AutomatedReversalConfiguration'
+    SetConnectorDeploymentUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          required:
+            - connectorDeployment
+          properties:
+            action:
+              type: "string"
+            connectorDeployment:
+              $ref: '#/components/schemas/ConnectorDeploymentReference'
+    SetDisplayInfoDescriptionUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+    SetDisplayInfoLabelUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            label:
+              $ref: '#/components/schemas/LocalizedString'
+    SetDisplayInfoLogoUrlUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            logoUrl:
+              $ref: '#/components/schemas/LocalizedString'
+    SetDisplayInfoPayButtonTextUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            payButtonText:
+              $ref: '#/components/schemas/LocalizedString'
+    SetDisplayInfoUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            displayInfo:
+              $ref: '#/components/schemas/DisplayInfo'
+    SetKeyUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            key:
+              type: "string"
+    SetNameUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          required:
+            - name
+          properties:
+            action:
+              type: "string"
+            name:
+              type: "string"
+    SetPredicateUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            predicate:
+              type: "string"
+    SetSortingInfoUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            sortingInfo:
+              $ref: '#/components/schemas/SortingInfo'
+    SetStatusUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          required:
+            - status
+          properties:
+            action:
+              type: "string"
+            status:
+              $ref: '#/components/schemas/PaymentIntegrationStatus'
+    SetTypeUpdateAction:
+      allOf:
+        - $ref: '#/components/schemas/PaymentIntegrationUpdateAction'
+        - type: "object"
+          required:
+            - type
+          properties:
+            action:
+              type: "string"
+            type:
               type: "string"
     PaymentIntent:
       type: "object"
@@ -1934,7 +3576,7 @@ components:
           type: "integer"
           format: "int32"
         application:
-          $ref: '#/components/schemas/ApplicationResourceIdentifier'
+          $ref: '#/components/schemas/ApplicationReference'
         transactionItems:
           type: "array"
           items:
