@@ -76,13 +76,31 @@ traits:
               ],
           },
       ]
+  secured_by_view_payment_integrations:
+    securedBy:
+      [
+        oauth_2_0:
+          { scopes: ['view_checkout_payment_integrations:{projectKey}'] },
+      ]
+  secured_by_manage_payment_integrations:
+    securedBy:
+      [
+        oauth_2_0:
+          { scopes: ['manage_checkout_payment_integrations:{projectKey}'] },
+      ]
+  secured_by_view_applications:
+    securedBy:
+      [oauth_2_0: { scopes: ['view_checkout_applications:{projectKey}'] }]
+  secured_by_manage_applications:
+    securedBy:
+      [oauth_2_0: { scopes: ['manage_checkout_applications:{projectKey}'] }]
 
 /{projectKey}:
   (annotations.methodName): withProjectKey
   uriParameters:
     projectKey:
       type: string
-      description: Identifier of your Checkout entity and `key` of your [Project](/../api/projects/project#project).
+      description: Identifier of your Checkout entity and `key` of your [Project](ctp:api:type:Project).
   displayName: Project
   /payment-intents:
     displayName: Payment Intents
@@ -92,7 +110,7 @@ traits:
         paymentId:
           type: string
           description: |
-            `id` of the [Payment](/../api/projects/payments).
+            `id` of the [Payment](ctp:api:type:Payment).
       post:
         displayName: Manage Payment by ID
         is:
@@ -144,7 +162,7 @@ traits:
         id:
           type: string
           description: |
-            `id` of the [Transaction](/transactions-api#transaction).
+            `id` of the [Transaction](ctp:checkout:type:Transaction).
       get:
         displayName: Get Transaction by ID
         is:
@@ -168,9 +186,9 @@ traits:
         key:
           type: string
           description: |
-            `key` of the [Transaction](/transactions-api#transaction).
+            `key` of the [Transaction](ctp:checkout:type:Transaction).
       get:
-        displayName: Get Transaction by key
+        displayName: Get Transaction by Key
         is:
           - secured_by_view_transactions
         description: |
@@ -186,3 +204,326 @@ traits:
             description: The request was invalid.
             body:
               type: ErrorResponse
+  /payment-integrations:
+    get:
+      displayName: Query Payment Integrations
+      is:
+        - secured_by_view_payment_integrations
+      description: |
+        Retrieves Payment Integrations in a [Project](ctp:api:type:Project).
+
+        The results are [paginated](/../api/general-concepts#pagination).
+      queryParameters:
+        sort?:
+          type: string[]
+          description: |
+            Controls [Sorting](/general-concepts#sorting) of query results.
+          example: ['createdAt asc', 'name desc']
+        limit?:
+          type: integer
+          format: int32
+          description: |
+            Number of results requested.
+          default: 20
+          minimum: 0
+          maximum: 500
+        offset?:
+          type: integer
+          format: int32
+          description: |
+            Number of elements skipped.
+          default: 0
+          maximum: 10000
+        withTotal?:
+          type: boolean
+          default: true
+          description: |
+            Controls the calculation of the total number of query results.
+      responses:
+        200:
+          body:
+            type: PaginatedPaymentIntegration
+            example: !include ../checkout/examples/payment-integrations/paginatedPaymentIntegrations.json
+    post:
+      displayName: Create Payment Integration
+      is:
+        - secured_by_manage_payment_integrations
+      description: |
+        Creates a new PaymentIntegration.
+      body:
+        type: PaymentIntegrationDraft
+        example: !include ../checkout/examples/payment-integrations/paymentIntegrationDraft.json
+      responses:
+        201:
+          body:
+            type: PaymentIntegration
+            example: !include ../checkout/examples/payment-integrations/paymentIntegration.json
+
+        400:
+          description: The request was invalid.
+          body:
+            type: ErrorResponse
+    /{id}:
+      (annotations.methodName): withId
+      uriParameters:
+        id:
+          type: string
+          description: |
+            `id` of the [PaymentIntegration](ctp:checkout:type:PaymentIntegration).
+      get:
+        displayName: Get Payment Integration by ID
+        is:
+          - secured_by_view_payment_integrations
+        description: |
+          Retrieves Payment Integrations in a [Project](ctp:api:type:Project) with a given `id`.
+        responses:
+          200:
+            body:
+              type: PaymentIntegration
+              example: !include ../checkout/examples/payment-integrations/paymentIntegration.json
+
+      head:
+        displayName: Check Payment Integration by ID
+        is:
+          - secured_by_view_payment_integrations
+        description: |
+          Checks if a PaymentIntegration with a given `id` exists. Returns `200 OK` if the PaymentIntegration exists, or `404 Not Found` if it doesn't. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [GeneralError](ctp:checkout:type:GeneralError)
+        responses:
+          200:
+            description: PaymentIntegration exists
+      post:
+        displayName: Update Payment Integration by ID
+        is:
+          - secured_by_manage_payment_integrations
+        body:
+          type: PaymentIntegrationUpdateActions
+          example: !include examples/payment-integrations/paymentIntegrationUpdateActions.json
+        responses:
+          200:
+            body:
+              type: PaymentIntegration
+      delete:
+        displayName: Delete Payment Integration by ID
+        is:
+          - secured_by_manage_payment_integrations
+        body:
+          type: PaymentIntegration
+        responses:
+          200:
+            body:
+              type: PaymentIntegration
+    /key={key}:
+      (annotations.methodName): withKey
+      uriParameters:
+        key:
+          type: string
+          description: |
+            `key` of the [PaymentIntegration](ctp:checkout:type:PaymentIntegration).
+      get:
+        displayName: Get Payment Integration by Key
+        is:
+          - secured_by_view_payment_integrations
+        description: |
+          Retrieves Payment Integrations in a [Project](ctp:api:type:Project) with a given `key`. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [GeneralError](ctp:checkout:type:GeneralError)
+        responses:
+          200:
+            body:
+              type: PaymentIntegration
+              example: !include ../checkout/examples/payment-integrations/paymentIntegration.json
+
+      post:
+        displayName: Update Payment Integration by Key
+        is:
+          - secured_by_manage_payment_integrations
+        body:
+          type: PaymentIntegrationUpdateActions
+        responses:
+          200:
+            body:
+              type: PaymentIntegration
+      head:
+        displayName: Check Payment Integration by Key
+        is:
+          - secured_by_view_payment_integrations
+        description: |
+          Checks if a PaymentIntegration with a given `key` exists. Returns `200 OK` if the PaymentIntegration exists, or `404 Not Found` if it doesn't. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [GeneralError](ctp:checkout:type:GeneralError)
+        responses:
+          200:
+            description: PaymentIntegration exists
+      delete:
+        displayName: Delete Payment Integration by Key
+        is:
+          - secured_by_manage_payment_integrations
+        body:
+          type: PaymentIntegration
+        responses:
+          200:
+            body:
+              type: PaymentIntegration
+  /applications:
+    get:
+      displayName: Query Applications
+      is:
+        - secured_by_view_applications
+      description: |
+        Retrieves Applications
+      queryParameters:
+        sort?:
+          type: string[]
+          description: |
+            Controls [Sorting](/general-concepts#sorting) of query results.
+          example: ['createdAt asc', 'name desc']
+        limit?:
+          type: integer
+          format: int32
+          description: |
+            Number of results requested.
+          default: 20
+          minimum: 0
+          maximum: 500
+        offset?:
+          type: integer
+          format: int32
+          description: |
+            Number of elements skipped.
+          default: 0
+          maximum: 10000
+        withTotal?:
+          type: boolean
+          default: true
+          description: |
+            Controls the calculation of the total number of query results.
+      responses:
+        200:
+          body:
+            type: PaginatedApplication
+            example: !include examples/applications/paginatedApplications.json
+    post:
+      displayName: Create Application
+      is:
+        - secured_by_manage_applications
+      description: |
+        Creates a new [Application](ctp:checkout:type:Application).
+      body:
+        type: ApplicationDraft
+        example: !include examples/applications/CompleteFlowApplicationDraft.json
+
+      responses:
+        201:
+          body:
+            type: Application
+            example: !include examples/applications/CompleteFlowApplication.json
+
+        400:
+          description: The request was invalid.
+          body:
+            type: ErrorResponse
+    /{id}:
+      (annotations.methodName): withId
+      uriParameters:
+        id:
+          type: string
+          description: |
+            `id` of the [Application](ctp:checkout:type:Application).
+      get:
+        displayName: Get Application by ID
+        is:
+          - secured_by_view_applications
+        description: |
+          Retrieves an [Application](ctp:checkout:type:Application) by a given `id`.
+        responses:
+          200:
+            body:
+              type: Application
+              example: !include examples/applications/CompleteFlowApplication.json
+      head:
+        displayName: Check Application by ID
+        is:
+          - secured_by_view_applications
+        description: |
+          Checks if an [Application](/applications-api#application) with a given `id` exists. Returns `200 OK` if the Application exists, or `404 Not Found` if it doesn't. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [GeneralError](ctp:checkout:type:GeneralError)
+        responses:
+          200:
+            description: Application exists
+      post:
+        displayName: Update Application by ID
+        is:
+          - secured_by_manage_applications
+        body:
+          type: ApplicationUpdateActions
+          example: !include examples/applications/ApplicationUpdateActions.json
+        responses:
+          200:
+            body:
+              type: Application
+      delete:
+        displayName: Delete Application by ID
+        is:
+          - secured_by_manage_applications
+        body:
+          type: Application
+        responses:
+          200:
+            body:
+              type: Application
+    /key={key}:
+      (annotations.methodName): withKey
+      uriParameters:
+        key:
+          type: string
+          description: |
+            `key` of the [Application](ctp:checkout:type:Application).
+      get:
+        displayName: Get Application by Key
+        is:
+          - secured_by_view_applications
+        description: |
+          Retrieves an [Application](ctp:checkout:type:Application) with a given `key`.
+          Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [GeneralError](ctp:checkout:type:GeneralError)
+        responses:
+          200:
+            body:
+              type: Application
+              example: !include ../checkout/examples/applications/PaymentOnlyApplication.json
+
+      post:
+        displayName: Update Application by Key
+        is:
+          - secured_by_manage_applications
+        body:
+          type: ApplicationUpdateActions
+        responses:
+          200:
+            body:
+              type: Application
+      head:
+        displayName: Check Application by Key
+        is:
+          - secured_by_view_applications
+        description: |
+          Checks if an [Application](ctp:checkout:type:Application) with a given `key` exists. Returns `200 OK` if the Application exists, or `404 Not Found` if it doesn't. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [GeneralError](ctp:checkout:type:GeneralError)
+        responses:
+          200:
+            description: Application exists
+      delete:
+        displayName: Delete Application by Key
+        is:
+          - secured_by_manage_applications
+        body:
+          type: Application
+        responses:
+          200:
+            body:
+              type: Application
