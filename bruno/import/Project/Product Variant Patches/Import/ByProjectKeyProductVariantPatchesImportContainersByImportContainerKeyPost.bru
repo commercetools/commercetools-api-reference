@@ -1,0 +1,95 @@
+meta {
+  name: Create Import Request for Product Variant Patches
+  type: http
+  seq: 21
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/product-variant-patches/import-containers/{{import-container-key}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "type" : "product-variant-patch",
+    "patches" : [ {
+      "productVariant" : {
+        "typeId" : "product-variant",
+        "key" : "red-t-shirt"
+      },
+      "attributes" : {
+        "attribute-to-update" : {
+          "type" : "boolean",
+          "value" : true
+        },
+        "name-of-attribute-to-delete" : {
+          "annotations" : [ ],
+          "value" : null
+        },
+        "name-of-localized-attribute-to-update" : {
+          "type" : "ltext",
+          "value" : {
+            "en" : "Existing field",
+            "es" : {
+              "annotations" : [ ],
+              "value" : null
+            },
+            "de" : "Updating field"
+          }
+        },
+        "name-of-localized-attribute-set-to-update" : {
+          "type" : "ltext-set",
+          "value" : [ {
+            "en" : "Existing field",
+            "es" : {
+              "annotations" : [ ],
+              "value" : null
+            },
+            "de" : "Updating field",
+            "br" : "New field"
+          }, {
+            "en" : "Another Existing field",
+            "es" : {
+              "annotations" : [ ],
+              "value" : null
+            },
+            "de" : "Another Updating field",
+            "br" : "Another New field"
+          } ]
+        }
+      },
+      "staged" : false
+    } ]
+  }
+}  
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("import-container-id", data.results[0].id); 
+          bru.setEnvVar("import-container-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("import-container-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("import-container-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("import-container-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("import-container-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

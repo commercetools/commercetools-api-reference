@@ -1,0 +1,74 @@
+meta {
+  name: Create Import Request for Embedded Prices
+  type: http
+  seq: 15
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/prices/import-containers/{{import-container-key}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "type" : "price",
+    "resources" : [ {
+      "key" : "price-key",
+      "country" : "DE",
+      "validFrom" : "2021-04-11T14:00:00.000Z",
+      "validUntil" : "2022-04-11T14:00:00.000Z",
+      "customerGroup" : {
+        "typeId" : "customer-group",
+        "key" : "customer-group-key"
+      },
+      "channel" : {
+        "typeId" : "channel",
+        "key" : "channel-key"
+      },
+      "productVariant" : {
+        "typeId" : "product-variant",
+        "key" : "red-t-shirt"
+      },
+      "product" : {
+        "typeId" : "product",
+        "key" : "t-shirt"
+      },
+      "value" : {
+        "type" : "centPrecision",
+        "currencyCode" : "EUR",
+        "centAmount" : 300
+      }
+    } ]
+  }
+}  
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("import-container-id", data.results[0].id); 
+          bru.setEnvVar("import-container-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("import-container-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("import-container-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("import-container-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("import-container-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
