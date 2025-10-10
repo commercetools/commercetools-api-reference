@@ -1,6 +1,6 @@
 #%RAML 1.0
 ---
-title: commercetools Composable Commerce Import API
+title: Import API
 (annotations.products):
   - Composable Commerce
 version: v1
@@ -69,25 +69,20 @@ uses:
 resourceTypes:
   base:
     get?:
-      displayName: Query <<resourcePathName>>
       responses:
         200:
     post?:
-      displayName: Import <<resourcePathName | !singularize>>
       responses:
         201:
     put?:
-      displayName: Update <<resourcePathName | !singularize>>
       responses:
         200:
     delete?:
-      displayName: Delete <<resourcePathName | !singularize>>
       responses:
         200:
   baseByParam:
     type: base
     get?:
-      displayName: Get <<resourcePathName | !singularize>>
       responses:
         200:
 
@@ -179,8 +174,9 @@ traits:
         `key` of the [Project](ctp:api:type:Project).
       type: string
   /import-containers:
+    displayName: Import Containers
     post:
-      displayName: Creates an Import Container in the Project.
+      displayName: Create Import Container
       description: |
         Creates an Import Container in the Project.
 
@@ -200,6 +196,7 @@ traits:
           body:
             type: error.ErrorResponse
     get:
+      displayName: Query Import Containers
       queryParameters:
         limit?:
           type: number
@@ -237,6 +234,7 @@ traits:
             `key` of the [ImportContainer](ctp:import:type:ImportContainer).
           type: string
       put:
+        displayName: Update Import Container
         description: Updates an [ImportContainer](ctp:import:type:ImportContainer) in the Project.
         is:
           - secured_by_manage_import_containers
@@ -257,6 +255,7 @@ traits:
               type: error.ErrorResponse
               example: !include examples/error-response-concurrent-modification.json
       get:
+        displayName: Get Import Container by Key
         description: Retrieves an [ImportContainer](ctp:import:type:ImportContainer) with the provided `importContainerKey`.
         is:
           - secured_by_view_import_containers
@@ -272,7 +271,7 @@ traits:
               type: error.ErrorResponse
               example: !include examples/error-response-resource-not-found.json
       delete:
-        displayName: Delete an Import Container.
+        displayName: Delete Import Container
         description: |
           Deletes an Import Container in the Project.
 
@@ -290,8 +289,10 @@ traits:
             body:
               type: error.ErrorResponse
       /import-summaries:
+        displayName: Import Summaries
         type: base
         get:
+          displayName: Get Import Summary
           is:
             - secured_by_view_import_containers
           description: |
@@ -302,8 +303,10 @@ traits:
                 type: import-summary.ImportSummary
                 example: !include examples/import-summary.json
       /import-operations:
+        displayName: Import Operations
         type: base
         get:
+          displayName: Query Import Operations
           description: |
             Retrieves all ImportOperations within an [ImportContainer](ctp:import:type:ImportContainer).
           is:
@@ -347,6 +350,7 @@ traits:
                 type: import-operation.ImportOperationPagedResponse
                 example: !include examples/import-operation-paged.response.json
   /import-operations:
+    displayName: Import Operations
     /{id}:
       type: baseByParam
       uriParameters:
@@ -355,6 +359,7 @@ traits:
             `id` of the [ImportOperation](ctp:import:type:ImportOperation).
           type: string
       get:
+        displayName: Get Import Operation by ID
         description: |
           Retrieves an ImportOperation with the provided `id`.
         is:
@@ -370,8 +375,10 @@ traits:
           503:
             body:
               type: error.ErrorResponse
-  /categories:
+  /business-units:
+    displayName: Business Units
     /import-containers:
+      displayName: Import
       /{importContainerKey}:
         type: base
         uriParameters:
@@ -381,6 +388,36 @@ traits:
               `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
+          displayName: Create Import Request for Business Units
+          description: Creates an Import Request for Business Units.
+          is:
+            - secured_by_manage_business_units
+          body:
+            type: import-request.BusinessUnitImportRequest
+            example: !include examples/business-units-import-request.json
+          responses:
+            201:
+              body:
+                type: import-request.ImportResponse
+                example: !include examples/import-response.json
+            400:
+              description: The request was invalid.
+              body:
+                type: error.ErrorResponse
+  /categories:
+    displayName: Categories
+    /import-containers:
+      displayName: Import
+      /{importContainerKey}:
+        type: base
+        uriParameters:
+          importContainerKey:
+            (postman.paramName): import-container-key
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
+            type: string
+        post:
+          displayName: Create Import Request for Categories
           description: Creates an Import Request for Categories.
           is:
             - secured_by_manage_products
@@ -396,8 +433,10 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-  /prices:
+  /customers:
+    displayName: Customers
     /import-containers:
+      displayName: Import
       /{importContainerKey}:
         type: base
         uriParameters:
@@ -407,7 +446,66 @@ traits:
               `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description: Creates an Import Request for Prices.
+          displayName: Create Import Request for Customers
+          description: Creates an Import Request for Customers.
+          is:
+            - secured_by_manage_customers
+          body:
+            type: import-request.CustomerImportRequest
+            example: !include examples/customer-import-request.json
+          responses:
+            201:
+              body:
+                type: import-request.ImportResponse
+                example: !include examples/import-response.json
+            400:
+              description: The request was invalid.
+              body:
+                type: error.ErrorResponse
+  /discount-codes:
+    displayName: Discount Codes
+    /import-containers:
+      displayName: Import
+      /{importContainerKey}:
+        type: base
+        uriParameters:
+          importContainerKey:
+            (postman.paramName): import-container-key
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
+            type: string
+        post:
+          displayName: Create Import Request for Discount Codes
+          description: Creates an Import Request for Discount Codes.
+          is:
+            - secured_by_manage_discount_codes
+          body:
+            type: import-request.DiscountCodeImportRequest
+            example: !include examples/discount-code-import-request.json
+          responses:
+            201:
+              body:
+                type: import-request.ImportResponse
+                example: !include examples/import-response.json
+            400:
+              description: The request was invalid.
+              body:
+                type: error.ErrorResponse
+  /prices:
+    displayName: Embedded Prices
+    /import-containers:
+      displayName: Import
+      /{importContainerKey}:
+        type: base
+        uriParameters:
+          importContainerKey:
+            (postman.paramName): import-container-key
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
+            type: string
+        post:
+          displayName: Create Import Request for Embedded Prices
+          description: Creates an Import Request for Embedded Prices.
           is:
             - secured_by_manage_products
           body:
@@ -422,8 +520,10 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-  /standalone-prices:
+  /inventories:
+    displayName: Inventory Entries
     /import-containers:
+      displayName: Import
       /{importContainerKey}:
         type: base
         uriParameters:
@@ -433,12 +533,13 @@ traits:
               `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description: Creates an Import Request for Standalone Prices.
+          displayName: Create Import Request for Inventory Entries
+          description: Creates an Import Request for InventoryEntries.
           is:
-            - secured_by_manage_standalone_prices
+            - secured_by_manage_products
           body:
-            type: import-request.StandalonePriceImportRequest
-            example: !include examples/standalone-price-import-request.json
+            type: import-request.InventoryImportRequest
+            example: !include examples/inventory-import-request.json
           responses:
             201:
               body:
@@ -449,7 +550,9 @@ traits:
               body:
                 type: error.ErrorResponse
   /products:
+    displayName: Products
     /import-containers:
+      displayName: Import
       /{importContainerKey}:
         type: base
         uriParameters:
@@ -459,6 +562,7 @@ traits:
               `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
+          displayName: Create Import Request for Products
           description: Creates an Import Request for Products.
           is:
             - secured_by_manage_products
@@ -475,7 +579,9 @@ traits:
               body:
                 type: error.ErrorResponse
   /product-drafts:
+    displayName: Product Drafts
     /import-containers:
+      displayName: Import
       /{importContainerKey}:
         type: base
         uriParameters:
@@ -485,6 +591,7 @@ traits:
               The ImportContainer used to create the new resource
             type: string
         post:
+          displayName: Create Import Request for Product Drafts
           description: |
             Creates an Import Request for Products.
           is:
@@ -502,7 +609,9 @@ traits:
               body:
                 type: error.ErrorResponse
   /product-types:
+    displayName: Product Types
     /import-containers:
+      displayName: Import
       /{importContainerKey}:
         type: base
         uriParameters:
@@ -512,6 +621,7 @@ traits:
               `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
+          displayName: Create Import Request for Product Types
           description: Creates an Import Request for ProductTypes.
           is:
             - secured_by_manage_products
@@ -528,7 +638,9 @@ traits:
               body:
                 type: error.ErrorResponse
   /product-variants:
+    displayName: Product Variants
     /import-containers:
+      displayName: Import
       /{importContainerKey}:
         type: base
         uriParameters:
@@ -538,6 +650,7 @@ traits:
               `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
+          displayName: Create Import Request for Product Variants
           description: Creates an Import Request for ProductVariants.
           is:
             - secured_by_manage_products
@@ -554,7 +667,9 @@ traits:
               body:
                 type: error.ErrorResponse
   /product-variant-patches:
+    displayName: Product Variant Patches
     /import-containers:
+      displayName: Import
       /{importContainerKey}:
         type: base
         uriParameters:
@@ -564,6 +679,7 @@ traits:
               `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
+          displayName: Create Import Request for Product Variant Patches
           description: |
             Creates an Import Request for updating Product Variants.
             Returns an [InvalidField](ctp:import:type:InvalidFieldError) error if the [ProductVariantPatchRequest](ctp:import:type:ProductVariantPatchRequest) contains patches with and without the `product` field set.
@@ -581,8 +697,10 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-  /orders:
+  /product-selections:
+    displayName: Product Selections
     /import-containers:
+      displayName: Import
       /{importContainerKey}:
         type: base
         uriParameters:
@@ -592,6 +710,36 @@ traits:
               `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
+          displayName: Create Import Request for Product Selections
+          description: Creates an Import Request for Product Selections.
+          is:
+            - secured_by_manage_product_selections
+          body:
+            type: import-request.ProductSelectionImportRequest
+            example: !include examples/product-selection-import-request.json
+          responses:
+            201:
+              body:
+                type: import-request.ImportResponse
+                example: !include examples/import-response.json
+            400:
+              description: The request was invalid.
+              body:
+                type: error.ErrorResponse
+  /orders:
+    displayName: Orders
+    /import-containers:
+      displayName: Import
+      /{importContainerKey}:
+        type: base
+        uriParameters:
+          importContainerKey:
+            (postman.paramName): import-container-key
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
+            type: string
+        post:
+          displayName: Create Import Request for Orders
           description: Creates an Import Request for creating Orders.
           is:
             - secured_by_manage_orders
@@ -608,7 +756,9 @@ traits:
               body:
                 type: error.ErrorResponse
   /order-patches:
+    displayName: Order Patches
     /import-containers:
+      displayName: Import
       /{importContainerKey}:
         type: base
         uriParameters:
@@ -617,6 +767,7 @@ traits:
             description: The ImportContainer used to create the resource
             type: string
         post:
+          displayName: Create Import Request for Order Patches
           description: Creates an Import Request for updating Orders.
           is:
             - secured_by_manage_orders
@@ -632,8 +783,10 @@ traits:
               description: The request was invalid.
               body:
                 type: error.ErrorResponse
-  /customers:
+  /standalone-prices:
+    displayName: Standalone Prices
     /import-containers:
+      displayName: Import
       /{importContainerKey}:
         type: base
         uriParameters:
@@ -643,38 +796,13 @@ traits:
               `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
-          description: Creates an Import Request for Customers.
+          displayName: Create Import Request for Standalone Prices
+          description: Creates an Import Request for Standalone Prices.
           is:
-            - secured_by_manage_customers
+            - secured_by_manage_standalone_prices
           body:
-            type: import-request.CustomerImportRequest
-            example: !include examples/customer-import-request.json
-          responses:
-            201:
-              body:
-                type: import-request.ImportResponse
-                example: !include examples/import-response.json
-            400:
-              description: The request was invalid.
-              body:
-                type: error.ErrorResponse
-  /inventories:
-    /import-containers:
-      /{importContainerKey}:
-        type: base
-        uriParameters:
-          importContainerKey:
-            (postman.paramName): import-container-key
-            description: |
-              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
-            type: string
-        post:
-          description: Creates an Import Request for InventoryEntries.
-          is:
-            - secured_by_manage_products
-          body:
-            type: import-request.InventoryImportRequest
-            example: !include examples/inventory-import-request.json
+            type: import-request.StandalonePriceImportRequest
+            example: !include examples/standalone-price-import-request.json
           responses:
             201:
               body:
@@ -685,7 +813,9 @@ traits:
               body:
                 type: error.ErrorResponse
   /types:
+    displayName: Types
     /import-containers:
+      displayName: Import
       /{importContainerKey}:
         type: base
         uriParameters:
@@ -695,90 +825,13 @@ traits:
               `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
             type: string
         post:
+          displayName: Create Import Request for Types
           description: Creates an Import Request for Types.
           is:
             - secured_by_manage_types
           body:
             type: import-request.TypeImportRequest
             example: !include examples/type-import-request.json
-          responses:
-            201:
-              body:
-                type: import-request.ImportResponse
-                example: !include examples/import-response.json
-            400:
-              description: The request was invalid.
-              body:
-                type: error.ErrorResponse
-  /discount-codes:
-    /import-containers:
-      /{importContainerKey}:
-        type: base
-        uriParameters:
-          importContainerKey:
-            (postman.paramName): import-container-key
-            description: |
-              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
-            type: string
-        post:
-          description: Creates an Import Request for Discount Codes.
-          is:
-            - secured_by_manage_discount_codes
-          body:
-            type: import-request.DiscountCodeImportRequest
-            example: !include examples/discount-code-import-request.json
-          responses:
-            201:
-              body:
-                type: import-request.ImportResponse
-                example: !include examples/import-response.json
-            400:
-              description: The request was invalid.
-              body:
-                type: error.ErrorResponse
-  /product-selections:
-    /import-containers:
-      /{importContainerKey}:
-        type: base
-        uriParameters:
-          importContainerKey:
-            (postman.paramName): import-container-key
-            description: |
-              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
-            type: string
-        post:
-          description: Creates an Import Request for Product Selections.
-          is:
-            - secured_by_manage_product_selections
-          body:
-            type: import-request.ProductSelectionImportRequest
-            example: !include examples/product-selection-import-request.json
-          responses:
-            201:
-              body:
-                type: import-request.ImportResponse
-                example: !include examples/import-response.json
-            400:
-              description: The request was invalid.
-              body:
-                type: error.ErrorResponse
-  /business-units:
-    /import-containers:
-      /{importContainerKey}:
-        type: base
-        uriParameters:
-          importContainerKey:
-            (postman.paramName): import-container-key
-            description: |
-              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
-            type: string
-        post:
-          description: Creates an Import Request for Business Units.
-          is:
-            - secured_by_manage_business_units
-          body:
-            type: import-request.BusinessUnitImportRequest
-            example: !include examples/business-units-import-request.json
           responses:
             201:
               body:
