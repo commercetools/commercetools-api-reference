@@ -50149,6 +50149,7 @@ components:
           ProjectNotConfiguredForLanguages: '#/components/schemas/ProjectNotConfiguredForLanguagesError'
           QueryComplexityLimitExceeded: '#/components/schemas/QueryComplexityLimitExceededError'
           QueryTimedOut: '#/components/schemas/QueryTimedOutError'
+          RecurringOrderFailure: '#/components/schemas/RecurringOrderFailureError'
           ReferenceExists: '#/components/schemas/ReferenceExistsError'
           ReferencedResourceNotFound: '#/components/schemas/ReferencedResourceNotFoundError'
           RequiredField: '#/components/schemas/RequiredFieldError'
@@ -50935,6 +50936,23 @@ components:
               type: "string"
           additionalProperties:
             type: "string"
+    RecurringOrderFailureError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - details
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            details:
+              {}
+          additionalProperties:
+            type: "string"
     ReferenceExistsError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -51632,6 +51650,7 @@ components:
           ProjectNotConfiguredForLanguages: '#/components/schemas/GraphQLProjectNotConfiguredForLanguagesError'
           QueryComplexityLimitExceeded: '#/components/schemas/GraphQLQueryComplexityLimitExceededError'
           QueryTimedOut: '#/components/schemas/GraphQLQueryTimedOutError'
+          RecurringOrderFailure: '#/components/schemas/GraphQLRecurringOrderFailureError'
           ReferenceExists: '#/components/schemas/GraphQLReferenceExistsError'
           ReferencedResourceNotFound: '#/components/schemas/GraphQLReferencedResourceNotFoundError'
           RequiredField: '#/components/schemas/GraphQLRequiredFieldError'
@@ -52256,6 +52275,20 @@ components:
           properties:
             code:
               type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLRecurringOrderFailureError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+            - details
+          properties:
+            code:
+              type: "string"
+            details:
+              {}
           additionalProperties:
             type: "string"
     GraphQLReferenceExistsError:
@@ -60279,6 +60312,7 @@ components:
               RecurringOrderCustomTypeSet: '#/components/schemas/RecurringOrderCustomTypeSetMessage'
               RecurringOrderDeleted: '#/components/schemas/RecurringOrderDeletedMessage'
               RecurringOrderExpiresAtSet: '#/components/schemas/RecurringOrderExpiresAtSetMessage'
+              RecurringOrderFailed: '#/components/schemas/RecurringOrderFailedMessage'
               RecurringOrderKeySet: '#/components/schemas/RecurringOrderKeySetMessage'
               RecurringOrderScheduleSet: '#/components/schemas/RecurringOrderScheduleSetMessage'
               RecurringOrderStartsAtSet: '#/components/schemas/RecurringOrderStartsAtSetMessage'
@@ -65833,6 +65867,57 @@ components:
             oldExpiresAt:
               type: "string"
               format: "datetime"
+    RecurringOrderFailedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - cartId
+            - failedAt
+            - failureReason
+            - orderScheduledAt
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            cartId:
+              type: "string"
+            failedAt:
+              type: "string"
+              format: "datetime"
+            failureReason:
+              type: "string"
+            orderScheduledAt:
+              type: "string"
+              format: "datetime"
+            errors:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/RecurringOrderFailureError'
     RecurringOrderKeySetMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -69222,6 +69307,7 @@ components:
           RecurringOrderCustomTypeSet: '#/components/schemas/RecurringOrderCustomTypeSetMessagePayload'
           RecurringOrderDeleted: '#/components/schemas/RecurringOrderDeletedMessagePayload'
           RecurringOrderExpiresAtSet: '#/components/schemas/RecurringOrderExpiresAtSetMessagePayload'
+          RecurringOrderFailed: '#/components/schemas/RecurringOrderFailedMessagePayload'
           RecurringOrderKeySet: '#/components/schemas/RecurringOrderKeySetMessagePayload'
           RecurringOrderScheduleSet: '#/components/schemas/RecurringOrderScheduleSetMessagePayload'
           RecurringOrderStartsAtSet: '#/components/schemas/RecurringOrderStartsAtSetMessagePayload'
@@ -71255,6 +71341,32 @@ components:
             oldExpiresAt:
               type: "string"
               format: "datetime"
+    RecurringOrderFailedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - cartId
+            - failedAt
+            - failureReason
+            - orderScheduledAt
+          properties:
+            type:
+              type: "string"
+            cartId:
+              type: "string"
+            failedAt:
+              type: "string"
+              format: "datetime"
+            failureReason:
+              type: "string"
+            orderScheduledAt:
+              type: "string"
+              format: "datetime"
+            errors:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/RecurringOrderFailureError'
     RecurringOrderKeySetMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
