@@ -1,0 +1,73 @@
+#%RAML 1.0 DataType
+(package): Common
+displayName: ProductVariant
+type: object
+description: |
+  A concrete sellable good for which inventory can be tracked. Product Variants are generally mapped to specific SKUs.
+properties:
+  id:
+    type: number
+    format: int64
+    description: |
+      A unique, sequential identifier of the Product Variant within the Product.
+  sku?:
+    type: string
+    description: |
+      User-defined unique SKU of the Product Variant.
+  key?:
+    type: string
+    description: |
+      User-defined unique identifier of the ProductVariant.
+
+      This is different from [Product](ctp:api:type:Product) `key`.
+  prices?:
+    type: Price[]
+    description: |
+      The Embedded Prices of the Product Variant.
+      Cannot contain two Prices of the same Price scope (with same currency, country, Customer Group, Channel, `validFrom` and `validUntil`).
+    maxItems: 100
+  attributes?:
+    type: Attribute[]
+    description: |
+      Variant Attributes according to the respective [AttributeDefinition](ctp:api:type:AttributeDefinition).
+  price?:
+    type: Price
+    description: |
+      Only available when [price selection](/../api/pricing-and-discounts-overview#price-selection) is used.
+      Cannot be used in a [Query Predicate](ctp:api:type:QueryPredicate).
+  images?:
+    type: Image[]
+    description: |
+      Images of the Product Variant.
+  assets?:
+    type: Asset[]
+    description: |
+      Media assets of the Product Variant.
+  availability?:
+    type: ProductVariantAvailability
+    description: |
+      Set if the Product Variant is tracked by [Inventory](ctp:api:type:InventoryEntry).
+      Can be used as an optimization to reduce calls to the Inventory service.
+      May not contain the latest Inventory State (it is [eventually consistent](/general-concepts#eventual-consistency)).
+  isMatchingVariant?:
+    type: boolean
+    description: |
+      `true` if the Product Variant matches the search query.
+      Only available in response to a [Product Projection Search](ctp:api:type:ProductProjectionSearch) request.
+  scopedPrice?:
+    type: ScopedPrice
+    description: |
+      Only available in response to a [Product Projection Search](ctp:api:type:ProductProjectionSearch) request
+      with [Product price selection](/../api/pricing-and-discounts-overview#product-price-selection).
+      Can be used to sort, [filter](ctp:api:type:ProductProjectionSearchFilterScopedPrice), and facet.
+  scopedPriceDiscounted?:
+    type: boolean
+    description: |
+      Only available in response to a [Product Projection Search](ctp:api:type:ProductProjectionSearchFilterScopedPrice) request
+      with [Product price selection](/../api/pricing-and-discounts-overview#product-price-selection).
+  recurrencePrices?:
+    type: Price[]
+    (beta): true
+    description: |
+      Only available when [Product price selection](/../api/pricing-and-discounts-overview#product-price-selection) is used.
+      Cannot be used in a [Query Predicate](ctp:api:type:QueryPredicate).

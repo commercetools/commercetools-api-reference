@@ -1,22 +1,50 @@
 #%RAML 1.0 DataType
 (package): Common
-type: object
 displayName: ReturnItem
-description:
+discriminator: type
+type: object
 properties:
   id:
     type: string
+    description: |
+      Unique identifier of the Return Item.
+  key?:
+    type: string
+    description: User-defined unique identifier of the Return Item.
+    pattern: ^[a-zA-Z0-9_-]
+    minLength: 2
+    maxLength: 256
   quantity:
-    type: integer
+    type: number
+    format: int64
+    description: |
+      Number of Line Items or Custom Line Items returned.
   type:
     type: string
-  comment:
+  comment?:
     type: string
+    description: |
+      User-defined description for the return.
   shipmentState:
     type: ReturnShipmentState
+    description: |
+      Shipment status of the Return Item.
   paymentState:
     type: ReturnPaymentState
+    description: |
+      Payment status of the Return Item:
+
+      - `NonRefundable`, for items in the `Advised` [ReturnShipmentState](ctp:api:type:ReturnShipmentState)
+      - `Initial`, for items in the `Returned` [ReturnShipmentState](ctp:api:type:ReturnShipmentState)
+  custom?:
+    type: CustomFields
+    description: |
+      Custom Fields of the Return Item.
   lastModifiedAt:
-    type: string
+    type: datetime
+    description: |
+      Date and time (UTC) the Return Item was last updated.
   createdAt:
-    type: string
+    type: datetime
+    description: |
+      Date and time (UTC) the Return Item was initially created.

@@ -1,42 +1,48 @@
 #%RAML 1.0 DataType
 (package): Common
-type: object
 displayName: AttributeDefinition
-description:
+type: object
 properties:
   type:
     type: AttributeType
+    description: Describes the Type of the Attribute.
   name:
     type: string
-    description:
-      The unique name of the attribute used in the API. The name must be between
-      two and 256 characters long and can contain the ASCII letters A to Z in
-      lowercase or uppercase, digits, underscores (`_`) and the hyphen-minus
-      (`-`). When using the same `name` for an attribute in two or more product
-      types all fields of the AttributeDefinition of this attribute need to be
-      the same across the product types, otherwise an
-      AttributeDefinitionAlreadyExists error code will be returned. An exception
-      to this are the values of an `enum` or `lenum` type and sets thereof.
+    pattern: ^[A-Za-z0-9_-]+$
+    minLength: 2
+    maxLength: 256
+    description: |
+      User-defined name of the Attribute that is unique within the [Project](ctp:api:type:Project).
   label:
     type: LocalizedString
+    description: Human-readable label for the Attribute.
   isRequired:
     type: boolean
-    description: Whether the attribute is required to have a value.
+    description: If `true`, the Attribute must have a value on a [ProductVariant](ctp:api:type:ProductVariant).
+  level:
+    type: AttributeLevelEnum
+    (beta): true
+    description: |
+      Specifies whether the Attribute is defined at the Product or Variant level.
+    default: Variant
   attributeConstraint:
     type: AttributeConstraintEnum
-  inputTip:
+    description: |
+      Specifies how Attributes are validated across all variants of a Product.
+  inputTip?:
     type: LocalizedString
+    description: |
+      Provides additional Attribute information to aid content managers configure Product details.
   inputHint:
     type: TextInputHint
+    description: Provides a visual representation directive for values of this Attribute (only relevant for [AttributeTextType](ctp:api:type:AttributeTextType) and [AttributeLocalizableTextType](ctp:api:type:AttributeLocalizableTextType)).
   isSearchable:
     type: boolean
-    description:
-      Whether the attribute's values should generally be enabled in product
-      search. This determines whether the value is stored in products for
-      matching terms in the context of full-text search queries  and can be used
-      in facets & filters as part of product search queries. The exact features
-      that are enabled/disabled with this flag depend on the concrete attribute
-      type and are described there. The max size of a searchable field is
-      **restricted to 10922 characters**. This constraint is enforced at both
-      product creation and product update. If the length of the input exceeds
-      the maximum size an InvalidField error is returned.
+    description: |-
+      If `true`, the Attribute's values are available in the [Product Search](/../api/projects/product-search) or the [Product Projection Search](/../api/projects/product-projection-search) API for use in full-text search queries, filters, and facets.
+      However, if an Attribute's `level` is set as `Product`, then Product Projection Search does **not support** the Attribute.
+
+      The exact features that are available with this flag depend on the specific [AttributeType](ctp:api:type:AttributeType).
+      The maximum size of a searchable field is **restricted** by the [Field content size limit](/../api/limits#field-content-size).
+      This constraint is enforced at both [Product creation](ctp:api:endpoint:/{projectKey}/products:POST) and [Product update](/../api/projects/products#update-product).
+      If the length of the input exceeds the maximum size, an [InvalidField](ctp:api:type:InvalidFieldError) error is returned.

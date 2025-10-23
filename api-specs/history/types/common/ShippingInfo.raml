@@ -1,0 +1,47 @@
+#%RAML 1.0 DataType
+(package): Common
+displayName: ShippingInfo
+type: object
+properties:
+  shippingMethodName:
+    type: string
+    description: |
+      Name of the Shipping Method.
+  price:
+    type: CentPrecisionMoney
+    description: |
+      Determined based on the [ShippingRate](ctp:api:type:ShippingRate) and its tiered prices, and either the sum of [LineItem](ctp:api:type:LineItem) prices or the `shippingRateInput` field.
+  shippingRate:
+    type: ShippingRate
+    description: |
+      Used to determine the price.
+  taxedPrice?:
+    type: TaxedItemPrice
+    description: |
+      Automatically set after the `taxRate` is set.
+  taxRate?:
+    type: TaxRate
+    description: |
+      Automatically set in the `Platform` [TaxMode](ctp:api:type:TaxMode) after the [shipping address is set](ctp:api:type:CartSetShippingAddressAction).
+
+      For the `External` [TaxMode](ctp:api:type:TaxMode) the Tax Rate must be set explicitly with the [ExternalTaxRateDraft](ctp:api:type:ExternalTaxRateDraft).
+  taxCategory?:
+    type: TaxCategoryReference
+    description: |
+      Used to select a Tax Rate when a Cart has the `Platform` [TaxMode](ctp:api:type:TaxMode).
+  shippingMethod?:
+    type: ShippingMethodReference
+    description: |
+      Not set if a custom Shipping Method is used.
+  deliveries?:
+    type: Delivery[]
+    description: |
+      Information on how items are delivered to customers.
+  discountedPrice?:
+    type: DiscountedLineItemPrice
+    description: |
+      Discounted price of the Shipping Method.
+  shippingMethodState:
+    type: ShippingMethodState
+    description: |
+      Indicates whether the [ShippingMethod](ctp:api:type:ShippingMethod) referenced in this ShippingInfo is allowed for the Cart.

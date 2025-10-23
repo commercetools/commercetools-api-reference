@@ -1,26 +1,137 @@
 #%RAML 1.0 DataType
 (package): Common
-type: object
 displayName: LineItem
-description:
+type: object
+description: |
+  The representation of a [Line Item](/../api/carts-orders-overview#line-items) in a [Cart](ctp:api:type:Cart) or in an [Order](ctp:api:type:Order).
 properties:
-  addedAt:
-    type: string
-  custom:
-    type: CustomFields
   id:
     type: string
-  name:
-    type: LocalizedString
+    description: |
+      Unique identifier of the LineItem.
+  key?:
+    type: string
+    description: |
+      User-defined unique identifier of the LineItem.
   productId:
     type: string
-  productSlug:
+    description: |
+      `id` of the [Product](ctp:api:type:Product) the Line Item is based on.
+  productKey?:
+    type: string
+    description: |
+      `key` of the [Product](ctp:api:type:Product).
+
+      This field is only present on:
+
+      - Line Items in a [Cart](ctp:api:type:Cart) when the `key` is available on that specific Product at the time the LineItem was created or updated on the Cart.
+      - Line Items in an [Order](ctp:api:type:Order) when the `key` is available on the specific Product at the time the Order was created from the Cart.
+
+      Present on resources created or updated after 3 December 2021.
+  name:
     type: LocalizedString
+    description: |
+      Name of the Product.
+  productSlug?:
+    type: LocalizedString
+    description: |
+      `slug` of the current version of the Product. Updated automatically if the `slug` changes. Empty if the Product has been deleted.
+      The `productSlug` field of LineItem is not expanded when using [Reference Expansion](/../api/general-concepts#reference-expansion).
   productType:
-    type: Reference
-  quantity:
-    type: integer
+    type: ProductTypeReference
+    description: |
+      Product Type of the Product.
   variant:
-    type: Variant
-  variantId:
-    type: integer
+    type: ProductVariant
+    description: |
+      Holds the data of the Product Variant added to the Cart.
+
+      The data is saved at the time the Product Variant is added to the Cart and is not updated automatically when Product Variant data changes.
+      Must be updated using the [Recalculate](ctp:api:type:CartRecalculateAction) update action.
+  price:
+    type: Price
+    description: |
+      Price of a Line Item selected from the Product Variant according to the [Product](ctp:api:type:Product) `priceMode`. If the `priceMode` is `Embedded` [ProductPriceMode](ctp:api:type:ProductPriceModeEnum) and the `variant` field hasn't been updated, the price may not correspond to a price in `variant.prices`.
+  quantity:
+    type: number
+    format: int64
+    description: |
+      Number of Line Items of the given Product Variant present in the [Cart](ctp:api:type:Cart) or [Order](ctp:api:type:Order).
+    default: 1
+  totalPrice:
+    type: CentPrecisionMoney
+    description: |
+      Total price of this Line Item equalling `price` multiplied by `quantity`. If the Line Item is discounted, the total price is the `discountedPricePerQuantity` multiplied by `quantity`.
+      Includes taxes if the [TaxRate](ctp:api:type:TaxRate) `includedInPrice` is `true`.
+
+      If `ExternalPrice` [LineItemPriceMode](#ctp:api:type:LineItemPriceMode) is used with high-precision money, then the total price is rounded by using the `HalfEven` rounding mode.
+  discountedPricePerQuantity:
+    type: DiscountedLineItemPriceForQuantity[]
+    description: |
+      Discounted price of a single quantity of the Line Item.
+  taxedPrice?:
+    type: TaxedItemPrice
+    description: |
+      Automatically set after `taxRate` is set.
+  taxedPricePortions:
+    type: MethodTaxedPrice[]
+    description: |-
+      Total taxed prices based on the quantity of Line Item assigned to each [Shipping Method](ctp:api:type:ShippingMethod). Only applicable for Carts with `Multiple` [ShippingMode](ctp:api:type:ShippingMode).
+      Automatically set after `perMethodTaxRate` is set.
+  state:
+    type: ItemState[]
+    description: |
+      Tracks specific quantities of the Line Item within a given State. When a Line Item is added to a Cart, its full quantity is set to the built-in "Initial" state. State transitions for Line Items are managed on the [Order](ctp:api:type:Order).
+  taxRate?:
+    type: TaxRate
+    description: |
+      - For a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode), the `taxRate` of Line Items is set automatically once a shipping address is set. The rate is based on the [TaxCategory](ctp:api:type:TaxCategory) that applies for the shipping address.
+      - For a Cart with `External` TaxMode, the `taxRate` of Line Items can be set using [ExternalTaxRateDraft](ctp:api:type:ExternalTaxRateDraft).
+  perMethodTaxRate:
+    type: MethodTaxRate[]
+    description: |-
+      Tax Rate per Shipping Method for a Cart with `Multiple` [ShippingMode](ctp:api:type:ShippingMode). For a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode) it is automatically set after the [Shipping Method is added](ctp:api:type:CartAddShippingMethodAction).
+      For a Cart with `External` [TaxMode](ctp:api:type:TaxMode), the Tax Rate must be set with [ExternalTaxRateDraft](ctp:api:type:ExternalTaxRateDraft).
+  supplyChannel?:
+    type: ChannelReference
+    description: |
+      Identifies [Inventory entries](/../api/projects/inventory) that are reserved. The referenced Channel has the `InventorySupply` [ChannelRoleEnum](ctp:api:type:ChannelRoleEnum).
+  distributionChannel?:
+    type: ChannelReference
+    description: |
+      Used to [select](/../api/pricing-and-discounts-overview#line-item-price-selection) a Product Price. The referenced Channel has the `ProductDistribution` [ChannelRoleEnum](ctp:api:type:ChannelRoleEnum).
+  priceMode:
+    type: LineItemPriceMode
+    description: |
+      Indicates how the Price for the Line Item is set.
+  lineItemMode:
+    type: LineItemMode
+    description: |
+      Indicates how the Line Item is added to the Cart.
+    default: Standard
+  inventoryMode?:
+    type: InventoryMode
+    description: |
+      Inventory mode specific to this Line Item only, and valid for the entire `quantity` of the Line Item.
+      Only present if the inventory mode is different from the `inventoryMode` specified on the [Cart](ctp:api:type:Cart).
+  shippingDetails?:
+    type: ItemShippingDetails
+    description: |
+      Container for Line Item-specific addresses.
+  custom?:
+    type: CustomFields
+    description: |
+      Custom Fields of the Line Item.
+  addedAt?:
+    type: datetime
+    description: |
+      Date and time (UTC) the Line Item was added to the Cart.
+  lastModifiedAt?:
+    type: datetime
+    description: |
+      Date and time (UTC) the Line Item was last updated.
+  recurrenceInfo?:
+    type: LineItemRecurrenceInfo
+    (beta): true
+    description: |
+      Recurring Order and frequency data.

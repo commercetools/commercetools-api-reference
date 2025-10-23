@@ -1,10 +1,64 @@
 #%RAML 1.0 DataType
 (package): Common
-type: object
 displayName: Price
-description:
+description: |-
+  The representation for prices embedded in [LineItems](ctp:api:type:LineItem) and in [ProductVariants](ctp:api:type:ProductVariant) when the [ProductPriceMode](ctp:api:type:ProductPriceModeEnum) is `Embedded`.
+  For the `Standalone` ProductPriceMode refer to [StandalonePrice](ctp:api:type:StandalonePrice).
+type: object
 properties:
   id:
     type: string
+    description: |
+      Unique identifier of this Price.
+  key?:
+    type: string
+    description: |
+      User-defined identifier of the Price. It is unique per [ProductVariant](ctp:api:type:ProductVariant).
+    pattern: ^[A-Za-z0-9_-]+$
+    minLength: 2
+    maxLength: 256
   value:
-    type: Money
+    type: TypedMoney
+    description: |
+      Money value of this Price.
+  country?:
+    type: CountryCode
+    description: |
+      Country for which this Price is valid.
+  customerGroup?:
+    type: CustomerGroupReference
+    description: |
+      [CustomerGroup](ctp:api:type:CustomerGroup) for which this Price is valid.
+  channel?:
+    type: ChannelReference
+    description: |
+      `ProductDistribution` [Channel](ctp:api:type:Channel) for which this Price is valid.
+  validFrom?:
+    type: datetime
+    description: |
+      Date and time from which this Price is valid.
+  validUntil?:
+    type: datetime
+    description: |
+      Date and time until this Price is valid. Prices that are no longer valid are not automatically removed, but they can be [removed](ctp:api:type:ProductRemovePriceAction) if necessary.
+  discounted?:
+    type: DiscountedPrice
+    description: |
+      Is set if a [ProductDiscount](ctp:api:type:ProductDiscount) has been applied.
+      If set, the API uses the DiscountedPrice value for the [Line Item price selection](/../api/pricing-and-discounts-overview#line-item-price-selection).
+      When a [relative discount](ctp:api:type:ProductDiscountValueRelative) has been applied and the fraction part of the DiscountedPrice `value` is 0.5, the `value` is rounded in favor of the customer with [half-down rounding](https://en.wikipedia.org/wiki/Rounding#Round_half_down).
+  tiers?:
+    type: PriceTier[]
+    description: |
+      Present if different Prices for certain [LineItem](ctp:api:type:LineItem) quantities have been specified.
+
+      If `discounted` is present, the tiered Price is ignored for a Product Variant.
+  custom?:
+    type: CustomFields
+    description: |
+      Custom Fields defined for the Price.
+  recurrencePolicy?:
+    type: RecurrencePolicyReference
+    (beta): true
+    description: |
+      [Recurrence Policy](ctp:api:type:RecurrencePolicy) for which this Price is valid.

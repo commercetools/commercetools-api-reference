@@ -2,32 +2,44 @@
 (package): Common
 type: object
 displayName: TaxRate
-description: Shape of the value for `addTaxRate` and `removeTaxRate` actions
 properties:
-  id:
+  id?:
     type: string
-    description:
-      The ID is always set if the tax rate is part of a TaxCategory. The
-      external tax rates in a Cart do not contain an `id`.
+    description: |
+      Present if the TaxRate is part of a [TaxCategory](ctp:api:type:TaxCategory).
+      Absent for external TaxRates in [LineItem](ctp:api:type:LineItem), [CustomLineItem](ctp:api:type:CustomLineItem), and [ShippingInfo](ctp:api:type:ShippingInfo).
+  key?:
+    type: string
+    description: |
+      User-defined unique identifier of the TaxRate.
+      Present when set using [TaxRateDraft](ctp:api:type:TaxRateDraft). Not available for external TaxRates created using [ExternalTaxRateDraft](ctp:api:type:ExternalTaxRateDraft).
+    pattern: ^[a-zA-Z0-9_-]
+    minLength: 2
+    maxLength: 256
   name:
     type: string
-    description:
+    description: |
+      Name of the TaxRate.
   amount:
-    type: integer
+    type: number
     minimum: 0
     maximum: 1
-    description:
-      Percentage in the range of [0..1]. The sum of the amounts of all
-      `subRates`, if there are any.
+    description: |
+      Tax rate. If subrates are used, the amount is the sum of all rates in `subRates`.
   includedInPrice:
     type: boolean
-    description:
+    description: |
+      If `true`, tax is included in [Embedded Prices](ctp:api:type:Price) or [Standalone Prices](ctp:api:type:StandalonePrice), and the `taxedPrice` is present on [LineItems](ctp:api:type:LineItem). In this case, the `totalNet` price on [TaxedPrice](ctp:api:type:TaxedPrice) includes the TaxRate.
   country:
     type: CountryCode
-  state:
+    description: |
+      Country in which the tax rate is applied in [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) format.
+  state?:
     type: string
-    description: The state in the country
-  subRates:
-    type: array
-    items:
-      type: SubRate
+    description: |
+      State within the country, such as Texas in the United States.
+  subRates?:
+    type: SubRate[]
+    description: |
+      Used when the total tax is a combination of multiple taxes (for example, local, state/provincial, and/or federal taxes). The total of all subrates must equal the TaxRate `amount`.
+      These subrates are used to calculate the `taxPortions` field of a [Cart](ctp:api:type:Cart) or [Order](ctp:api:type:Order) and the `taxedPrice` field of [LineItems](ctp:api:type:LineItem), [CustomLineItems](ctp:api:type:CustomLineItem), and [ShippingInfos](ctp:api:type:ShippingInfo).
