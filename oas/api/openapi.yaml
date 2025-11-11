@@ -60290,6 +60290,7 @@ components:
               InventoryEntryDeleted: '#/components/schemas/InventoryEntryDeletedMessage'
               InventoryEntryQuantitySet: '#/components/schemas/InventoryEntryQuantitySetMessage'
               OrderPaymentAdded: '#/components/schemas/OrderPaymentAddedMessage'
+              OrderPaymentRemoved: '#/components/schemas/OrderPaymentRemovedMessage'
               PaymentCreated: '#/components/schemas/PaymentCreatedMessage'
               PaymentInteractionAdded: '#/components/schemas/PaymentInteractionAddedMessage'
               PaymentInterfaceIdSet: '#/components/schemas/PaymentInterfaceIdSetMessage'
@@ -61573,7 +61574,7 @@ components:
         - $ref: '#/components/schemas/Message'
         - type: "object"
           required:
-            - payment
+            - paymentRef
           properties:
             id:
               type: "string"
@@ -61602,8 +61603,47 @@ components:
               type: "string"
             resourceUserProvidedIdentifiers:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
-            payment:
+            paymentRef:
               $ref: '#/components/schemas/PaymentReference'
+    OrderPaymentRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - paymentRef
+            - removedPaymentInfo
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            paymentRef:
+              $ref: '#/components/schemas/PaymentReference'
+            removedPaymentInfo:
+              type: "boolean"
     OrderPaymentStateChangedMessage:
       allOf:
         - $ref: '#/components/schemas/OrderMessage'
@@ -69301,6 +69341,7 @@ components:
           InventoryEntryDeleted: '#/components/schemas/InventoryEntryDeletedMessagePayload'
           InventoryEntryQuantitySet: '#/components/schemas/InventoryEntryQuantitySetMessagePayload'
           OrderPaymentAdded: '#/components/schemas/OrderPaymentAddedMessagePayload'
+          OrderPaymentRemoved: '#/components/schemas/OrderPaymentRemovedMessagePayload'
           PaymentCreated: '#/components/schemas/PaymentCreatedMessagePayload'
           PaymentInteractionAdded: '#/components/schemas/PaymentInteractionAddedMessagePayload'
           PaymentInterfaceIdSet: '#/components/schemas/PaymentInterfaceIdSetMessagePayload'
@@ -69833,12 +69874,26 @@ components:
         - $ref: '#/components/schemas/MessagePayload'
         - type: "object"
           required:
-            - payment
+            - paymentRef
           properties:
             type:
               type: "string"
-            payment:
+            paymentRef:
               $ref: '#/components/schemas/PaymentReference'
+    OrderPaymentRemovedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - paymentRef
+            - removedPaymentInfo
+          properties:
+            type:
+              type: "string"
+            paymentRef:
+              $ref: '#/components/schemas/PaymentReference'
+            removedPaymentInfo:
+              type: "boolean"
     OrderPaymentStateChangedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/OrderMessagePayload'
