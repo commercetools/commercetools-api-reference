@@ -47180,6 +47180,15 @@ components:
               type: "string"
             custom:
               $ref: '#/components/schemas/CustomFieldsDraft'
+    AddressRole:
+      type: "string"
+      enum:
+        - Shipping
+        - Billing
+      x-annotation-package: "Common"
+      x-annotation-enumDescriptions:
+        Shipping: "The address is used as a shipping address.n"
+        Billing: "The address is used as a billing address.n"
     Asset:
       type: "object"
       required:
@@ -56393,6 +56402,7 @@ components:
         - type: "object"
           required:
             - address
+            - addressRoles
           properties:
             id:
               type: "string"
@@ -56423,6 +56433,10 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             address:
               $ref: '#/components/schemas/Address'
+            addressRoles:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AddressRole'
     BusinessUnitAddressCustomFieldAddedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -56627,6 +56641,7 @@ components:
         - type: "object"
           required:
             - address
+            - addressRoles
           properties:
             id:
               type: "string"
@@ -56657,6 +56672,10 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             address:
               $ref: '#/components/schemas/Address'
+            addressRoles:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AddressRole'
     BusinessUnitApprovalRuleModeChangedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -58151,6 +58170,7 @@ components:
         - type: "object"
           required:
             - address
+            - addressRoles
           properties:
             id:
               type: "string"
@@ -58181,6 +58201,10 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             address:
               $ref: '#/components/schemas/Address'
+            addressRoles:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AddressRole'
     CustomerAddressCustomFieldAddedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -58380,6 +58404,83 @@ components:
             addressId:
               type: "string"
     CustomerAddressRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - address
+            - addressRoles
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            address:
+              $ref: '#/components/schemas/Address'
+            addressRoles:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AddressRole'
+    CustomerBillingAddressAddedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - address
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            address:
+              $ref: '#/components/schemas/Address'
+    CustomerBillingAddressRemovedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
         - type: "object"
@@ -58808,12 +58909,15 @@ components:
               type: "string"
             resourceUserProvidedIdentifiers:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
+            email:
+              type: "string"
     CustomerEmailChangedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
         - type: "object"
           required:
             - email
+            - oldEmail
           properties:
             id:
               type: "string"
@@ -58843,6 +58947,8 @@ components:
             resourceUserProvidedIdentifiers:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             email:
+              type: "string"
+            oldEmail:
               type: "string"
     CustomerEmailTokenCreatedMessage:
       allOf:
@@ -58921,6 +59027,40 @@ components:
               type: "string"
             resourceUserProvidedIdentifiers:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
+    CustomerExternalIdSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            externalId:
+              type: "string"
     CustomerFirstNameSetMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -59031,6 +59171,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/Message'
         - type: "object"
+          required:
+            - customerGroupAssignments
+            - oldCustomerGroupAssignments
           properties:
             id:
               type: "string"
@@ -59060,6 +59203,10 @@ components:
             resourceUserProvidedIdentifiers:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             customerGroupAssignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerGroupAssignment'
+            oldCustomerGroupAssignments:
               type: "array"
               items:
                 $ref: '#/components/schemas/CustomerGroupAssignment'
@@ -59400,6 +59547,78 @@ components:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
             reset:
               type: "boolean"
+    CustomerShippingAddressAddedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - address
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            address:
+              $ref: '#/components/schemas/Address'
+    CustomerShippingAddressRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - address
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            address:
+              $ref: '#/components/schemas/Address'
     CustomerStoresSetMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -60386,6 +60605,8 @@ components:
               CustomerAddressCustomTypeRemoved: '#/components/schemas/CustomerAddressCustomTypeRemovedMessage'
               CustomerAddressCustomTypeSet: '#/components/schemas/CustomerAddressCustomTypeSetMessage'
               CustomerAddressRemoved: '#/components/schemas/CustomerAddressRemovedMessage'
+              CustomerBillingAddressAdded: '#/components/schemas/CustomerBillingAddressAddedMessage'
+              CustomerBillingAddressRemoved: '#/components/schemas/CustomerBillingAddressRemovedMessage'
               CustomerCompanyNameSet: '#/components/schemas/CustomerCompanyNameSetMessage'
               CustomerCreated: '#/components/schemas/CustomerCreatedMessage'
               CustomerCustomFieldAdded: '#/components/schemas/CustomerCustomFieldAddedMessage'
@@ -60400,6 +60621,7 @@ components:
               CustomerEmailChanged: '#/components/schemas/CustomerEmailChangedMessage'
               CustomerEmailTokenCreated: '#/components/schemas/CustomerEmailTokenCreatedMessage'
               CustomerEmailVerified: '#/components/schemas/CustomerEmailVerifiedMessage'
+              CustomerExternalIdSet: '#/components/schemas/CustomerExternalIdSetMessage'
               CustomerFirstNameSet: '#/components/schemas/CustomerFirstNameSetMessage'
               CustomerGroupAssignmentAdded: '#/components/schemas/CustomerGroupAssignmentAddedMessage'
               CustomerGroupAssignmentRemoved: '#/components/schemas/CustomerGroupAssignmentRemovedMessage'
@@ -60413,6 +60635,8 @@ components:
               CustomerLastNameSet: '#/components/schemas/CustomerLastNameSetMessage'
               CustomerPasswordTokenCreated: '#/components/schemas/CustomerPasswordTokenCreatedMessage'
               CustomerPasswordUpdated: '#/components/schemas/CustomerPasswordUpdatedMessage'
+              CustomerShippingAddressAdded: '#/components/schemas/CustomerShippingAddressAddedMessage'
+              CustomerShippingAddressRemoved: '#/components/schemas/CustomerShippingAddressRemovedMessage'
               CustomerStoresSet: '#/components/schemas/CustomerStoresSetMessage'
               CustomerTitleSet: '#/components/schemas/CustomerTitleSetMessage'
               DiscountCodeCreated: '#/components/schemas/DiscountCodeCreatedMessage'
@@ -68056,11 +68280,16 @@ components:
         - type: "object"
           required:
             - address
+            - addressRoles
           properties:
             type:
               type: "string"
             address:
               $ref: '#/components/schemas/Address'
+            addressRoles:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AddressRole'
     BusinessUnitAddressCustomFieldAddedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -68140,11 +68369,16 @@ components:
         - type: "object"
           required:
             - address
+            - addressRoles
           properties:
             type:
               type: "string"
             address:
               $ref: '#/components/schemas/Address'
+            addressRoles:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AddressRole'
     BusinessUnitApprovalRuleModeChangedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -68629,11 +68863,16 @@ components:
         - type: "object"
           required:
             - address
+            - addressRoles
           properties:
             type:
               type: "string"
             address:
               $ref: '#/components/schemas/Address'
+            addressRoles:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AddressRole'
     CustomerAddressCustomFieldAddedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -68708,6 +68947,33 @@ components:
             addressId:
               type: "string"
     CustomerAddressRemovedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - address
+            - addressRoles
+          properties:
+            type:
+              type: "string"
+            address:
+              $ref: '#/components/schemas/Address'
+            addressRoles:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/AddressRole'
+    CustomerBillingAddressAddedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - address
+          properties:
+            type:
+              type: "string"
+            address:
+              $ref: '#/components/schemas/Address'
+    CustomerBillingAddressRemovedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
         - type: "object"
@@ -68836,16 +69102,21 @@ components:
           properties:
             type:
               type: "string"
+            email:
+              type: "string"
     CustomerEmailChangedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
         - type: "object"
           required:
             - email
+            - oldEmail
           properties:
             type:
               type: "string"
             email:
+              type: "string"
+            oldEmail:
               type: "string"
     CustomerEmailTokenCreatedMessagePayload:
       allOf:
@@ -68873,6 +69144,15 @@ components:
         - type: "object"
           properties:
             type:
+              type: "string"
+    CustomerExternalIdSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            externalId:
               type: "string"
     CustomerFirstNameSetMessagePayload:
       allOf:
@@ -68909,10 +69189,17 @@ components:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
         - type: "object"
+          required:
+            - customerGroupAssignments
+            - oldCustomerGroupAssignments
           properties:
             type:
               type: "string"
             customerGroupAssignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerGroupAssignment'
+            oldCustomerGroupAssignments:
               type: "array"
               items:
                 $ref: '#/components/schemas/CustomerGroupAssignment'
@@ -69028,6 +69315,28 @@ components:
               type: "string"
             reset:
               type: "boolean"
+    CustomerShippingAddressAddedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - address
+          properties:
+            type:
+              type: "string"
+            address:
+              $ref: '#/components/schemas/Address'
+    CustomerShippingAddressRemovedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - address
+          properties:
+            type:
+              type: "string"
+            address:
+              $ref: '#/components/schemas/Address'
     CustomerStoresSetMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -69437,6 +69746,8 @@ components:
           CustomerAddressCustomTypeRemoved: '#/components/schemas/CustomerAddressCustomTypeRemovedMessagePayload'
           CustomerAddressCustomTypeSet: '#/components/schemas/CustomerAddressCustomTypeSetMessagePayload'
           CustomerAddressRemoved: '#/components/schemas/CustomerAddressRemovedMessagePayload'
+          CustomerBillingAddressAdded: '#/components/schemas/CustomerBillingAddressAddedMessagePayload'
+          CustomerBillingAddressRemoved: '#/components/schemas/CustomerBillingAddressRemovedMessagePayload'
           CustomerCompanyNameSet: '#/components/schemas/CustomerCompanyNameSetMessagePayload'
           CustomerCreated: '#/components/schemas/CustomerCreatedMessagePayload'
           CustomerCustomFieldAdded: '#/components/schemas/CustomerCustomFieldAddedMessagePayload'
@@ -69451,6 +69762,7 @@ components:
           CustomerEmailChanged: '#/components/schemas/CustomerEmailChangedMessagePayload'
           CustomerEmailTokenCreated: '#/components/schemas/CustomerEmailTokenCreatedMessagePayload'
           CustomerEmailVerified: '#/components/schemas/CustomerEmailVerifiedMessagePayload'
+          CustomerExternalIdSet: '#/components/schemas/CustomerExternalIdSetMessagePayload'
           CustomerFirstNameSet: '#/components/schemas/CustomerFirstNameSetMessagePayload'
           CustomerGroupAssignmentAdded: '#/components/schemas/CustomerGroupAssignmentAddedMessagePayload'
           CustomerGroupAssignmentRemoved: '#/components/schemas/CustomerGroupAssignmentRemovedMessagePayload'
@@ -69464,6 +69776,8 @@ components:
           CustomerLastNameSet: '#/components/schemas/CustomerLastNameSetMessagePayload'
           CustomerPasswordTokenCreated: '#/components/schemas/CustomerPasswordTokenCreatedMessagePayload'
           CustomerPasswordUpdated: '#/components/schemas/CustomerPasswordUpdatedMessagePayload'
+          CustomerShippingAddressAdded: '#/components/schemas/CustomerShippingAddressAddedMessagePayload'
+          CustomerShippingAddressRemoved: '#/components/schemas/CustomerShippingAddressRemovedMessagePayload'
           CustomerStoresSet: '#/components/schemas/CustomerStoresSetMessagePayload'
           CustomerTitleSet: '#/components/schemas/CustomerTitleSetMessagePayload'
           DiscountCodeCreated: '#/components/schemas/DiscountCodeCreatedMessagePayload'
