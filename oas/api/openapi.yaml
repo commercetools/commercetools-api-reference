@@ -42325,6 +42325,10 @@ components:
               type: "string"
             custom:
               $ref: '#/components/schemas/CustomFields'
+            customerGroupAssignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerGroupAssignment'
             addresses:
               type: "array"
               items:
@@ -42459,6 +42463,10 @@ components:
           format: "int32"
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
+        customerGroupAssignments:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/CustomerGroupAssignmentDraft'
     BusinessUnitKeyReference:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
@@ -42572,6 +42580,7 @@ components:
           addAddress: '#/components/schemas/BusinessUnitAddAddressAction'
           addAssociate: '#/components/schemas/BusinessUnitAddAssociateAction'
           addBillingAddressId: '#/components/schemas/BusinessUnitAddBillingAddressIdAction'
+          addCustomerGroupAssignment: '#/components/schemas/BusinessUnitAddCustomerGroupAssignmentAction'
           addShippingAddressId: '#/components/schemas/BusinessUnitAddShippingAddressIdAction'
           addStore: '#/components/schemas/BusinessUnitAddStoreAction'
           changeAddress: '#/components/schemas/BusinessUnitChangeAddressAction'
@@ -42584,6 +42593,7 @@ components:
           removeAddress: '#/components/schemas/BusinessUnitRemoveAddressAction'
           removeAssociate: '#/components/schemas/BusinessUnitRemoveAssociateAction'
           removeBillingAddressId: '#/components/schemas/BusinessUnitRemoveBillingAddressIdAction'
+          removeCustomerGroupAssignment: '#/components/schemas/BusinessUnitRemoveCustomerGroupAssignmentAction'
           removeShippingAddressId: '#/components/schemas/BusinessUnitRemoveShippingAddressIdAction'
           removeStore: '#/components/schemas/BusinessUnitRemoveStoreAction'
           setAddressCustomField: '#/components/schemas/BusinessUnitSetAddressCustomFieldAction'
@@ -42592,6 +42602,7 @@ components:
           setContactEmail: '#/components/schemas/BusinessUnitSetContactEmailAction'
           setCustomField: '#/components/schemas/BusinessUnitSetCustomFieldAction'
           setCustomType: '#/components/schemas/BusinessUnitSetCustomTypeAction'
+          setCustomerGroupAssignments: '#/components/schemas/BusinessUnitSetCustomerGroupAssignmentsAction'
           setDefaultBillingAddress: '#/components/schemas/BusinessUnitSetDefaultBillingAddressAction'
           setDefaultShippingAddress: '#/components/schemas/BusinessUnitSetDefaultShippingAddressAction'
           setStoreMode: '#/components/schemas/BusinessUnitSetStoreModeAction'
@@ -42648,6 +42659,10 @@ components:
               type: "string"
             custom:
               $ref: '#/components/schemas/CustomFields'
+            customerGroupAssignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerGroupAssignment'
             addresses:
               type: "array"
               items:
@@ -42731,6 +42746,10 @@ components:
               format: "int32"
             custom:
               $ref: '#/components/schemas/CustomFieldsDraft'
+            customerGroupAssignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerGroupAssignmentDraft'
     Division:
       allOf:
         - $ref: '#/components/schemas/BusinessUnit'
@@ -42778,6 +42797,10 @@ components:
               type: "string"
             custom:
               $ref: '#/components/schemas/CustomFields'
+            customerGroupAssignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerGroupAssignment'
             addresses:
               type: "array"
               items:
@@ -42863,6 +42886,10 @@ components:
               format: "int32"
             custom:
               $ref: '#/components/schemas/CustomFieldsDraft'
+            customerGroupAssignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerGroupAssignmentDraft'
             parentUnit:
               $ref: '#/components/schemas/BusinessUnitResourceIdentifier'
     InheritedAssociate:
@@ -42920,6 +42947,17 @@ components:
               type: "string"
             addressKey:
               type: "string"
+    BusinessUnitAddCustomerGroupAssignmentAction:
+      allOf:
+        - $ref: '#/components/schemas/BusinessUnitUpdateAction'
+        - type: "object"
+          required:
+            - customerGroupAssignment
+          properties:
+            action:
+              type: "string"
+            customerGroupAssignment:
+              $ref: '#/components/schemas/CustomerGroupAssignmentDraft'
     BusinessUnitAddShippingAddressIdAction:
       allOf:
         - $ref: '#/components/schemas/BusinessUnitUpdateAction'
@@ -43059,6 +43097,17 @@ components:
               type: "string"
             addressKey:
               type: "string"
+    BusinessUnitRemoveCustomerGroupAssignmentAction:
+      allOf:
+        - $ref: '#/components/schemas/BusinessUnitUpdateAction'
+        - type: "object"
+          required:
+            - customerGroup
+          properties:
+            action:
+              type: "string"
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
     BusinessUnitRemoveShippingAddressIdAction:
       allOf:
         - $ref: '#/components/schemas/BusinessUnitUpdateAction'
@@ -43158,6 +43207,17 @@ components:
               $ref: '#/components/schemas/TypeResourceIdentifier'
             fields:
               $ref: '#/components/schemas/FieldContainer'
+    BusinessUnitSetCustomerGroupAssignmentsAction:
+      allOf:
+        - $ref: '#/components/schemas/BusinessUnitUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            customerGroupAssignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerGroupAssignmentDraft'
     BusinessUnitSetDefaultBillingAddressAction:
       allOf:
         - $ref: '#/components/schemas/BusinessUnitUpdateAction'
@@ -57262,6 +57322,118 @@ components:
               $ref: '#/components/schemas/CustomFields'
             oldTypeId:
               type: "string"
+    BusinessUnitCustomerGroupAssignmentAddedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - customerGroupAssignment
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            customerGroupAssignment:
+              $ref: '#/components/schemas/CustomerGroupAssignment'
+    BusinessUnitCustomerGroupAssignmentRemovedMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - customerGroupAssignment
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            customerGroupAssignment:
+              $ref: '#/components/schemas/CustomerGroupAssignment'
+    BusinessUnitCustomerGroupAssignmentsSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            customerGroupAssignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerGroupAssignment'
+            oldCustomerGroupAssignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerGroupAssignment'
     BusinessUnitDefaultBillingAddressSetMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -60607,6 +60779,9 @@ components:
               BusinessUnitCustomFieldRemoved: '#/components/schemas/BusinessUnitCustomFieldRemovedMessage'
               BusinessUnitCustomTypeRemoved: '#/components/schemas/BusinessUnitCustomTypeRemovedMessage'
               BusinessUnitCustomTypeSet: '#/components/schemas/BusinessUnitCustomTypeSetMessage'
+              BusinessUnitCustomerGroupAssignmentAdded: '#/components/schemas/BusinessUnitCustomerGroupAssignmentAddedMessage'
+              BusinessUnitCustomerGroupAssignmentRemoved: '#/components/schemas/BusinessUnitCustomerGroupAssignmentRemovedMessage'
+              BusinessUnitCustomerGroupAssignmentsSet: '#/components/schemas/BusinessUnitCustomerGroupAssignmentsSetMessage'
               BusinessUnitDefaultBillingAddressSet: '#/components/schemas/BusinessUnitDefaultBillingAddressSetMessage'
               BusinessUnitDefaultShippingAddressSet: '#/components/schemas/BusinessUnitDefaultShippingAddressSetMessage'
               BusinessUnitDeleted: '#/components/schemas/BusinessUnitDeletedMessage'
@@ -68590,6 +68765,43 @@ components:
               $ref: '#/components/schemas/CustomFields'
             oldTypeId:
               type: "string"
+    BusinessUnitCustomerGroupAssignmentAddedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - customerGroupAssignment
+          properties:
+            type:
+              type: "string"
+            customerGroupAssignment:
+              $ref: '#/components/schemas/CustomerGroupAssignment'
+    BusinessUnitCustomerGroupAssignmentRemovedMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - customerGroupAssignment
+          properties:
+            type:
+              type: "string"
+            customerGroupAssignment:
+              $ref: '#/components/schemas/CustomerGroupAssignment'
+    BusinessUnitCustomerGroupAssignmentsSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            customerGroupAssignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerGroupAssignment'
+            oldCustomerGroupAssignments:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/CustomerGroupAssignment'
     BusinessUnitDefaultBillingAddressSetMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -69748,6 +69960,9 @@ components:
           BusinessUnitCustomFieldRemoved: '#/components/schemas/BusinessUnitCustomFieldRemovedMessagePayload'
           BusinessUnitCustomTypeRemoved: '#/components/schemas/BusinessUnitCustomTypeRemovedMessagePayload'
           BusinessUnitCustomTypeSet: '#/components/schemas/BusinessUnitCustomTypeSetMessagePayload'
+          BusinessUnitCustomerGroupAssignmentAdded: '#/components/schemas/BusinessUnitCustomerGroupAssignmentAddedMessagePayload'
+          BusinessUnitCustomerGroupAssignmentRemoved: '#/components/schemas/BusinessUnitCustomerGroupAssignmentRemovedMessagePayload'
+          BusinessUnitCustomerGroupAssignmentsSet: '#/components/schemas/BusinessUnitCustomerGroupAssignmentsSetMessagePayload'
           BusinessUnitDefaultBillingAddressSet: '#/components/schemas/BusinessUnitDefaultBillingAddressSetMessagePayload'
           BusinessUnitDefaultShippingAddressSet: '#/components/schemas/BusinessUnitDefaultShippingAddressSetMessagePayload'
           BusinessUnitDeleted: '#/components/schemas/BusinessUnitDeletedMessagePayload'

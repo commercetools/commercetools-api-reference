@@ -14,6 +14,35 @@ interface CustomerGroupAssignment [[CustomerGroupAssignment.svg]]  {
 
 
 
+interface BusinessUnit [[BusinessUnit.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    key: String
+    status: [[BusinessUnitStatus.svg BusinessUnitStatus]]
+    stores: [[StoreKeyReference.svg List<StoreKeyReference>]]
+    inheritedStores: [[StoreKeyReference.svg List<StoreKeyReference>]]
+    storeMode: [[BusinessUnitStoreMode.svg BusinessUnitStoreMode]]
+    unitType: [[BusinessUnitType.svg BusinessUnitType]]
+    name: String
+    contactEmail: String
+    custom: [[CustomFields.svg CustomFields]]
+    customerGroupAssignments: [[CustomerGroupAssignment.svg List<CustomerGroupAssignment>]]
+    addresses: [[Address.svg List<Address>]]
+    shippingAddressIds: [[String.svg List<String>]]
+    defaultShippingAddressId: String
+    billingAddressIds: [[String.svg List<String>]]
+    defaultBillingAddressId: String
+    associateMode: [[BusinessUnitAssociateMode.svg BusinessUnitAssociateMode]]
+    associates: [[Associate.svg List<Associate>]]
+    inheritedAssociates: [[InheritedAssociate.svg List<InheritedAssociate>]]
+    parentUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    topLevelUnit: [[BusinessUnitKeyReference.svg BusinessUnitKeyReference]]
+    approvalRuleMode: [[BusinessUnitApprovalRuleMode.svg BusinessUnitApprovalRuleMode]]
+}
 interface Customer [[Customer.svg]]  {
     id: String
     version: Long
@@ -47,6 +76,21 @@ interface Customer [[Customer.svg]]  {
     stores: [[StoreKeyReference.svg List<StoreKeyReference>]]
     authenticationMode: [[AuthenticationMode.svg AuthenticationMode]]
 }
+interface BusinessUnitCustomerGroupAssignmentsSetMessage [[BusinessUnitCustomerGroupAssignmentsSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    customerGroupAssignments: [[CustomerGroupAssignment.svg List<CustomerGroupAssignment>]]
+    oldCustomerGroupAssignments: [[CustomerGroupAssignment.svg List<CustomerGroupAssignment>]]
+}
 interface CustomerGroupAssignmentsSetMessage [[CustomerGroupAssignmentsSetMessage.svg]]  {
     id: String
     version: Long
@@ -62,10 +106,43 @@ interface CustomerGroupAssignmentsSetMessage [[CustomerGroupAssignmentsSetMessag
     customerGroupAssignments: [[CustomerGroupAssignment.svg List<CustomerGroupAssignment>]]
     oldCustomerGroupAssignments: [[CustomerGroupAssignment.svg List<CustomerGroupAssignment>]]
 }
+interface BusinessUnitCustomerGroupAssignmentsSetMessagePayload [[BusinessUnitCustomerGroupAssignmentsSetMessagePayload.svg]]  {
+    type: String
+    customerGroupAssignments: [[CustomerGroupAssignment.svg List<CustomerGroupAssignment>]]
+    oldCustomerGroupAssignments: [[CustomerGroupAssignment.svg List<CustomerGroupAssignment>]]
+}
 interface CustomerGroupAssignmentsSetMessagePayload [[CustomerGroupAssignmentsSetMessagePayload.svg]]  {
     type: String
     customerGroupAssignments: [[CustomerGroupAssignment.svg List<CustomerGroupAssignment>]]
     oldCustomerGroupAssignments: [[CustomerGroupAssignment.svg List<CustomerGroupAssignment>]]
+}
+interface BusinessUnitCustomerGroupAssignmentAddedMessage [[BusinessUnitCustomerGroupAssignmentAddedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    customerGroupAssignment: [[CustomerGroupAssignment.svg CustomerGroupAssignment]]
+}
+interface BusinessUnitCustomerGroupAssignmentRemovedMessage [[BusinessUnitCustomerGroupAssignmentRemovedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    customerGroupAssignment: [[CustomerGroupAssignment.svg CustomerGroupAssignment]]
 }
 interface CustomerGroupAssignmentAddedMessage [[CustomerGroupAssignmentAddedMessage.svg]]  {
     id: String
@@ -95,6 +172,14 @@ interface CustomerGroupAssignmentRemovedMessage [[CustomerGroupAssignmentRemoved
     resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
     customerGroupAssignment: [[CustomerGroupAssignment.svg CustomerGroupAssignment]]
 }
+interface BusinessUnitCustomerGroupAssignmentAddedMessagePayload [[BusinessUnitCustomerGroupAssignmentAddedMessagePayload.svg]]  {
+    type: String
+    customerGroupAssignment: [[CustomerGroupAssignment.svg CustomerGroupAssignment]]
+}
+interface BusinessUnitCustomerGroupAssignmentRemovedMessagePayload [[BusinessUnitCustomerGroupAssignmentRemovedMessagePayload.svg]]  {
+    type: String
+    customerGroupAssignment: [[CustomerGroupAssignment.svg CustomerGroupAssignment]]
+}
 interface CustomerGroupAssignmentAddedMessagePayload [[CustomerGroupAssignmentAddedMessagePayload.svg]]  {
     type: String
     customerGroupAssignment: [[CustomerGroupAssignment.svg CustomerGroupAssignment]]
@@ -104,13 +189,22 @@ interface CustomerGroupAssignmentRemovedMessagePayload [[CustomerGroupAssignment
     customerGroupAssignment: [[CustomerGroupAssignment.svg CustomerGroupAssignment]]
 }
 
+CustomerGroupAssignment --> BusinessUnit #green;text:green : "customerGroupAssignments"
 CustomerGroupAssignment --> Customer #green;text:green : "customerGroupAssignments"
+CustomerGroupAssignment --> BusinessUnitCustomerGroupAssignmentsSetMessage #green;text:green : "customerGroupAssignments"
+CustomerGroupAssignment --> BusinessUnitCustomerGroupAssignmentsSetMessage #green;text:green : "oldCustomerGroupAssignments"
 CustomerGroupAssignment --> CustomerGroupAssignmentsSetMessage #green;text:green : "customerGroupAssignments"
 CustomerGroupAssignment --> CustomerGroupAssignmentsSetMessage #green;text:green : "oldCustomerGroupAssignments"
+CustomerGroupAssignment --> BusinessUnitCustomerGroupAssignmentsSetMessagePayload #green;text:green : "customerGroupAssignments"
+CustomerGroupAssignment --> BusinessUnitCustomerGroupAssignmentsSetMessagePayload #green;text:green : "oldCustomerGroupAssignments"
 CustomerGroupAssignment --> CustomerGroupAssignmentsSetMessagePayload #green;text:green : "customerGroupAssignments"
 CustomerGroupAssignment --> CustomerGroupAssignmentsSetMessagePayload #green;text:green : "oldCustomerGroupAssignments"
+CustomerGroupAssignment --> BusinessUnitCustomerGroupAssignmentAddedMessage #green;text:green : "customerGroupAssignment"
+CustomerGroupAssignment --> BusinessUnitCustomerGroupAssignmentRemovedMessage #green;text:green : "customerGroupAssignment"
 CustomerGroupAssignment --> CustomerGroupAssignmentAddedMessage #green;text:green : "customerGroupAssignment"
 CustomerGroupAssignment --> CustomerGroupAssignmentRemovedMessage #green;text:green : "customerGroupAssignment"
+CustomerGroupAssignment --> BusinessUnitCustomerGroupAssignmentAddedMessagePayload #green;text:green : "customerGroupAssignment"
+CustomerGroupAssignment --> BusinessUnitCustomerGroupAssignmentRemovedMessagePayload #green;text:green : "customerGroupAssignment"
 CustomerGroupAssignment --> CustomerGroupAssignmentAddedMessagePayload #green;text:green : "customerGroupAssignment"
 CustomerGroupAssignment --> CustomerGroupAssignmentRemovedMessagePayload #green;text:green : "customerGroupAssignment"
 @enduml
