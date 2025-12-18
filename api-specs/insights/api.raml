@@ -1,0 +1,854 @@
+#%RAML 1.0
+---
+title: commercetools Composable Commerce insights API
+annotationTypes: !include annotations.raml
+(products):
+  - Composable Commerce
+baseUri: https://api.{region}.commercetools.com
+(sdkBaseUri): https://api.europe-west1.gcp.commercetools.com
+baseUriParameters:
+  region:
+    type: string
+    enum:
+      - us-central1.gcp
+      - us-east-2.aws
+      - europe-west1.gcp
+      - eu-central-1.aws
+      - australia-southeast1.gcp
+    description: |
+      [Region](/../api/general-concepts#hosts) in which the Project is hosted.
+version: v1
+securitySchemes:
+  oauth_2_0: !include securitySchemes/oauth2.raml
+securedBy: [oauth_2_0]
+
+mediaType: application/json
+traits:
+  errorable: !include traits/errorable.raml
+resourceTypes:
+  base:
+    get?:
+      is:
+        - errorable
+    put?:
+      is:
+        - errorable
+    delete?:
+      is:
+        - errorable
+
+types:
+  ProjectConfigurationDraft:
+    (package): Configuration
+    type: object
+    displayName: ProjectConfigurationDraft
+    properties:
+      active?:
+        type: boolean
+        description: |
+          If `true`, the Platform Insights configuration for your Project is active.
+      providers:
+        type: ProviderDraft[]
+        maxItems: 5
+        description: |
+          List of supported APM providers.
+        (uniqueProperty): 'type'
+      additionalAttributes?:
+        type: AttributeDraft[]
+        maxItems: 10
+        (uniqueProperty): 'name'
+        description: |
+          List of Attributes to add to a metric.
+    example:
+      {
+        'providers':
+          [
+            {
+              'type': 'NewRelic',
+              'eventTypes': ['Metrics'],
+              'region': 'eu',
+              'apiKey': 'euNR12345',
+            },
+          ],
+      }
+    description: |
+      Draft to create a Platform Insights configuration for your Project.
+  ConfigurationUpdate:
+    (package): Configuration
+    type: object
+    properties:
+      actions:
+        type: ConfigurationUpdateAction[]
+    description: |
+      Update actions to be performed on the Platform Insights configuration for your Project.
+    example: { 'actions': [{ 'action': 'activate' }] }
+  ConfigurationUpdateAction:
+    (package): Configuration
+    type: object
+    discriminator: action
+    properties:
+      action:
+        type: string
+    example: { 'action': 'activate' }
+  ConfigurationActivateAction:
+    (package): Configuration
+    type: ConfigurationUpdateAction
+    discriminatorValue: 'activate'
+    example: { 'action': 'activate' }
+    description: |
+      Activates a Platform Insights configuration for your Project.
+  ConfigurationDeactivateAction:
+    (package): Configuration
+    type: ConfigurationUpdateAction
+    discriminatorValue: 'deactivate'
+    example: { 'action': 'deactivate' }
+    description: |
+      Deactivates a Platform Insights configuration for your Project.
+  ConfigurationSetActiveAction:
+    (package): Configuration
+    type: ConfigurationUpdateAction
+    discriminatorValue: 'setActive'
+    example: { 'action': 'setActive', 'provider': 'NewRelic', 'active': true }
+    description: |
+      Activates a provider Platform Insights configuration for your Project.
+    properties:
+      provider:
+        type: ProviderTypeId
+      active:
+        type: boolean
+  ConfigurationRemoveProviderAction:
+    (package): Configuration
+    type: ConfigurationUpdateAction
+    discriminatorValue: 'removeProvider'
+    properties:
+      provider:
+        type: ProviderTypeId
+    example: { 'action': 'removeProvider', 'provider': 'NewRelic' }
+    description: |
+      Removes an APM provider from a Platform Insights configuration for your Project.
+  ConfigurationSetEventTypesAction:
+    (package): Configuration
+    type: ConfigurationUpdateAction
+    discriminatorValue: 'setEventTypes'
+    properties:
+      provider:
+        type: ProviderTypeId
+        description: |
+          Provider to be updated in the Platform Insights configuration for your Project.
+      eventTypes:
+        type: EventType[]
+        description: |
+          List of eventTypes to be used for this provider.
+    example:
+      {
+        'action': 'setEventTypes',
+        'provider': 'NewRelic',
+        'eventTypes': ['Logs', 'Metrics'],
+      }
+  ConfigurationSetProviderAction:
+    (package): Configuration
+    type: ConfigurationUpdateAction
+    discriminatorValue: 'setProvider'
+    properties:
+      provider:
+        type: ProviderDraft
+        description: |
+          New APM provider to be set for your Platform Insights configuration.
+    example:
+      {
+        'action': 'setProvider',
+        'provider':
+          {
+            'type': 'NewRelic',
+            'eventTypes': ['Metrics'],
+            'region': 'eu',
+            'apiKey': 'euNR12345',
+          },
+      }
+    description: |
+      Sets an APM provider to a Platform Insights configuration for your Project.
+  ConfigurationSetAttributesAction:
+    (package): Configuration
+    type: ConfigurationUpdateAction
+    discriminatorValue: 'setAttributes'
+    properties:
+      attributes:
+        type: AttributeDraft[]
+        description: |
+          List of Attributes to be set for the events of your Platform Insights configuration.
+    example:
+      {
+        'action': 'setAttributes',
+        'attributes':
+          [
+            {
+              'type': 'String',
+              'eventType': 'Metrics',
+              'name': 'team',
+              'value': 'commercetools',
+            },
+          ],
+      }
+    description: |
+      Sets the Attributes that are to be added to the events of your Platform Insights configuration.
+  ConfigurationAddAttributeAction:
+    (package): Configuration
+    type: ConfigurationUpdateAction
+    discriminatorValue: 'addAttribute'
+    properties:
+      attribute:
+        type: AttributeDraft
+        description: |
+          Attribute to be set for your Platform Insights configuration.
+    example:
+      {
+        'action': 'addAttribute',
+        'attribute':
+          {
+            'type': 'String',
+            'eventType': 'Metrics',
+            'name': 'team',
+            'value': 'commercetools',
+          },
+      }
+    description: |
+      Adds Attributes that are to be included in the events of your Platform Insights configuration.
+  ConfigurationRemoveAttributeAction:
+    (package): Configuration
+    type: ConfigurationUpdateAction
+    discriminatorValue: 'removeAttribute'
+    properties:
+      attribute:
+        type: string
+        description: |
+          Attribute to be removed from your Platform Insights configuration.
+    example: { 'action': 'removeAttribute', 'attribute': 'name' }
+    description: |
+      Removes Attributes from your Platform Insights configuration.
+  EventType:
+    (package): Configuration
+    type: string
+    enum:
+      - Logs
+      - Metrics
+    description: |
+      List of event types to be exported to a supported APM provider.
+  ProviderTypeId:
+    (package): Configuration
+    type: string
+    enum:
+      - NewRelic
+      - DynatraceSaaS
+      - DynatraceActiveGate
+      - Datadog
+      - Otlp
+      - OtlpHttp
+    description: |
+      List of supported APM providers for your Platform Insights configuration.
+  ProviderDraft:
+    (package): Configuration
+    type: object
+    discriminator: type
+    properties:
+      active?:
+        type: boolean
+        description: |
+          If `true`, this provider configuration is active.
+      type:
+        type: ProviderTypeId
+        description: |
+          APM provider for your Platform Insights configuration.
+      eventTypes:
+        type: EventType[]
+        description: |
+          List of event types to be exported to the APM provider.
+    description: |
+      APM provider details for your Platform Insights configuration.
+  NewRelicProviderDraft:
+    (package): Configuration
+    type: ProviderDraft
+    discriminatorValue: NewRelic
+    properties:
+      region:
+        type: NewRelicRegion
+        description: |
+          Region in which your NewRelic account is based. For example, EU.
+      apiKey?:
+        type: string
+        description: |
+          API key (type `Ingest - License`) that's used to authenticate your NewRelic account. If you don't specify the API key, an existing key will
+          be kept.
+    example:
+      {
+        'type': 'NewRelic',
+        'region': 'eu',
+        'apiKey': 'euNR12345',
+        'eventTypes': ['Metrics'],
+      }
+  DynatraceSaaSProviderDraft:
+    (package): Configuration
+    type: ProviderDraft
+    discriminatorValue: DynatraceSaaS
+    properties:
+      environmentId:
+        type: string
+        pattern: ^[^.|\\\/:'"`#?]+$
+        description: |
+          Unique user-defined environment identifier of your DynatraceSaaS account.
+      apiKey?:
+        type: string
+        description: |
+          API key used to authenticate your DynatraceSaaS account. The required scopes are `Ingest-Logs` and `Ingest-Metrics`.
+          If you don't specify the API key, an existing key will be kept.
+    example:
+      {
+        'type': 'DynatraceSaaS',
+        'environmentId': 'dtMyEnvironment',
+        'apiKey': 'dtabc1234',
+        'eventTypes': ['Metrics'],
+      }
+  DynatraceActiveGateProviderDraft:
+    (package): Configuration
+    type: ProviderDraft
+    discriminatorValue: DynatraceActiveGate
+    properties:
+      activeGateDomain:
+        type: string
+        pattern: ^[^|\\\/:#?'"`]+$
+        description: |
+          Your ActiveGate domain.
+      activeGatePort?:
+        type: number
+        description: |
+          Your ActiveGate domain port.
+      environmentId:
+        type: string
+        pattern: ^[^.|\\\/:'"`#?]+$
+        description: |
+          Unique user-defined environment identifier of your DynatraceActiveGate account.
+      apiKey?:
+        type: string
+        description: |
+          API key used to authenticate your DynatraceActiveGate account. The required scopes are `Ingest-Logs` and `Ingest-Metrics`
+          If you don't specify the API key, an existing key will be kept.
+    example:
+      {
+        'type': 'DynatraceActiveGate',
+        'activeGateDomain': 'my-active-gate.example.com',
+        'environmentId': 'dtMyEnvironment',
+        'apiKey': 'dtabc1234',
+        'eventTypes': ['Metrics'],
+      }
+  DatadogProviderDraft:
+    (package): Configuration
+    type: ProviderDraft
+    discriminatorValue: Datadog
+    properties:
+      site:
+        type: DatadogSite
+        description: |
+          Website in which your Datadog account is hosted.
+      apiKey?:
+        type: string
+        description: |
+          API key used to authenticate your Datadog account. If you don't specify the API key, an existing key will be kept.
+    example:
+      {
+        'type': 'Datadog',
+        'site': 'US1',
+        'apiKey': 'ddApiKey12345',
+        'eventTypes': ['Metrics'],
+      }
+  OtlpProvider:
+    (package): Configuration
+    type: Provider
+    discriminatorValue: Otlp
+    properties:
+      endpoint:
+        type: string
+        description: |
+          Destination for your OpenTelemetry Protocol (OTLP) provider.
+      headers:
+        type: OtlpProviderHeader[]
+        description: |
+          Headers configured for connecting to your OTLP provider.
+    example:
+      {
+        'type': 'Otlp',
+        'active': true,
+        'endpoint': 'https://myotlpprovider.com:14317',
+        'headers': [{ 'name': 'api-key' }],
+        'eventTypes': ['Metrics'],
+      }
+  OtlpHttpProvider:
+    (package): Configuration
+    type: Provider
+    discriminatorValue: OtlpHttp
+    properties:
+      endpoint:
+        type: string
+        description: |
+          Destination for your OpenTelemetry Protocol (OTLP) provider.
+      headers:
+        type: OtlpProviderHeader[]
+        description: |
+          Headers configured for connecting to your OTLP provider.
+    example:
+      {
+        'type': 'OtlpHttp',
+        'active': true,
+        'endpoint': 'https://myotlpprovider.com:14318',
+        'headers': [{ 'name': 'api-key' }],
+        'eventTypes': ['Metrics'],
+      }
+  OtlpProviderHeader:
+    (package): Configuration
+    type: object
+    properties:
+      name:
+        type: string
+        description: |
+          Name of the header.
+  OtlpProviderDraft:
+    (package): Configuration
+    type: ProviderDraft
+    discriminatorValue: Otlp
+    properties:
+      endpoint:
+        type: string
+        description: |
+          Destination for your OpenTelemetry Protocol (OTLP) provider.
+      headers?:
+        type: OtlpProviderHeaderDraft[]
+        description: |
+          Headers configured for connecting to your OTLP provider.
+    example:
+      {
+        'type': 'Otlp',
+        'endpoint': 'https://myotlpprovider.com:14317',
+        'headers': [{ 'name': 'api-key', 'value': 'apiKey1234' }],
+        'eventTypes': ['Metrics'],
+      }
+  OtlpHttpProviderDraft:
+    (package): Configuration
+    type: ProviderDraft
+    discriminatorValue: OtlpHttp
+    properties:
+      endpoint:
+        type: string
+        description: |
+          Destination for your OpenTelemetry Protocol (OTLP) provider.
+      headers?:
+        type: OtlpProviderHeaderDraft[]
+        description: |
+          Headers configured for connecting to your OTLP provider.
+    example:
+      {
+        'type': 'OtlpHttp',
+        'endpoint': 'https://myotlpprovider.com:14318',
+        'headers': [{ 'name': 'api-key', 'value': 'apiKey1234' }],
+        'eventTypes': ['Metrics'],
+      }
+  OtlpProviderHeaderDraft:
+    (package): Configuration
+    type: object
+    properties:
+      name:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9-_]*$
+        description: |
+          Name of the header.
+      value:
+        type: string
+        pattern: ^[^']+$
+        description: |
+          Value of the header.
+  ServiceRegion:
+    (package): Configuration
+    type: string
+    description: |
+      Region where your Platform Insights configuration is being run.
+    enum:
+      - local-dev
+      - ctp-gcp-production-us-v1
+      - ctp-gcp-production-eu-v1
+      - ctp-production-au
+      - ctp-aws-production-fra
+      - ctp-aws-production-ohio
+      - ctp-gcp-performance-test
+      - ctp-staging
+  ProjectConfiguration:
+    (package): Configuration
+    type: object
+    properties:
+      active:
+        type: boolean
+        description: |
+          If `true`, the Platform Insights configuration is active.
+      projectKey:
+        type: string
+        description: |
+          User-defined unique identifier of the Project.
+      providers:
+        type: Provider[]
+        description: |
+          List of supported APM providers.
+      lastModifiedAt:
+        type: datetime
+        description: |
+          Date and time (UTC) on which the Platform Insights configuration was last updated.
+      lastModifiedBy?:
+        type: ClientLogging
+        description: |
+          User IDs and references who last modified the Platform Insights configuration.
+      additionalAttributes?:
+        type: Attribute[]
+        (uniqueProperty): 'name'
+        description: |
+          List of Attributes to add to a metric.
+    example:
+      {
+        'active': true,
+        'projectKey': 'my-project-key',
+        'lastModifiedAt': '2024-12-12T12:01:03.000Z',
+        'providers':
+          [
+            {
+              'type': 'NewRelic',
+              'active': true,
+              'region': 'eu',
+              'eventTypes': ['Metrics'],
+            },
+          ],
+      }
+    description: |
+      Platform Insights configuration of your Project.
+  ClientLogging:
+    (package): Configuration
+    displayName: ClientLogging
+    type: object
+    properties:
+      clientId?:
+        type: string
+        description: |
+          `id` of the [API Client](ctp:api:type:ApiClient) that created the resource.
+  InternalProjectConfiguration:
+    (package): Configuration
+    type: object
+    properties:
+      active:
+        type: boolean
+      projectKey:
+        type: string
+      serviceRegion:
+        type: ServiceRegion
+      providers:
+        type: ProviderDraft[]
+        maxItems: 5
+      additionalAttributes?:
+        type: Attribute[]
+        maxItems: 10
+        (uniqueProperty): 'name'
+        description: |
+          List of Attributes to add to a metric.
+      lastModifiedAt?:
+        type: datetime
+        description: |
+          Date and time (UTC) on which the Platform Insights configuration was last updated.
+      lastModifiedBy?:
+        type: ClientLogging
+        description: |
+          User IDs and references who last modified the Platform Insights configuration.
+    example:
+      {
+        'active': true,
+        'projectKey': 'my-project-key',
+        'serviceRegion': 'ctp-gcp-production-eu-v1',
+        'providers':
+          [
+            {
+              'type': 'NewRelic',
+              'region': 'eu',
+              'eventTypes': ['Metrics'],
+              'apiKey': 'abc',
+            },
+          ],
+      }
+  Provider:
+    (package): Configuration
+    type: object
+    discriminator: type
+    properties:
+      type: ProviderTypeId
+      active:
+        type: boolean
+        description: |
+          If `true`, this provider configuration is active.
+      valid?:
+        type: boolean
+        description: |
+          If `true`, it's possible to send metrics to the APM provider.
+      eventTypes:
+        type: EventType[]
+        description: |
+          List of event types to be exported to a supported APM provider.
+  NewRelicRegion:
+    (package): Configuration
+    type: string
+    description: |
+      List of regions where NewRelic is hosted.
+    enum:
+      - 'eu'
+      - 'us'
+  NewRelicProvider:
+    (package): Configuration
+    type: Provider
+    discriminatorValue: NewRelic
+    properties:
+      region:
+        type: NewRelicRegion
+        description: |
+          Region where your NewRelic account is hosted. For example, EU.
+    example:
+      {
+        'type': 'NewRelic',
+        'active': true,
+        'region': 'eu',
+        'eventTypes': ['Metrics'],
+      }
+  DynatraceSaaSProvider:
+    (package): Configuration
+    type: Provider
+    discriminatorValue: DynatraceSaaS
+    properties:
+      environmentId:
+        type: string
+        description: |
+          Unique user-defined environment identifier of your DynatraceSaaS account.
+    example:
+      {
+        'type': 'DynatraceSaaS',
+        'active': true,
+        'environmentId': 'dtMyEnvironment',
+        'eventTypes': ['Metrics'],
+      }
+  DynatraceActiveGateProvider:
+    (package): Configuration
+    type: Provider
+    discriminatorValue: DynatraceActiveGate
+    properties:
+      activeGateDomain:
+        type: string
+        description: |
+          Your ActiveGate domain.
+      activeGatePort?:
+        type: number
+        description: |
+          Your ActiveGate domain port.
+      environmentId:
+        type: string
+        description: |
+          Unique user-defined environment identifier of your DynatraceSaaS account.
+    example:
+      {
+        'type': 'DynatraceActiveGate',
+        'active': true,
+        'activeGateDomain': 'my-active-gate.example.com',
+        'environmentId': 'dtMyEnvironment',
+        'eventTypes': ['Metrics'],
+      }
+  DatadogSite:
+    (package): Configuration
+    type: string
+    enum:
+      - US1
+      - US3
+      - US5
+      - EU1
+      - 'US1-FED'
+      - AP1
+  DatadogProvider:
+    (package): Configuration
+    type: Provider
+    discriminatorValue: Datadog
+    properties:
+      site:
+        type: DatadogSite
+        description: |
+          Website where your Datadog account is hosted.
+    example:
+      {
+        'type': 'Datadog',
+        'active': true,
+        'site': 'US1',
+        'eventTypes': ['Metrics'],
+      }
+  AttributeTypeId:
+    (package): Configuration
+    type: string
+    enum:
+      - String
+  Attribute:
+    (package): Configuration
+    type: object
+    discriminator: type
+    properties:
+      eventType:
+        type: EventType
+      type:
+        type: AttributeTypeId
+      name:
+        type: string
+  AttributeDraft:
+    (package): Configuration
+    type: object
+    discriminator: type
+    properties:
+      eventType:
+        type: EventType
+      type:
+        type: AttributeTypeId
+      name:
+        type: string
+        maxLength: 30
+  StringAttributeDraft:
+    (package): Configuration
+    type: AttributeDraft
+    discriminatorValue: 'String'
+    properties:
+      value:
+        type: string
+        maxLength: 100
+  StringAttribute:
+    (package): Configuration
+    type: Attribute
+    discriminatorValue: 'String'
+    properties:
+      value:
+        type: string
+  ErrorResponse:
+    (package): Error
+    type: object
+    displayName: ErrorResponse
+    description: |
+      Base representation of an error response containing common fields for all errors.
+    example: !include ./examples/error.example.json
+    (ignoreValidators): [PolymorphicSubtypesRule]
+    properties:
+      statusCode:
+        type: integer
+        description: |
+          HTTP status code corresponding to the error.
+      error?:
+        type: string
+        description: |
+          Type of error.
+      message:
+        type: string
+        description: |
+          First error message in the `errors` array.
+      errors?:
+        type: array
+        items: ErrorObject
+        description: |
+          Errors returned for a request.
+
+          A single error response can contain multiple errors if the errors are related to the same HTTP status code, such as `400`.
+  ErrorObject:
+    (package): Error
+    type: object
+    displayName: ErrorObject
+    discriminator: code
+    description: Represents a single error. Multiple errors might be included in an [ErrorResponse](ctp:api:type:ErrorResponse).
+    properties:
+      code:
+        type: string
+        description: |
+          Identifier of the error.
+      message:
+        type: string
+        description: |
+          Plain-text description that describes the cause of the error.
+      //:
+        type: any
+        description: |
+          Error-specific additional fields.
+  InvalidJsonInputError:
+    (package): Error
+    type: ErrorObject
+    displayName: InvalidJsonInputError
+    discriminatorValue: InvalidJsonInput
+    description: |
+      Returned when an invalid JSON input is sent.
+      This error occurs when the JSON file is syntactically incorrect or doesn't conform to the expected shape (for example, a required field is missing from the file).
+
+      The client application validates the input according to the constraints described in the error message before sending the request.
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+        description: |
+          `"Request body does not contain a valid JSON."`
+      detailedErrorMessage?:
+        type: string
+        description: Detailed error message that explains the reason why the JSON file is invalid.
+/{projectKey}:
+  (methodName): withProjectKey
+  uriParameters:
+    projectKey:
+      type: string
+      description: '`key` of the [Project](ctp:api:type:Project).'
+  displayName: Project
+  type: base
+  /insights-configuration:
+    type: base
+    get:
+      securedBy: [oauth_2_0: { scopes: ['manage_project:{projectKey}'] }]
+      displayName: Query insights project configuration
+      description: |
+        Retrieve the Platform Insights configuration for your Project.
+      responses:
+        200:
+          body:
+            application/json:
+              type: ProjectConfiguration
+              example: !include ./examples/project-configuration.example.json
+    post:
+      securedBy: [oauth_2_0: { scopes: ['manage_project:{projectKey}'] }]
+      description: |
+        Perform specific update actions, such as enabling or disabling an existing Platform Insights configuration. After you enable or disable a Platform Insights configuration, the action is performed in an [eventually consistent](/general-concepts#eventual-consistency) way.
+      body:
+        application/json:
+          type: ConfigurationUpdate
+          example: !include ./examples/configuration-update.example.json
+      responses:
+        200:
+          body:
+            application/json:
+              type: ProjectConfiguration
+              example: !include ./examples/project-configuration.example.json
+    put:
+      securedBy: [oauth_2_0: { scopes: ['manage_project:{projectKey}'] }]
+      description: |
+        Create or update a Platform Insights configuration. After you create a Platform Insights configuration, it becomes active in an [eventually consistent](/general-concepts#eventual-consistency) way.
+      body:
+        application/json:
+          type: ProjectConfigurationDraft
+          example: !include ./examples/project-configuration-draft.example.json
+      responses:
+        200:
+          body:
+            application/json:
+              type: ProjectConfiguration
+              example: !include ./examples/project-configuration.example.json
+    delete:
+      securedBy: [oauth_2_0: { scopes: ['manage_project:{projectKey}'] }]
+      description: |
+        Delete the Platform Insights configuration details of your Project. After you delete a Platform Insights configuration, it is deleted in an [eventually consistent](/general-concepts#eventual-consistency) way.
+      responses:
+        200:
+          body:
+            application/json:
+              type: ProjectConfiguration
+              example: !include ./examples/project-configuration.example.json
