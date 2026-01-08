@@ -44244,6 +44244,8 @@ components:
             deleteDaysAfterLastModification:
               type: "integer"
               format: "int32"
+            purchaseOrderNumber:
+              type: "string"
             lastModifiedBy:
               $ref: '#/components/schemas/LastModifiedBy'
             createdBy:
@@ -44326,6 +44328,8 @@ components:
           format: "int64"
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
+        purchaseOrderNumber:
+          type: "string"
     CartMergeMode:
       type: "string"
       enum:
@@ -44505,6 +44509,7 @@ components:
           setLineItemTaxRate: '#/components/schemas/CartSetLineItemTaxRateAction'
           setLineItemTotalPrice: '#/components/schemas/CartSetLineItemTotalPriceAction'
           setLocale: '#/components/schemas/CartSetLocaleAction'
+          setPurchaseOrderNumber: '#/components/schemas/CartSetPurchaseOrderNumberAction'
           setShippingAddress: '#/components/schemas/CartSetShippingAddressAction'
           setShippingAddressCustomField: '#/components/schemas/CartSetShippingAddressCustomFieldAction'
           setShippingAddressCustomType: '#/components/schemas/CartSetShippingAddressCustomTypeAction'
@@ -46325,6 +46330,15 @@ components:
               type: "string"
             locale:
               $ref: '#/components/schemas/Locale'
+    CartSetPurchaseOrderNumberAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            purchaseOrderNumber:
+              type: "string"
     CartSetShippingAddressAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -58183,6 +58197,42 @@ components:
               type: "string"
             resourceUserProvidedIdentifiers:
               $ref: '#/components/schemas/UserProvidedIdentifiers'
+    CartPurchaseOrderNumberSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            purchaseOrderNumber:
+              type: "string"
+            oldPurchaseOrderNumber:
+              type: "string"
     CartUnfrozenMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -60820,6 +60870,7 @@ components:
               CartDiscountStoreRemoved: '#/components/schemas/CartDiscountStoreRemovedMessage'
               CartDiscountStoresSet: '#/components/schemas/CartDiscountStoresSetMessage'
               CartFrozen: '#/components/schemas/CartFrozenMessage'
+              CartPurchaseOrderNumberSet: '#/components/schemas/CartPurchaseOrderNumberSetMessage'
               CartUnfrozen: '#/components/schemas/CartUnfrozenMessage'
               CategoryCreated: '#/components/schemas/CategoryCreatedMessage'
               CategorySlugChanged: '#/components/schemas/CategorySlugChangedMessage'
@@ -69051,6 +69102,17 @@ components:
           properties:
             type:
               type: "string"
+    CartPurchaseOrderNumberSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            purchaseOrderNumber:
+              type: "string"
+            oldPurchaseOrderNumber:
+              type: "string"
     CartUnfrozenMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -70001,6 +70063,7 @@ components:
           CartDiscountStoreRemoved: '#/components/schemas/CartDiscountStoreRemovedMessagePayload'
           CartDiscountStoresSet: '#/components/schemas/CartDiscountStoresSetMessagePayload'
           CartFrozen: '#/components/schemas/CartFrozenMessagePayload'
+          CartPurchaseOrderNumberSet: '#/components/schemas/CartPurchaseOrderNumberSetMessagePayload'
           CartUnfrozen: '#/components/schemas/CartUnfrozenMessagePayload'
           CategoryCreated: '#/components/schemas/CategoryCreatedMessagePayload'
           CategorySlugChanged: '#/components/schemas/CategorySlugChangedMessagePayload'
