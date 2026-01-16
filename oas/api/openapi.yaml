@@ -44241,6 +44241,8 @@ components:
               $ref: '#/components/schemas/CustomFields'
             discountTypeCombination:
               $ref: '#/components/schemas/DiscountTypeCombination'
+            lock:
+              $ref: '#/components/schemas/CartLock'
             deleteDaysAfterLastModification:
               type: "integer"
               format: "int32"
@@ -44329,6 +44331,17 @@ components:
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
         purchaseOrderNumber:
+          type: "string"
+    CartLock:
+      type: "object"
+      required:
+        - clientId
+        - createdAt
+      properties:
+        createdAt:
+          type: "string"
+          format: "datetime"
+        clientId:
           type: "string"
     CartMergeMode:
       type: "string"
@@ -44466,6 +44479,7 @@ components:
           changeTaxMode: '#/components/schemas/CartChangeTaxModeAction'
           changeTaxRoundingMode: '#/components/schemas/CartChangeTaxRoundingModeAction'
           freezeCart: '#/components/schemas/CartFreezeCartAction'
+          lockCart: '#/components/schemas/CartLockCartAction'
           recalculate: '#/components/schemas/CartRecalculateAction'
           removeCustomLineItem: '#/components/schemas/CartRemoveCustomLineItemAction'
           removeDiscountCode: '#/components/schemas/CartRemoveDiscountCodeAction'
@@ -44520,6 +44534,7 @@ components:
           setShippingMethodTaxRate: '#/components/schemas/CartSetShippingMethodTaxRateAction'
           setShippingRateInput: '#/components/schemas/CartSetShippingRateInputAction'
           unfreezeCart: '#/components/schemas/CartUnfreezeCartAction'
+          unlockCart: '#/components/schemas/CartUnlockCartAction'
           updateItemShippingAddress: '#/components/schemas/CartUpdateItemShippingAddressAction'
       required:
         - action
@@ -45785,6 +45800,13 @@ components:
           properties:
             action:
               type: "string"
+    CartLockCartAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
     CartRecalculateAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -46443,6 +46465,13 @@ components:
             shippingRateInput:
               $ref: '#/components/schemas/ShippingRateInputDraft'
     CartUnfreezeCartAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+    CartUnlockCartAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
         - type: "object"
