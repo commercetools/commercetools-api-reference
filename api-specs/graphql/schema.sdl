@@ -1836,6 +1836,7 @@ type Cart implements Versioned & ReferenceExpandable {
   discountTypeCombination: DiscountTypeCombination
   cartState: CartState!
   key: String
+  lock: CartLock
   custom: CustomFieldsType
   deleteDaysAfterLastModification: Int
   totalLineItemQuantity: Long
@@ -2114,6 +2115,12 @@ type CartLimitsProjection {
   total: CartLimitWithCurrent!
 }
 
+"Prevents edits on a Cart unless the caller has the `manage_locked_carts` OAuth scope."
+type CartLock {
+  createdAt: DateTime!
+  clientId: String!
+}
+
 enum CartMergeMode {
   """
   `LineItem`s of the anonymous cart will be copied to the customer’s active cart that has been modified most recently.
@@ -2253,6 +2260,8 @@ input CartUpdateAction {
   updateItemShippingAddress: UpdateCartItemShippingAddress
   freezeCart: FreezeCart
   unfreezeCart: UnfreezeCart
+  lockCart: LockCart
+  unlockCart: UnlockCart
   applyDeltaToLineItemShippingDetailsTargets: ApplyCartDeltaToLineItemShippingDetailsTargets
   applyDeltaToCustomLineItemShippingDetailsTargets: ApplyCartDeltaToCustomLineItemShippingDetailsTargets
   addLineItem: AddCartLineItem
@@ -5847,6 +5856,10 @@ type LocalizedStringType implements FieldType {
 type Location {
   country: Country!
   state: String
+}
+
+input LockCart {
+  dummy: String
 }
 
 "The `Long` scalar type represents non-fractional signed whole numeric values. Long can represent values between -(2^63) and 2^63 - 1."
@@ -16793,6 +16806,10 @@ input TypeUpdateAction {
 }
 
 input UnfreezeCart {
+  dummy: String
+}
+
+input UnlockCart {
   dummy: String
 }
 
