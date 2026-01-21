@@ -5,7 +5,19 @@ displayName: CartFreezeCartAction
 discriminatorValue: freezeCart
 example: !include ../../../examples/Cart/CartFreezeCartAction.json
 description: |
-  Changes the [CartState](ctp:api:type:CartState) from `Active` to `Frozen`. Results in a [Frozen Cart](ctp:api:type:FrozenCarts).
-  Fails with [InvalidOperation](ctp:api:type:InvalidOperationError) error when the Cart is empty.
 
-  Freezing a Cart produces the [CartFrozen](ctp:api:type:CartFrozenMessage) Message.
+  Freezes the Cart based on the provided [FreezeStrategy](ctp:api:type:FreezeStrategy).
+
+  The following behavior occurs:
+    - Changes the Cart State from `Active` to `Frozen`.
+    - Sets the corresponding [FreezeStrategy](ctp:api:type:FreezeStrategy) on the Cart's `freezeStrategy` field.
+    - Produces the [CartFrozen](ctp:api:type:CartFrozenMessage) Message.
+
+  If the Cart is empty, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
+
+properties:
+  strategy?:
+    type: FreezeStrategy
+    description: |
+      Strategy that determines the freezing behavior.
+    default: SoftFreeze
