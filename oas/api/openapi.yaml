@@ -44195,6 +44195,8 @@ components:
               $ref: '#/components/schemas/InventoryMode'
             cartState:
               $ref: '#/components/schemas/CartState'
+            freezeStrategy:
+              $ref: '#/components/schemas/FreezeStrategy'
             billingAddress:
               $ref: '#/components/schemas/Address'
             shippingAddress:
@@ -44440,7 +44442,10 @@ components:
          CustomLineItem Quantity](ctp:api:type:CartChangeCustomLineItemQuantityAction)n
           - [Remove CustomLineItem](ctp:api:type:CartRemoveCustomLineItemAction)n  - [Change
          TaxMode](ctp:api:type:CartChangeTaxModeAction)n  - [Set LineItem Price](ctp:api:type:CartSetLineItemPriceAction)n
-          - [Set LineItem TotalPrice](ctp:api:type:CartSetLineItemTotalPriceAction)n"
+          - [Set LineItem TotalPrice](ctp:api:type:CartSetLineItemTotalPriceAction)nn
+        Additionally, when using the `HardFreeze` [FreezeStrategy](ctp:api:type:FreezeStrategy),
+         the following update actions are also not allowed:n  - [Set ShippingMethod](ctp:api:type:CartSetShippingMethodAction)n
+          - [Set CustomShippingMethod](ctp:api:type:CartSetCustomShippingMethodAction)n"
     CartUpdate:
       type: "object"
       required:
@@ -44892,6 +44897,19 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/SubRate'
+    FreezeStrategy:
+      type: "string"
+      enum:
+        - SoftFreeze
+        - HardFreeze
+      x-annotation-package: "Cart"
+      x-annotation-enumDescriptions:
+        SoftFreeze: "More lenient Cart freeze strategy that locks prices as they were when
+         the Cart was frozen. This is the default strategy when not explicitly specified,
+         ensuring backwards compatibility.n"
+        HardFreeze: "Stricter Cart freeze strategy that, in addition to the `SoftFreeze` behavior,
+         also freezes Cart Discounts, Discount Codes, and Shipping Methods, ensuring the
+         final price remains unchanged.n"
     InventoryMode:
       type: "string"
       enum:
@@ -45800,6 +45818,8 @@ components:
           properties:
             action:
               type: "string"
+            strategy:
+              $ref: '#/components/schemas/FreezeStrategy'
     CartLockCartAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'

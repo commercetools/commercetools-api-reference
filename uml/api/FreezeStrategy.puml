@@ -1,20 +1,10 @@
 @startuml
 
-hide empty fields
-hide empty methods
-legend
-|= |= line |
-|<back:black>   </back>| inheritance |
-|<back:green>   </back>| property reference |
-|<back:blue>   </back>| discriminated class |
-endlegend
-interface CartLock [[CartLock.svg]]  {
-    createdAt: DateTime
-    clientId: String
+hide methods
+enum FreezeStrategy {
+    SOFT_FREEZE
+    HARD_FREEZE
 }
-
-
-
 interface Cart [[Cart.svg]]  {
     id: String
     version: Long
@@ -65,6 +55,10 @@ interface Cart [[Cart.svg]]  {
     lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
     createdBy: [[CreatedBy.svg CreatedBy]]
 }
-
-CartLock --> Cart #green;text:green : "lock"
+interface CartFreezeCartAction [[CartFreezeCartAction.svg]]  {
+    action: String
+    strategy: [[FreezeStrategy.svg FreezeStrategy]]
+}
+FreezeStrategy --> Cart #green;text:green : "freezeStrategy"
+FreezeStrategy --> CartFreezeCartAction #green;text:green : "strategy"
 @enduml
