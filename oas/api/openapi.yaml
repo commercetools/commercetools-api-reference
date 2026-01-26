@@ -43335,6 +43335,7 @@ components:
             - isActive
             - lastModifiedAt
             - name
+            - recurringOrderScope
             - references
             - requiresDiscountCode
             - sortOrder
@@ -43396,6 +43397,8 @@ components:
               $ref: '#/components/schemas/CustomFields'
             discountGroup:
               $ref: '#/components/schemas/DiscountGroupReference'
+            recurringOrderScope:
+              $ref: '#/components/schemas/RecurringOrderScope'
     CartDiscountCustomLineItemsTarget:
       allOf:
         - $ref: '#/components/schemas/CartDiscountTarget'
@@ -43448,6 +43451,8 @@ components:
           $ref: '#/components/schemas/CustomFieldsDraft'
         discountGroup:
           $ref: '#/components/schemas/DiscountGroupResourceIdentifier'
+        recurringOrderScope:
+          $ref: '#/components/schemas/RecurringOrderScopeDraft'
     CartDiscountLineItemsTarget:
       allOf:
         - $ref: '#/components/schemas/CartDiscountTarget'
@@ -43595,6 +43600,7 @@ components:
           setDescription: '#/components/schemas/CartDiscountSetDescriptionAction'
           setDiscountGroup: '#/components/schemas/CartDiscountSetDiscountGroupAction'
           setKey: '#/components/schemas/CartDiscountSetKeyAction'
+          setRecurringOrderScope: '#/components/schemas/CartDiscountSetRecurringOrderScopeAction'
           setStores: '#/components/schemas/CartDiscountSetStoresAction'
           setValidFrom: '#/components/schemas/CartDiscountSetValidFromAction'
           setValidFromAndUntil: '#/components/schemas/CartDiscountSetValidFromAndUntilAction'
@@ -44056,6 +44062,17 @@ components:
               type: "string"
             key:
               type: "string"
+    CartDiscountSetRecurringOrderScopeAction:
+      allOf:
+        - $ref: '#/components/schemas/CartDiscountUpdateAction'
+        - type: "object"
+          required:
+            - recurringOrderScope
+          properties:
+            action:
+              type: "string"
+            recurringOrderScope:
+              $ref: '#/components/schemas/RecurringOrderScopeDraft'
     CartDiscountSetStoresAction:
       allOf:
         - $ref: '#/components/schemas/CartDiscountUpdateAction'
@@ -83782,6 +83799,104 @@ components:
       properties:
         type:
           type: "string"
+    AnyOrder:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderScope'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+    AnyOrderDraft:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderScopeDraft'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+    ApplicableRecurrencePolicies:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderScope'
+        - type: "object"
+          required:
+            - recurrencePolicies
+            - type
+          properties:
+            type:
+              type: "string"
+            recurrencePolicies:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/RecurrencePolicyReference'
+    ApplicableRecurrencePoliciesDraft:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderScopeDraft'
+        - type: "object"
+          required:
+            - recurrencePolicies
+            - type
+          properties:
+            type:
+              type: "string"
+            recurrencePolicies:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/RecurrencePolicyResourceIdentifier'
+    NonRecurringOrdersOnly:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderScope'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+    NonRecurringOrdersOnlyDraft:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderScopeDraft'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+    RecurringOrderScope:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          AnyOrder: '#/components/schemas/AnyOrder'
+          ApplicableRecurrencePolicies: '#/components/schemas/ApplicableRecurrencePolicies'
+          NonRecurringOrdersOnly: '#/components/schemas/NonRecurringOrdersOnly'
+          RecurringOrdersOnly: '#/components/schemas/RecurringOrdersOnly'
+      required:
+        - type
+      properties:
+        type:
+          type: "string"
+    RecurringOrderScopeDraft:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          AnyOrder: '#/components/schemas/AnyOrderDraft'
+          ApplicableRecurrencePolicies: '#/components/schemas/ApplicableRecurrencePoliciesDraft'
+          NonRecurringOrdersOnly: '#/components/schemas/NonRecurringOrdersOnlyDraft'
+          RecurringOrdersOnly: '#/components/schemas/RecurringOrdersOnlyDraft'
+      required:
+        - type
+      properties:
+        type:
+          type: "string"
+    RecurringOrdersOnly:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderScope'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+    RecurringOrdersOnlyDraft:
+      allOf:
+        - $ref: '#/components/schemas/RecurringOrderScopeDraft'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
     RecurringOrderSetCustomFieldAction:
       allOf:
         - $ref: '#/components/schemas/RecurringOrderUpdateAction'
