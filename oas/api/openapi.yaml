@@ -37317,6 +37317,7 @@ paths:
 
         - If the Standalone Price has the same price scope as an existing Standalone Price, a [DuplicateStandalonePriceScope](ctp:api:type:DuplicateStandalonePriceScopeError) error is returned.
         - If the Standalone Price has overlapping validity periods within the same price scope, a [OverlappingStandalonePriceValidity](ctp:api:type:OverlappingStandalonePriceValidityError) error is returned. A Price without validity period does not conflict with a Price defined for a time period.
+        - If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.
       parameters:
         - name: expand
           in: query
@@ -37437,6 +37438,8 @@ paths:
         - oauth_2_0:
             - "manage_standalone_prices:{projectKey}"
       operationId: ByProjectKeyStandalonePricesKeyByKeyPost
+      description: |-
+        If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.
       parameters:
         - name: expand
           in: query
@@ -37609,6 +37612,8 @@ paths:
         - oauth_2_0:
             - "manage_standalone_prices:{projectKey}"
       operationId: ByProjectKeyStandalonePricesByIDPost
+      description: |-
+        If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.
       parameters:
         - name: expand
           in: query
@@ -50477,6 +50482,7 @@ components:
           EnumKeyDoesNotExist: '#/components/schemas/EnumKeyDoesNotExistError'
           EnumValueIsUsed: '#/components/schemas/EnumValueIsUsedError'
           EnumValuesMustMatch: '#/components/schemas/EnumValuesMustMatchError'
+          ExactLockConflict: '#/components/schemas/ExactLockConflictError'
           ExpiredCustomerEmailToken: '#/components/schemas/ExpiredCustomerEmailTokenError'
           ExpiredCustomerPasswordToken: '#/components/schemas/ExpiredCustomerPasswordTokenError'
           ExtensionBadResponse: '#/components/schemas/ExtensionBadResponseError'
@@ -50534,6 +50540,7 @@ components:
           ShippingMethodDoesNotMatchCart: '#/components/schemas/ShippingMethodDoesNotMatchCartError'
           StoreCartDiscountsLimitReached: '#/components/schemas/StoreCartDiscountsLimitReachedError'
           SyntaxError: '#/components/schemas/SyntaxErrorError'
+          ValidityLockConflict: '#/components/schemas/ValidityLockConflictError'
       required:
         - //
         - code
@@ -50560,6 +50567,40 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/ErrorObject'
+    ExactLockConflictError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - currency
+            - message
+            - sku
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            sku:
+              type: "string"
+            currency:
+              $ref: '#/components/schemas/CurrencyCode'
+            country:
+              $ref: '#/components/schemas/CountryCode'
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
+            channel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
+            validFrom:
+              type: "string"
+              format: "datetime"
+            validUntil:
+              type: "string"
+              format: "datetime"
+            recurrencePolicy:
+              $ref: '#/components/schemas/RecurrencePolicyReference'
+          additionalProperties:
+            type: "string"
     ExpiredCustomerEmailTokenError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -51536,6 +51577,34 @@ components:
               type: "string"
           additionalProperties:
             type: "string"
+    ValidityLockConflictError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - currency
+            - message
+            - sku
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            sku:
+              type: "string"
+            currency:
+              $ref: '#/components/schemas/CurrencyCode'
+            country:
+              $ref: '#/components/schemas/CountryCode'
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
+            channel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
+            recurrencePolicy:
+              $ref: '#/components/schemas/RecurrencePolicyResourceIdentifier'
+          additionalProperties:
+            type: "string"
     VariantValues:
       type: "object"
       required:
@@ -51978,6 +52047,7 @@ components:
           EnumKeyDoesNotExist: '#/components/schemas/GraphQLEnumKeyDoesNotExistError'
           EnumValueIsUsed: '#/components/schemas/GraphQLEnumValueIsUsedError'
           EnumValuesMustMatch: '#/components/schemas/GraphQLEnumValuesMustMatchError'
+          ExactLockConflict: '#/components/schemas/GraphQLExactLockConflictError'
           ExpiredCustomerEmailToken: '#/components/schemas/GraphQLExpiredCustomerEmailTokenError'
           ExpiredCustomerPasswordToken: '#/components/schemas/GraphQLExpiredCustomerPasswordTokenError'
           ExtensionBadResponse: '#/components/schemas/GraphQLExtensionBadResponseError'
@@ -52035,6 +52105,7 @@ components:
           ShippingMethodDoesNotMatchCart: '#/components/schemas/GraphQLShippingMethodDoesNotMatchCartError'
           StoreCartDiscountsLimitReached: '#/components/schemas/GraphQLStoreCartDiscountsLimitReachedError'
           SyntaxError: '#/components/schemas/GraphQLSyntaxErrorError'
+          ValidityLockConflict: '#/components/schemas/GraphQLValidityLockConflictError'
       required:
         - //
         - code
@@ -52043,6 +52114,37 @@ components:
           type: "string"
       additionalProperties:
         type: "string"
+    GraphQLExactLockConflictError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+            - currency
+            - sku
+          properties:
+            code:
+              type: "string"
+            sku:
+              type: "string"
+            currency:
+              $ref: '#/components/schemas/CurrencyCode'
+            country:
+              $ref: '#/components/schemas/CountryCode'
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
+            channel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
+            validFrom:
+              type: "string"
+              format: "datetime"
+            validUntil:
+              type: "string"
+              format: "datetime"
+            recurrencePolicy:
+              $ref: '#/components/schemas/RecurrencePolicyReference'
+          additionalProperties:
+            type: "string"
     GraphQLExpiredCustomerEmailTokenError:
       allOf:
         - $ref: '#/components/schemas/GraphQLErrorObject'
@@ -52830,6 +52932,31 @@ components:
           properties:
             code:
               type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLValidityLockConflictError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+            - currency
+            - sku
+          properties:
+            code:
+              type: "string"
+            sku:
+              type: "string"
+            currency:
+              $ref: '#/components/schemas/CurrencyCode'
+            country:
+              $ref: '#/components/schemas/CountryCode'
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
+            channel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
+            recurrencePolicy:
+              $ref: '#/components/schemas/RecurrencePolicyResourceIdentifier'
           additionalProperties:
             type: "string"
     BaseEvent:
