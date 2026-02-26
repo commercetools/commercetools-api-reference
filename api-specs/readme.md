@@ -332,7 +332,6 @@ To add a new field in the properties:
 
 1. Go in the [/types](./api/types) folder and then in the resource related folder.
 2. Add the name of the field based on our naming convention guidelines. If the field is **Optional** add `?`.
-
    - for numbers:\
      Use a specific type if applicable, like `integer`, or `number` plus `format`, and specify `minimum` and/or `maximum` if different from the physical limits of the data type. For optional fields in write models, specify a `default` value.
 
@@ -510,7 +509,6 @@ If you need to add a new **scope**, follow these steps:
    ```
 
 3. Add the new **scope** in 4 files (for more information, check [/securitySchemes](#security-schemes)):
-
    - [oauth2.raml](./api/securitySchemes/oauth2.raml),
    - [oauth2_password.raml](./api/securitySchemes/oauth2_password.raml),
    - [oauth2_refresh.raml](./api/securitySchemes/oauth2_refresh.raml),
@@ -909,12 +907,17 @@ The api.raml file contains the base of our APIs and the definition of everything
 
 ### Validator rules
 
-We built a RAML validator tool which validates during the CI process the new code written related to our RAML files and for every error will show the related message.
+Our own [RMF-Codegen](https://github.com/commercetools/rmf-codegen) contains a RAML validator tool that checks if:
 
-If you want to run locally:
+- The given JSON examples adhere to their RAML types (optional values can be absent).
+- The type names, property names, etc. follow our [API design guidelines](https://commercetools.atlassian.net/wiki/spaces/ADGAG/pages/467697895/API+DESIGN+GUIDELINES).
+
+The validation takes place during the CI process triggered by a Github workflow. It is a required step in the build process, you cannot merge a Docs PR with validation errors.
+
+You can run the validator locally from the root of each api specs folder:
 `yarn raml:validate`.
 
-The rules included are:
+The validator is currently checking following rules. Check [this section](#add-a-validator-rule) if you want to add another validation rule.
 
 #### AsMapRule
 
@@ -1343,6 +1346,21 @@ types:
   SubBar2:
     type: InvalidBar
 ```
+
+### Add a validator rule
+
+On [this wiki page](https://commercetools.atlassian.net/wiki/spaces/ADGAG/pages/2947514403/Spec+Validation+Rules), you can find an overview about the design rules that have been implemented so. far and which still need to be added to the RAML validator.
+
+A new validation rule is added to the [RMF-Codegen](https://github.com/commercetools/rmf-codegen) which is then pulled to this repository via [npm](https://www.npmjs.com/package/@commercetools-docs/rmf-codegen/).
+
+Adding a new validation rule might cause the validator to fail because we have a couple of instance that do not follow the rule. Since we cannot change existing specifications easily, we need to add exceptions from the rule to a file named `ruleset.xml`. You'll find that in the root of each api spec folder.
+
+To give us time to add the exception rules, we pinned the version of the validator in the CI workflow.
+
+When a new validator version gets released,
+
+- Try it out by running `yarn ramlvalidate` in the `api-specs` folder and add an exception for each of the validation errors.
+- Increment the version of `@commercetools-docs/rmf-codegen` in the Github workflow files `.github/workflows/raml-validate-diff.yaml` and `.github/workflows/docs-kit-preview-pipeline.yaml`.
 
 # Generate a Postman Collection
 
