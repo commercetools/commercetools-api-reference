@@ -54,30 +54,6 @@ Our APIs have to follow our
     - [types.raml](#typesraml)
   - [api.raml](#apiraml)
 - [Validator Rules](#validator-rules)
-  - [AsMapRule](#asmaprule)
-  - [BooleanPropertyNameRule](#booleanpropertynamerule)
-  - [CamelCaseRule](#camelcaserule)
-  - [DatetimeRule](#datetimerule)
-  - [DiscriminatorNameRule](#discriminatornamerule)
-  - [DiscriminatorParentRule](#discriminatorparentrule)
-  - [FilenameRule](#filenamerule)
-  - [NamedBodyTypeRule](#namedbodytyperule)
-  - [NamedStringEnumRule](#namedstringenumrule)
-  - [NestedTypeRule](#nestedtyperule)
-  - [PackageDefinedRule](#packagedefinedrule)
-  - [PostBodyRule](#postbodyrule)
-  - [PropertyPluralRule](#propertypluralrule)
-  - [QueryParameterCamelCaseRule](#queryparametercamelcaserule)
-  - [QueryParameterPlaceholderAnnotationRule](#queryparameterplaceholderannotationrule)
-  - [ResourceCatchAllRule](#resourcecatchallrule)
-  - [ResourceLowerCaseHyphenRule](#resourcelowercasehyphenrule)
-  - [ResourcePluralRule](#resourcepluralrule)
-  - [SdkBaseUriRule](#sdkbaseurirule)
-  - [StringPropertySingularRule](#stringpropertysingularrule)
-  - [SuccessBodyRule](#successbodyrule)
-  - [UnionTypePropertyRule](#uniontypepropertyrule)
-  - [UpdateActionNameRule](#updateactionnamerule)
-  - [UriParameterDeclaredRule](#uriparameterdeclaredrule)
 
 ### How to:
 
@@ -917,443 +893,13 @@ The validation takes place during the CI process triggered by a Github workflow.
 You can run the validator locally from the root of each api specs folder:
 `yarn raml:validate`.
 
-The validator is currently checking following rules. Check [this section](#add-a-validator-rule) if you want to add another validation rule.
+#### Current status of validator rules
 
-#### AsMapRule
+On [this wiki page](https://commercetools.atlassian.net/wiki/spaces/ADGAG/pages/2947514403/Spec+Validation+Rules), you can find an overview about the design rules that are currently checked by the validator and which are still to be added.
 
-This rule consists of checking the name of the property if it starts and end with _"/"_, it has to be annotated with **"(asMap)"** annotation.
-
-```raml
-types:
-  LocalizedString:
-    type: object
-    (asMap):
-        key: string
-        value: string
-    properties:
-      /^[a-z]{2}$/: string
-```
-
-#### BooleanPropertyNameRule
-
-If the property type is **Boolean**, this rule checks the name of the property does not have **is** as a prefix.
-
-```raml
-  Invalid:
-    type: object
-    properties:
-      isBad: boolean
-  Valid:
-    type: object
-    properties:
-      /a-z/: boolean
-      good: boolean
-      isolated: boolean
-      isFine: string
-```
-
-#### CamelCaseRule
-
-In this case, it checks if the name of the property is written in camelCase, but it already excludes "error_description".
-This means that the hyphens are not allowed on the property name level.
-
-```raml
-    properties:
-      /a-z/: string
-      camelCase: string
-```
-
-#### DatetimeRule
-
-If the property type is **DateTime** or **TimeOnly** or **DateOnly**, this rule checks the name of the property:
-
-- it has to finish with **At** or **From** or **To** or **Until**.
-- in case of date range, it has to have a property which finishes with **From** and a property which finishes with **To** or **Until**.
-
-```raml
-  FooAtDateTime:
-    type: object
-    properties:
-      fooAt: datetime
-  FooRangeDateTime:
-    type: object
-    properties:
-      fooFrom: datetime
-      fooTo: datetime
-  ValidDateRange:
-    type: object
-    properties:
-      validFrom: date-only
-      validUntil: date-only
-```
-
-#### DiscriminatorNameRule
-
-In case we need to set a Discriminator Value, this validator rule checks if it has been set and if it contains it.
-See here how to set up:
-
-```raml
-types:
-  FooUpdateAction:
-    type: object
-    discriminator: type
-    properties:
-      type: string
-  BarFoo:
-    type: FooUpdateAction
-    discriminatorValue: bar
-```
-
-#### DiscriminatorParentRule
-
-This rule checks if the **Discriminator** type is set on the attribute level, it cannot be set as parent.
-So, the discriminator type has not to be included in the base type.
-
-```raml
-types:
-  Foo:
-    type: object
-    discriminator: type
-    properties:
-      type: string
-  Baz:
-    type: object
-    properties:
-      type: string
-  FooBar:
-    discriminator: type
-    properties:
-      type: string
-  FooBaz:
-    discriminator: type
-    type: Foos
-    properties:
-      type: string
-  Foos:
-    properties:
-      id: string
-```
-
-#### FilenameRule
-
-This rule checks:
-
-- if the new file has been included in the **types.raml** see the example below
-- the **displayName** may be different
-- name includes the domain/package
-
-So we are creating a new file: FooBar.raml and this is what we will write in the types.raml file:
-
-```raml
-Foo: !include foo/FooBar.raml
-```
-
-#### NamedBodyTypeRule
-
-This rule checks if it is defined for Success or for the request body in the methods of the body type.
-
-```raml
-get:
-  body:
-    application/json:
-      example: !include ../examples/cart-create.example.json
-  responses:
-    201:
-      body:
-        application/json:
-          example: !include ../examples/cart.example.json
-```
-
-#### NamedStringEnumRule
-
-This rule validates that if the type is a **string**, and it does not have a pattern defined, it has to have **Enum** values like in this case:
-
-```raml
-types:
-  Foo:
-    type: string
-    description: foo
-    enum:
-      - bar
-  Bar:
-    type: string
-    pattern: /a-z/
-```
-
-#### NestedTypeRule
-
-The nested types and properties are forbidden. So in the case an object type or an array type is defined, we accept only properties and the related types defined once.
-In the example below, there are cases which are valid.
-
-```raml
-types:
-  FooObject:
-    type: object
-    properties:
-      meta:
-        type: object
-        description: valid
-  Bar:
-    type: object
-    properties:
-      valid: string
-      validBaz: Baz
-  FooArray:
-    type: object
-    properties:
-      validArr:
-        type: string[]
-```
-
-#### PackageDefinedRule
-
-The **(package)** annotation has to be defined in case of creation of a new _Library_.
-
-```raml
-(package): Cart
-displayName: Cart
-(updateType): CartUpdate
-type: BaseResource
-properties:
-  id:
-    (identifier): true
-    type: string
-    description: The unique ID of the cart.
-```
-
-#### PostBodyRule
-
-This rule is a complementary rule to the [Named Body Type](#named-body-type) Rule.
-In this case check on for the _POST method_ if the body is correctly set.
-
-```raml
-/categories:
-  get:
-  post:
-    body:
-      application/json:
-        type: object
-```
-
-#### PropertyPluralRule
-
-This rule is valid not for all the properties, it's regulated in base of the English grammar.
-But, in general, all the array property names have to be in plural.
-
-```raml
-types:
-  Foo:
-    type: object
-    properties:
-      validItems: string[]
-      money: string[]
-```
-
-#### QueryParameterCamelCaseRule
-
-This rule checks if the **Query Parameter** name is valid. It has to be composed by only alphanumeric and dot and lower camel cased.
-It already excludes "error_description".
-
-```raml
-queryParameters:
-  customerId?:
-    type: string
-  filter.query?: string
-```
-
-#### QueryParameterPlaceholderAnnotationRule
-
-About this rule, this is how to define a **Query Parameter** with a Placeholder annotation:
-
-- If the query parameter starts and ends with _"/"_ it must have a **(placeholderParam)** annotation.
-- The Placeholder object must have declared the fields: _paramName_, _template_ and _placeholder_.
-
-```raml
-queryParameters:
-  /text\.[a-z]{2}(-[A-Z]{2})?/:
-    (placeholderParam):
-      paramName: text
-      template: text.<locale>
-      placeholder: locale
-```
-
-#### ResourceCatchAllRule
-
-When specifying a so-called _Catch-All_ path that fetches a collection of resources, like our Query endpoints, make sure there is only one like it in the route.
-A consumer either needs information about how to distinguish the paths or has to decide on a priority order.
-
-Instead of multiple catch ALL paths:
-
-`/{id}/options:`
-`/{key}/options:`
-
-or using an URI parameter with multiple purposes:
-
-`/{idOrKey}/options:`
-
-insert a path segment that clearly distinguishes the routes and avoids ambiguity, like:
-
-`/key={key}/options:`
-`/{ID}/options:`
-
-```raml
-/{projectKey}:
-  /categories:
-    /key={key}:
-    /{id}:
-```
-
-#### ResourceLowerCaseHyphenRule
-
-In this case, it checks if the resource is lowercased and hyphen separated
-
-```raml
-/{projectKey}:
-  /valid:
-    /key={key}:
-    /{id}:
-  /valid-resource:
-    /{id}:
-```
-
-#### ResourcePluralRule
-
-This rule is on the resource level, it already excludes "inventory", "login", "me", "import" and "in-store" and it's regulated in base of the English grammar.
-But, in general, all the array resources names have to be in plural.
-
-```raml
-/{projectKey}:
-  /categories:
-  /inventory:
-  /login:
-  /me:
-  /in-store:
-```
-
-#### SdkBaseUriRule
-
-This rule checks on the API settings level if the **baseUri**, the annotation **(sdkBaseUri)** is declared.
-
-```raml
-annotationTypes:
-  sdkBaseUri: string
-
-baseUri: https://api.{region}.commercetools.com
-(sdkBaseUri): https://api.europe-west1.commercetools.com
-baseUriParameters:
-```
-
-#### StringPropertySingularRule
-
-This rule is on the property level, and it's regulated in base of the English grammar.
-The property which is not an array as a type, it has to be singular.
-
-```raml
-types:
-  Foo:
-    type: object
-    properties:
-      validItem: string
-      /a-z/: string
-      maxApplications: number
-      hasChanges: boolean
-```
-
-#### SuccessBodyRule
-
-On the HTTP method level, it checks if it has the body type for success responses defined.
-
-```raml
-/categories:
-  get:
-    responses:
-      200:
-        body:
-          application/json:
-            type: object
-  post:
-    responses:
-      201:
-        body:
-          application/json:
-            type: object
-```
-
-#### UnionTypePropertyRule
-
-This rule asserts that the usage of the Union type is not allowed for the property. To clarify better see the example below:
-
-```raml
-types:
-  Foo:
-    type: object
-    properties:
-      validItems: string
-      invalidItem: string | number
-      invalidItemDesc:
-        description: test
-        type: string | number
-      /invalid[a-z]/: string | number
-```
-
-#### UpdateActionNameRule
-
-The rule consists in verifying the name of the action, so it is valid if the type is referred to an **UpdateAction**.
-
-```raml
-types:
-  UpdateAction:
-    type: object
-  ValidAction:
-    type: UpdateAction
-```
-
-#### UriParameterDeclaredRule
-
-In the resource the **uriParameters** have to be declared, so we have this rule which checks it.
-
-```raml
-resourceTypes:
-    base:
-        uriParameters:
-            <<uriParameterName>>:
-                type: string
-        get:
-```
-
-#### PolymorphicSubtypesRule
-
-The rule verifies that a type defines a discriminator if it has subtypes to avoid issues with deserialization of read models.
-
-```raml
-types:
-  Foo:
-    type: object
-    discriminator: type
-    properties:
-      type: string
-  SubFoo:
-    discriminatorValue: sub
-    type: Foo
-  InvalidBar:
-    type: object
-    description: InvalidBar
-    properties:
-      name: string
-  SubBar:
-    description: SubBar
-    type: InvalidBar
-  SubBar2:
-    type: InvalidBar
-```
-
-### Add a validator rule
-
-On [this wiki page](https://commercetools.atlassian.net/wiki/spaces/ADGAG/pages/2947514403/Spec+Validation+Rules), you can find an overview about the design rules that have been implemented so. far and which still need to be added to the RAML validator.
+#### Newly added validator rules
 
 A new validation rule is added to the [RMF-Codegen](https://github.com/commercetools/rmf-codegen) which is then pulled to this repository via [npm](https://www.npmjs.com/package/@commercetools-docs/rmf-codegen/).
-
-Adding a new validation rule might cause the validator to fail because we have a couple of instance that do not follow the rule. Since we cannot change existing specifications easily, we need to add exceptions from the rule to a file named `ruleset.xml`. You'll find that in the root of each api spec folder.
 
 To give us time to add the exception rules, we pinned the version of the validator in the CI workflow.
 
@@ -1361,6 +907,40 @@ When a new validator version gets released,
 
 - Try it out by running `yarn ramlvalidate` in the `api-specs` folder and add an exception for each of the validation errors.
 - Increment the version of `@commercetools-docs/rmf-codegen` in the Github workflow files `.github/workflows/raml-validate-diff.yaml` and `.github/workflows/docs-kit-preview-pipeline.yaml`.
+
+#### Add exceptions from validator rules
+
+When a validator rule is introduced or tightened, existing RAML definitions can fail validation even if they must remain unchanged for compatibility reasons. In this case, add an exception in the `ruleset.xml` file of the affected API specs folder.
+
+Use this general pattern:
+
+1. Identify the failing validator rule from the validation output.
+2. Open the matching `ruleset.xml` (for example, `api-specs/api/ruleset.xml` or `api-specs/import/ruleset.xml`).
+3. Find the `<rule>` entry for that validator rule (`<name>...</name>`).
+4. Add an exclusion under `<options>` using `<option type="exclude">...</option>`.
+5. Use the exact value expected by that rule (for example, a resource path segment, type name, property name, enum type, or endpoint signature).
+6. Re-run `yarn raml:validate` and keep the exception as narrow as possible.
+
+Example:
+
+```xml
+<rule>
+  <name>com.commercetools.rmf.validators.SomeRule</name>
+  <options>
+    <option type="exclude">exact-value-from-validation-error</option>
+  </options>
+</rule>
+```
+
+If multiple values must be excluded, add one `<option>` per value.
+
+Prefer targeted exceptions instead of disabling an entire rule by:
+
+```xml
+<rule enabled="false">
+  <name>com.commercetools.rmf.validators.ProblematicRule</name>
+</rule>
+```
 
 # Generate a Postman Collection
 
