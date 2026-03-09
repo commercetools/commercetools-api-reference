@@ -52982,6 +52982,44 @@ components:
         createdAt:
           type: "string"
           format: "datetime"
+    Event:
+      type: "object"
+      discriminator:
+        propertyName: type
+        mapping:
+          CheckoutOrderCreationFailed: '#/components/schemas/CheckoutOrderCreationFailedEvent'
+          CheckoutPaymentAuthorizationCancelled: '#/components/schemas/CheckoutPaymentAuthorizationCancelledEvent'
+          CheckoutPaymentAuthorizationFailed: '#/components/schemas/CheckoutPaymentAuthorizationFailedEvent'
+          CheckoutPaymentAuthorized: '#/components/schemas/CheckoutPaymentAuthorizedEvent'
+          CheckoutPaymentCancelAuthorizationFailed: '#/components/schemas/CheckoutPaymentCancelAuthorizationFailedEvent'
+          CheckoutPaymentChargeFailed: '#/components/schemas/CheckoutPaymentChargeFailedEvent'
+          CheckoutPaymentCharged: '#/components/schemas/CheckoutPaymentChargedEvent'
+          CheckoutPaymentRefundFailed: '#/components/schemas/CheckoutPaymentRefundFailedEvent'
+          CheckoutPaymentRefunded: '#/components/schemas/CheckoutPaymentRefundedEvent'
+          ImportContainerCreated: '#/components/schemas/ImportContainerCreatedEvent'
+          ImportContainerDeleted: '#/components/schemas/ImportContainerDeletedEvent'
+          ImportOperationRejected: '#/components/schemas/ImportOperationRejectedEvent'
+          ImportUnresolved: '#/components/schemas/ImportUnresolvedEvent'
+          ImportValidationFailed: '#/components/schemas/ImportValidationFailedEvent'
+          ImportWaitForMasterVariant: '#/components/schemas/ImportWaitForMasterVariantEvent'
+      required:
+        - createdAt
+        - id
+        - notificationType
+        - resourceType
+        - type
+      properties:
+        id:
+          type: "string"
+        notificationType:
+          type: "string"
+        resourceType:
+          $ref: '#/components/schemas/EventSubscriptionResourceTypeId'
+        type:
+          $ref: '#/components/schemas/EventType'
+        createdAt:
+          type: "string"
+          format: "datetime"
     CheckoutOrderCreationFailedEvent:
       allOf:
         - $ref: '#/components/schemas/Event'
@@ -53171,44 +53209,122 @@ components:
               format: "datetime"
             data:
               $ref: '#/components/schemas/CheckoutMessagePaymentsPayloadBaseData'
-    Event:
+    CheckoutMessageOrderPayloadBaseData:
       type: "object"
-      discriminator:
-        propertyName: type
-        mapping:
-          CheckoutOrderCreationFailed: '#/components/schemas/CheckoutOrderCreationFailedEvent'
-          CheckoutPaymentAuthorizationCancelled: '#/components/schemas/CheckoutPaymentAuthorizationCancelledEvent'
-          CheckoutPaymentAuthorizationFailed: '#/components/schemas/CheckoutPaymentAuthorizationFailedEvent'
-          CheckoutPaymentAuthorized: '#/components/schemas/CheckoutPaymentAuthorizedEvent'
-          CheckoutPaymentCancelAuthorizationFailed: '#/components/schemas/CheckoutPaymentCancelAuthorizationFailedEvent'
-          CheckoutPaymentChargeFailed: '#/components/schemas/CheckoutPaymentChargeFailedEvent'
-          CheckoutPaymentCharged: '#/components/schemas/CheckoutPaymentChargedEvent'
-          CheckoutPaymentRefundFailed: '#/components/schemas/CheckoutPaymentRefundFailedEvent'
-          CheckoutPaymentRefunded: '#/components/schemas/CheckoutPaymentRefundedEvent'
-          ImportContainerCreated: '#/components/schemas/ImportContainerCreatedEvent'
-          ImportContainerDeleted: '#/components/schemas/ImportContainerDeletedEvent'
-          ImportOperationRejected: '#/components/schemas/ImportOperationRejectedEvent'
-          ImportUnresolved: '#/components/schemas/ImportUnresolvedEvent'
-          ImportValidationFailed: '#/components/schemas/ImportValidationFailedEvent'
-          ImportWaitForMasterVariant: '#/components/schemas/ImportWaitForMasterVariantEvent'
+      required:
+        - cart
+        - errors
+        - payments
+        - projectKey
+      properties:
+        projectKey:
+          type: "string"
+        cart:
+          $ref: '#/components/schemas/CartReference'
+        payments:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PaymentReference'
+        errors:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+    CheckoutMessagePaymentsPayloadBaseData:
+      type: "object"
+      required:
+        - payment
+        - projectKey
+        - transactionId
+      properties:
+        projectKey:
+          type: "string"
+        payment:
+          $ref: '#/components/schemas/PaymentReference'
+        transactionId:
+          type: "string"
+        cart:
+          $ref: '#/components/schemas/CartReference'
+        order:
+          $ref: '#/components/schemas/OrderReference'
+    ImportContainerCreatedEventData:
+      type: "object"
       required:
         - createdAt
-        - id
-        - notificationType
-        - resourceType
-        - type
+        - key
+        - lastModifiedAt
+        - version
       properties:
-        id:
+        key:
           type: "string"
-        notificationType:
-          type: "string"
-        resourceType:
-          $ref: '#/components/schemas/EventSubscriptionResourceTypeId'
-        type:
-          $ref: '#/components/schemas/EventType'
+        version:
+          type: "integer"
+          format: "int32"
         createdAt:
           type: "string"
           format: "datetime"
+        lastModifiedAt:
+          type: "string"
+          format: "datetime"
+    ImportContainerDeletedEventData:
+      type: "object"
+      required:
+        - key
+        - version
+      properties:
+        key:
+          type: "string"
+        version:
+          type: "integer"
+          format: "int32"
+    ImportOperationRejectedEventData:
+      type: "object"
+      required:
+        - id
+      properties:
+        id:
+          type: "string"
+    ImportUnresolvedEventData:
+      type: "object"
+      required:
+        - id
+        - importContainerKey
+        - version
+      properties:
+        id:
+          type: "string"
+        version:
+          type: "integer"
+          format: "int32"
+        importContainerKey:
+          type: "string"
+    ImportValidationFailedEventData:
+      type: "object"
+      required:
+        - id
+        - importContainerKey
+        - version
+      properties:
+        id:
+          type: "string"
+        version:
+          type: "integer"
+          format: "int32"
+        importContainerKey:
+          type: "string"
+    ImportWaitForMasterVariantEventData:
+      type: "object"
+      required:
+        - id
+        - importContainerKey
+        - version
+      properties:
+        id:
+          type: "string"
+        version:
+          type: "integer"
+          format: "int32"
+        importContainerKey:
+          type: "string"
     ImportContainerCreatedEvent:
       allOf:
         - $ref: '#/components/schemas/Event'
@@ -53335,122 +53451,6 @@ components:
               format: "datetime"
             data:
               $ref: '#/components/schemas/ImportWaitForMasterVariantEventData'
-    CheckoutMessageOrderPayloadBaseData:
-      type: "object"
-      required:
-        - cart
-        - errors
-        - payments
-        - projectKey
-      properties:
-        projectKey:
-          type: "string"
-        cart:
-          $ref: '#/components/schemas/CartReference'
-        payments:
-          type: "array"
-          items:
-            $ref: '#/components/schemas/PaymentReference'
-        errors:
-          type: "array"
-          items:
-            $ref: '#/components/schemas/ErrorObject'
-    CheckoutMessagePaymentsPayloadBaseData:
-      type: "object"
-      required:
-        - payment
-        - projectKey
-        - transactionId
-      properties:
-        projectKey:
-          type: "string"
-        payment:
-          $ref: '#/components/schemas/PaymentReference'
-        transactionId:
-          type: "string"
-        cart:
-          $ref: '#/components/schemas/CartReference'
-        order:
-          $ref: '#/components/schemas/OrderReference'
-    ImportContainerCreatedEventData:
-      type: "object"
-      required:
-        - createdAt
-        - key
-        - lastModifiedAt
-        - version
-      properties:
-        key:
-          type: "string"
-        version:
-          type: "integer"
-          format: "int32"
-        createdAt:
-          type: "string"
-          format: "datetime"
-        lastModifiedAt:
-          type: "string"
-          format: "datetime"
-    ImportContainerDeletedEventData:
-      type: "object"
-      required:
-        - key
-        - version
-      properties:
-        key:
-          type: "string"
-        version:
-          type: "integer"
-          format: "int32"
-    ImportOperationRejectedEventData:
-      type: "object"
-      required:
-        - id
-      properties:
-        id:
-          type: "string"
-    ImportUnresolvedEventData:
-      type: "object"
-      required:
-        - id
-        - importContainerKey
-        - version
-      properties:
-        id:
-          type: "string"
-        version:
-          type: "integer"
-          format: "int32"
-        importContainerKey:
-          type: "string"
-    ImportValidationFailedEventData:
-      type: "object"
-      required:
-        - id
-        - importContainerKey
-        - version
-      properties:
-        id:
-          type: "string"
-        version:
-          type: "integer"
-          format: "int32"
-        importContainerKey:
-          type: "string"
-    ImportWaitForMasterVariantEventData:
-      type: "object"
-      required:
-        - id
-        - importContainerKey
-        - version
-      properties:
-        id:
-          type: "string"
-        version:
-          type: "integer"
-          format: "int32"
-        importContainerKey:
-          type: "string"
     AWSLambdaDestination:
       allOf:
         - $ref: '#/components/schemas/ExtensionDestination'
