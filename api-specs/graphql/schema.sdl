@@ -469,6 +469,96 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
 }
 
+type BusinessUnit implements Versioned & ReferenceExpandable {
+    id: String!
+    key: String!
+    name: String!
+    contactEmail: String
+    addresses: [Address!]!
+    defaultShippingAddress: Address
+    defaultBillingAddress: Address
+    defaultShippingAddressId: String
+    defaultBillingAddressId: String
+    shippingAddresses: [Address!]!
+    billingAddresses: [Address!]!
+    shippingAddressIds: [String!]!
+    billingAddressIds: [String!]!
+    status: BusinessUnitStatus!
+    storesRef: [KeyReference!]
+    stores: [Store!]
+    storeMode: String
+    unitType: BusinessUnitType!
+    associates: [Associate!]!
+    associateMode: BusinessUnitAssociateMode!
+    inheritedAssociates: [InheritedAssociate!]
+    custom: CustomFieldsType
+    parentUnitRef: KeyReference
+    parentUnit: BusinessUnit
+    """
+  This field contains the BusinessUnits KeyReferences from the Company to the parent Division of this BusinessUnit in that order.
+  """
+  ancestors: [BusinessUnit!]!
+    """
+  This field contains the inherited stores from its parentUnit if storeMode is set to FromParent.
+  """
+  inheritedStores: [InheritedStore!]
+    topLevelUnitRef: KeyReference
+    topLevelUnit: BusinessUnit!
+    approvalRuleMode: BusinessUnitApprovalRuleMode!
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  customerGroupAssignments: [CustomerGroupAssignment!]
+    version: Long!
+    createdAt: DateTime!
+    lastModifiedAt: DateTime!
+    createdBy: Initiator
+    lastModifiedBy: Initiator
+}
+
+"""
+A customer is a person purchasing products. Carts, Orders and Reviews can be associated to a customer.
+"""
+type Customer implements Versioned & ReferenceExpandable {
+    id: String!
+    customerNumber: String
+    email: String!
+    addresses: [Address!]!
+    defaultShippingAddressId: String
+    defaultBillingAddressId: String
+    shippingAddressIds: [String!]!
+    billingAddressIds: [String!]!
+    isEmailVerified: Boolean!
+    customerGroupRef: Reference
+    externalId: String
+    key: String
+    authenticationMode: AuthenticationMode
+    firstName: String
+    lastName: String
+    middleName: String
+    title: String
+    locale: Locale
+    salutation: String
+    dateOfBirth: Date
+    companyName: String
+    vatId: String
+    password: String
+    customerGroup: CustomerGroup
+    defaultShippingAddress: Address
+    defaultBillingAddress: Address
+    shippingAddresses: [Address!]!
+    billingAddresses: [Address!]!
+    storesRef: [KeyReference!]!
+    stores: [Store!]!
+    customerGroupAssignments: [CustomerGroupAssignment!]!
+    custom: CustomFieldsType
+    version: Long!
+    createdAt: DateTime!
+    lastModifiedAt: DateTime!
+    createdBy: Initiator
+    lastModifiedBy: Initiator
+}
+
 """
 API Clients can be used to obtain OAuth 2 access tokens. The secret is only shown once in the response of creating the API Client.
 """
