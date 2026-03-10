@@ -2070,7 +2070,7 @@ type CountOnCustomLineItemUnits implements PatternComponent {
     predicate: String!
     minCount: Int
     maxCount: Int
-    excludeCount: Int
+    excludeCount: Int @deprecated(reason: "Please use 'triggerPattern' to exclude.")
     type: String!
 }
 
@@ -3015,6 +3015,10 @@ type Extension implements Versioned & ReferenceExpandable {
     destination: ExtensionDestination!
     triggers: [Trigger!]!
     timeoutInMs: Int
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  expansionPaths: [String!]!
     id: String!
     version: Long!
     createdAt: DateTime!
@@ -12732,7 +12736,7 @@ input CountOnCustomLineItemUnitsInput {
     predicate: String!
     minCount: Int = 1
     maxCount: Int
-    excludeCount: Int
+    excludeCount: Int @deprecated(reason: "Please use 'triggerPattern' to exclude.")
 }
 
 input CountOnLineItemUnitsInput {
@@ -13239,11 +13243,19 @@ input ExtensionDraft {
     destination: ExtensionDestinationInput!
     triggers: [TriggerInput!]!
     timeoutInMs: Int
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  expansionPaths: [String!]
 }
 
 input ExtensionUpdateAction {
     changeDestination: ChangeExtensionDestination
     changeTriggers: ChangeExtensionTriggers
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  setExpansionPaths: SetExtensionExpansionPaths
     setKey: SetExtensionKey
     setTimeoutInMs: SetExtensionTimeoutInMs
 }
@@ -15919,6 +15931,13 @@ input SetDiscountGroupSortOrder {
     sortOrder: String!
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetExtensionExpansionPaths {
+    expansionPaths: [String!]!
+}
+
 input SetExtensionKey {
     key: String
 }
@@ -17983,8 +18002,8 @@ input StateUpdateAction {
 BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
 """
 input StockLevelsDraft {
-    safetyStock: Long
-    reorderPoint: Long
+    safetyStock: Int
+    reorderPoint: Int
 }
 
 input StoreCountryInput {
