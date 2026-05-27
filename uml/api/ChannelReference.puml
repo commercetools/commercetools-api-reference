@@ -86,6 +86,7 @@ interface LineItem [[LineItem.svg]]  {
     lineItemMode: [[LineItemMode.svg LineItemMode]]
     inventoryMode: [[InventoryMode.svg InventoryMode]]
     shippingDetails: [[ItemShippingDetails.svg ItemShippingDetails]]
+    reservation: [[ReservationReference.svg ReservationReference]]
     custom: [[CustomFields.svg CustomFields]]
     addedAt: DateTime
     lastModifiedAt: DateTime
@@ -164,9 +165,26 @@ interface InventoryEntry [[InventoryEntry.svg]]  {
     maxCartQuantity: Integer
     restockableInDays: Long
     expectedDelivery: DateTime
+    reservationExpirationInMinutes: Integer
+    stockLevels: [[InventoryEntryStockLevels.svg InventoryEntryStockLevels]]
     custom: [[CustomFields.svg CustomFields]]
 }
 interface InventoryEntryDeletedMessage [[InventoryEntryDeletedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    sku: String
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface InventoryEntryOutOfStockMessage [[InventoryEntryOutOfStockMessage.svg]]  {
     id: String
     version: Long
     createdAt: DateTime
@@ -200,6 +218,38 @@ interface InventoryEntryQuantitySetMessage [[InventoryEntryQuantitySetMessage.sv
     sku: String
     supplyChannel: [[ChannelReference.svg ChannelReference]]
 }
+interface InventoryEntryReorderPointMessage [[InventoryEntryReorderPointMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    sku: String
+    quantityOnStock: Integer
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface InventoryEntrySafetyStockMessage [[InventoryEntrySafetyStockMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    sku: String
+    quantityOnStock: Integer
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
 interface OrderLineItemDistributionChannelSetMessage [[OrderLineItemDistributionChannelSetMessage.svg]]  {
     id: String
     version: Long
@@ -221,6 +271,11 @@ interface InventoryEntryDeletedMessagePayload [[InventoryEntryDeletedMessagePayl
     sku: String
     supplyChannel: [[ChannelReference.svg ChannelReference]]
 }
+interface InventoryEntryOutOfStockMessagePayload [[InventoryEntryOutOfStockMessagePayload.svg]]  {
+    type: String
+    sku: String
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
 interface InventoryEntryQuantitySetMessagePayload [[InventoryEntryQuantitySetMessagePayload.svg]]  {
     type: String
     oldQuantityOnStock: Long
@@ -228,6 +283,18 @@ interface InventoryEntryQuantitySetMessagePayload [[InventoryEntryQuantitySetMes
     oldAvailableQuantity: Long
     newAvailableQuantity: Long
     sku: String
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface InventoryEntryReorderPointMessagePayload [[InventoryEntryReorderPointMessagePayload.svg]]  {
+    type: String
+    sku: String
+    quantityOnStock: Integer
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface InventoryEntrySafetyStockMessagePayload [[InventoryEntrySafetyStockMessagePayload.svg]]  {
+    type: String
+    sku: String
+    quantityOnStock: Integer
     supplyChannel: [[ChannelReference.svg ChannelReference]]
 }
 interface OrderLineItemDistributionChannelSetMessagePayload [[OrderLineItemDistributionChannelSetMessagePayload.svg]]  {
@@ -348,10 +415,16 @@ ChannelReference --> MatchingPriceNotFoundError #green;text:green : "channel"
 ChannelReference --> GraphQLMatchingPriceNotFoundError #green;text:green : "channel"
 ChannelReference --> InventoryEntry #green;text:green : "supplyChannel"
 ChannelReference --> InventoryEntryDeletedMessage #green;text:green : "supplyChannel"
+ChannelReference --> InventoryEntryOutOfStockMessage #green;text:green : "supplyChannel"
 ChannelReference --> InventoryEntryQuantitySetMessage #green;text:green : "supplyChannel"
+ChannelReference --> InventoryEntryReorderPointMessage #green;text:green : "supplyChannel"
+ChannelReference --> InventoryEntrySafetyStockMessage #green;text:green : "supplyChannel"
 ChannelReference --> OrderLineItemDistributionChannelSetMessage #green;text:green : "distributionChannel"
 ChannelReference --> InventoryEntryDeletedMessagePayload #green;text:green : "supplyChannel"
+ChannelReference --> InventoryEntryOutOfStockMessagePayload #green;text:green : "supplyChannel"
 ChannelReference --> InventoryEntryQuantitySetMessagePayload #green;text:green : "supplyChannel"
+ChannelReference --> InventoryEntryReorderPointMessagePayload #green;text:green : "supplyChannel"
+ChannelReference --> InventoryEntrySafetyStockMessagePayload #green;text:green : "supplyChannel"
 ChannelReference --> OrderLineItemDistributionChannelSetMessagePayload #green;text:green : "distributionChannel"
 ChannelReference --> SyncInfo #green;text:green : "channel"
 ChannelReference --> StandalonePrice #green;text:green : "channel"

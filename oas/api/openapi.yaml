@@ -2192,7 +2192,7 @@ paths:
       description: |-
         Creates an Order from a [Cart](ctp:api:type:Cart) in a [BusinessUnit](ctp:api:type:BusinessUnit).
 
-        The Cart must have a shipping address and an active Shipping Method set.
+        The Cart must have a shipping address set.
 
         If the Cart does not reference the same BusinessUnit as the `businessUnitKey` path parameter, an [InvalidOperation](ctp:api:type:InvalidOperationError) is returned.
 
@@ -6519,6 +6519,10 @@ paths:
         Creates a Cart in the Project.
 
         If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, or if the Shipping Method is not active, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
+
+        When using [InventoryMode](ctp:api:type:InventoryMode) `ReserveOnCart`:
+        - If only some Line Items can be reserved, the Cart creation succeeds, however, the items that could not be reserved are removed and reservation warnings are returned in the response.
+        - If none of the Line Items can be reserved, the Cart creation fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error.
 
         Specific Error Codes:
 
@@ -15831,7 +15835,7 @@ paths:
       description: |-
         Creates an Order from a Cart in a [Store](ctp:api:type:Store) for the Customer or anonymous user. The `customerId` or `anonymousId` field on the Order is automatically set based on the [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
 
-        The Cart must have a shipping address and an active Shipping Method set.
+        The Cart must have a shipping address set.
 
         When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
 
@@ -16980,7 +16984,7 @@ paths:
       operationId: ByProjectKeyInStoreKeyByStoreKeyOrdersPost
       description: |-
         Creates an Order from a Cart in a [Store](ctp:api:type:Store).
-        The Cart must have a shipping address and an active Shipping Method set.
+        The Cart must have a shipping address set.
 
         The shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).
 
@@ -21157,9 +21161,9 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyInventoryPost
       description: |-
-        Creates an InventoryEntry in the Project.
+        Creates an InventoryEntry in the Project. Only one InventoryEntry can be created for a combination of a SKU and a supply channel.
 
-        If quantity limits are provided, existing Line Items that reference a Product Variant with an SKU that matches the Inventory Entry can be affected. For more information, see [Quantity limits](/../api/carts-orders-overview#quantity-limits).
+        If quantity limits are provided, existing Line Items that reference a Product Variant with an SKU that matches the Inventory Entry can be affected. For more information, see [Quantity limits](/../api/inventory-overview#quantity-limits).
 
         Produces the [InventoryEntryCreated](ctp:api:type:InventoryEntryCreatedMessage) Message.
       parameters:
@@ -23035,7 +23039,9 @@ paths:
       description: |-
         Creates an Order from a Cart for the Customer or anonymous user. The `customerId` or `anonymousId` field on the Order is automatically set based on the [customer:{id}](/scopes#composable-commerce-oauth) or [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope.
 
-        The Cart must have a shipping address and an active Shipping Method set. When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
+        The Cart must have a shipping address set.
+
+        When creating [B2B Orders](/associates-overview#b2b-resources), the Customer must have the `CreateMyOrdersFromMyCarts` [Permission](ctp:api:type:Permission).
 
         If the Cart's `customerId` does not match the [customer:{id}](/scopes#composable-commerce-oauth) scope, or the `anonymousId` does not match the [anonymous_id:{id}](/scopes#composable-commerce-oauth) scope, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
 
@@ -25581,7 +25587,7 @@ paths:
       description: |-
         Creates an Order from a Cart.
 
-        The Cart must have a shipping address and an active Shipping Method set.
+        The Cart must have a shipping address set.
 
         The shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).
 
@@ -33374,12 +33380,9 @@ paths:
       security:
         - oauth_2_0:
             - "view_recurrence_policies:{projectKey}"
-            - "view_recurring_orders:{projectKey}"
       operationId: ByProjectKeyRecurrencePoliciesGet
       description: |-
         Retrieves Recurrence Policies in the Project.
-
-        The `view_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `view_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.
       parameters:
         - name: expand
           in: query
@@ -33470,12 +33473,9 @@ paths:
       security:
         - oauth_2_0:
             - "view_recurrence_policies:{projectKey}"
-            - "view_recurring_orders:{projectKey}"
       operationId: ByProjectKeyRecurrencePoliciesHead
       description: |-
         Checks if one or more Recurrence Policies exist for the provided query predicate. Returns a `200` status if any Recurrence Policies match the query predicate, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
-
-        The `view_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `view_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.
       parameters:
         - name: where
           in: query
@@ -33509,12 +33509,9 @@ paths:
       security:
         - oauth_2_0:
             - "manage_recurrence_policies:{projectKey}"
-            - "manage_recurring_orders:{projectKey}"
       operationId: ByProjectKeyRecurrencePoliciesPost
       description: |-
         Creates a Recurrence Policy in the Project.
-
-        The `manage_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `manage_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.
       parameters:
         - name: expand
           in: query
@@ -33570,12 +33567,9 @@ paths:
       security:
         - oauth_2_0:
             - "view_recurrence_policies:{projectKey}"
-            - "view_recurring_orders:{projectKey}"
       operationId: ByProjectKeyRecurrencePoliciesKeyByKeyGet
       description: |-
         Retrieves a Recurrence Policy with the provided `key`.
-
-        The `view_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `view_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.
       parameters:
         - name: expand
           in: query
@@ -33613,12 +33607,9 @@ paths:
       security:
         - oauth_2_0:
             - "view_recurrence_policies:{projectKey}"
-            - "view_recurring_orders:{projectKey}"
       operationId: ByProjectKeyRecurrencePoliciesKeyByKeyHead
       description: |-
         Checks if a Recurrence Policy exists with the provided `key`. Returns a `200` status if the Recurrence Policy exists, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
-
-        The `view_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `view_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.
       responses:
         "200":
           description: |-
@@ -33642,12 +33633,9 @@ paths:
       security:
         - oauth_2_0:
             - "manage_recurrence_policies:{projectKey}"
-            - "manage_recurring_orders:{projectKey}"
       operationId: ByProjectKeyRecurrencePoliciesKeyByKeyPost
       description: |-
         Updates a Recurrence Policy using one or more [update actions](/../api/projects/recurrence-policies#update-actions).
-
-        The `manage_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `manage_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.
       parameters:
         - name: expand
           in: query
@@ -33693,14 +33681,11 @@ paths:
       security:
         - oauth_2_0:
             - "manage_recurrence_policies:{projectKey}"
-            - "manage_recurring_orders:{projectKey}"
       operationId: ByProjectKeyRecurrencePoliciesKeyByKeyDelete
       description: |-
         Deletes a Recurrence Policy in the Project.
 
         A Recurrence Policy can be deleted only if it is not referenced by any Embedded Price, Standalone Price, or (Custom) Line Item, otherwise a [ReferenceExists](ctp:api:type:ReferenceExistsError) error is returned.
-
-        The `manage_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `manage_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.
       parameters:
         - name: version
           in: query
@@ -33760,12 +33745,9 @@ paths:
       security:
         - oauth_2_0:
             - "view_recurrence_policies:{projectKey}"
-            - "view_recurring_orders:{projectKey}"
       operationId: ByProjectKeyRecurrencePoliciesByIDGet
       description: |-
         Retrieves a Recurrence Policy with the provided `id`.
-
-        The `view_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `view_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.
       parameters:
         - name: expand
           in: query
@@ -33803,12 +33785,9 @@ paths:
       security:
         - oauth_2_0:
             - "view_recurrence_policies:{projectKey}"
-            - "view_recurring_orders:{projectKey}"
       operationId: ByProjectKeyRecurrencePoliciesByIDHead
       description: |-
         Checks if a Recurrence Policy exists with the provided `id`. Returns a `200` status if the Recurrence Policy exists, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.
-
-        The `view_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `view_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.
       responses:
         "200":
           description: |-
@@ -33832,12 +33811,9 @@ paths:
       security:
         - oauth_2_0:
             - "manage_recurrence_policies:{projectKey}"
-            - "manage_recurring_orders:{projectKey}"
       operationId: ByProjectKeyRecurrencePoliciesByIDPost
       description: |-
         Updates a Recurrence Policy using one or more [update actions](/../api/projects/recurrence-policies#update-actions).
-
-        The `manage_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `manage_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.
       parameters:
         - name: expand
           in: query
@@ -33883,14 +33859,11 @@ paths:
       security:
         - oauth_2_0:
             - "manage_recurrence_policies:{projectKey}"
-            - "manage_recurring_orders:{projectKey}"
       operationId: ByProjectKeyRecurrencePoliciesByIDDelete
       description: |-
         Deletes a Recurrence Policy in the Project.
 
         A Recurrence Policy can be deleted only if it is not referenced by any Embedded Price, Standalone Price, or (Custom) Line Item, otherwise a [ReferenceExists](ctp:api:type:ReferenceExistsError) error is returned.
-
-        The `manage_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `manage_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.
       parameters:
         - name: version
           in: query
@@ -41623,6 +41596,7 @@ components:
         - type: "object"
           required:
             - key
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -41658,6 +41632,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -42025,6 +42000,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -42521,6 +42497,7 @@ components:
         - type: "object"
           required:
             - key
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -42556,6 +42533,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -43523,6 +43501,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -44276,6 +44255,10 @@ components:
               $ref: '#/components/schemas/LastModifiedBy'
             createdBy:
               $ref: '#/components/schemas/CreatedBy'
+            warnings:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/WarningObject'
     CartDraft:
       type: "object"
       required:
@@ -44389,7 +44372,9 @@ components:
       x-annotation-enumDescriptions:
         Customer: "Cart was created by a Customer.nnThis is the default value.n"
         Merchant: "Cart was created by a merchant on behalf of a Customer.n"
-        Quote: "Cart was created as part of a Quote.n"
+        Quote: "Cart is the [quotationCart](ctp:api:type:StagedQuote) that was automatically
+         created by the [Create StagedQuote](ctp:api:endpoint:/{projectKey}/staged-quotes:POST)
+         endpoint during the quoting process.n"
         RecurringOrder: "Cart was created as part of a Recurring Order.n"
     CartPagedQueryResponse:
       type: "object"
@@ -44421,6 +44406,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -44551,6 +44537,7 @@ components:
           setLineItemTotalPrice: '#/components/schemas/CartSetLineItemTotalPriceAction'
           setLocale: '#/components/schemas/CartSetLocaleAction'
           setPurchaseOrderNumber: '#/components/schemas/CartSetPurchaseOrderNumberAction'
+          setReservationExpirationInMinutes: '#/components/schemas/CartSetReservationExpirationInMinutesAction'
           setShippingAddress: '#/components/schemas/CartSetShippingAddressAction'
           setShippingAddressCustomField: '#/components/schemas/CartSetShippingAddressCustomFieldAction'
           setShippingAddressCustomType: '#/components/schemas/CartSetShippingAddressCustomTypeAction'
@@ -44750,6 +44737,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -44938,10 +44926,11 @@ components:
         - None
         - TrackOnly
         - ReserveOnOrder
+        - ReserveOnCart
       x-annotation-package: "Cart"
       x-annotation-enumDescriptions:
         None: "Adding and ordering items from a Cart are independent of the Inventory with
-         no inventory checks or modifications.nnThis is the default mode.n"
+         no inventory checks or modifications.nThis is the default mode.n"
         TrackOnly: "Orders are tracked on the Inventory, and ordering a [LineItem](ctp:api:type:LineItem)
          deducts the available quantity on the respective [InventoryEntry](ctp:api:type:InventoryEntry).n
         nAn [Order can be created](ctp:api:endpoint:/{projectKey}/orders:POST) even if
@@ -44955,6 +44944,16 @@ components:
          (but is still updated) for the ordered Line Item quantity.nnHowever, an Order
          can be created if the [InventoryEntry](ctp:api:type:InventoryEntry) `restockableInDays`
          is set (including `0`).n"
+        ReserveOnCart: "This feature is in [Beta](/../offering/compatibility#public-beta).n
+        nWhen Line Items are added to a Cart, they are automatically reserved. The reservation
+         can be released by [removing](ctp:api:type:CartRemoveLineItemAction) the Line
+         Item from the Cart or [changing](ctp:api:type:CartSetLineItemInventoryModeAction)
+         their inventory mode to something other than `ReserveOnCart`. Reservations expire
+         after the time specified in the Project's [`reservationExpirationInMinutes`](ctp:api:type:InventoryConfiguration)
+         setting.nnTo use this inventory mode, you must set the reservation expiration
+         time on the [Project](ctp:api:type:Project) using the [Set Reservation Expiration
+         In Minutes](ctp:api:type:ProjectSetReservationExpirationInMinutesAction) update
+         action.n"
     ItemShippingDetails:
       type: "object"
       required:
@@ -45062,6 +45061,8 @@ components:
           $ref: '#/components/schemas/InventoryMode'
         shippingDetails:
           $ref: '#/components/schemas/ItemShippingDetails'
+        reservation:
+          $ref: '#/components/schemas/ReservationReference'
         custom:
           $ref: '#/components/schemas/CustomFields'
         addedAt:
@@ -45203,6 +45204,20 @@ components:
             - $ref: '#/components/schemas/OrderReference'
         key:
           type: "string"
+    ReservationReference:
+      allOf:
+        - $ref: '#/components/schemas/Reference'
+        - type: "object"
+          required:
+            - id
+            - typeId
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            obj:
+              $ref: '#/components/schemas/Reservation'
     RoundingMode:
       type: "string"
       enum:
@@ -46403,6 +46418,18 @@ components:
               type: "string"
             purchaseOrderNumber:
               type: "string"
+    CartSetReservationExpirationInMinutesAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          required:
+            - reservationExpirationInMinutes
+          properties:
+            action:
+              type: "string"
+            reservationExpirationInMinutes:
+              type: "integer"
+              format: "int32"
     CartSetShippingAddressAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -46652,6 +46679,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -47076,6 +47104,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -47814,6 +47843,23 @@ components:
       x-annotation-enumDescriptions:
         centPrecision: "Use to set currency in cent precision."
         highPrecision: "Use to set currency in high precision."
+    NonStandardCurrency:
+      type: "string"
+      enum:
+        - CZK0
+        - HUF0
+        - ILS0
+        - KZT0
+        - TRY0
+        - TWD0
+      x-annotation-package: "Common"
+      x-annotation-enumDescriptions:
+        CZK0: "Czech Koruna with `0` fraction digitsn"
+        HUF0: "Hungarian Forint with `0` fraction digitsn"
+        ILS0: "Israeli New Shekel with `0` fraction digitsn"
+        KZT0: "Kazakhstani Tenge with `0` fraction digitsn"
+        TRY0: "Turkish Lira with `0` fraction digitsn"
+        TWD0: "Taiwan Dollar with `0` fraction digitsn"
     Price:
       type: "object"
       required:
@@ -47952,6 +47998,7 @@ components:
           direct-discount: '#/components/schemas/DirectDiscountReference'
           discount-code: '#/components/schemas/DiscountCodeReference'
           discount-group: '#/components/schemas/DiscountGroupReference'
+          extension: '#/components/schemas/ExtensionReference'
           inventory-entry: '#/components/schemas/InventoryEntryReference'
           order-edit: '#/components/schemas/OrderEditReference'
           order: '#/components/schemas/OrderReference'
@@ -47966,6 +48013,7 @@ components:
           quote-request: '#/components/schemas/QuoteRequestReference'
           recurrence-policy: '#/components/schemas/RecurrencePolicyReference'
           recurring-order: '#/components/schemas/RecurringOrderReference'
+          reservation: '#/components/schemas/ReservationReference'
           review: '#/components/schemas/ReviewReference'
           shipping-method: '#/components/schemas/ShippingMethodReference'
           shopping-list: '#/components/schemas/ShoppingListReference'
@@ -48020,6 +48068,7 @@ components:
         - quote-request
         - recurrence-policy
         - recurring-order
+        - reservation
         - review
         - shipping-method
         - shopping-list
@@ -48034,18 +48083,14 @@ components:
       x-annotation-package: "Common"
       x-annotation-enumDescriptions:
         approval-flow: "References an [ApprovalFlow](ctp:api:type:ApprovalFlow). Only available
-         for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         approval-rule: "References an [ApprovalRule](ctp:api:type:ApprovalRule). Only available
-         for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         associate-role: "References an [AssociateRole](ctp:api:type:AssociateRole). Only available
-         for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         attribute-group: "References an [AttributeGroup](ctp:api:type:AttributeGroup).n"
         business-unit: "References a [BusinessUnit](ctp:api:type:BusinessUnit). Only available
-         for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         cart: "References a [Cart](ctp:api:type:Cart).n"
         cart-discount: "References a [CartDiscount](ctp:api:type:CartDiscount).n"
         category: "References a [Category](ctp:api:type:Category).n"
@@ -48076,6 +48121,7 @@ components:
         quote-request: "References a [QuoteRequest](ctp:api:type:QuoteRequest).n"
         recurring-order: "References a [RecurringOrder](ctp:api:type:RecurringOrder).n"
         recurrence-policy: "References a [RecurrencePolicy](ctp:api:type:RecurrencePolicy).n"
+        reservation: "References a [Reservation](ctp:api:type:Reservation).n"
         review: "References a [Review](ctp:api:type:Review).n"
         shipping-method: "References a [ShippingMethod](ctp:api:type:ShippingMethod).n"
         shopping-list: "References a [ShoppingList](ctp:api:type:ShoppingList).n"
@@ -48103,6 +48149,7 @@ components:
           customer: '#/components/schemas/CustomerResourceIdentifier'
           discount-code: '#/components/schemas/DiscountCodeResourceIdentifier'
           discount-group: '#/components/schemas/DiscountGroupResourceIdentifier'
+          extension: '#/components/schemas/ExtensionResourceIdentifier'
           inventory-entry: '#/components/schemas/InventoryEntryResourceIdentifier'
           order-edit: '#/components/schemas/OrderEditResourceIdentifier'
           payment: '#/components/schemas/PaymentResourceIdentifier'
@@ -48290,6 +48337,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -48370,6 +48418,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -48798,6 +48847,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -48857,6 +48907,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -48868,6 +48919,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -49568,6 +49620,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -49857,6 +49910,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -50080,6 +50134,20 @@ components:
             error_description:
               type: "string"
     BadGatewayError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    CircularDependencyError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
@@ -50464,6 +50532,7 @@ components:
           AttributeDefinitionTypeConflict: '#/components/schemas/AttributeDefinitionTypeConflictError'
           AttributeNameDoesNotExist: '#/components/schemas/AttributeNameDoesNotExistError'
           BadGateway: '#/components/schemas/BadGatewayError'
+          CircularDependency: '#/components/schemas/CircularDependencyError'
           ConcurrentModification: '#/components/schemas/ConcurrentModificationError'
           ContentTooLarge: '#/components/schemas/ContentTooLargeError'
           CountryNotConfiguredInStore: '#/components/schemas/CountryNotConfiguredInStoreError'
@@ -50486,6 +50555,9 @@ components:
           ExpiredCustomerEmailToken: '#/components/schemas/ExpiredCustomerEmailTokenError'
           ExpiredCustomerPasswordToken: '#/components/schemas/ExpiredCustomerPasswordTokenError'
           ExtensionBadResponse: '#/components/schemas/ExtensionBadResponseError'
+          ExtensionChainTooDeep: '#/components/schemas/ExtensionChainTooDeepError'
+          ExtensionChainTooWide: '#/components/schemas/ExtensionChainTooWideError'
+          ExtensionDependencyExists: '#/components/schemas/ExtensionDependencyExistsError'
           ExtensionNoResponse: '#/components/schemas/ExtensionNoResponseError'
           ExtensionPredicateEvaluationFailed: '#/components/schemas/ExtensionPredicateEvaluationFailedError'
           ExtensionUpdateActionsFailed: '#/components/schemas/ExtensionUpdateActionsFailedError'
@@ -50504,12 +50576,15 @@ components:
           InvalidSubject: '#/components/schemas/InvalidSubjectError'
           invalid_token: '#/components/schemas/InvalidTokenError'
           LanguageUsedInStores: '#/components/schemas/LanguageUsedInStoresError'
+          LineItemQuantityAboveLimit: '#/components/schemas/LineItemQuantityAboveLimitError'
+          LineItemQuantityBelowLimit: '#/components/schemas/LineItemQuantityBelowLimitError'
           LockedField: '#/components/schemas/LockedFieldError'
           MatchingPriceNotFound: '#/components/schemas/MatchingPriceNotFoundError'
           MaxCartDiscountsReached: '#/components/schemas/MaxCartDiscountsReachedError'
           MaxDiscountGroupsReached: '#/components/schemas/MaxDiscountGroupsReachedError'
           MaxResourceLimitExceeded: '#/components/schemas/MaxResourceLimitExceededError'
           MaxStoreReferencesReached: '#/components/schemas/MaxStoreReferencesReachedError'
+          MissingDependency: '#/components/schemas/MissingDependencyError'
           MissingRoleOnChannel: '#/components/schemas/MissingRoleOnChannelError'
           MissingTaxRateForCountry: '#/components/schemas/MissingTaxRateForCountryError'
           MoneyOverflow: '#/components/schemas/MoneyOverflowError'
@@ -50659,6 +50734,48 @@ components:
             extensionId:
               type: "string"
             extensionKey:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    ExtensionChainTooDeepError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    ExtensionChainTooWideError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    ExtensionDependencyExistsError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
               type: "string"
           additionalProperties:
             type: "string"
@@ -50962,6 +51079,54 @@ components:
               type: "string"
           additionalProperties:
             type: "string"
+    LineItemQuantityAboveLimitError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - maxCartQuantity
+            - message
+            - quantity
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            quantity:
+              type: "integer"
+              format: "int32"
+            maxCartQuantity:
+              type: "integer"
+              format: "int32"
+            lineItem:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    LineItemQuantityBelowLimitError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+            - minCartQuantity
+            - quantity
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            quantity:
+              type: "integer"
+              format: "int32"
+            minCartQuantity:
+              type: "integer"
+              format: "int32"
+            lineItem:
+              type: "string"
+          additionalProperties:
+            type: "string"
     LockedFieldError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
@@ -51054,6 +51219,20 @@ components:
           additionalProperties:
             type: "string"
     MaxStoreReferencesReachedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    MissingDependencyError:
       allOf:
         - $ref: '#/components/schemas/ErrorObject'
         - type: "object"
@@ -51721,6 +51900,17 @@ components:
               type: "string"
           additionalProperties:
             type: "string"
+    GraphQLCircularDependencyError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
+          additionalProperties:
+            type: "string"
     GraphQLConcurrentModificationError:
       allOf:
         - $ref: '#/components/schemas/GraphQLErrorObject'
@@ -52029,6 +52219,7 @@ components:
           AttributeDefinitionTypeConflict: '#/components/schemas/GraphQLAttributeDefinitionTypeConflictError'
           AttributeNameDoesNotExist: '#/components/schemas/GraphQLAttributeNameDoesNotExistError'
           BadGateway: '#/components/schemas/GraphQLBadGatewayError'
+          CircularDependency: '#/components/schemas/GraphQLCircularDependencyError'
           ConcurrentModification: '#/components/schemas/GraphQLConcurrentModificationError'
           ContentTooLarge: '#/components/schemas/GraphQLContentTooLargeError'
           CountryNotConfiguredInStore: '#/components/schemas/GraphQLCountryNotConfiguredInStoreError'
@@ -52051,6 +52242,9 @@ components:
           ExpiredCustomerEmailToken: '#/components/schemas/GraphQLExpiredCustomerEmailTokenError'
           ExpiredCustomerPasswordToken: '#/components/schemas/GraphQLExpiredCustomerPasswordTokenError'
           ExtensionBadResponse: '#/components/schemas/GraphQLExtensionBadResponseError'
+          ExtensionChainTooDeep: '#/components/schemas/GraphQLExtensionChainTooDeepError'
+          ExtensionChainTooWide: '#/components/schemas/GraphQLExtensionChainTooWideError'
+          ExtensionDependencyExists: '#/components/schemas/GraphQLExtensionDependencyExistsError'
           ExtensionNoResponse: '#/components/schemas/GraphQLExtensionNoResponseError'
           ExtensionPredicateEvaluationFailed: '#/components/schemas/GraphQLExtensionPredicateEvaluationFailedError'
           ExtensionUpdateActionsFailed: '#/components/schemas/GraphQLExtensionUpdateActionsFailedError'
@@ -52069,12 +52263,15 @@ components:
           InvalidSubject: '#/components/schemas/GraphQLInvalidSubjectError'
           invalid_token: '#/components/schemas/GraphQLInvalidTokenError'
           LanguageUsedInStores: '#/components/schemas/GraphQLLanguageUsedInStoresError'
+          LineItemQuantityAboveLimit: '#/components/schemas/GraphQLLineItemQuantityAboveLimitError'
+          LineItemQuantityBelowLimit: '#/components/schemas/GraphQLLineItemQuantityBelowLimitError'
           LockedField: '#/components/schemas/GraphQLLockedFieldError'
           MatchingPriceNotFound: '#/components/schemas/GraphQLMatchingPriceNotFoundError'
           MaxCartDiscountsReached: '#/components/schemas/GraphQLMaxCartDiscountsReachedError'
           MaxDiscountGroupsReached: '#/components/schemas/GraphQLMaxDiscountGroupsReachedError'
           MaxResourceLimitExceeded: '#/components/schemas/GraphQLMaxResourceLimitExceededError'
           MaxStoreReferencesReached: '#/components/schemas/GraphQLMaxStoreReferencesReachedError'
+          MissingDependency: '#/components/schemas/GraphQLMissingDependencyError'
           MissingRoleOnChannel: '#/components/schemas/GraphQLMissingRoleOnChannelError'
           MissingTaxRateForCountry: '#/components/schemas/GraphQLMissingTaxRateForCountryError'
           MoneyOverflow: '#/components/schemas/GraphQLMoneyOverflowError'
@@ -52194,6 +52391,39 @@ components:
             extensionId:
               type: "string"
             extensionKey:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLExtensionChainTooDeepError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLExtensionChainTooWideError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLExtensionDependencyExistsError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
               type: "string"
           additionalProperties:
             type: "string"
@@ -52427,6 +52657,48 @@ components:
               type: "string"
           additionalProperties:
             type: "string"
+    GraphQLLineItemQuantityAboveLimitError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+            - maxCartQuantity
+            - quantity
+          properties:
+            code:
+              type: "string"
+            quantity:
+              type: "integer"
+              format: "int32"
+            maxCartQuantity:
+              type: "integer"
+              format: "int32"
+            lineItem:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLLineItemQuantityBelowLimitError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+            - minCartQuantity
+            - quantity
+          properties:
+            code:
+              type: "string"
+            quantity:
+              type: "integer"
+              format: "int32"
+            minCartQuantity:
+              type: "integer"
+              format: "int32"
+            lineItem:
+              type: "string"
+          additionalProperties:
+            type: "string"
     GraphQLLockedFieldError:
       allOf:
         - $ref: '#/components/schemas/GraphQLErrorObject'
@@ -52504,6 +52776,17 @@ components:
           additionalProperties:
             type: "string"
     GraphQLMaxStoreReferencesReachedError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+          properties:
+            code:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLMissingDependencyError:
       allOf:
         - $ref: '#/components/schemas/GraphQLErrorObject'
         - type: "object"
@@ -53528,6 +53811,16 @@ components:
             timeoutInMs:
               type: "integer"
               format: "int32"
+            dependencies:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ExtensionReference'
+            expansionPaths:
+              type: "array"
+              items:
+                type: "string"
+            additionalContext:
+              $ref: '#/components/schemas/ExtensionAdditionalContext'
     ExtensionAction:
       type: "string"
       enum:
@@ -53537,6 +53830,18 @@ components:
       x-annotation-enumDescriptions:
         Create: "An Extension gets called during a Create request."
         Update: "An Extension gets called during an Update request."
+    ExtensionAdditionalContext:
+      type: "object"
+      required:
+        - includeOldResource
+      properties:
+        includeOldResource:
+          type: "boolean"
+    ExtensionAdditionalContextDraft:
+      type: "object"
+      properties:
+        includeOldResource:
+          type: "boolean"
     ExtensionDestination:
       type: "object"
       discriminator:
@@ -53567,6 +53872,16 @@ components:
         timeoutInMs:
           type: "integer"
           format: "int32"
+        dependencies:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/ExtensionResourceIdentifier'
+        expansionPaths:
+          type: "array"
+          items:
+            type: "string"
+        additionalContext:
+          $ref: '#/components/schemas/ExtensionAdditionalContextDraft'
     ExtensionInput:
       type: "object"
       required:
@@ -53576,6 +53891,8 @@ components:
         action:
           $ref: '#/components/schemas/ExtensionAction'
         resource:
+          $ref: '#/components/schemas/Reference'
+        oldResource:
           $ref: '#/components/schemas/Reference'
     ExtensionPagedQueryResponse:
       type: "object"
@@ -53601,6 +53918,31 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/Extension'
+    ExtensionReference:
+      allOf:
+        - $ref: '#/components/schemas/Reference'
+        - type: "object"
+          required:
+            - id
+            - typeId
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            obj:
+              $ref: '#/components/schemas/Extension'
+    ExtensionResourceIdentifier:
+      allOf:
+        - $ref: '#/components/schemas/ResourceIdentifier'
+        - type: "object"
+          properties:
+            typeId:
+              $ref: '#/components/schemas/ReferenceTypeId'
+            id:
+              type: "string"
+            key:
+              type: "string"
     ExtensionResourceTypeId:
       type: "string"
       enum:
@@ -53662,6 +54004,9 @@ components:
         mapping:
           changeDestination: '#/components/schemas/ExtensionChangeDestinationAction'
           changeTriggers: '#/components/schemas/ExtensionChangeTriggersAction'
+          setAdditionalContext: '#/components/schemas/ExtensionSetAdditionalContextAction'
+          setDependencies: '#/components/schemas/ExtensionSetDependenciesAction'
+          setExpansionPaths: '#/components/schemas/ExtensionSetExpansionPathsAction'
           setKey: '#/components/schemas/ExtensionSetKeyAction'
           setTimeoutInMs: '#/components/schemas/ExtensionSetTimeoutInMsAction'
       required:
@@ -53729,6 +54074,43 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ExtensionTrigger'
+    ExtensionSetAdditionalContextAction:
+      allOf:
+        - $ref: '#/components/schemas/ExtensionUpdateAction'
+        - type: "object"
+          required:
+            - additionalContext
+          properties:
+            action:
+              type: "string"
+            additionalContext:
+              $ref: '#/components/schemas/ExtensionAdditionalContextDraft'
+    ExtensionSetDependenciesAction:
+      allOf:
+        - $ref: '#/components/schemas/ExtensionUpdateAction'
+        - type: "object"
+          required:
+            - dependencies
+          properties:
+            action:
+              type: "string"
+            dependencies:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ExtensionResourceIdentifier'
+    ExtensionSetExpansionPathsAction:
+      allOf:
+        - $ref: '#/components/schemas/ExtensionUpdateAction'
+        - type: "object"
+          required:
+            - expansionPaths
+          properties:
+            action:
+              type: "string"
+            expansionPaths:
+              type: "array"
+              items:
+                type: "string"
     ExtensionSetKeyAction:
       allOf:
         - $ref: '#/components/schemas/ExtensionUpdateAction'
@@ -53857,6 +54239,11 @@ components:
             expectedDelivery:
               type: "string"
               format: "datetime"
+            reservationExpirationInMinutes:
+              type: "integer"
+              format: "int32"
+            stockLevels:
+              $ref: '#/components/schemas/InventoryEntryStockLevels'
             custom:
               $ref: '#/components/schemas/CustomFields'
     InventoryEntryDraft:
@@ -53886,6 +54273,11 @@ components:
         expectedDelivery:
           type: "string"
           format: "datetime"
+        reservationExpirationInMinutes:
+          type: "integer"
+          format: "int32"
+        stockLevels:
+          $ref: '#/components/schemas/InventoryEntryStockLevels'
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
     InventoryEntryReference:
@@ -53894,6 +54286,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -53912,6 +54305,15 @@ components:
               type: "string"
             key:
               type: "string"
+    InventoryEntryStockLevels:
+      type: "object"
+      properties:
+        reorderPoint:
+          type: "integer"
+          format: "int32"
+        safetyStock:
+          type: "integer"
+          format: "int32"
     InventoryEntryUpdate:
       type: "object"
       required:
@@ -53938,7 +54340,10 @@ components:
           setExpectedDelivery: '#/components/schemas/InventoryEntrySetExpectedDeliveryAction'
           setInventoryLimits: '#/components/schemas/InventoryEntrySetInventoryLimitsAction'
           setKey: '#/components/schemas/InventoryEntrySetKeyAction'
+          setReorderPoint: '#/components/schemas/InventoryEntrySetReorderPointAction'
+          setReservationExpirationInMinutes: '#/components/schemas/InventoryEntrySetReservationExpirationInMinutesAction'
           setRestockableInDays: '#/components/schemas/InventoryEntrySetRestockableInDaysAction'
+          setSafetyStock: '#/components/schemas/InventoryEntrySetSafetyStockAction'
           setSupplyChannel: '#/components/schemas/InventoryEntrySetSupplyChannelAction'
       required:
         - action
@@ -54061,6 +54466,26 @@ components:
               type: "string"
             key:
               type: "string"
+    InventoryEntrySetReorderPointAction:
+      allOf:
+        - $ref: '#/components/schemas/InventoryEntryUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            quantity:
+              type: "integer"
+              format: "int32"
+    InventoryEntrySetReservationExpirationInMinutesAction:
+      allOf:
+        - $ref: '#/components/schemas/InventoryEntryUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            reservationExpirationInMinutes:
+              type: "integer"
+              format: "int32"
     InventoryEntrySetRestockableInDaysAction:
       allOf:
         - $ref: '#/components/schemas/InventoryEntryUpdateAction'
@@ -54071,6 +54496,16 @@ components:
             restockableInDays:
               type: "integer"
               format: "int64"
+    InventoryEntrySetSafetyStockAction:
+      allOf:
+        - $ref: '#/components/schemas/InventoryEntryUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            quantity:
+              type: "integer"
+              format: "int32"
     InventoryEntrySetSupplyChannelAction:
       allOf:
         - $ref: '#/components/schemas/InventoryEntryUpdateAction'
@@ -60885,6 +61320,44 @@ components:
               type: "string"
             supplyChannel:
               $ref: '#/components/schemas/ChannelReference'
+    InventoryEntryOutOfStockMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - sku
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            sku:
+              type: "string"
+            supplyChannel:
+              $ref: '#/components/schemas/ChannelReference'
     InventoryEntryQuantitySetMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -60936,6 +61409,128 @@ components:
               format: "int64"
             sku:
               type: "string"
+            supplyChannel:
+              $ref: '#/components/schemas/ChannelReference'
+    InventoryEntryReorderPointMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - quantityOnStock
+            - sku
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            sku:
+              type: "string"
+            quantityOnStock:
+              type: "integer"
+              format: "int32"
+            supplyChannel:
+              $ref: '#/components/schemas/ChannelReference'
+    InventoryEntryReservationExpirationInMinutesSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            newReservationExpirationInMinutes:
+              type: "integer"
+              format: "int32"
+            oldReservationExpirationInMinutes:
+              type: "integer"
+              format: "int32"
+    InventoryEntrySafetyStockMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          required:
+            - quantityOnStock
+            - sku
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            sku:
+              type: "string"
+            quantityOnStock:
+              type: "integer"
+              format: "int32"
             supplyChannel:
               $ref: '#/components/schemas/ChannelReference'
     LineItemStateTransitionMessage:
@@ -61118,7 +61713,11 @@ components:
               DiscountGroupSortOrderSet: '#/components/schemas/DiscountGroupSortOrderSetMessage'
               InventoryEntryCreated: '#/components/schemas/InventoryEntryCreatedMessage'
               InventoryEntryDeleted: '#/components/schemas/InventoryEntryDeletedMessage'
+              InventoryEntryOutOfStock: '#/components/schemas/InventoryEntryOutOfStockMessage'
               InventoryEntryQuantitySet: '#/components/schemas/InventoryEntryQuantitySetMessage'
+              InventoryEntryReorderPoint: '#/components/schemas/InventoryEntryReorderPointMessage'
+              InventoryEntryReservationExpirationInMinutesSet: '#/components/schemas/InventoryEntryReservationExpirationInMinutesSetMessage'
+              InventoryEntrySafetyStock: '#/components/schemas/InventoryEntrySafetyStockMessage'
               OrderPaymentAdded: '#/components/schemas/OrderPaymentAddedMessage'
               OrderPaymentRemoved: '#/components/schemas/OrderPaymentRemovedMessage'
               PaymentCreated: '#/components/schemas/PaymentCreatedMessage'
@@ -70130,6 +70729,19 @@ components:
               type: "string"
             supplyChannel:
               $ref: '#/components/schemas/ChannelReference'
+    InventoryEntryOutOfStockMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - sku
+          properties:
+            type:
+              type: "string"
+            sku:
+              type: "string"
+            supplyChannel:
+              $ref: '#/components/schemas/ChannelReference'
     InventoryEntryQuantitySetMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -70156,6 +70768,53 @@ components:
               format: "int64"
             sku:
               type: "string"
+            supplyChannel:
+              $ref: '#/components/schemas/ChannelReference'
+    InventoryEntryReorderPointMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - quantityOnStock
+            - sku
+          properties:
+            type:
+              type: "string"
+            sku:
+              type: "string"
+            quantityOnStock:
+              type: "integer"
+              format: "int32"
+            supplyChannel:
+              $ref: '#/components/schemas/ChannelReference'
+    InventoryEntryReservationExpirationInMinutesSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            newReservationExpirationInMinutes:
+              type: "integer"
+              format: "int32"
+            oldReservationExpirationInMinutes:
+              type: "integer"
+              format: "int32"
+    InventoryEntrySafetyStockMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          required:
+            - quantityOnStock
+            - sku
+          properties:
+            type:
+              type: "string"
+            sku:
+              type: "string"
+            quantityOnStock:
+              type: "integer"
+              format: "int32"
             supplyChannel:
               $ref: '#/components/schemas/ChannelReference'
     LineItemStateTransitionMessagePayload:
@@ -70311,7 +70970,11 @@ components:
           DiscountGroupSortOrderSet: '#/components/schemas/DiscountGroupSortOrderSetMessagePayload'
           InventoryEntryCreated: '#/components/schemas/InventoryEntryCreatedMessagePayload'
           InventoryEntryDeleted: '#/components/schemas/InventoryEntryDeletedMessagePayload'
+          InventoryEntryOutOfStock: '#/components/schemas/InventoryEntryOutOfStockMessagePayload'
           InventoryEntryQuantitySet: '#/components/schemas/InventoryEntryQuantitySetMessagePayload'
+          InventoryEntryReorderPoint: '#/components/schemas/InventoryEntryReorderPointMessagePayload'
+          InventoryEntryReservationExpirationInMinutesSet: '#/components/schemas/InventoryEntryReservationExpirationInMinutesSetMessagePayload'
+          InventoryEntrySafetyStock: '#/components/schemas/InventoryEntrySafetyStockMessagePayload'
           OrderPaymentAdded: '#/components/schemas/OrderPaymentAddedMessagePayload'
           OrderPaymentRemoved: '#/components/schemas/OrderPaymentRemovedMessagePayload'
           PaymentCreated: '#/components/schemas/PaymentCreatedMessagePayload'
@@ -73221,6 +73884,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -75781,6 +76445,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -77154,6 +77819,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -77167,7 +77833,6 @@ components:
         - Active
         - Inactive
       x-annotation-package: "PaymentMethod"
-      x-beta: true
       x-annotation-enumDescriptions:
         Active: "The PaymentMethod is active.n"
         Inactive: "The PaymentMethod is inactive.n"
@@ -77464,6 +78129,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -78107,6 +78773,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -78925,6 +79592,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -78967,9 +79635,9 @@ components:
         individual: "For this type of Product Selection, the Products are to be assigned individually
          by using the [Add Product](/projects/product-selections#add-product) update action.n"
         individualExclusion: "Defines the Product Selection to contain Products that are excluded
-         from the catalog ([BETA](/../offering/api-compatibility#public-beta)).nFor this
-         type of Product Selection, the Products are to be excluded individually by using
-         the [Exclude Product](/projects/product-selections#exclude-product) update action.n"
+         from the catalog ([BETA](/../offering/compatibility#public-beta)).nFor this type
+         of Product Selection, the Products are to be excluded individually by using the
+         [Exclude Product](/projects/product-selections#exclude-product) update action.n"
     ProductSelectionUpdate:
       type: "object"
       required:
@@ -79397,6 +80065,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -80218,11 +80887,9 @@ components:
       x-annotation-package: "ProductType"
       x-annotation-enumDescriptions:
         associate-role: "References a [AssociateRole](ctp:api:type:AssociateRole). Only available
-         for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         business-unit: "References a [BusinessUnit](ctp:api:type:BusinessUnit). Only available
-         for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         cart: "References a [Cart](ctp:api:type:Cart).n"
         cart-discount: "References a [CartDiscount](ctp:api:type:CartDiscount).n"
         category: "References a [Category](ctp:api:type:Category).n"
@@ -80368,6 +81035,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -81183,6 +81851,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -82378,6 +83047,16 @@ components:
           type: "string"
         authorizationHeader:
           type: "string"
+    InventoryConfiguration:
+      type: "object"
+      required:
+        - releaseExpiredReservations
+      properties:
+        reservationExpirationInMinutes:
+          type: "integer"
+          format: "int32"
+        releaseExpiredReservations:
+          type: "boolean"
     OrderSearchStatus:
       type: "string"
       enum:
@@ -82407,6 +83086,7 @@ components:
         - createdAt
         - currencies
         - discounts
+        - inventory
         - key
         - languages
         - messages
@@ -82451,6 +83131,8 @@ components:
           $ref: '#/components/schemas/SearchIndexingConfiguration'
         businessUnits:
           $ref: '#/components/schemas/BusinessUnitConfiguration'
+        inventory:
+          $ref: '#/components/schemas/InventoryConfiguration'
         discounts:
           $ref: '#/components/schemas/DiscountsConfiguration'
     ProjectUpdate:
@@ -82490,6 +83172,8 @@ components:
           setMyBusinessUnitAssociateRoleOnCreation: '#/components/schemas/ProjectSetBusinessUnitAssociateRoleOnCreationAction'
           setDiscountsConfiguration: '#/components/schemas/ProjectSetDiscountsConfigurationAction'
           setExternalOAuth: '#/components/schemas/ProjectSetExternalOAuthAction'
+          setReleaseExpiredReservations: '#/components/schemas/ProjectSetReleaseExpiredReservationsAction'
+          setReservationExpirationInMinutes: '#/components/schemas/ProjectSetReservationExpirationInMinutesAction'
           setShippingRateInputType: '#/components/schemas/ProjectSetShippingRateInputTypeAction'
       required:
         - action
@@ -82769,6 +83453,29 @@ components:
               type: "string"
             externalOAuth:
               $ref: '#/components/schemas/ExternalOAuth'
+    ProjectSetReleaseExpiredReservationsAction:
+      allOf:
+        - $ref: '#/components/schemas/ProjectUpdateAction'
+        - type: "object"
+          required:
+            - releaseExpiredReservations
+          properties:
+            action:
+              type: "string"
+            releaseExpiredReservations:
+              type: "boolean"
+    ProjectSetReservationExpirationInMinutesAction:
+      allOf:
+        - $ref: '#/components/schemas/ProjectUpdateAction'
+        - type: "object"
+          required:
+            - reservationExpirationInMinutes
+          properties:
+            action:
+              type: "string"
+            reservationExpirationInMinutes:
+              type: "integer"
+              format: "int32"
     ProjectSetShippingRateInputTypeAction:
       allOf:
         - $ref: '#/components/schemas/ProjectUpdateAction'
@@ -82925,6 +83632,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Reference'
         - type: "object"
+          required:
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -83204,6 +83913,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Reference'
         - type: "object"
+          required:
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -83459,6 +84170,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -83827,6 +84539,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -84130,6 +84843,74 @@ components:
               $ref: '#/components/schemas/StateResourceIdentifier'
             force:
               type: "boolean"
+    Reservation:
+      allOf:
+        - $ref: '#/components/schemas/BaseResource'
+        - type: "object"
+          required:
+            - createdAt
+            - expiresAt
+            - id
+            - inventoryEntry
+            - lastModifiedAt
+            - lineItemId
+            - owner
+            - quantity
+            - state
+            - version
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            expiresAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            inventoryEntry:
+              $ref: '#/components/schemas/InventoryEntryReference'
+            quantity:
+              type: "integer"
+              format: "int64"
+            owner:
+              $ref: '#/components/schemas/Reference'
+            lineItemId:
+              type: "string"
+            state:
+              $ref: '#/components/schemas/ReservationState'
+    ReservationState:
+      type: "string"
+      enum:
+        - Created
+        - Updated
+        - Released
+        - Expired
+        - Committed
+      x-annotation-package: "Reservation"
+      x-beta: true
+      x-annotation-enumDescriptions:
+        Created: "The `availableQuantity` of the item has been reduced by the reserved quantity,
+         but the `quantityOnStock` remains unchanged.n"
+        Updated: "The reservation has been updated. If the quantity of an item changed, the
+         `availableQuantity` is increased or decreased accordingly, while the `quantityOnStock`
+         remains unchanged.n"
+        Released: "The reserved quantity of the item has been released. The `availableQuantity`
+         is increased accordingly.n"
+        Expired: "The reservation has expired and the `availableQuantity` is increased accordingly.
+         Reservation expirations are [eventually consistent](/../api/general-concepts#eventual-consistency),
+         meaning it can take a few minutes for the status to update after expiration.n"
+        Committed: "The quantity of the item has been allocated for fulfillment. The `quantityOnStock`
+         has been reduced by the reserved quantity.n"
     Review:
       allOf:
         - $ref: '#/components/schemas/BaseResource'
@@ -84264,6 +85045,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -85160,6 +85942,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -85640,6 +86423,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -86184,6 +86968,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Reference'
         - type: "object"
+          required:
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -86452,6 +87238,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Reference'
         - type: "object"
+          required:
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -86759,6 +87547,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -87072,6 +87861,7 @@ components:
         - type: "object"
           required:
             - key
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -87107,6 +87897,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -87450,18 +88241,14 @@ components:
       x-annotation-package: "Subscription"
       x-annotation-enumDescriptions:
         approval-flow: "Changes related to [ApprovalFlows](ctp:api:type:ApprovalFlow). Only
-         available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         available for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         approval-rule: "Changes related to [ApprovalRules](ctp:api:type:ApprovalRule). Only
-         available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         available for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         associate-role: "Changes related to [AssociateRoles](ctp:api:type:AssociateRole).
-         Only available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         Only available for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         attribute-group: "Changes related to [AttributeGroups](ctp:api:type:AttributeGroup).n"
         business-unit: "Changes to [BusinessUnits](ctp:api:type:BusinessUnit). Only available
-         for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         cart: "Changes to [Carts](ctp:api:type:Cart). Only notification of creation is supported.n"
         cart-discount: "Changes to [CartDiscounts](ctp:api:type:CartDiscount).n"
         category: "Changes to [Categories](ctp:api:type:Category).n"
@@ -87816,17 +88603,13 @@ components:
       x-annotation-package: "Subscription"
       x-annotation-enumDescriptions:
         approval-flow: "Messages related to [ApprovalFlows](ctp:api:type:ApprovalFlow). Only
-         available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         available for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         approval-rule: "Messages related to [ApprovalRules](ctp:api:type:ApprovalRule). Only
-         available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         available for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         associate-role: "Messages related to [AssociateRoles](ctp:api:type:AssociateRole).
-         Only available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         Only available for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         business-unit: "Messages related to [BusinessUnits](ctp:api:type:BusinessUnit). Only
-         available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
-         Projects.n"
+         available for [B2B](/../offering/commerce-b2b)-enabled Projects.n"
         category: "Messages related to [Categories](ctp:api:type:Category).n"
         customer: "Messages related to [Customers](ctp:api:type:Customer).n"
         customer-email-token: "Messages related to [CustomerTokens](ctp:api:type:CustomerToken)
@@ -88078,8 +88861,8 @@ components:
          and the delivery of the notifications is no longer attempted. Undelivered notifications
          are not retained and will not be delivered. The `status` will not automatically
          change to [Healthy](ctp:api:type:SubscriptionHealthStatus). To return your subscriptions
-         to a [Healthy](ctp:api:type:SubscriptionHealthStatus) status, contact the [Composable
-         Commerce support team](https://support.commercetools.com/)."
+         to a [Healthy](ctp:api:type:SubscriptionHealthStatus) status, contact the [commercetools
+         support team](https://support.commercetools.com/)."
     SubscriptionNotification:
       type: "object"
       discriminator:
@@ -88289,6 +89072,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -88575,13 +89359,13 @@ components:
         - zone
       x-annotation-package: "Type"
       x-annotation-enumDescriptions:
-        approval-flow: "[ApprovalFlow](ctp:api:type:ApprovalFlow) - Only available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
+        approval-flow: "[ApprovalFlow](ctp:api:type:ApprovalFlow) - Only available for [B2B](/../offering/commerce-b2b)-enabled
          Projects.n"
-        approval-rule: "[ApprovalRule](ctp:api:type:ApprovalRule) - Only available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
+        approval-rule: "[ApprovalRule](ctp:api:type:ApprovalRule) - Only available for [B2B](/../offering/commerce-b2b)-enabled
          Projects.n"
         associate-role: "[AssociateRole](ctp:api:type:AssociateRole) - Only available for
-         [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled Projects.n"
-        business-unit: "[BusinessUnit](ctp:api:type:BusinessUnit) - Only available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
+         [B2B](/../offering/commerce-b2b)-enabled Projects.n"
+        business-unit: "[BusinessUnit](ctp:api:type:BusinessUnit) - Only available for [B2B](/../offering/commerce-b2b)-enabled
          Projects.n"
         cart: "[Cart](ctp:api:type:Cart)n"
         cart-discount: "[CartDiscount](ctp:api:type:CartDiscount)n"
@@ -88720,6 +89504,7 @@ components:
         - product-selection
         - product-tailoring
         - quote
+        - reservation
         - review
         - recurring-order
         - shipping
@@ -88735,13 +89520,13 @@ components:
          [Cart](ctp:api:type:Cart), [Order](ctp:api:type:Order), [OrderEdit](ctp:api:type:OrderEdit),
          [Customer](ctp:api:type:Customer), and [Channel](ctp:api:type:Channel)n"
         asset: "[Asset](ctp:api:type:Asset) on [Category](ctp:api:type:Category) and [ProductVariant](ctp:api:type:ProductVariant)n"
-        approval-flow: "[ApprovalFlow](ctp:api:type:ApprovalFlow) - Only available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
+        approval-flow: "[ApprovalFlow](ctp:api:type:ApprovalFlow) - Only available for [B2B](/../offering/commerce-b2b)-enabled
          Projects.n"
-        approval-rule: "[ApprovalRule](ctp:api:type:ApprovalRule) - Only available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
+        approval-rule: "[ApprovalRule](ctp:api:type:ApprovalRule) - Only available for [B2B](/../offering/commerce-b2b)-enabled
          Projects.n"
         associate-role: "[AssociateRole](ctp:api:type:AssociateRole) - Only available for
-         [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled Projects.n"
-        business-unit: "[BusinessUnit](ctp:api:type:BusinessUnit) - Only available for [B2B](/../offering/composable-commerce#composable-commerce-for-b2b)-enabled
+         [B2B](/../offering/commerce-b2b)-enabled Projects.n"
+        business-unit: "[BusinessUnit](ctp:api:type:BusinessUnit) - Only available for [B2B](/../offering/commerce-b2b)-enabled
          Projects.n"
         cart-discount: "[CartDiscount](ctp:api:type:CartDiscount)n"
         category: "[Category](ctp:api:type:Category)n"
@@ -88778,6 +89563,7 @@ components:
          the [StagedQuote](ctp:api:type:StagedQuote).nFor this reason, the Types for Quotes
          are also valid for QuoteRequests and StagedQuotes, and hence all have the same
          identifier: `quote`.n"
+        reservation: "[Reservation](ctp:api:type:Reservation)n"
         review: "[Review](ctp:api:type:Review)n"
         recurring-order: "[RecurringOrder](ctp:api:type:RecurringOrder)n"
         shipping: "[Shipping](ctp:api:type:Shipping)n"
@@ -88881,6 +89667,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'
@@ -89142,6 +89929,74 @@ components:
               type: "string"
             description:
               $ref: '#/components/schemas/LocalizedString'
+    CannotChangeReservationExpiryWarning:
+      allOf:
+        - $ref: '#/components/schemas/WarningObject'
+        - type: "object"
+          required:
+            - code
+            - lineItemId
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            lineItemId:
+              type: "string"
+    CannotCreateReservationWarning:
+      allOf:
+        - $ref: '#/components/schemas/WarningObject'
+        - type: "object"
+          required:
+            - code
+            - message
+            - productId
+            - quantity
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            productId:
+              type: "string"
+            sku:
+              type: "string"
+            supplyChannel:
+              type: "string"
+            quantity:
+              type: "number"
+              format: "double"
+    CannotUpdateReservationWarning:
+      allOf:
+        - $ref: '#/components/schemas/WarningObject'
+        - type: "object"
+          required:
+            - code
+            - lineItemId
+            - message
+            - productId
+            - requestedQuantity
+            - reservedQuantity
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            lineItemId:
+              type: "string"
+            requestedQuantity:
+              type: "number"
+              format: "double"
+            reservedQuantity:
+              type: "number"
+              format: "double"
+            productId:
+              type: "string"
+            sku:
+              type: "string"
+            supplyChannel:
+              type: "string"
     ImageProcessingOngoingWarning:
       allOf:
         - $ref: '#/components/schemas/WarningObject'
@@ -89159,6 +90014,9 @@ components:
       discriminator:
         propertyName: code
         mapping:
+          CannotChangeReservationExpiry: '#/components/schemas/CannotChangeReservationExpiryWarning'
+          CannotCreateReservation: '#/components/schemas/CannotCreateReservationWarning'
+          CannotUpdateReservation: '#/components/schemas/CannotUpdateReservationWarning'
           ImageProcessingOngoing: '#/components/schemas/ImageProcessingOngoingWarning'
       required:
         - code
@@ -89259,6 +90117,7 @@ components:
         - type: "object"
           required:
             - id
+            - typeId
           properties:
             typeId:
               $ref: '#/components/schemas/ReferenceTypeId'

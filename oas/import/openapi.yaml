@@ -760,6 +760,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /{projectKey}/product-tailorings/import-containers/{importContainerKey}:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+      - name: importContainerKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_products:{projectKey}"
+      operationId: ByProjectKeyProductTailoringsImportContainersByImportContainerKeyPost
+      description: |-
+        Creates an Import Request for Product Tailoring.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductTailoringImportRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+
+        "400":
+          description: |-
+            The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /{projectKey}/product-types/import-containers/{importContainerKey}:
     parameters:
       - name: projectKey
@@ -1882,6 +1924,7 @@ components:
         - product
         - product-draft
         - product-selection
+        - product-tailoring
         - product-type
         - product-variant
         - product-variant-patch
@@ -1903,6 +1946,8 @@ components:
         product-draft: "The [Product draft import](ctp:import:type:ProductDraftImport) resource
          type."
         product-selection: "The [Product Selection import](ctp:import:type:ProductSelectionImport)
+         resource type."
+        product-tailoring: "The [Product Tailoring import](ctp:import:type:ProductTailoringImport)
          resource type."
         product-type: "The [Product Type import](ctp:import:type:ProductTypeImport) resource
          type."
@@ -1984,9 +2029,11 @@ components:
          meet validation constraints. Generates the [ImportValidationFailed](ctp:api:type:ImportValidationFailedEvent)
          Event."
         waitForMasterVariant: "Products must have at least one Product Variant, also known
-         as the Master Variant. If you import a Product without a Master Variant, the import
-         request will have this status until another import request includes Master Variant
-         data for the Product. Generates the [ImportWaitForMasterVariant](ctp:api:type:ImportWaitForMasterVariantEvent)
+         as the Master Variant. If you import a Product without a Master Variant and the
+         referenced Product Type has required Variant Attributes, the import request has
+         this status until another import request includes Master Variant data for the
+         Product. Products without required Variant Attributes are imported without entering
+         this state. Generates the [ImportWaitForMasterVariant](ctp:api:type:ImportWaitForMasterVariantEvent)
          Event."
         rejected: "The resource could not be imported. References were resolved, but the system
          could not import the data due to an internal server error and the retry limit
@@ -2636,6 +2683,7 @@ components:
           product-draft: '#/components/schemas/ProductDraftImportRequest'
           product: '#/components/schemas/ProductImportRequest'
           product-selection: '#/components/schemas/ProductSelectionImportRequest'
+          product-tailoring: '#/components/schemas/ProductTailoringImportRequest'
           product-type: '#/components/schemas/ProductTypeImportRequest'
           product-variant: '#/components/schemas/ProductVariantImportRequest'
           product-variant-patch: '#/components/schemas/ProductVariantPatchRequest'
@@ -2850,6 +2898,19 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ProductSelectionImport'
+    ProductTailoringImportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ImportRequest'
+        - type: "object"
+          required:
+            - resources
+          properties:
+            type:
+              $ref: '#/components/schemas/ImportResourceType'
+            resources:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductTailoringImport'
     BusinessUnitImportRequest:
       allOf:
         - $ref: '#/components/schemas/ImportRequest'
@@ -3317,6 +3378,9 @@ components:
             expectedDelivery:
               type: "string"
               format: "datetime"
+            reservationExpirationInMinutes:
+              type: "number"
+              format: "double"
             supplyChannel:
               $ref: '#/components/schemas/ChannelKeyReference'
             custom:
@@ -4406,6 +4470,62 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ProductSelectionAssignment'
+    ProductVariantTailoringImport:
+      type: "object"
+      required:
+        - sku
+      properties:
+        sku:
+          type: "string"
+        images:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Image'
+        assets:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Asset'
+        attributes:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Attribute'
+    ProductTailoringImport:
+      allOf:
+        - $ref: '#/components/schemas/ImportResource'
+        - type: "object"
+          required:
+            - key
+            - product
+            - store
+          properties:
+            key:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreKeyReference'
+            product:
+              $ref: '#/components/schemas/ProductKeyReference'
+            name:
+              $ref: '#/components/schemas/LocalizedString'
+            description:
+              $ref: '#/components/schemas/LocalizedString'
+            metaTitle:
+              $ref: '#/components/schemas/LocalizedString'
+            metaDescription:
+              $ref: '#/components/schemas/LocalizedString'
+            metaKeywords:
+              $ref: '#/components/schemas/LocalizedString'
+            slug:
+              $ref: '#/components/schemas/LocalizedString'
+            publish:
+              type: "boolean"
+            variants:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ProductVariantTailoringImport'
+            attributes:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/Attribute'
     AttributeDefinition:
       type: "object"
       required:
@@ -5063,6 +5183,8 @@ components:
               $ref: '#/components/schemas/DiscountedPrice'
             custom:
               $ref: '#/components/schemas/Custom'
+            active:
+              type: "boolean"
     TypeTextInputHint:
       type: "string"
       enum:

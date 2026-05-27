@@ -124,6 +124,7 @@ interface Cart [[Cart.svg]] extends BaseResource {
     purchaseOrderNumber: String
     lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
     createdBy: [[CreatedBy.svg CreatedBy]]
+    warnings: [[WarningObject.svg List<WarningObject>]]
 }
 interface CartDiscount [[CartDiscount.svg]] extends BaseResource {
     id: String
@@ -289,6 +290,9 @@ interface Extension [[Extension.svg]] extends BaseResource {
     destination: [[ExtensionDestination.svg ExtensionDestination]]
     triggers: [[ExtensionTrigger.svg List<ExtensionTrigger>]]
     timeoutInMs: Integer
+    dependencies: [[ExtensionReference.svg List<ExtensionReference>]]
+    expansionPaths: [[String.svg List<String>]]
+    additionalContext: [[ExtensionAdditionalContext.svg ExtensionAdditionalContext]]
 }
 interface InventoryEntry [[InventoryEntry.svg]] extends BaseResource {
     id: String
@@ -306,6 +310,8 @@ interface InventoryEntry [[InventoryEntry.svg]] extends BaseResource {
     maxCartQuantity: Integer
     restockableInDays: Long
     expectedDelivery: DateTime
+    reservationExpirationInMinutes: Integer
+    stockLevels: [[InventoryEntryStockLevels.svg InventoryEntryStockLevels]]
     custom: [[CustomFields.svg CustomFields]]
 }
 interface Order [[Order.svg]] extends BaseResource {
@@ -633,6 +639,20 @@ interface RecurringOrder [[RecurringOrder.svg]] extends BaseResource {
     custom: [[CustomFields.svg CustomFields]]
     lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
     createdBy: [[CreatedBy.svg CreatedBy]]
+}
+interface Reservation [[Reservation.svg]] extends BaseResource {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    expiresAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    inventoryEntry: [[InventoryEntryReference.svg InventoryEntryReference]]
+    quantity: Long
+    owner: [[Reference.svg Reference]]
+    lineItemId: String
+    state: [[ReservationState.svg ReservationState]]
 }
 interface Review [[Review.svg]] extends BaseResource {
     id: String
@@ -2691,6 +2711,21 @@ interface InventoryEntryDeletedMessage [[InventoryEntryDeletedMessage.svg]]  {
     sku: String
     supplyChannel: [[ChannelReference.svg ChannelReference]]
 }
+interface InventoryEntryOutOfStockMessage [[InventoryEntryOutOfStockMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    sku: String
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
 interface InventoryEntryQuantitySetMessage [[InventoryEntryQuantitySetMessage.svg]]  {
     id: String
     version: Long
@@ -2708,6 +2743,53 @@ interface InventoryEntryQuantitySetMessage [[InventoryEntryQuantitySetMessage.sv
     oldAvailableQuantity: Long
     newAvailableQuantity: Long
     sku: String
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface InventoryEntryReorderPointMessage [[InventoryEntryReorderPointMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    sku: String
+    quantityOnStock: Integer
+    supplyChannel: [[ChannelReference.svg ChannelReference]]
+}
+interface InventoryEntryReservationExpirationInMinutesSetMessage [[InventoryEntryReservationExpirationInMinutesSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    newReservationExpirationInMinutes: Integer
+    oldReservationExpirationInMinutes: Integer
+}
+interface InventoryEntrySafetyStockMessage [[InventoryEntrySafetyStockMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    sku: String
+    quantityOnStock: Integer
     supplyChannel: [[ChannelReference.svg ChannelReference]]
 }
 interface OrderPaymentAddedMessage [[OrderPaymentAddedMessage.svg]]  {
@@ -4895,7 +4977,11 @@ BaseResource --> DiscountGroupSortOrderSetMessage #blue;text:blue : "type : Disc
 BaseResource --> Division #blue;text:blue : "unitType : Division"
 BaseResource --> InventoryEntryCreatedMessage #blue;text:blue : "type : InventoryEntryCreated"
 BaseResource --> InventoryEntryDeletedMessage #blue;text:blue : "type : InventoryEntryDeleted"
+BaseResource --> InventoryEntryOutOfStockMessage #blue;text:blue : "type : InventoryEntryOutOfStock"
 BaseResource --> InventoryEntryQuantitySetMessage #blue;text:blue : "type : InventoryEntryQuantitySet"
+BaseResource --> InventoryEntryReorderPointMessage #blue;text:blue : "type : InventoryEntryReorderPoint"
+BaseResource --> InventoryEntryReservationExpirationInMinutesSetMessage #blue;text:blue : "type : InventoryEntryReservationExpirationInMinutesSet"
+BaseResource --> InventoryEntrySafetyStockMessage #blue;text:blue : "type : InventoryEntrySafetyStock"
 BaseResource --> OrderPaymentAddedMessage #blue;text:blue : "type : OrderPaymentAdded"
 BaseResource --> OrderPaymentRemovedMessage #blue;text:blue : "type : OrderPaymentRemoved"
 BaseResource --> PaymentCreatedMessage #blue;text:blue : "type : PaymentCreated"
