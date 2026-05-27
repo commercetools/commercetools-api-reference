@@ -51,22 +51,22 @@ properties:
     type: number
     format: int64
     description: |-
-      Overall amount of stock (`availableQuantity` + reserved).
+      Overall amount of stock (`availableQuantity` + reserved). This value is eventually consistent with the internal SKU availability used for reservation logic, with a delay of up to 10 seconds. See [Inventory checks and consistency](/../api/inventory-overview#inventory-checks-and-consistency) for more information.
   availableQuantity:
     type: number
     format: int64
     description: |
-      Available amount of stock (`quantityOnStock` - reserved).
+      Available amount of stock (`quantityOnStock` - reserved). This value is eventually consistent with the internal SKU availability used for reservation logic, with a delay of up to 10 seconds. See [Inventory checks and consistency](/../api/inventory-overview#inventory-checks-and-consistency) for more information.
   minCartQuantity?:
     type: integer
     minimum: 1
     description: |
-      Minimum quantity that can be added to a Cart. See [Quantity limits](/../api/carts-orders-overview#quantity-limits).
+      Minimum quantity that can be added to a Cart. See [Quantity limits](/../api/inventory-overview#quantity-limits).
   maxCartQuantity?:
     type: integer
     minimum: 1
     description: |
-      Maximum quantity that can be added to a Cart. See [Quantity limits](/../api/carts-orders-overview#quantity-limits).
+      Maximum quantity that can be added to a Cart. See [Quantity limits](/../api/inventory-overview#quantity-limits).
   restockableInDays?:
     type: number
     format: int64
@@ -75,6 +75,22 @@ properties:
     type: datetime
     description: |
       Date and time of the next restock.
+  reservationExpirationInMinutes?:
+    type: number
+    format: int32
+    minimum: 1
+    maximum: 44640
+    (beta): true
+    description: |
+      Expiration time of [ReserveOnCart](ctp:api:type:InventoryMode) reservations associated with this InventoryEntry.
+
+      - A Reservation is [ReserveOnCart](ctp:api:type:InventoryMode) if it was created for a [LineItem](ctp:api:type:LineItem) that is using the [ReserveOnCart](ctp:api:type:InventoryMode) inventory mode.
+      - If this field is empty, the [Project](ctp:api:type:Project)-level reservation expiration time applies.
+  stockLevels?:
+    type: InventoryEntryStockLevels
+    (beta): true
+    description: |
+      Configuration of stock levels for the InventoryEntry. Corresponding [Messages](/../api/projects/messages/product-catalog-messages#inventory-entry-messages) are triggered when the `quantityOnStock` reaches the configured levels.
   custom?:
     type: CustomFields
     description: |

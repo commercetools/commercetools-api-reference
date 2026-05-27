@@ -1,0 +1,90 @@
+#%RAML 1.0 Library
+usage: Product Tailoring import types.
+(annotations.package): product-tailoring
+
+uses:
+  common: common.raml
+  annotations: ../annotationTypes/annotations.raml
+  product-variant-import: product-variant-import.raml
+
+types:
+  ProductVariantTailoringImport:
+    description: |
+      Represents the data of a Product Variant to be tailored for a Store.
+    type: object
+    properties:
+      sku:
+        type: string
+        description: |
+          The `sku` of the [ProductVariant](ctp:api:type:ProductVariant) to be tailored.
+      images?:
+        type: common.Image[]
+        description: |
+          Maps to `ProductVariantTailoring.images`.
+      assets?:
+        type: common.Asset[]
+        description: |
+          Maps to `ProductVariantTailoring.assets`.
+      attributes?:
+        type: product-variant-import.Attribute[]
+        description: |
+          Maps to `ProductVariantTailoring.attributes`.
+    additionalProperties: false
+
+  ProductTailoringImport:
+    type: common.ImportResource
+    description: |
+      Represents the data used to import a Product Tailoring. Once imported, this data is persisted as a [ProductTailoring](ctp:api:type:ProductTailoring) in the Project.
+    example: !include ../examples/product-tailoring-import.json
+    additionalProperties: false
+    properties:
+      key:
+        type: string
+        description: User-defined unique identifier. If a [ProductTailoring](ctp:api:type:ProductTailoring) with this `key` exists, it is updated with the imported data.
+        minLength: 2
+        maxLength: 256
+      store:
+        type: common.StoreKeyReference
+        description: |
+          The Store to which the ProductTailoring belongs. If the referenced [Store](ctp:api:type:Store) does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced Store is created.
+      product:
+        type: common.ProductKeyReference
+        description: |
+          The Product to which the ProductTailoring belongs. If the referenced [Product](ctp:api:type:Product) does not exist, the `state` of the [ImportOperation](ctp:import:type:ImportOperation) will be set to `unresolved` until the referenced Product is created.
+      name?:
+        type: common.LocalizedString
+        description: |
+          Maps to `ProductTailoring.name`.
+      description?:
+        type: common.LocalizedString
+        description: |
+          Maps to `ProductTailoring.description`.
+      metaTitle?:
+        type: common.LocalizedString
+        description: |
+          Maps to `ProductTailoring.metaTitle`.
+      metaDescription?:
+        type: common.LocalizedString
+        description: |
+          Maps to `ProductTailoring.metaDescription`.
+      metaKeywords?:
+        type: common.LocalizedString
+        description: |
+          Maps to `ProductTailoring.metaKeywords`.
+      slug?:
+        type: common.LocalizedString
+        description: |
+          Maps to `ProductTailoring.slug`.
+      publish?:
+        type: boolean
+        default: false
+        description: |
+          Set to `true` to publish the ProductTailoring immediately. Otherwise, the tailored product information is just staged.
+      variants?:
+        type: ProductVariantTailoringImport[]
+        description: |
+          Tailored Variants of the Product.
+      attributes?:
+        type: product-variant-import.Attribute[]
+        description: |
+          Attributes of the tailored Product.

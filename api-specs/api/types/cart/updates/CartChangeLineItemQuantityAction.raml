@@ -17,7 +17,12 @@ description: |
 
   The [LineItem](ctp:api:type:LineItem) price is set as described in [Line Item price selection](/../api/pricing-and-discounts-overview#line-item-price-selection).
 
-  This action is subject to [InventoryEntry](ctp:api:type:InventoryEntry) min/max restrictions when applicable. For more information, see [Quantity limits](/../api/carts-orders-overview#quantity-limits).
+  This action is subject to [InventoryEntry](ctp:api:type:InventoryEntry) min/max restrictions when applicable. For more information, see [Quantity limits](/../api/inventory-overview#quantity-limits).
+
+  If using [InventoryMode](ctp:api:type:InventoryMode) `ReserveOnCart`:
+  - If the requested quantity cannot be reserved, the Line Item quantity does not change and a [CannotUpdateReservationWarning](ctp:api:type:CannotUpdateReservationWarning) is returned in the Cart response.
+  - Changing the quantity of a reserved Line Item also updates the reservation expiration time. To synchronize the expiration across the rest of the Line Items in the Cart, you must call the [Set Cart Reservation Expiration in Minutes](ctp:api:type:CartSetReservationExpirationInMinutesAction) update action after any Line Item changes.
+
 properties:
   lineItemId?:
     type: string

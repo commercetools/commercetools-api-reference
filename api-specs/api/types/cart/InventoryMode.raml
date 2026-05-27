@@ -8,10 +8,10 @@ enum:
   - None
   - TrackOnly
   - ReserveOnOrder
+  - ReserveOnCart
 (enumDescriptions):
   None: |
     Adding and ordering items from a Cart are independent of the Inventory with no inventory checks or modifications.
-
     This is the default mode.
   TrackOnly: |
     Orders are tracked on the Inventory, and ordering a [LineItem](ctp:api:type:LineItem) deducts the available quantity on the respective [InventoryEntry](ctp:api:type:InventoryEntry).
@@ -23,3 +23,9 @@ enum:
     This is because the [InventoryEntry](ctp:api:type:InventoryEntry) `availableQuantity` is insufficient (but is still updated) for the ordered Line Item quantity.
 
     However, an Order can be created if the [InventoryEntry](ctp:api:type:InventoryEntry) `restockableInDays` is set (including `0`).
+  ReserveOnCart: |
+    This feature is in [Beta](/../offering/compatibility#public-beta).
+
+    When Line Items are added to a Cart, they are automatically reserved. The reservation can be released by [removing](ctp:api:type:CartRemoveLineItemAction) the Line Item from the Cart or [changing](ctp:api:type:CartSetLineItemInventoryModeAction) their inventory mode to something other than `ReserveOnCart`. Reservations expire after the time specified in the Project's [`reservationExpirationInMinutes`](ctp:api:type:InventoryConfiguration) setting.
+
+    To use this inventory mode, you must set the reservation expiration time on the [Project](ctp:api:type:Project) using the [Set Reservation Expiration In Minutes](ctp:api:type:ProjectSetReservationExpirationInMinutesAction) update action.
