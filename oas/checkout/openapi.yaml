@@ -580,7 +580,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/any'
+                $ref: '#/components/schemas/PaymentIntentResponse'
 
         "400":
           description: |-
@@ -2236,6 +2236,21 @@ components:
         cancelPayment: "[Cancels](ctp:checkout:type:PaymentIntentCancelAction) an authorized
          Payment.n"
         reversePayment: "[Reverses](ctp:checkout:type:PaymentIntentReverseAction) a Payment.n"
+    PaymentIntentOutcome:
+      type: "string"
+      enum:
+        - approved
+        - rejected
+        - received
+      x-annotation-package: "PaymentIntents"
+      x-annotation-ignoreValidators:
+        - "EnumValuePascalCaseRule"
+      x-annotation-enumDescriptions:
+        approved: "The Payment Intent was processed and approved by the payment service provider
+         (PSP).n"
+        rejected: "The Payment Intent was rejected by the payment service provider (PSP).n"
+        received: "The Payment Intent was received and is being processed asynchronously by
+         the payment service provider (PSP).n"
     PaymentIntentRefundAction:
       allOf:
         - $ref: '#/components/schemas/PaymentIntentAction'
@@ -2251,6 +2266,13 @@ components:
               type: "string"
             merchantReference:
               type: "string"
+    PaymentIntentResponse:
+      type: "object"
+      required:
+        - outcome
+      properties:
+        outcome:
+          $ref: '#/components/schemas/PaymentIntentOutcome'
     PaymentIntentReverseAction:
       allOf:
         - $ref: '#/components/schemas/PaymentIntentAction'
