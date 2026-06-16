@@ -2807,6 +2807,35 @@ type BusinessUnitTypeSet implements MessagePayload {
     type: String!
 }
 
+type CannotChangeReservationExpiryTypedWarning implements TypedWarning {
+    lineItemId: String!
+    type: String!
+    code: TypedWarningCode!
+    message: String!
+}
+
+type CannotCreateReservationTypedWarning implements TypedWarning {
+    productId: String!
+    sku: String
+    quantity: Long!
+    supplyChannelRef: Reference
+    type: String!
+    code: TypedWarningCode!
+    message: String!
+}
+
+type CannotUpdateReservationTypedWarning implements TypedWarning {
+    lineItemId: String!
+    productId: String!
+    sku: String
+    reservedQuantity: Long!
+    requestedQuantity: Long!
+    supplyChannelRef: Reference
+    type: String!
+    code: TypedWarningCode!
+    message: String!
+}
+
 """
 A shopping cart holds product variants and can be ordered. Each cart either belongs to a registered customer or is an anonymous cart.
 """
@@ -2863,6 +2892,10 @@ type Cart implements Versioned & ReferenceExpandable {
     totalLineItemQuantity: Long
     recurringPaymentConfiguration: RecurringPaymentConfiguration
     freezeStrategy: FreezeStrategy
+    """
+  Warnings from the latest cart mutation. Not persisted and only available in mutation responses.
+  """
+  warnings: [TypedWarning!]!
     id: String!
     version: Long!
     createdAt: DateTime!
@@ -4429,6 +4462,12 @@ type FixedPriceDiscountValue implements CartDiscountValue {
     money: [BaseMoney!]!
 }
 
+type GeneralTypedWarning implements TypedWarning {
+    type: String!
+    code: TypedWarningCode!
+    message: String!
+}
+
 type GiftLineItemValue implements CartDiscountValue {
     type: String!
     variantId: Int!
@@ -4466,6 +4505,12 @@ type Image {
     url: String!
     dimensions: Dimensions!
     label: String
+}
+
+type ImageProcessingOngoingTypedWarning implements TypedWarning {
+    type: String!
+    code: TypedWarningCode!
+    message: String!
 }
 
 type ImageProductSearch {
@@ -10010,6 +10055,12 @@ interface FieldType {
     name: String!
 }
 
+"""A non-fatal warning that occurred during a mutation."""
+interface TypedWarning {
+    code: TypedWarningCode!
+    message: String!
+}
+
 interface ShippingRateInputType {
     type: String!
 }
@@ -10566,6 +10617,13 @@ enum BusinessUnitConfigurationStatus {
 enum BusinessUnitSearchStatus {
   Activated
   Deactivated
+}
+enum TypedWarningCode {
+  CannotChangeReservationExpiry
+  CannotCreateReservation
+  CannotUpdateReservation
+  General
+  ImageProcessingOngoing
 }
 enum TaxMode {
   """No taxes are added to the cart."""
