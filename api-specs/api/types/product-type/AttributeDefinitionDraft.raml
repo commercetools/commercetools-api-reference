@@ -17,10 +17,10 @@ properties:
     minLength: 2
     maxLength: 256
     description: |-
-      User-defined name of the Attribute that is unique to the [Project](ctp:api:type:Project).
+      User-defined name of the Attribute that must be unique within the ProductType.
 
-      When using the same `name` for an Attribute in multiple ProductTypes, all fields of the AttributeDefinition of this Attribute must be the same across the ProductTypes, else an [AttributeDefinitionAlreadyExists](ctp:api:type:AttributeDefinitionAlreadyExistsError) error is returned.
-      An exception to this are the values of an `enum` or `lenum` Type and sets thereof.
+      To use the same `name` in multiple ProductTypes, each AttributeDefinition must have the same `type`; otherwise, an [AttributeDefinitionTypeConflict](ctp:api:type:AttributeDefinitionTypeConflictError) error is returned.
+      For `enum` or `lenum` Types and sets of these AttributeTypes, the enum values can be different for each ProductType.
   label:
     type: LocalizedString
     description: Human-readable label for the Attribute.
@@ -53,7 +53,8 @@ properties:
     description: |-
       Set as `true` if you want the Attribute's values to be available in the [Product Search](/api/projects/product-search) or the [Product Projection Search](/api/projects/product-projection-search) API and can be used in full-text search queries, filters, and facets.
       If an Attribute's `level` is set as `Product`, then Product Projection Search does **not support** the Attribute.
-
+      To use the Attribute in search, filters, or facets, set `isSearchable` to `true` for all AttributeDefinitions with the same `name` across different ProductTypes.
+      If the `isSearchable` values are different, the Attribute isn't available for search, filters, or facets.
 
       Which exact features are available with this flag depends on the specific [AttributeType](ctp:api:type:AttributeType).
       The maximum size of a searchable field is **restricted** by the [Field content size limit](/api/limits#field-content-size).
