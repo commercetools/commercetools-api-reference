@@ -3037,6 +3037,10 @@ type CartLock {
     clientId: String!
 }
 
+type CartLocked implements MessagePayload {
+    type: String!
+}
+
 type CartPurchaseOrderNumberSet implements MessagePayload {
     purchaseOrderNumber: String
     oldPurchaseOrderNumber: String
@@ -3056,6 +3060,10 @@ type CartScoreType implements ShippingRateInputType {
 }
 
 type CartUnfrozen implements MessagePayload {
+    type: String!
+}
+
+type CartUnlocked implements MessagePayload {
     type: String!
 }
 
@@ -8796,6 +8804,8 @@ type ShippingMethod implements Versioned & ReferenceExpandable {
     taxCategoryRef: Reference
     localizedDescriptionAllLocales: [LocalizedString!]
     localizedNameAllLocales: [LocalizedString!]
+    storesRef: [KeyReference!]!
+    stores: [Store!]!
     localizedDescription(
     """
     String is defined for different locales. This argument specifies the desired locale.
@@ -8832,6 +8842,7 @@ type ShippingMethodLimitWithCurrent implements LimitWithCurrent {
 }
 
 type ShippingMethodLimitsProjection {
+    stores: Limit!
     total: ShippingMethodLimitWithCurrent!
 }
 
@@ -11629,6 +11640,10 @@ input AddRecurringPaymentAllocation {
 input AddShippingMethodShippingRate {
     zone: ResourceIdentifierInput!
     shippingRate: ShippingRateDraft!
+}
+
+input AddShippingMethodStore {
+    store: ResourceIdentifierInput!
 }
 
 input AddShippingMethodZone {
@@ -15274,6 +15289,10 @@ input RemoveShippingMethodShippingRate {
     shippingRate: ShippingRateDraft!
 }
 
+input RemoveShippingMethodStore {
+    store: ResourceIdentifierInput!
+}
+
 input RemoveShippingMethodZone {
     zone: ResourceIdentifierInput!
 }
@@ -17393,6 +17412,10 @@ input SetShippingMethodPredicate {
     predicate: String
 }
 
+input SetShippingMethodStores {
+    stores: [ResourceIdentifierInput!]!
+}
+
 input SetShoppingListAnonymousId {
     anonymousId: String
 }
@@ -18005,6 +18028,7 @@ input ShippingMethodDraft {
     predicate: String
     key: String
     custom: CustomFieldsDraft
+    stores: [ResourceIdentifierInput!]
 }
 
 input ShippingMethodTargetDraft {
@@ -18018,12 +18042,14 @@ input ShippingMethodTargetDraftType {
 }
 
 input ShippingMethodUpdateAction {
+    addStore: AddShippingMethodStore
     addShippingRate: AddShippingMethodShippingRate
     addZone: AddShippingMethodZone
     changeActive: ChangeShippingMethodActive
     changeIsDefault: ChangeShippingMethodIsDefault
     changeName: ChangeShippingMethodName
     changeTaxCategory: ChangeShippingMethodTaxCategory
+    removeStore: RemoveShippingMethodStore
     removeShippingRate: RemoveShippingMethodShippingRate
     removeZone: RemoveShippingMethodZone
     setCustomField: SetShippingMethodCustomField
@@ -18034,6 +18060,7 @@ input ShippingMethodUpdateAction {
     setLocalizedDescription: SetShippingMethodLocalizedDescription
     setLocalizedName: SetShippingMethodLocalizedName
     setPredicate: SetShippingMethodPredicate
+    setStores: SetShippingMethodStores
 }
 
 input ShippingRateDraft {
