@@ -6534,7 +6534,11 @@ paths:
       description: |-
         Creates a Cart in the Project.
 
-        If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, or if the Shipping Method is not active, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
+        An [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned in one of the following cases:
+          1. If the referenced Shipping Method has a predicate that does not match the Cart.
+          2. If the referenced Shipping Method is not active.
+          3. If the referenced Shipping Method is associated with a Store that is different from the Cart's Store.
+          4. If the referenced Shipping Method is associated with a Store and the Cart is not associated with any Store.
 
         When using [InventoryMode](ctp:api:type:InventoryMode) `ReserveOnCart`:
         - If only some Line Items can be reserved, the Cart creation succeeds, however, the items that could not be reserved are removed and reservation warnings are returned in the response.
@@ -13218,7 +13222,10 @@ paths:
       description: |-
         Creates a Cart in a [Store](ctp:api:type:Store).
 
-        If the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, or if the Shipping Method is not active, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
+        An [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned in one of the following cases:
+          1. If the referenced Shipping Method has a predicate that does not match the Cart.
+          2. If the referenced Shipping Method is not active.
+          3. If the referenced Shipping Method is associated with a Store that is different from the Cart's Store.
 
         Specific Error Codes:
 
@@ -85928,6 +85935,7 @@ components:
             - isDefault
             - lastModifiedAt
             - name
+            - stores
             - taxCategory
             - version
             - zoneRates
@@ -85971,6 +85979,10 @@ components:
               type: "string"
             custom:
               $ref: '#/components/schemas/CustomFields'
+            stores:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreKeyReference'
     ShippingMethodDraft:
       type: "object"
       required:
@@ -86003,6 +86015,10 @@ components:
           type: "string"
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
+        stores:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/StoreResourceIdentifier'
     ShippingMethodPagedQueryResponse:
       type: "object"
       required:
@@ -86069,12 +86085,14 @@ components:
         propertyName: action
         mapping:
           addShippingRate: '#/components/schemas/ShippingMethodAddShippingRateAction'
+          addStore: '#/components/schemas/ShippingMethodAddStoreAction'
           addZone: '#/components/schemas/ShippingMethodAddZoneAction'
           changeActive: '#/components/schemas/ShippingMethodChangeActiveAction'
           changeIsDefault: '#/components/schemas/ShippingMethodChangeIsDefaultAction'
           changeName: '#/components/schemas/ShippingMethodChangeNameAction'
           changeTaxCategory: '#/components/schemas/ShippingMethodChangeTaxCategoryAction'
           removeShippingRate: '#/components/schemas/ShippingMethodRemoveShippingRateAction'
+          removeStore: '#/components/schemas/ShippingMethodRemoveStoreAction'
           removeZone: '#/components/schemas/ShippingMethodRemoveZoneAction'
           setCustomField: '#/components/schemas/ShippingMethodSetCustomFieldAction'
           setCustomType: '#/components/schemas/ShippingMethodSetCustomTypeAction'
@@ -86083,6 +86101,7 @@ components:
           setLocalizedDescription: '#/components/schemas/ShippingMethodSetLocalizedDescriptionAction'
           setLocalizedName: '#/components/schemas/ShippingMethodSetLocalizedNameAction'
           setPredicate: '#/components/schemas/ShippingMethodSetPredicateAction'
+          setStores: '#/components/schemas/ShippingMethodSetStoresAction'
       required:
         - action
       properties:
@@ -86181,6 +86200,17 @@ components:
               $ref: '#/components/schemas/ZoneResourceIdentifier'
             shippingRate:
               $ref: '#/components/schemas/ShippingRateDraft'
+    ShippingMethodAddStoreAction:
+      allOf:
+        - $ref: '#/components/schemas/ShippingMethodUpdateAction'
+        - type: "object"
+          required:
+            - store
+          properties:
+            action:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreResourceIdentifier'
     ShippingMethodAddZoneAction:
       allOf:
         - $ref: '#/components/schemas/ShippingMethodUpdateAction'
@@ -86250,6 +86280,17 @@ components:
               $ref: '#/components/schemas/ZoneResourceIdentifier'
             shippingRate:
               $ref: '#/components/schemas/ShippingRateDraft'
+    ShippingMethodRemoveStoreAction:
+      allOf:
+        - $ref: '#/components/schemas/ShippingMethodUpdateAction'
+        - type: "object"
+          required:
+            - store
+          properties:
+            action:
+              type: "string"
+            store:
+              $ref: '#/components/schemas/StoreResourceIdentifier'
     ShippingMethodRemoveZoneAction:
       allOf:
         - $ref: '#/components/schemas/ShippingMethodUpdateAction'
@@ -86330,6 +86371,19 @@ components:
               type: "string"
             predicate:
               type: "string"
+    ShippingMethodSetStoresAction:
+      allOf:
+        - $ref: '#/components/schemas/ShippingMethodUpdateAction'
+        - type: "object"
+          required:
+            - stores
+          properties:
+            action:
+              type: "string"
+            stores:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/StoreResourceIdentifier'
     ShoppingList:
       allOf:
         - $ref: '#/components/schemas/BaseResource'
