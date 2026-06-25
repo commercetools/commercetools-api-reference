@@ -433,6 +433,105 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     key: String
   ): PaymentMethod
     paymentMethods(where: String, sort: [String!], limit: Int, offset: Int): PaymentMethodQueryResult!
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  variant(
+    """Queries for a current variant with specified SKU"""
+    sku: String
+    """Queries for a staged variant with specified SKU"""
+    stagedSku: String
+    """Queries with specified ID"""
+    id: String
+    """Queries with specified key"""
+    key: String
+  ): Variant
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  variants(
+    where: String
+    sort: [String!]
+    limit: Int
+    offset: Int
+    """Queries with specified Product ID"""
+    productId: String
+  ): VariantQueryResult!
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  productProjectionVariantAttributes(
+    """Queries with specified ID"""
+    id: String
+    """Queries with specified key"""
+    key: String
+    staged: Boolean! = false
+    """
+    The names of the attributes to include. At least one needs to be specified.
+    """
+    includeAttributeNames: [String!]!
+    localeProjection: [Locale!]
+    """
+    The IDs of channels to include.
+    
+    If no channels is provided only the `noChannel` is returned.
+    """
+    includeChannelIds: [String!]
+  ): ProductProjectionVariantAttributes
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  
+  Query a single variant projection by id, key, or sku and other args
+  """
+  variantProjection(
+    """Queries with specified ID"""
+    id: String
+    """Queries with specified key"""
+    key: String
+    """Queries for a variant projection with specified SKU"""
+    sku: String
+    """
+    If true, queries staged projections. If false (default), queries current (published) projections.
+    """
+    staged: Boolean! = false
+    """
+    Filters localized fields (name, slug, description, attribute labels) to the specified locales
+    """
+    localeProjection: [Locale!]
+  ): VariantProjection
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  
+  Query variant projections with filtering and pagination
+  """
+  variantProjections(
+    where: String
+    sort: [String!]
+    limit: Int
+    offset: Int
+    """
+    If true, queries staged projections. If false (default), queries current (published) projections.
+    """
+    staged: Boolean! = false
+    """Filters variant projections by product ID"""
+    productId: String
+    """
+    Filters localized fields (name, slug, description, attribute labels) to the specified locales
+    """
+    localeProjection: [Locale!]
+    """
+    The names of the attributes to include.
+    
+    If neither `includeNames` nor `excludeNames` are provided, then all attributes are returned.
+    """
+    includeNames: [String!]
+    """
+    The names of the attributes to exclude.
+    
+    If neither `includeNames` nor `excludeNames` are provided, then all attributes are returned.
+    """
+    excludeNames: [String!]
+  ): VariantProjectionQueryResult!
     productSelectionAssignments(where: String, sort: [String!], limit: Int, offset: Int): ProductAssignmentQueryResult!
 }
 
@@ -1593,6 +1692,35 @@ type Mutation {
     """Queries with specified key"""
     key: String
   ): PaymentMethod
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  createVariant(draft: VariantDraft!): Variant
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  updateVariant(
+    """Queries with specified ID"""
+    id: String
+    """Queries with specified key"""
+    key: String
+    actions: [VariantUpdateAction!]!
+    version: Long!
+  ): Variant
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  deleteVariant(
+    """Queries with specified ID"""
+    id: String
+    """Queries with specified key"""
+    key: String
+    version: Long!
+  ): VariantDeletionResult
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  bulkUpdateVariants(input: BulkUpdateVariantsInput!): BulkUpdateVariantsResponse!
 }
 
 type McpServer {
@@ -2488,6 +2616,40 @@ type BooleanField implements CustomField {
 
 type BooleanType implements FieldType {
     name: String!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type BulkUpdateVariantsItemError {
+    code: String
+    message: String
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type BulkUpdateVariantsItemResult {
+    status: BulkUpdateVariantsItemStatus!
+    resource: BulkUpdateVariantsResource
+    errors: [BulkUpdateVariantsItemError!]
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type BulkUpdateVariantsResource {
+    id: String!
+    version: Long!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type BulkUpdateVariantsResponse {
+    successCount: Int!
+    failureCount: Int!
+    results: [BulkUpdateVariantsItemResult!]!
 }
 
 type BusinessUnitAddressAdded implements MessagePayload {
@@ -4631,6 +4793,81 @@ type InStore implements CartDiscountQueryInterface & CartQueryInterface & Custom
     key: String
   ): BusinessUnit
     businessUnits(where: String, sort: [String!], limit: Int, offset: Int): BusinessUnitQueryResult!
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  productProjectionVariantAttributes(
+    """Queries with specified ID"""
+    id: String
+    """Queries with specified key"""
+    key: String
+    staged: Boolean! = false
+    """
+    The names of the attributes to include. At least one needs to be specified.
+    """
+    includeAttributeNames: [String!]!
+    localeProjection: [Locale!]
+    """
+    The IDs of channels to include.
+    
+    If no channels is provided only the `noChannel` is returned.
+    """
+    includeChannelIds: [String!]
+  ): ProductProjectionVariantAttributes
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  
+  Query a single variant projection by id, key, or sku and other args
+  """
+  variantProjection(
+    """Queries with specified ID"""
+    id: String
+    """Queries with specified key"""
+    key: String
+    """Queries for a variant projection with specified SKU"""
+    sku: String
+    """
+    If true, queries staged projections. If false (default), queries current (published) projections.
+    """
+    staged: Boolean! = false
+    """
+    Filters localized fields (name, slug, description, attribute labels) to the specified locales
+    """
+    localeProjection: [Locale!]
+  ): VariantProjection
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  
+  Query variant projections with filtering and pagination
+  """
+  variantProjections(
+    where: String
+    sort: [String!]
+    limit: Int
+    offset: Int
+    """
+    If true, queries staged projections. If false (default), queries current (published) projections.
+    """
+    staged: Boolean! = false
+    """Filters variant projections by product ID"""
+    productId: String
+    """
+    Filters localized fields (name, slug, description, attribute labels) to the specified locales
+    """
+    localeProjection: [Locale!]
+    """
+    The names of the attributes to include.
+    
+    If neither `includeNames` nor `excludeNames` are provided, then all attributes are returned.
+    """
+    includeNames: [String!]
+    """
+    The names of the attributes to exclude.
+    
+    If neither `includeNames` nor `excludeNames` are provided, then all attributes are returned.
+    """
+    excludeNames: [String!]
+  ): VariantProjectionQueryResult!
 }
 
 type InStoreMe implements MeQueryInterface & CartQueryInterface & ActiveCartInterface & OrderQueryInterface & ShoppingListQueryInterface {
@@ -6345,6 +6582,14 @@ type ProductData {
   ): ProductVariant
     skus: [String!]!
     attributesRaw: [RawProductAttribute!]!
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  defaultVariantRef: Reference
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  defaultVariant: Variant
 }
 
 type ProductDeleted implements MessagePayload {
@@ -6811,6 +7056,16 @@ type ProductProjectionSearchResult {
     total: Int!
     results: [ProductProjection!]!
     facets: [FacetResultValue!]!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type ProductProjectionVariantAttributes {
+    productId: String!
+    productKey: String
+    attributes: [VariantAttributeDefinition!]!
+    variants: [VariantAttributeVariant!]!
 }
 
 type ProductPublished implements MessagePayload {
@@ -7564,6 +7819,10 @@ type ProjectProjection {
   BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
   """
   inventory: InventoryConfiguration!
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  productCatalogModel: ProductCatalogModel
 }
 
 type PurchaseOrderNumberSet implements MessagePayload & OrderMessagePayload {
@@ -9778,6 +10037,81 @@ type ValueFacetResult implements FacetResult {
     type: String!
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type Variant implements Versioned {
+    productRef: Reference!
+    variantId: Int!
+    key: String
+    current: VariantData!
+    staged: VariantData
+    published: Boolean!
+    id: String!
+    version: Long!
+    createdAt: DateTime!
+    lastModifiedAt: DateTime!
+    createdBy: Initiator
+    lastModifiedBy: Initiator
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type VariantAttributeAvailability {
+    noChannel: VariantAttributeSimpleAvailability
+    channels: [VariantAttributeChannelAvailability!]!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type VariantAttributeChannelAvailability {
+    channelRef: Reference!
+    availability: VariantAttributeSimpleAvailability!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type VariantAttributeDefinition {
+    name: String!
+    type: String!
+    label(
+    """
+    String is defined for different locales. This argument specifies the desired locale.
+    """
+    locale: Locale
+    """
+    List of languages the client is able to understand, and which locale variant is preferred.
+    """
+    acceptLanguage: [Locale!]
+  ): String
+    labelAllLocales: [LocalizedString!]!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type VariantAttributeSimpleAvailability {
+    isOnStock: Boolean!
+    availableQuantity: Long!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type VariantAttributeVariant {
+    id: String!
+    sku: String
+    key: String
+    availability: VariantAttributeAvailability
+    attributesRaw: [RawAttribute!]!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
 type VariantCreated implements MessagePayload {
     id: String!
     productId: String!
@@ -9791,16 +10125,60 @@ type VariantCreated implements MessagePayload {
     type: String!
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type VariantData {
+    sku: String
+    images: [Image!]!
+    """This field contains raw attributes data"""
+  attributesRaw(
+    """
+    The names of the attributes to include.
+    
+    If neither `includeNames` nor `excludeNames` are provided, then all attributes are returned.
+    """
+    includeNames: [String!]
+    """
+    The names of the attributes to exclude.
+    
+    If neither `includeNames` nor `excludeNames` are provided, then all attributes are returned.
+    """
+    excludeNames: [String!]
+  ): [RawAttribute!]!
+    assets: [Asset!]!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
 type VariantDeleted implements MessagePayload {
     type: String!
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+type VariantDeletionResult {
+    variant: Variant!
+    """
+  Warnings produced while deleting the variant. Only available in the mutation response.
+  """
+  warnings: [TypedWarning!]!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
 type VariantImageAdded implements MessagePayload {
     image: Image!
     staged: Boolean!
     type: String!
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
 type VariantImagesSet implements MessagePayload {
     staged: Boolean!
     images: [Image!]!
@@ -9808,16 +10186,112 @@ type VariantImagesSet implements MessagePayload {
     type: String!
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
 type VariantKeySet implements MessagePayload {
     key: String
     oldKey: String
     type: String!
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+
+A variant projection with embedded product data
+"""
+type VariantProjection {
+    id: String!
+    staged: Boolean!
+    default: Boolean!
+    variantId: Int!
+    version: Long!
+    createdAt: DateTime!
+    productRef: Reference!
+    key: String
+    sku: String
+    images: [Image!]!
+    assets: [Asset!]!
+    """
+  This field contains attributes data. Use includeNames/excludeNames query arguments to filter.
+  """
+  attributes(
+    """
+    The names of the attributes to include.
+    
+    If neither `includeNames` nor `excludeNames` are provided, then all attributes are returned.
+    """
+    includeNames: [String!]
+    """
+    The names of the attributes to exclude.
+    
+    If neither `includeNames` nor `excludeNames` are provided, then all attributes are returned.
+    """
+    excludeNames: [String!]
+  ): [RawAttribute!]!
+    name(
+    """
+    String is defined for different locales. This argument specifies the desired locale.
+    """
+    locale: Locale
+    """
+    List of languages the client is able to understand, and which locale variant is preferred.
+    """
+    acceptLanguage: [Locale!]
+  ): String
+    nameAllLocales: [LocalizedString!]!
+    slug(
+    """
+    String is defined for different locales. This argument specifies the desired locale.
+    """
+    locale: Locale
+    """
+    List of languages the client is able to understand, and which locale variant is preferred.
+    """
+    acceptLanguage: [Locale!]
+  ): String
+    slugAllLocales: [LocalizedString!]!
+    description(
+    """
+    String is defined for different locales. This argument specifies the desired locale.
+    """
+    locale: Locale
+    """
+    List of languages the client is able to understand, and which locale variant is preferred.
+    """
+    acceptLanguage: [Locale!]
+  ): String
+    descriptionAllLocales: [LocalizedString!]
+    """Returns a single price based on the price selection rules."""
+  price(currency: Currency!, country: Country, customerGroupId: String, customerGroupAssignmentIds: [String!], channelId: String, date: DateTime, recurrencePolicyId: String): ProductPrice
+}
+
+type VariantProjectionQueryResult {
+    offset: Int!
+    count: Int!
+    total: Long!
+    exists: Boolean!
+    results: [VariantProjection!]!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
 type VariantPublished implements MessagePayload {
     type: String!
 }
 
+type VariantQueryResult {
+    offset: Int!
+    count: Int!
+    total: Long!
+    exists: Boolean!
+    results: [Variant!]!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
 type VariantSkuSet implements MessagePayload {
     sku: String
     oldSku: String
@@ -9825,6 +10299,9 @@ type VariantSkuSet implements MessagePayload {
     type: String!
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
 type VariantStagedChangesRemoved implements MessagePayload {
     type: String!
 }
@@ -9834,6 +10311,9 @@ type VariantTailoring {
     assets: [Asset!]
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
 type VariantUnpublished implements MessagePayload {
     productRef: Reference!
     type: String!
@@ -10946,6 +11426,12 @@ enum PriceMode {
   """
   Standalone
 }
+enum ProductCatalogModel {
+  """Default. Variants embedded in products."""
+  Classic
+  """Variants as separate entities."""
+  Modular
+}
 enum PublishScope {
   """Publishes the complete staged projection"""
   All
@@ -11785,6 +12271,23 @@ input AddTypeLocalizedEnumValue {
     value: LocalizedEnumValueInput!
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input AddVariantAsset {
+    staged: Boolean = true
+    position: Int
+    asset: AssetDraftInput!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input AddVariantExternalImage {
+    image: ImageInput!
+    staged: Boolean = true
+}
+
 input AddZoneLocation {
     location: ZoneLocation!
 }
@@ -12034,6 +12537,24 @@ input BaseMoneyInput {
 input BaseSearchKeywordInput {
     whitespace: WhitespaceSuggestTokenizerInput
     custom: CustomSuggestTokenizerInput
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input BulkUpdateVariantsInput {
+    items: [BulkUpdateVariantsItemInput!]!
+    actions: [VariantBulkAction!]!
+    versionControl: VersionControl = On
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input BulkUpdateVariantsItemInput {
+    id: String
+    key: String
+    version: Long
 }
 
 input BusinessUnitDraft {
@@ -13000,6 +13521,24 @@ input ChangeTypeLocalizedEnumValueOrder {
 
 input ChangeTypeName {
     name: [LocalizedStringItemInputType!]!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input ChangeVariantAssetName {
+    staged: Boolean = true
+    name: [LocalizedStringItemInputType!]!
+    assetKey: String
+    assetId: String
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input ChangeVariantAssetOrder {
+    staged: Boolean = true
+    assetOrder: [String!]!
 }
 
 input ChangeZoneName {
@@ -14816,7 +15355,10 @@ input ProductUpdateAction {
     setAssetSources: SetProductAssetSources
     setAssetTags: SetProductAssetTags
     setCategoryOrderHint: SetProductCategoryOrderHint
-    setDefaultVariant: SetProductDefaultVariant
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  setDefaultVariant: SetProductDefaultVariant
     setDiscountedPrice: SetProductDiscountedPrice
     setAttribute: SetProductAttribute
     setAttributeInAllVariants: SetProductAttributeInAllVariants
@@ -14912,6 +15454,10 @@ input ProjectSettingsUpdateAction {
   BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
   """
   setReleaseExpiredReservations: SetProjectSettingsReleaseExpiredReservations
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  setProductCatalogModel: SetProjectSettingsProductCatalogModel
 }
 
 input PublishProduct {
@@ -14919,6 +15465,13 @@ input PublishProduct {
 }
 
 input PublishTailoring {
+    dummy: String
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input PublishVariant {
     dummy: String
 }
 
@@ -15375,6 +15928,23 @@ input RemoveStoreSupplyChannel {
 
 input RemoveTypeFieldDefinition {
     fieldName: String!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input RemoveVariantAsset {
+    assetId: String
+    assetKey: String
+    staged: Boolean = true
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input RemoveVariantImage {
+    imageUrl: String!
+    staged: Boolean = true
 }
 
 input RemoveZoneLocation {
@@ -16916,6 +17486,9 @@ input SetProductCategoryOrderHint {
     staged: Boolean = true
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
 input SetProductDefaultVariant {
     variant: ResourceIdentifierInput
     staged: Boolean = true
@@ -17205,6 +17778,13 @@ BETA: This feature can be subject to change and should be used carefully in prod
 """
 input SetProjectSettingsMyBusinessUnitAssociateRoleOnCreation {
     associateRole: ResourceIdentifierInput
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetProjectSettingsProductCatalogModel {
+    productCatalogModel: ProductCatalogModel!
 }
 
 """
@@ -17983,6 +18563,117 @@ input SetTypeDescription {
     description: [LocalizedStringItemInputType!]
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetVariantAssetCustomField {
+    staged: Boolean = true
+    value: String
+    name: String!
+    assetKey: String
+    assetId: String
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetVariantAssetCustomType {
+    staged: Boolean = true
+    typeId: String
+    typeKey: String
+    type: ResourceIdentifierInput
+    fields: [CustomFieldInput!]
+    assetKey: String
+    assetId: String
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetVariantAssetDescription {
+    staged: Boolean = true
+    description: [LocalizedStringItemInputType!]
+    assetKey: String
+    assetId: String
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetVariantAssetKey {
+    staged: Boolean = true
+    assetKey: String
+    assetId: String!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetVariantAssetSources {
+    staged: Boolean = true
+    sources: [AssetSourceInput!] = []
+    assetKey: String
+    assetId: String
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetVariantAssetTags {
+    staged: Boolean = true
+    tags: [String!] = []
+    assetKey: String
+    assetId: String
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetVariantAssets {
+    assets: [AssetDraftInput!] = []
+    staged: Boolean = true
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetVariantAttribute {
+    name: String!
+    value: String
+    staged: Boolean = true
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetVariantAttributes {
+    attributes: [ProductAttributeInput!] = []
+    staged: Boolean = true
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetVariantImages {
+    images: [ImageInput!] = []
+    staged: Boolean = true
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetVariantKey {
+    key: String
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input SetVariantSku {
+    sku: String
+    staged: Boolean = true
+}
+
 input SetZoneDescription {
     description: String
 }
@@ -18660,6 +19351,13 @@ input UnpublishTailoring {
     dummy: String
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input UnpublishVariant {
+    dummy: String
+}
+
 input UpdateCartItemShippingAddress {
     address: AddressInput!
 }
@@ -18687,6 +19385,54 @@ input UpdateStagedOrderSyncInfo {
 input ValueFilterInput {
     path: String!
     values: [String!]!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input VariantBulkAction {
+    publish: PublishVariant
+    unpublish: UnpublishVariant
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input VariantDraft {
+    key: String
+    product: ResourceIdentifierInput!
+    sku: String
+    attributes: [ProductAttributeInput!] = []
+    assets: [AssetDraftInput!] = []
+    images: [ImageInput!] = []
+    publish: Boolean = false
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input VariantUpdateAction {
+    publish: PublishVariant
+    unpublish: UnpublishVariant
+    removeStagedChanges: RemoveStagedChanges
+    removeAsset: RemoveVariantAsset
+    addExternalImage: AddVariantExternalImage
+    addAsset: AddVariantAsset
+    changeAssetName: ChangeVariantAssetName
+    changeAssetOrder: ChangeVariantAssetOrder
+    removeImage: RemoveVariantImage
+    setAssets: SetVariantAssets
+    setAttribute: SetVariantAttribute
+    setAttributes: SetVariantAttributes
+    setImages: SetVariantImages
+    setKey: SetVariantKey
+    setSku: SetVariantSku
+    setAssetCustomField: SetVariantAssetCustomField
+    setAssetCustomType: SetVariantAssetCustomType
+    setAssetDescription: SetVariantAssetDescription
+    setAssetKey: SetVariantAssetKey
+    setAssetSources: SetVariantAssetSources
+    setAssetTags: SetVariantAssetTags
 }
 
 input WhitespaceSuggestTokenizerInput {
