@@ -1,0 +1,83 @@
+meta {
+  name: Create Import Request for Variants
+  type: http
+  seq: 27
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/variants/import-containers/{{import-container-key}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "type" : "variant",
+    "resources" : [ {
+      "key" : "variant-1",
+      "sku" : "VARIANT-SKU-001",
+      "product" : {
+        "typeId" : "product",
+        "key" : "product-1"
+      },
+      "publish" : false,
+      "images" : [ {
+        "url" : "https://example.com/images/variant-1.jpg",
+        "label" : "Variant image",
+        "dimensions" : {
+          "w" : 800,
+          "h" : 600
+        }
+      } ],
+      "attributes" : [ {
+        "name" : "color",
+        "type" : "text",
+        "value" : "blue"
+      } ],
+      "assets" : [ {
+        "key" : "variant-asset-1",
+        "sources" : [ {
+          "uri" : "https://example.com/assets/variant-1.mp4",
+          "key" : "variant-video"
+        } ],
+        "name" : {
+          "en" : "Variant Demo"
+        },
+        "description" : {
+          "en" : "Variant demo video"
+        },
+        "tags" : [ "video", "demo" ]
+      } ]
+    } ]
+  }
+}  
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("import-container-id", data.results[0].id); 
+          bru.setEnvVar("import-container-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("import-container-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("import-container-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("import-container-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("import-container-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

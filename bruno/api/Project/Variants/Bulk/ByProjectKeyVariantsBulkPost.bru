@@ -1,0 +1,57 @@
+meta {
+  name: Bulk Update Variants
+  type: http
+  seq: 517
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/variants/bulk
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "items" : [ {
+      "id" : "7a3b5c8d-1e2f-4a5b-8c9d-0e1f2a3b4c5d",
+      "version" : 1
+    }, {
+      "key" : "my-variant-key",
+      "version" : 3
+    } ],
+    "actions" : [ {
+      "action" : "publish"
+    } ]
+  }
+}  
+
+query {
+  ~versionControl: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("bulk-id", data.results[0].id); 
+          bru.setEnvVar("bulk-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("bulk-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("bulk-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("bulk-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("bulk-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

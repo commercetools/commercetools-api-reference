@@ -1,0 +1,84 @@
+meta {
+  name: Create Variant
+  type: http
+  seq: 111
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/variants
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "product" : {
+      "typeId" : "product",
+      "id" : "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+    },
+    "publish" : false,
+    "sku" : "SKU-BLUE-M-001",
+    "key" : "blue-medium-variant",
+    "images" : [ {
+      "url" : "https://example.com/images/variant-blue-medium.jpg",
+      "label" : "Blue Medium Variant",
+      "dimensions" : {
+        "w" : 800,
+        "h" : 600
+      }
+    } ],
+    "attributes" : [ {
+      "name" : "color",
+      "value" : "blue"
+    }, {
+      "name" : "size",
+      "value" : "M"
+    } ],
+    "assets" : [ {
+      "sources" : [ {
+        "uri" : "https://example.com/assets/variant-demo-video.mp4",
+        "key" : "demo-video"
+      } ],
+      "name" : {
+        "en-US" : "Variant Demo Video",
+        "de-DE" : "Variant-Demonstrationsvideo"
+      },
+      "description" : {
+        "en-US" : "Detailed demonstration of the variant features",
+        "de-DE" : "Detaillierte Demonstration der Variant-Merkmale"
+      },
+      "tags" : [ "video", "demo", "tutorial" ]
+    } ]
+  }
+}  
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("variant-id", data.results[0].id); 
+          bru.setEnvVar("variant-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("variant-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("variant-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("variant-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("variant-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}

@@ -16,6 +16,61 @@ interface Image [[Image.svg]]  {
 
 
 
+interface VariantCreatedMessage [[VariantCreatedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    productId: String
+    variantId: Integer
+    key: String
+    sku: String
+    attributes: [[Attribute.svg List<Attribute>]]
+    assets: [[Asset.svg List<Asset>]]
+    images: [[Image.svg List<Image>]]
+    publish: Boolean
+}
+interface VariantImagesSetMessage [[VariantImagesSetMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    images: [[Image.svg List<Image>]]
+    oldImages: [[Image.svg List<Image>]]
+    staged: Boolean
+}
+interface VariantCreatedMessagePayload [[VariantCreatedMessagePayload.svg]]  {
+    type: String
+    id: String
+    productId: String
+    variantId: Integer
+    key: String
+    sku: String
+    attributes: [[Attribute.svg List<Attribute>]]
+    assets: [[Asset.svg List<Asset>]]
+    images: [[Image.svg List<Image>]]
+    publish: Boolean
+}
+interface VariantImagesSetMessagePayload [[VariantImagesSetMessagePayload.svg]]  {
+    type: String
+    images: [[Image.svg List<Image>]]
+    oldImages: [[Image.svg List<Image>]]
+    staged: Boolean
+}
 interface ProductVariantImportDraft [[ProductVariantImportDraft.svg]]  {
     id: Long
     sku: String
@@ -78,6 +133,44 @@ interface ProductAddVariantAction [[ProductAddVariantAction.svg]]  {
     staged: Boolean
     assets: [[AssetDraft.svg List<AssetDraft>]]
 }
+interface VariantData [[VariantData.svg]]  {
+    sku: String
+    images: [[Image.svg List<Image>]]
+    attributes: [[Attribute.svg List<Attribute>]]
+    assets: [[Asset.svg List<Asset>]]
+}
+interface VariantDraft [[VariantDraft.svg]]  {
+    key: String
+    sku: String
+    product: [[ProductResourceIdentifier.svg ProductResourceIdentifier]]
+    publish: Boolean
+    images: [[Image.svg List<Image>]]
+    attributes: [[Attribute.svg List<Attribute>]]
+    assets: [[AssetDraft.svg List<AssetDraft>]]
+}
+interface VariantProjection [[VariantProjection.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    staged: Boolean
+    variantId: Integer
+    product: [[ProductReference.svg ProductReference]]
+    name: [[LocalizedString.svg LocalizedString]]
+    slug: [[LocalizedString.svg LocalizedString]]
+    description: [[LocalizedString.svg LocalizedString]]
+    key: String
+    sku: String
+    images: [[Image.svg List<Image>]]
+    assets: [[Asset.svg List<Asset>]]
+    attributes: [[Attribute.svg List<Attribute>]]
+    price: [[Price.svg Price]]
+    default: Boolean
+}
+interface VariantSetImagesAction [[VariantSetImagesAction.svg]]  {
+    action: String
+    images: [[Image.svg List<Image>]]
+    staged: Boolean
+}
 interface ProductImageAddedMessage [[ProductImageAddedMessage.svg]]  {
     id: String
     version: Long
@@ -112,6 +205,21 @@ interface ProductTailoringImageAddedMessage [[ProductTailoringImageAddedMessage.
     variantId: Long
     image: [[Image.svg Image]]
 }
+interface VariantImageAddedMessage [[VariantImageAddedMessage.svg]]  {
+    id: String
+    version: Long
+    createdAt: DateTime
+    lastModifiedAt: DateTime
+    lastModifiedBy: [[LastModifiedBy.svg LastModifiedBy]]
+    createdBy: [[CreatedBy.svg CreatedBy]]
+    sequenceNumber: Long
+    resource: [[Reference.svg Reference]]
+    resourceVersion: Long
+    type: String
+    resourceUserProvidedIdentifiers: [[UserProvidedIdentifiers.svg UserProvidedIdentifiers]]
+    image: [[Image.svg Image]]
+    staged: Boolean
+}
 interface ProductImageAddedMessagePayload [[ProductImageAddedMessagePayload.svg]]  {
     type: String
     variantId: Long
@@ -126,6 +234,11 @@ interface ProductTailoringImageAddedMessagePayload [[ProductTailoringImageAddedM
     variantId: Long
     image: [[Image.svg Image]]
 }
+interface VariantImageAddedMessagePayload [[VariantImageAddedMessagePayload.svg]]  {
+    type: String
+    image: [[Image.svg Image]]
+    staged: Boolean
+}
 interface ProductTailoringAddExternalImageAction [[ProductTailoringAddExternalImageAction.svg]]  {
     action: String
     variantId: Long
@@ -137,6 +250,11 @@ interface ProductAddExternalImageAction [[ProductAddExternalImageAction.svg]]  {
     action: String
     variantId: Long
     sku: String
+    image: [[Image.svg Image]]
+    staged: Boolean
+}
+interface VariantAddExternalImageAction [[VariantAddExternalImageAction.svg]]  {
+    action: String
     image: [[Image.svg Image]]
     staged: Boolean
 }
@@ -176,6 +294,12 @@ interface ProductTailoringSetExternalImagesAction [[ProductTailoringSetExternalI
     staged: Boolean
 }
 
+Image --> VariantCreatedMessage #green;text:green : "images"
+Image --> VariantImagesSetMessage #green;text:green : "images"
+Image --> VariantImagesSetMessage #green;text:green : "oldImages"
+Image --> VariantCreatedMessagePayload #green;text:green : "images"
+Image --> VariantImagesSetMessagePayload #green;text:green : "images"
+Image --> VariantImagesSetMessagePayload #green;text:green : "oldImages"
 Image --> ProductVariantImportDraft #green;text:green : "images"
 Image --> ProductVariantTailoring #green;text:green : "images"
 Image --> ProductVariantTailoringDraft #green;text:green : "images"
@@ -183,12 +307,19 @@ Image --> ProductTailoringAddVariantAction #green;text:green : "images"
 Image --> ProductVariant #green;text:green : "images"
 Image --> ProductVariantDraft #green;text:green : "images"
 Image --> ProductAddVariantAction #green;text:green : "images"
+Image --> VariantData #green;text:green : "images"
+Image --> VariantDraft #green;text:green : "images"
+Image --> VariantProjection #green;text:green : "images"
+Image --> VariantSetImagesAction #green;text:green : "images"
 Image --> ProductImageAddedMessage #green;text:green : "image"
 Image --> ProductTailoringImageAddedMessage #green;text:green : "image"
+Image --> VariantImageAddedMessage #green;text:green : "image"
 Image --> ProductImageAddedMessagePayload #green;text:green : "image"
 Image --> ProductTailoringImageAddedMessagePayload #green;text:green : "image"
+Image --> VariantImageAddedMessagePayload #green;text:green : "image"
 Image --> ProductTailoringAddExternalImageAction #green;text:green : "image"
 Image --> ProductAddExternalImageAction #green;text:green : "image"
+Image --> VariantAddExternalImageAction #green;text:green : "image"
 Image --> ProductTailoringImagesSetMessage #green;text:green : "oldImages"
 Image --> ProductTailoringImagesSetMessage #green;text:green : "images"
 Image --> ProductTailoringImagesSetMessagePayload #green;text:green : "oldImages"

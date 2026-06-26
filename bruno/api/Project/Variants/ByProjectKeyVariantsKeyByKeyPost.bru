@@ -1,0 +1,53 @@
+meta {
+  name: Update Variant by Key
+  type: http
+  seq: 520
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/variants/key={{variant-key}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "version" : 1,
+    "actions" : [ {
+      "action" : "setSku",
+      "sku" : "SKU-BLUE-M-002",
+      "staged" : true
+    } ]
+  }
+}  
+
+query {
+  ~expand: 
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("variant-id", data.results[0].id); 
+          bru.setEnvVar("variant-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("variant-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("variant-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("variant-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("variant-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
