@@ -1,0 +1,180 @@
+type:
+  baseDomain:
+    resourceType: Variant
+    resourceQueryType: VariantPagedQueryResponse
+    resourceDraft: VariantDraft
+    whereExample: 'sku = "my-variant-sku"'
+    sortExample: createdAt asc
+(updateable): Variant
+(deleteable): Variant
+(createable): VariantDraft
+get:
+  displayName: Query Variants
+  securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
+  description: |
+    Queries Variants matching the provided predicates.
+    This endpoint returns both current (published) and staged (draft) data for each Variant.
+
+    When querying an Attribute, you must always include both the `attribute-name` and `attribute-value` details in the QueryPredicate. Otherwise, a [400 Bad Request](/errors#400-bad-request) error will occur.
+  queryParameters:
+    where:
+      type: QueryPredicate[]
+      description: |-
+        Query Predicates on Attributes are limited to [Text](ctp:api:type:AttributeTextType),
+        [Enum](ctp:api:type:AttributeEnumType), [Boolean](ctp:api:type:AttributeBooleanType),
+        [Number](ctp:api:type:AttributeNumberType), [Date](ctp:api:type:AttributeDateType),
+        [Time](ctp:api:type:AttributeTimeType), and [DateTime](ctp:api:type:AttributeDateTimeType) attribute types.
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../examples/variants.example.json
+post:
+  displayName: Create Variant
+  securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
+  description: |
+    Creates a new Variant with only the current representation. Produces the [VariantCreated](ctp:api:type:VariantCreatedMessage) Message.
+  body:
+    application/json:
+      example: !include ../examples/variant-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../examples/variant-created.example.json
+head:
+  displayName: Check if Variant exists by Query Predicate
+  securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
+  description: |
+    Checks if a Variant exists for the provided query predicate.
+    Returns a `200` status if any Variants match, or a `404` status otherwise.
+  queryParameters:
+    where:
+      type: QueryPredicate[]
+      description: |-
+        Query Predicates on Attributes are limited to [Text](ctp:api:type:AttributeTextType),
+        [Enum](ctp:api:type:AttributeEnumType), [Boolean](ctp:api:type:AttributeBooleanType),
+        [Number](ctp:api:type:AttributeNumberType), [Date](ctp:api:type:AttributeDateType),
+        [Time](ctp:api:type:AttributeTimeType), and [DateTime](ctp:api:type:AttributeDateTimeType) attribute types.
+/bulk:
+  post:
+    displayName: Bulk Update Variants
+    securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
+    description: |
+      Applies update actions to multiple Variants in a single request.
+      Returns a `207 Multi-Status` response with the result for each Variant.
+      Each Variant is updated independently, so some may succeed while others fail.
+    queryParameters:
+      versionControl?:
+        type: string
+        enum: ['On', 'Off']
+        default: 'On'
+        description: |
+          Controls whether optimistic concurrency is enforced for each item.
+          - `On` (default): each item must include a `version` field. A [ConcurrentModification](ctp:api:type:ConcurrentModificationError) error is returned for any item whose version does not match.
+          - `Off`: version fields are ignored and updates are applied without version checks.
+    body:
+      application/json:
+        type: VariantBulkUpdate
+        example: !include ../examples/variant-bulk.example.json
+    responses:
+      207:
+        body:
+          application/json:
+            type: VariantBulkUpdateResponse
+            example: !include ../examples/variant-bulk-response.example.json
+      400:
+        description: |
+          A [BulkOperationMaxItemsExceeded](ctp:api:type:BulkOperationMaxItemsExceededError) error is returned when the request contains more than 1000 items.
+/key={key}:
+  (methodName): withKey
+  type:
+    baseResource:
+      uriParameterName: key
+      resourceType: Variant
+      resourceUpdateType: VariantUpdate
+  get:
+    displayName: Get Variant by Key
+    securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
+    description: |
+      Retrieves a Variant by its key.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/variant.example.json
+  head:
+    displayName: Check if Variant exists by Key
+    securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
+    description: |
+      Checks if a Variant exists by its key.
+      Returns a `200` status if the Variant exists, or a `404` status otherwise.
+  post:
+    displayName: Update Variant by Key
+    securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
+    description: |
+      Updates a Variant identified by its key.
+    body:
+      application/json:
+        example: !include ../examples/variant-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/variant-updated.example.json
+  delete:
+    displayName: Delete Variant by Key
+    securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
+    description: |
+      Deletes a Variant identified by its key.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/variant.example.json
+/{ID}:
+  (methodName): withId
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: Variant
+      resourceUpdateType: VariantUpdate
+  get:
+    displayName: Get Variant by ID
+    securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
+    description: |
+      Retrieves a Variant by its ID.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/variant.example.json
+  head:
+    displayName: Check if Variant exists by ID
+    securedBy: [oauth_2_0: { scopes: ['view_products:{projectKey}'] }]
+    description: |
+      Checks if a Variant exists by its ID.
+      Returns a `200` status if the Variant exists, or a `404` status otherwise.
+  post:
+    displayName: Update Variant by ID
+    securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
+    description: |
+      Updates a Variant identified by its ID.
+    body:
+      application/json:
+        example: !include ../examples/variant-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/variant-updated.example.json
+  delete:
+    displayName: Delete Variant by ID
+    securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
+    description: |
+      Deletes a Variant identified by its ID.
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/variant.example.json

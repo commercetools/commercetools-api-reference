@@ -1,0 +1,51 @@
+#%RAML 1.0 Library
+usage: Variant import types.
+(annotations.package): variants
+
+uses:
+  annotations: ../annotationTypes/annotations.raml
+  common: common.raml
+  product-variant-import: product-variant-import.raml
+
+types:
+  VariantImport:
+    (annotations.beta): true
+    description: |
+      Represents the data used to import a Variant.
+      Once imported, this data is persisted as a [Variant](ctp:api:type:Variant) in the Project.
+
+      This import resource is only available for Projects with `productCatalogModel` set to `Modular`.
+    type: common.ImportResource
+    properties:
+      key:
+        type: string
+        description: User-defined unique identifier. If a Variant with this `key` exists, it is updated with the imported data.
+      sku:
+        description: |
+          Maps to `VariantData.sku`.
+        type: string
+      product:
+        description: |
+          Maps to `Variant.product`.
+        type: common.ProductKeyReference
+      publish?:
+        description: |
+          Indicates whether the Variant is published. If `true`, the Variant is immediately available in the current published state.
+          Maps to `VariantDraft.publish`.
+        type: boolean
+        default: false
+      images?:
+        description: |
+          Maps to `VariantData.images`.
+        type: array
+        items: common.Image
+      attributes?:
+        description: |
+          Maps to `VariantData.attributes`.
+        type: array
+        items: product-variant-import.Attribute
+      assets?:
+        description: |
+          Maps to `VariantData.assets`.
+        type: array
+        items: common.Asset

@@ -1,0 +1,162 @@
+type:
+  baseDomain:
+    resourceType: VariantProjection
+    resourceQueryType: VariantProjectionPagedQueryResponse
+    whereExample: 'sku = "my-variant-sku"'
+    sortExample: createdAt asc
+description: |
+  A Variant Projection is a lightweight, read-only representation of a single Product Variant
+  with embedded Product data such as name, slug, and description.
+get:
+  displayName: Query VariantProjections
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'view_products:{projectKey}',
+              'view_published_products:{projectKey}',
+            ],
+        },
+    ]
+  description: |
+    Queries Variant Projections matching the provided predicates.
+
+    By default, this endpoint returns the `current` representation where variants are published.
+
+    Required access scopes:
+
+    - To retrieve the current representation of published Variants, the `view_published_products:{projectKey}` scope is required.
+
+    - To retrieve the staged representation (draft data), the API Client must have the `view_products:{projectKey}` scope.
+  is:
+    - projectionSelectingVariant
+    - priceSelecting
+    - localeProjecting
+    - attributeFiltering
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../examples/variant-projections.example.json
+head:
+  displayName: Check if VariantProjection exists by Query Predicate
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'view_products:{projectKey}',
+              'view_published_products:{projectKey}',
+            ],
+        },
+    ]
+  description: |
+    Checks if a Variant Projection exists for the provided query predicate.
+    Returns a `200` status if any Variant Projections match, or a `404` status otherwise.
+  is:
+    - projectionSelectingVariant
+    - projectionValidating
+  queryParameters:
+    where?:
+      type: QueryPredicate[]
+/key={key}:
+  (methodName): withKey
+  type:
+    baseResource:
+      uriParameterName: key
+      resourceType: VariantProjection
+  get:
+    displayName: Get VariantProjection by Key
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_products:{projectKey}',
+                'view_published_products:{projectKey}',
+              ],
+          },
+      ]
+    description: |
+      Retrieves a Variant Projection by its key.
+    is:
+      - projectionSelectingVariant
+      - priceSelecting
+      - localeProjecting
+      - attributeFiltering
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/variant-projection.example.json
+  head:
+    displayName: Check if VariantProjection exists by Key
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_products:{projectKey}',
+                'view_published_products:{projectKey}',
+              ],
+          },
+      ]
+    description: |
+      Checks if a VariantProjection exists with the provided `key`. Returns a `200` status if the VariantProjection exists, or a `404` status otherwise.
+    is:
+      - projectionSelectingVariant
+      - projectionValidating
+/{ID}:
+  (methodName): withId
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: VariantProjection
+  get:
+    displayName: Get VariantProjection by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_products:{projectKey}',
+                'view_published_products:{projectKey}',
+              ],
+          },
+      ]
+    description: |
+      Retrieves a Variant Projection by its ID.
+    is:
+      - projectionSelectingVariant
+      - priceSelecting
+      - localeProjecting
+      - attributeFiltering
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../examples/variant-projection.example.json
+  head:
+    displayName: Check if VariantProjection exists by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_products:{projectKey}',
+                'view_published_products:{projectKey}',
+              ],
+          },
+      ]
+    description: |
+      Checks if a VariantProjection exists with the provided `id`. Returns a `200` status if the VariantProjection exists, or a `404` status otherwise.
+    is:
+      - projectionSelectingVariant
+      - projectionValidating

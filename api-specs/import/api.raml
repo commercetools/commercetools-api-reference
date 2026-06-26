@@ -65,6 +65,7 @@ uses:
   product-type-import: types/product-type-import.raml
   product-variant-import: types/product-variant-import.raml
   standalone-price-import: types/standalone-price-import.raml
+  variant-import: types/variant-import.raml
   type-import: types/type-import.raml
 
 resourceTypes:
@@ -833,6 +834,39 @@ traits:
           body:
             type: import-request.StandalonePriceImportRequest
             example: !include examples/standalone-price-import-request.json
+          responses:
+            201:
+              body:
+                type: import-request.ImportResponse
+                example: !include examples/import-response.json
+            400:
+              description: The request was invalid.
+              body:
+                type: error.ErrorResponse
+  /variants:
+    displayName: Variants
+    /import-containers:
+      displayName: Import
+      /{importContainerKey}:
+        type: base
+        uriParameters:
+          importContainerKey:
+            (postman.paramName): import-container-key
+            description: |
+              `key` of the [ImportContainer](ctp:import:type:ImportContainer) to send this ImportRequest.
+            type: string
+        post:
+          displayName: Create Import Request for Variants
+          (annotations.beta): true
+          description: |
+            Creates an Import Request for Variants.
+
+            This endpoint is only available for Projects with `productCatalogModel` set to `Modular`.
+          is:
+            - secured_by_manage_products
+          body:
+            type: import-request.VariantImportRequest
+            example: !include examples/variants-import-request.json
           responses:
             201:
               body:
