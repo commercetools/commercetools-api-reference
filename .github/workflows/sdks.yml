@@ -48,7 +48,7 @@ jobs:
         # Get GitHub token via the CT SDKs App
       - name: Generate GitHub token (via CT SDKs App)
         id: generate_github_token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1
         with:
           app-id: ${{ secrets.CT_SDKS_APP_ID }}
           private-key: ${{ secrets.CT_SDKS_APP_PEM }}
@@ -63,7 +63,7 @@ jobs:
           echo "email=${GH_APP_USER}+ct-sdks[bot]@users.noreply.github.com" >> "$GITHUB_OUTPUT"
 
       - name: "Checkout api reference"
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           path: commercetools-api-reference
           # Pass a personal access token (using our CT SDKs App) to be able to trigger other workflows
@@ -72,21 +72,21 @@ jobs:
           token: ${{ steps.generate_github_token.outputs.token }}
           
       - name: "Checkout SDK"
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           repository: ${{ matrix.repository }}
           path: commercetools-sdk
           token: ${{ steps.generate_github_token.outputs.token }}
 
       - name: 'Setup Java'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
         with:
           distribution: temurin
           java-version: '17'
 
       - name: "Install Csharp"
         if: ${{ matrix.language == 'csharp' }}
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
         with:
           dotnet-version: |
             6.0.x
@@ -95,7 +95,7 @@ jobs:
 
       - name: "Install PHP with extensions"
         if: ${{ matrix.language == 'php' }}
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: "8.4"
           coverage: pcov
@@ -105,7 +105,7 @@ jobs:
 
       - name: Setup Node (uses version in .nvmrc)
         if: ${{ matrix.language == 'typescript' }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version-file: 'commercetools-sdk/.nvmrc'
 
@@ -169,7 +169,7 @@ jobs:
           mv api/minified.json api/collection.json
 
       - name: "Checkout previous api reference"
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
           path: commercetools-api-reference-previous
@@ -280,7 +280,7 @@ jobs:
         run: echo "CHANGES_PENDING=`git status --porcelain -- ':(exclude)*references.txt' | grep -c ^`" >> $GITHUB_ENV
         working-directory: commercetools-sdk
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@3ea6ae190baf489ba007f7c92608f33ce20ef04a # v4
         if: env.CHANGES_PENDING != '0' && github.ref == 'refs/heads/main' && matrix.language != 'postman'
         with:
           repository: commercetools-sdk
@@ -291,7 +291,7 @@ jobs:
           commit_user_email: ${{ steps.get_app_user.outputs.email }}
           file_pattern: '. :!composer.json'
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@3ea6ae190baf489ba007f7c92608f33ce20ef04a # v4
         if: ${{ matrix.language == 'postman' && env.CHANGES_PENDING != '0'  && github.ref == 'refs/heads/main' }}
         with:
           repository: commercetools-sdk
@@ -301,7 +301,7 @@ jobs:
           commit_user_name: ct-sdks[bot]
           commit_user_email: ${{ steps.get_app_user.outputs.email }}
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@3ea6ae190baf489ba007f7c92608f33ce20ef04a # v4
         if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
         with:
           repository: commercetools-sdk
