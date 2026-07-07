@@ -32399,6 +32399,8 @@ paths:
         To create a new Product, send a representation that is going to become the initial _staged_ and _current_ representation of the new Product in the catalog.
         If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, selected Prices will be added to the response.
         Produces the [ProductCreated](/projects/messages/product-catalog-messages#product-created) Message.
+
+        A failed response can return an [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError) error.
       parameters:
         - name: priceCurrency
           in: query
@@ -32610,7 +32612,7 @@ paths:
             - "manage_products:{projectKey}"
       operationId: ByProjectKeyProductsKeyByKeyPost
       description: |-
-        A failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.
+        A failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.
       parameters:
         - name: priceCurrency
           in: query
@@ -33070,7 +33072,7 @@ paths:
       description: |-
         If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.
 
-        A failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.
+        A failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.
       parameters:
         - name: priceCurrency
           in: query
@@ -53084,6 +53086,7 @@ components:
           ObjectNotFound: '#/components/schemas/ObjectNotFoundError'
           OutOfStock: '#/components/schemas/OutOfStockError'
           OverCapacity: '#/components/schemas/OverCapacityError'
+          OverlappingPriceValidity: '#/components/schemas/OverlappingPriceValidityError'
           OverlappingStandalonePriceValidity: '#/components/schemas/OverlappingStandalonePriceValidityError'
           PendingOperation: '#/components/schemas/PendingOperationError'
           PriceChanged: '#/components/schemas/PriceChangedError'
@@ -53856,6 +53859,44 @@ components:
               type: "string"
             message:
               type: "string"
+          additionalProperties:
+            type: "string"
+    OverlappingPriceValidityError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - conflictingPrice
+            - currency
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            conflictingPrice:
+              type: "string"
+            currency:
+              $ref: '#/components/schemas/CurrencyCode'
+            country:
+              $ref: '#/components/schemas/CountryCode'
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
+            channel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
+            validFrom:
+              type: "string"
+              format: "datetime"
+            validUntil:
+              type: "string"
+              format: "datetime"
+            conflictingValidFrom:
+              type: "string"
+              format: "datetime"
+            conflictingValidUntil:
+              type: "string"
+              format: "datetime"
           additionalProperties:
             type: "string"
     OverlappingStandalonePriceValidityError:
@@ -54791,6 +54832,7 @@ components:
           ObjectNotFound: '#/components/schemas/GraphQLObjectNotFoundError'
           OutOfStock: '#/components/schemas/GraphQLOutOfStockError'
           OverCapacity: '#/components/schemas/GraphQLOverCapacityError'
+          OverlappingPriceValidity: '#/components/schemas/GraphQLOverlappingPriceValidityError'
           OverlappingStandalonePriceValidity: '#/components/schemas/GraphQLOverlappingStandalonePriceValidityError'
           PendingOperation: '#/components/schemas/GraphQLPendingOperationError'
           PriceChanged: '#/components/schemas/GraphQLPriceChangedError'
@@ -55406,6 +55448,41 @@ components:
           properties:
             code:
               type: "string"
+          additionalProperties:
+            type: "string"
+    GraphQLOverlappingPriceValidityError:
+      allOf:
+        - $ref: '#/components/schemas/GraphQLErrorObject'
+        - type: "object"
+          required:
+            - code
+            - conflictingPrice
+            - currency
+          properties:
+            code:
+              type: "string"
+            conflictingPrice:
+              type: "string"
+            currency:
+              $ref: '#/components/schemas/CurrencyCode'
+            country:
+              $ref: '#/components/schemas/CountryCode'
+            customerGroup:
+              $ref: '#/components/schemas/CustomerGroupResourceIdentifier'
+            channel:
+              $ref: '#/components/schemas/ChannelResourceIdentifier'
+            validFrom:
+              type: "string"
+              format: "datetime"
+            validUntil:
+              type: "string"
+              format: "datetime"
+            conflictingValidFrom:
+              type: "string"
+              format: "datetime"
+            conflictingValidUntil:
+              type: "string"
+              format: "datetime"
           additionalProperties:
             type: "string"
     GraphQLOverlappingStandalonePriceValidityError:
