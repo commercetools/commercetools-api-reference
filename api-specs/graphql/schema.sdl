@@ -1788,6 +1788,20 @@ type CommerceMcpServerConfig implements McpServerConfig {
 }
 
 """
+Skeleton shopper-facing MCP server config. Carries only the shared
+`McpServerConfig` fields — no response-shaping (`jsonOutputFiltering`,
+`toolOutputFormatting`) yet, as the skeleton exposes a single demo tool.
+Those fields can be added later without breaking existing clients.
+"""
+type UcpShopperMcpServerConfig implements McpServerConfig {
+    type: McpServerType!
+    majorVersion: String!
+    url: String!
+    tools: [String!]!
+    toolCustomizations: [ToolCustomization!]!
+}
+
+"""
 Customization applied to a single tool at `tools/list` and `tools/call`
 time. At least one of `description` or a non-empty `parameters` list MUST
 be present; a customization with neither has no effect and is rejected at
@@ -10859,6 +10873,7 @@ enum AttributionSource {
 }
 enum McpServerType {
   CommerceMCP
+  UCPShopperMCP
 }
 enum McpServerAuthenticationMode {
   CommercetoolsIdentity
@@ -11586,6 +11601,7 @@ input McpServerDraft {
 
 input McpServerConfigDraft {
     commerce: CommerceMcpServerConfigDraft
+    ucpShopper: UcpShopperMcpServerConfigDraft
 }
 
 input CommerceMcpServerConfigDraft {
@@ -11594,6 +11610,17 @@ input CommerceMcpServerConfigDraft {
     toolCustomizations: [ToolCustomizationDraft!]
     jsonOutputFiltering: McpServerJsonOutputFilteringInput
     toolOutputFormatting: McpServerToolOutputFormatting
+}
+
+"""
+Draft for a shopper-facing UCP MCP server. Mirrors the shared fields of
+`CommerceMcpServerConfigDraft` without the response-shaping options the
+skeleton does not yet support.
+"""
+input UcpShopperMcpServerConfigDraft {
+    majorVersion: String!
+    tools: [String!]!
+    toolCustomizations: [ToolCustomizationDraft!]
 }
 
 """
