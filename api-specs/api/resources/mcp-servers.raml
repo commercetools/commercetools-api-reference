@@ -1,0 +1,215 @@
+type: base
+description: Manage MCP Server configurations for a Project.
+get:
+  displayName: Query MCP Servers
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'manage_mcp_servers:{projectKey}',
+              'view_mcp_servers:{projectKey}',
+            ],
+        },
+    ]
+  is:
+    - sortable:
+        sortExample: createdAt asc
+    - paging
+  responses:
+    200:
+      body:
+        application/json:
+          type: McpServerPagedQueryResponse
+          example: !include ../examples/mcp-servers.example.json
+post:
+  displayName: Create MCP Server
+  securedBy: [oauth_2_0: { scopes: ['manage_mcp_servers:{projectKey}'] }]
+  description: |
+    Creates a new MCP Server for the Project.
+
+    Specific Error Codes:
+    - [DuplicateField](ctp:api:type:DuplicateFieldError)
+  body:
+    application/json:
+      type: McpServerDraft
+      example: !include ../examples/mcp-server-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          type: McpServer
+          example: !include ../examples/mcp-server.example.json
+/types:
+  (methodName): types
+  type: base
+  get:
+    displayName: Query MCP Server types
+    description: |
+      Returns the catalog of available [MCP Server types](ctp:api:type:McpServerType), each with its major versions and the tools you can enable for them.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_project:{projectKey}',
+                'manage_mcp_servers:{projectKey}',
+                'view_mcp_servers:{projectKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            type: array
+            items: McpServerType
+            example: !include ../examples/mcp-server-types.example.json
+  /{mcpServerType}:
+    (methodName): withMcpServerType
+    type: base
+    uriParameters:
+      mcpServerType:
+        type: string
+        description: '`type` of the [McpServerType](ctp:api:type:McpServerType), such as `CommerceMCP`.'
+    get:
+      displayName: Get MCP Server type
+      description: |
+        Returns a single [MCP Server type](ctp:api:type:McpServerType). When `majorVersion` is omitted, the latest major version is returned.
+      securedBy:
+        [
+          oauth_2_0:
+            {
+              scopes:
+                [
+                  'manage_project:{projectKey}',
+                  'manage_mcp_servers:{projectKey}',
+                  'view_mcp_servers:{projectKey}',
+                ],
+            },
+        ]
+      queryParameters:
+        majorVersion?:
+          type: string
+          description: |
+            Major version to return, such as `v4`. When omitted, the latest major version is returned.
+      responses:
+        200:
+          body:
+            application/json:
+              type: McpServerType
+              example: !include ../examples/McpServer/McpServerType.json
+/key={key}:
+  (methodName): withKey
+  type: base
+  uriParameters:
+    key:
+      type: string
+      description: '`key` of the [McpServer](ctp:api:type:McpServer).'
+  get:
+    displayName: Get MCP Server by Key
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_mcp_servers:{projectKey}',
+                'view_mcp_servers:{projectKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            type: McpServer
+            example: !include ../examples/mcp-server.example.json
+  post:
+    displayName: Update MCP Server by Key
+    securedBy: [oauth_2_0: { scopes: ['manage_mcp_servers:{projectKey}'] }]
+    is:
+      - conflicting
+    description: |
+      Specific Error Codes:
+      - [InvalidOperation](ctp:api:type:InvalidOperationError)
+    body:
+      application/json:
+        type: McpServerUpdate
+        example: !include ../examples/mcp-server-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: McpServer
+            example: !include ../examples/mcp-server-update-response.example.json
+  delete:
+    displayName: Delete MCP Server by Key
+    securedBy: [oauth_2_0: { scopes: ['manage_mcp_servers:{projectKey}'] }]
+    is:
+      - versioned
+      - conflicting
+    responses:
+      200:
+        body:
+          application/json:
+            type: McpServer
+            example: !include ../examples/mcp-server.example.json
+/{ID}:
+  (methodName): withId
+  type: base
+  uriParameters:
+    ID:
+      type: string
+      description: '`id` of the [McpServer](ctp:api:type:McpServer).'
+  get:
+    displayName: Get MCP Server by ID
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_mcp_servers:{projectKey}',
+                'view_mcp_servers:{projectKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            type: McpServer
+            example: !include ../examples/mcp-server.example.json
+  post:
+    displayName: Update MCP Server by ID
+    securedBy: [oauth_2_0: { scopes: ['manage_mcp_servers:{projectKey}'] }]
+    is:
+      - conflicting
+    description: |
+      Specific Error Codes:
+      - [InvalidOperation](ctp:api:type:InvalidOperationError)
+    body:
+      application/json:
+        type: McpServerUpdate
+        example: !include ../examples/mcp-server-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: McpServer
+            example: !include ../examples/mcp-server-update-response.example.json
+  delete:
+    displayName: Delete MCP Server by ID
+    securedBy: [oauth_2_0: { scopes: ['manage_mcp_servers:{projectKey}'] }]
+    is:
+      - versioned
+      - conflicting
+    responses:
+      200:
+        body:
+          application/json:
+            type: McpServer
+            example: !include ../examples/mcp-server.example.json

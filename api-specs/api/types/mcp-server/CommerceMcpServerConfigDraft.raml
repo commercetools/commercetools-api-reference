@@ -1,0 +1,39 @@
+#%RAML 1.0 DataType
+(package): McpServer
+type: McpServerConfigDraft
+displayName: CommerceMcpServerConfigDraft
+discriminatorValue: CommerceMCP
+example: !include ../../examples/McpServer/CommerceMcpServerConfigDraft.json
+description: |
+  Connection configuration for creating or updating a Commerce MCP Server.
+properties:
+  majorVersion:
+    type: string
+    enum:
+      - v1
+      - v4
+    (enumDescriptions):
+      v1: |
+        Version 1 of the Commerce MCP Server configuration. Deprecated. Use `v4` instead.
+      v4: |
+        Version 4 of the Commerce MCP Server configuration.
+    description: |
+      Major version of this MCP Server type. Supported versions are `v1` (deprecated) and `v4`.
+  tools:
+    type: array
+    items: McpServerTool
+    description: |
+      List of tools to enable for this MCP Server. Use `all` to enable all available tools, or specify individual tool names such as `read_products` or `create_orders`. To reduce the number of LLM turns and improve overall performance, it is advisable to expose only the tools that are necessary, or at least minimize the exposure of tools that are unlikely to be used.
+  toolCustomizations?:
+    type: array
+    items: ToolCustomization
+    description: |
+      Per-tool customizations applied at `tools/list` and `tools/call` time, such as overriding a tool's description or constraining its parameters.
+  jsonOutputFiltering?:
+    type: McpServerJsonOutputFiltering
+    description: |
+      Response field-filtering rules applied to tool responses.
+  toolOutputFormatting?:
+    type: McpServerToolOutputFormatting
+    description: |
+      Output formatting applied to tool responses. When absent, responses are left untouched.
