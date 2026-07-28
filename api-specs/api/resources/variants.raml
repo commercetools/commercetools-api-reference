@@ -178,3 +178,54 @@ head:
         body:
           application/json:
             example: !include ../examples/variant.example.json
+  /images:
+    post:
+      displayName: Upload Variant image
+      description: |
+        Uploads a JPEG, PNG, or a GIF image file to a [Variant](ctp:api:type:Variant) identified by its ID.
+        The maximum file size of the image is **10MB**.
+
+        The response status code depends on the size of the original image.
+        If the image is small, the API responds with `200 OK`, and if the image is larger, it responds with `202 Accepted`.
+        The Variant returned with a `202 Accepted` status code contains a `warnings` field with an [ImageProcessingOngoing](ctp:api:type:ImageProcessingOngoingWarning) Warning.
+
+        Produces the [VariantImageAdded](/projects/messages/product-catalog-messages#variant-image-added) Message.
+
+      queryParameters:
+        filename?:
+          type: string
+          default: 'img'
+          description: |
+            URL-encoded filename of the image when stored in the Content Delivery Network (CDN).
+            The filename is modified when uploaded to prevent filename conflicts.
+            If not provided, a random filename is generated.
+        staged?:
+          type: boolean
+          default: true
+          description: |
+            If `true`, only the staged Variant is updated.
+            If `false`, both the current and staged Variant are updated.
+      securedBy: [oauth_2_0: { scopes: ['manage_products:{projectKey}'] }]
+      body:
+        image/jpeg:
+          type: file
+        image/png:
+          type: file
+        image/gif:
+          type: file
+      headers:
+        Content-Type:
+          type: string
+          description: |
+            One of `image/jpeg`, `image/png`, or `image/gif`.
+      responses:
+        200:
+          body:
+            application/json:
+              type: Variant
+              example: !include ../examples/variant.example.json
+        202:
+          body:
+            application/json:
+              type: Variant
+              example: !include ../examples/variant-with-image-processing-warning.example.json
