@@ -5183,6 +5183,8 @@ type LineItem {
     priceMode: LineItemPriceMode!
     custom: CustomFieldsType
     inventoryMode: InventoryMode
+    reservation: Reservation
+    reservationRef: Reference
     shippingDetails: ItemShippingDetails
     perMethodTaxRate: [MethodTaxRate!]!
     taxedPricePortions: [MethodTaxedPrice!]!
@@ -8457,6 +8459,26 @@ type RemoveStagedOrderPaymentOutput implements StagedOrderUpdateActionOutput {
     paymentResId: ResourceIdentifier!
 }
 
+"""
+A Reservation holds inventory of an InventoryEntry for a Cart line item until the reservation expires or the Cart is ordered.
+"""
+type Reservation implements Versioned {
+    inventoryEntry: InventoryEntry
+    inventoryEntryRef: Reference!
+    lineItemId: String!
+    quantity: Long!
+    ownerRef: Reference!
+    state: ReservationState!
+    inventoryMode: String!
+    expiresAt: DateTime
+    id: String!
+    version: Long!
+    createdAt: DateTime!
+    lastModifiedAt: DateTime!
+    createdBy: Initiator
+    lastModifiedBy: Initiator
+}
+
 type ResourceIdentifier {
     typeId: String!
     key: String
@@ -11562,6 +11584,16 @@ enum RecurringOrderState {
   Expired
   Failed
   Paused
+}
+enum ReservationState {
+  CommitInProgress
+  Committed
+  Created
+  CreationInProgress
+  Expired
+  Released
+  UpdateInProgress
+  Updated
 }
 enum SearchIndexingStatus {
   Activated
