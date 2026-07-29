@@ -2537,6 +2537,7 @@ type AttributeDefinition {
     acceptLanguage: [Locale!]
   ): String
     inputHint: TextInputHint!
+    displayGroup: DisplayGroup!
     isSearchable: Boolean!
     labelAllLocales: [LocalizedString!]!
     inputTipAllLocales: [LocalizedString!]
@@ -5164,7 +5165,10 @@ type LineItem {
   ): String
     productSlugAllLocales: [LocalizedString!]
     productType: ProductTypeDefinition
-    productTypeRef: Reference
+    """
+  Reference to the product type of the line item, carrying the snapshot `version` captured when the line item was added.
+  """
+  productTypeRef: VersionedReference
     variant: ProductVariant
     price: ProductPrice!
     taxedPrice: TaxedItemPrice
@@ -5666,6 +5670,8 @@ type Order implements Versioned & ReferenceExpandable {
     discountTypeCombination: DiscountTypeCombination
     completedAt: DateTime
     orderNumber: String
+    """Indicates if the order is included in the transaction fee calculation."""
+  transactionFee: Boolean!
     orderState: OrderState!
     stateRef: Reference
     state: State
@@ -7644,6 +7650,7 @@ type ProductTypeDefinition implements Versioned & ReferenceExpandable {
     key: String
     name: String!
     description: String!
+    classifier: ProductTypeClassifier!
     attributeDefinitions(
     """
     The names of the attribute definitions to include.
@@ -10457,6 +10464,12 @@ type VariantUnpublished implements MessagePayload {
     type: String!
 }
 
+type VersionedReference {
+    typeId: String!
+    id: String!
+    version: Long
+}
+
 type WhitespaceSuggestTokenizer implements SuggestTokenizer {
     type: String!
 }
@@ -11189,6 +11202,15 @@ enum TextInputHint {
   SingleLine
   MultiLine
 }
+enum DisplayGroup {
+  General
+  Prices
+  Images
+  Categories
+  Variants
+  Inventory
+  Other
+}
 enum AuthenticationMode {
   ExternalAuth
   Password
@@ -11577,6 +11599,32 @@ enum PublishScope {
   All
   """Publishes only prices on the staged projection"""
   Prices
+}
+enum ProductTypeClassifier {
+  Animal
+  Apparel
+  Art
+  Audio
+  Baby
+  Bike
+  Book
+  Bottle
+  Camera
+  Car
+  Complex
+  Computer
+  Cosmetic
+  Digital
+  Electronic
+  Food
+  Furniture
+  Home
+  Jewelery
+  Living
+  Luggage
+  Office
+  Sport
+  Toy
 }
 enum RecurringOrderState {
   Active
