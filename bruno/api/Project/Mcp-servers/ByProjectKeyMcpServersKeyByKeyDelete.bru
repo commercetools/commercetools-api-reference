@@ -1,0 +1,43 @@
+meta {
+  name: Delete MCP Server by Key
+  type: http
+  seq: 819
+}
+
+delete {
+  url: {{apiUrl}}/{{project-key}}/mcp-servers/key={{mcp-server-key}}?version={{mcp-server-version}}
+  body: none
+  auth: inherit
+}
+
+
+query {
+  version: {{mcp-server-version}}
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("mcp-server-id", data.results[0].id); 
+          bru.setEnvVar("mcp-server-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("mcp-server-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("mcp-server-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("mcp-server-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("mcp-server-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
