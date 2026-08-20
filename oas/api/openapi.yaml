@@ -48536,6 +48536,7 @@ components:
           setCustomerId: '#/components/schemas/CartSetCustomerIdAction'
           setDeleteDaysAfterLastModification: '#/components/schemas/CartSetDeleteDaysAfterLastModificationAction'
           setDirectDiscounts: '#/components/schemas/CartSetDirectDiscountsAction'
+          setEstimatedDelivery: '#/components/schemas/CartSetEstimatedDeliveryAction'
           setItemShippingAddressCustomField: '#/components/schemas/CartSetItemShippingAddressCustomFieldAction'
           setItemShippingAddressCustomType: '#/components/schemas/CartSetItemShippingAddressCustomTypeAction'
           setKey: '#/components/schemas/CartSetKeyAction'
@@ -48881,6 +48882,15 @@ components:
           $ref: '#/components/schemas/Reference'
         discountedAmount:
           $ref: '#/components/schemas/TypedMoney'
+    EstimatedDelivery:
+      type: "object"
+      properties:
+        from:
+          type: "string"
+          format: "datetime"
+        until:
+          type: "string"
+          format: "datetime"
     ExternalLineItemTotalPrice:
       type: "object"
       required:
@@ -49337,6 +49347,8 @@ components:
           $ref: '#/components/schemas/DiscountedLineItemPrice'
         shippingMethodState:
           $ref: '#/components/schemas/ShippingMethodState'
+        estimatedDelivery:
+          $ref: '#/components/schemas/EstimatedDelivery'
     ShippingMethodState:
       type: "string"
       enum:
@@ -49690,6 +49702,8 @@ components:
                 $ref: '#/components/schemas/DeliveryDraft'
             custom:
               $ref: '#/components/schemas/CustomFieldsDraft'
+            estimatedDelivery:
+              $ref: '#/components/schemas/EstimatedDelivery'
     CartAddShoppingListAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -50160,6 +50174,8 @@ components:
               $ref: '#/components/schemas/ExternalTaxRateDraft'
             custom:
               $ref: '#/components/schemas/CustomFieldsDraft'
+            estimatedDelivery:
+              $ref: '#/components/schemas/EstimatedDelivery'
     CartSetCustomTypeAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -50221,6 +50237,17 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/DirectDiscountDraft'
+    CartSetEstimatedDeliveryAction:
+      allOf:
+        - $ref: '#/components/schemas/CartUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            shippingKey:
+              type: "string"
+            estimatedDelivery:
+              $ref: '#/components/schemas/EstimatedDelivery'
     CartSetItemShippingAddressCustomFieldAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -50516,6 +50543,8 @@ components:
               $ref: '#/components/schemas/ShippingMethodResourceIdentifier'
             externalTaxRate:
               $ref: '#/components/schemas/ExternalTaxRateDraft'
+            estimatedDelivery:
+              $ref: '#/components/schemas/EstimatedDelivery'
     CartSetShippingMethodTaxAmountAction:
       allOf:
         - $ref: '#/components/schemas/CartUpdateAction'
@@ -63668,6 +63697,42 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/StoreKeyReference'
+    CartEstimatedDeliverySetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            estimatedDelivery:
+              $ref: '#/components/schemas/EstimatedDelivery'
+            shippingKey:
+              type: "string"
     CartFrozenMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -66596,6 +66661,7 @@ components:
               CartDiscountStoreAdded: '#/components/schemas/CartDiscountStoreAddedMessage'
               CartDiscountStoreRemoved: '#/components/schemas/CartDiscountStoreRemovedMessage'
               CartDiscountStoresSet: '#/components/schemas/CartDiscountStoresSetMessage'
+              CartEstimatedDeliverySet: '#/components/schemas/CartEstimatedDeliverySetMessage'
               CartFrozen: '#/components/schemas/CartFrozenMessage'
               CartLocked: '#/components/schemas/CartLockedMessage'
               CartPurchaseOrderNumberSet: '#/components/schemas/CartPurchaseOrderNumberSetMessage'
@@ -66787,14 +66853,24 @@ components:
               StandalonePriceValidFromSet: '#/components/schemas/StandalonePriceValidFromSetMessage'
               StandalonePriceValidUntilSet: '#/components/schemas/StandalonePriceValidUntilSetMessage'
               StandalonePriceValueChanged: '#/components/schemas/StandalonePriceValueChangedMessage'
+              StoreCheckoutUrlTemplateSet: '#/components/schemas/StoreCheckoutUrlTemplateSetMessage'
+              StoreContactUrlSet: '#/components/schemas/StoreContactUrlSetMessage'
+              StoreCookiePolicyUrlSet: '#/components/schemas/StoreCookiePolicyUrlSetMessage'
               StoreCountriesChanged: '#/components/schemas/StoreCountriesChangedMessage'
               StoreCreated: '#/components/schemas/StoreCreatedMessage'
               StoreDeleted: '#/components/schemas/StoreDeletedMessage'
               StoreDistributionChannelsChanged: '#/components/schemas/StoreDistributionChannelsChangedMessage'
+              StoreFaqUrlSet: '#/components/schemas/StoreFaqUrlSetMessage'
+              StoreImprintUrlSet: '#/components/schemas/StoreImprintUrlSetMessage'
               StoreLanguagesChanged: '#/components/schemas/StoreLanguagesChangedMessage'
               StoreNameSet: '#/components/schemas/StoreNameSetMessage'
+              StoreOrderUrlTemplateSet: '#/components/schemas/StoreOrderUrlTemplateSetMessage'
+              StorePrivacyPolicyUrlSet: '#/components/schemas/StorePrivacyPolicyUrlSetMessage'
               StoreProductSelectionsChanged: '#/components/schemas/StoreProductSelectionsChangedMessage'
+              StoreRefundPolicyUrlSet: '#/components/schemas/StoreRefundPolicyUrlSetMessage'
+              StoreShippingPolicyUrlSet: '#/components/schemas/StoreShippingPolicyUrlSetMessage'
               StoreSupplyChannelsChanged: '#/components/schemas/StoreSupplyChannelsChangedMessage'
+              StoreTermsOfServiceUrlSet: '#/components/schemas/StoreTermsOfServiceUrlSetMessage'
               VariantCreated: '#/components/schemas/VariantCreatedMessage'
               VariantDeleted: '#/components/schemas/VariantDeletedMessage'
               VariantImageAdded: '#/components/schemas/VariantImageAddedMessage'
@@ -67689,6 +67765,42 @@ components:
               $ref: '#/components/schemas/OrderEdit'
             result:
               $ref: '#/components/schemas/OrderEditApplied'
+    OrderEstimatedDeliverySetMessage:
+      allOf:
+        - $ref: '#/components/schemas/OrderMessage'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            estimatedDelivery:
+              $ref: '#/components/schemas/EstimatedDelivery'
+            shippingKey:
+              type: "string"
     OrderImportedMessage:
       allOf:
         - $ref: '#/components/schemas/OrderMessage'
@@ -73740,6 +73852,108 @@ components:
               type: "boolean"
             oldValue:
               $ref: '#/components/schemas/TypedMoney'
+    StoreCheckoutUrlTemplateSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            checkoutUrlTemplate:
+              type: "string"
+    StoreContactUrlSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            contactUrl:
+              type: "string"
+    StoreCookiePolicyUrlSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            cookiePolicyUrl:
+              type: "string"
     StoreCountriesChangedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -73912,6 +74126,74 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ChannelReference'
+    StoreFaqUrlSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            faqUrl:
+              type: "string"
+    StoreImprintUrlSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            imprintUrl:
+              type: "string"
     StoreLanguagesChangedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -73990,6 +74272,74 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/LocalizedString'
+    StoreOrderUrlTemplateSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            orderUrlTemplate:
+              type: "string"
+    StorePrivacyPolicyUrlSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            privacyPolicyUrl:
+              type: "string"
     StoreProductSelectionsChangedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -74034,6 +74384,74 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ProductSelectionSetting'
+    StoreRefundPolicyUrlSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            refundPolicyUrl:
+              type: "string"
+    StoreShippingPolicyUrlSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            shippingPolicyUrl:
+              type: "string"
     StoreSupplyChannelsChangedMessage:
       allOf:
         - $ref: '#/components/schemas/Message'
@@ -74074,6 +74492,40 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ChannelReference'
+    StoreTermsOfServiceUrlSetMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+        - type: "object"
+          properties:
+            id:
+              type: "string"
+            version:
+              type: "integer"
+              format: "int64"
+            createdAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedAt:
+              type: "string"
+              format: "datetime"
+            lastModifiedBy:
+              $ref: '#/components/schemas/LastModifiedBy'
+            createdBy:
+              $ref: '#/components/schemas/CreatedBy'
+            sequenceNumber:
+              type: "integer"
+              format: "int64"
+            resource:
+              $ref: '#/components/schemas/Reference'
+            resourceVersion:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+            resourceUserProvidedIdentifiers:
+              $ref: '#/components/schemas/UserProvidedIdentifiers'
+            termsOfServiceUrl:
+              type: "string"
     UserProvidedIdentifiers:
       type: "object"
       properties:
@@ -75236,6 +75688,17 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/StoreKeyReference'
+    CartEstimatedDeliverySetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            estimatedDelivery:
+              $ref: '#/components/schemas/EstimatedDelivery'
+            shippingKey:
+              type: "string"
     CartFrozenMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -76277,6 +76740,7 @@ components:
           CartDiscountStoreAdded: '#/components/schemas/CartDiscountStoreAddedMessagePayload'
           CartDiscountStoreRemoved: '#/components/schemas/CartDiscountStoreRemovedMessagePayload'
           CartDiscountStoresSet: '#/components/schemas/CartDiscountStoresSetMessagePayload'
+          CartEstimatedDeliverySet: '#/components/schemas/CartEstimatedDeliverySetMessagePayload'
           CartFrozen: '#/components/schemas/CartFrozenMessagePayload'
           CartLocked: '#/components/schemas/CartLockedMessagePayload'
           CartPurchaseOrderNumberSet: '#/components/schemas/CartPurchaseOrderNumberSetMessagePayload'
@@ -76469,14 +76933,24 @@ components:
           StandalonePriceValidFromSet: '#/components/schemas/StandalonePriceValidFromSetMessagePayload'
           StandalonePriceValidUntilSet: '#/components/schemas/StandalonePriceValidUntilSetMessagePayload'
           StandalonePriceValueChanged: '#/components/schemas/StandalonePriceValueChangedMessagePayload'
+          StoreCheckoutUrlTemplateSet: '#/components/schemas/StoreCheckoutUrlTemplateSetMessagePayload'
+          StoreContactUrlSet: '#/components/schemas/StoreContactUrlSetMessagePayload'
+          StoreCookiePolicyUrlSet: '#/components/schemas/StoreCookiePolicyUrlSetMessagePayload'
           StoreCountriesChanged: '#/components/schemas/StoreCountriesChangedMessagePayload'
           StoreCreated: '#/components/schemas/StoreCreatedMessagePayload'
           StoreDeleted: '#/components/schemas/StoreDeletedMessagePayload'
           StoreDistributionChannelsChanged: '#/components/schemas/StoreDistributionChannelsChangedMessagePayload'
+          StoreFaqUrlSet: '#/components/schemas/StoreFaqUrlSetMessagePayload'
+          StoreImprintUrlSet: '#/components/schemas/StoreImprintUrlSetMessagePayload'
           StoreLanguagesChanged: '#/components/schemas/StoreLanguagesChangedMessagePayload'
           StoreNameSet: '#/components/schemas/StoreNameSetMessagePayload'
+          StoreOrderUrlTemplateSet: '#/components/schemas/StoreOrderUrlTemplateSetMessagePayload'
+          StorePrivacyPolicyUrlSet: '#/components/schemas/StorePrivacyPolicyUrlSetMessagePayload'
           StoreProductSelectionsChanged: '#/components/schemas/StoreProductSelectionsChangedMessagePayload'
+          StoreRefundPolicyUrlSet: '#/components/schemas/StoreRefundPolicyUrlSetMessagePayload'
+          StoreShippingPolicyUrlSet: '#/components/schemas/StoreShippingPolicyUrlSetMessagePayload'
           StoreSupplyChannelsChanged: '#/components/schemas/StoreSupplyChannelsChangedMessagePayload'
+          StoreTermsOfServiceUrlSet: '#/components/schemas/StoreTermsOfServiceUrlSetMessagePayload'
           VariantCreated: '#/components/schemas/VariantCreatedMessagePayload'
           VariantDeleted: '#/components/schemas/VariantDeletedMessagePayload'
           VariantImageAdded: '#/components/schemas/VariantImageAddedMessagePayload'
@@ -76769,6 +77243,17 @@ components:
               $ref: '#/components/schemas/OrderEdit'
             result:
               $ref: '#/components/schemas/OrderEditApplied'
+    OrderEstimatedDeliverySetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/OrderMessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            estimatedDelivery:
+              $ref: '#/components/schemas/EstimatedDelivery'
+            shippingKey:
+              type: "string"
     OrderImportedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/OrderMessagePayload'
@@ -78986,6 +79471,33 @@ components:
               type: "boolean"
             oldValue:
               $ref: '#/components/schemas/TypedMoney'
+    StoreCheckoutUrlTemplateSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            checkoutUrlTemplate:
+              type: "string"
+    StoreContactUrlSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            contactUrl:
+              type: "string"
+    StoreCookiePolicyUrlSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            cookiePolicyUrl:
+              type: "string"
     StoreCountriesChangedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -79058,6 +79570,24 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ChannelReference'
+    StoreFaqUrlSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            faqUrl:
+              type: "string"
+    StoreImprintUrlSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            imprintUrl:
+              type: "string"
     StoreLanguagesChangedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -79086,6 +79616,24 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/LocalizedString'
+    StoreOrderUrlTemplateSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            orderUrlTemplate:
+              type: "string"
+    StorePrivacyPolicyUrlSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            privacyPolicyUrl:
+              type: "string"
     StoreProductSelectionsChangedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -79105,6 +79653,24 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ProductSelectionSetting'
+    StoreRefundPolicyUrlSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            refundPolicyUrl:
+              type: "string"
+    StoreShippingPolicyUrlSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            shippingPolicyUrl:
+              type: "string"
     StoreSupplyChannelsChangedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -79120,6 +79686,15 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ChannelReference'
+    StoreTermsOfServiceUrlSetMessagePayload:
+      allOf:
+        - $ref: '#/components/schemas/MessagePayload'
+        - type: "object"
+          properties:
+            type:
+              type: "string"
+            termsOfServiceUrl:
+              type: "string"
     VariantCreatedMessagePayload:
       allOf:
         - $ref: '#/components/schemas/MessagePayload'
@@ -82075,6 +82650,7 @@ components:
           setDeliveryCustomField: '#/components/schemas/OrderSetDeliveryCustomFieldAction'
           setDeliveryCustomType: '#/components/schemas/OrderSetDeliveryCustomTypeAction'
           setDeliveryItems: '#/components/schemas/OrderSetDeliveryItemsAction'
+          setEstimatedDelivery: '#/components/schemas/OrderSetEstimatedDeliveryAction'
           setItemShippingAddressCustomField: '#/components/schemas/OrderSetItemShippingAddressCustomFieldAction'
           setItemShippingAddressCustomType: '#/components/schemas/OrderSetItemShippingAddressCustomTypeAction'
           setLineItemCustomField: '#/components/schemas/OrderSetLineItemCustomFieldAction'
@@ -82830,6 +83406,17 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/DeliveryItem'
+    OrderSetEstimatedDeliveryAction:
+      allOf:
+        - $ref: '#/components/schemas/OrderUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            shippingKey:
+              type: "string"
+            estimatedDelivery:
+              $ref: '#/components/schemas/EstimatedDelivery'
     OrderSetItemShippingAddressCustomFieldAction:
       allOf:
         - $ref: '#/components/schemas/OrderUpdateAction'
@@ -91467,6 +92054,8 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/StoreKeyReference'
+            carrier:
+              type: "string"
     ShippingMethodDraft:
       type: "object"
       required:
@@ -91503,6 +92092,8 @@ components:
           type: "array"
           items:
             $ref: '#/components/schemas/StoreResourceIdentifier'
+        carrier:
+          type: "string"
     ShippingMethodPagedQueryResponse:
       type: "object"
       required:
@@ -91578,6 +92169,7 @@ components:
           removeShippingRate: '#/components/schemas/ShippingMethodRemoveShippingRateAction'
           removeStore: '#/components/schemas/ShippingMethodRemoveStoreAction'
           removeZone: '#/components/schemas/ShippingMethodRemoveZoneAction'
+          setCarrier: '#/components/schemas/ShippingMethodSetCarrierAction'
           setCustomField: '#/components/schemas/ShippingMethodSetCustomFieldAction'
           setCustomType: '#/components/schemas/ShippingMethodSetCustomTypeAction'
           setDescription: '#/components/schemas/ShippingMethodSetDescriptionAction'
@@ -91786,6 +92378,15 @@ components:
               type: "string"
             zone:
               $ref: '#/components/schemas/ZoneResourceIdentifier'
+    ShippingMethodSetCarrierAction:
+      allOf:
+        - $ref: '#/components/schemas/ShippingMethodUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            carrier:
+              type: "string"
     ShippingMethodSetCustomFieldAction:
       allOf:
         - $ref: '#/components/schemas/ShippingMethodUpdateAction'
@@ -93444,6 +94045,8 @@ components:
                 $ref: '#/components/schemas/ProductSelectionSetting'
             custom:
               $ref: '#/components/schemas/CustomFields'
+            storefront:
+              $ref: '#/components/schemas/Storefront'
     StoreCountry:
       type: "object"
       required:
@@ -93482,6 +94085,8 @@ components:
             $ref: '#/components/schemas/ProductSelectionSettingDraft'
         custom:
           $ref: '#/components/schemas/CustomFieldsDraft'
+        storefront:
+          $ref: '#/components/schemas/Storefront'
     StoreKeyReference:
       allOf:
         - $ref: '#/components/schemas/KeyReference'
@@ -93570,18 +94175,51 @@ components:
           removeDistributionChannel: '#/components/schemas/StoreRemoveDistributionChannelAction'
           removeProductSelection: '#/components/schemas/StoreRemoveProductSelectionAction'
           removeSupplyChannel: '#/components/schemas/StoreRemoveSupplyChannelAction'
+          setCheckoutUrlTemplate: '#/components/schemas/StoreSetCheckoutUrlTemplateAction'
+          setContactUrl: '#/components/schemas/StoreSetContactUrlAction'
+          setCookiePolicyUrl: '#/components/schemas/StoreSetCookiePolicyUrlAction'
           setCountries: '#/components/schemas/StoreSetCountriesAction'
           setCustomField: '#/components/schemas/StoreSetCustomFieldAction'
           setCustomType: '#/components/schemas/StoreSetCustomTypeAction'
           setDistributionChannels: '#/components/schemas/StoreSetDistributionChannelsAction'
+          setFaqUrl: '#/components/schemas/StoreSetFaqUrlAction'
+          setImprintUrl: '#/components/schemas/StoreSetImprintUrlAction'
           setLanguages: '#/components/schemas/StoreSetLanguagesAction'
           setName: '#/components/schemas/StoreSetNameAction'
+          setOrderUrlTemplate: '#/components/schemas/StoreSetOrderUrlTemplateAction'
+          setPrivacyPolicyUrl: '#/components/schemas/StoreSetPrivacyPolicyUrlAction'
           setProductSelections: '#/components/schemas/StoreSetProductSelectionsAction'
+          setRefundPolicyUrl: '#/components/schemas/StoreSetRefundPolicyUrlAction'
+          setShippingPolicyUrl: '#/components/schemas/StoreSetShippingPolicyUrlAction'
           setSupplyChannels: '#/components/schemas/StoreSetSupplyChannelsAction'
+          setTermsOfServiceUrl: '#/components/schemas/StoreSetTermsOfServiceUrlAction'
       required:
         - action
       properties:
         action:
+          type: "string"
+    Storefront:
+      type: "object"
+      properties:
+        checkoutUrlTemplate:
+          type: "string"
+        orderUrlTemplate:
+          type: "string"
+        termsOfServiceUrl:
+          type: "string"
+        privacyPolicyUrl:
+          type: "string"
+        refundPolicyUrl:
+          type: "string"
+        shippingPolicyUrl:
+          type: "string"
+        cookiePolicyUrl:
+          type: "string"
+        imprintUrl:
+          type: "string"
+        faqUrl:
+          type: "string"
+        contactUrl:
           type: "string"
     StoreAddCountryAction:
       allOf:
@@ -93686,6 +94324,33 @@ components:
               type: "string"
             supplyChannel:
               $ref: '#/components/schemas/ChannelResourceIdentifier'
+    StoreSetCheckoutUrlTemplateAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            checkoutUrlTemplate:
+              type: "string"
+    StoreSetContactUrlAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            contactUrl:
+              type: "string"
+    StoreSetCookiePolicyUrlAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            cookiePolicyUrl:
+              type: "string"
     StoreSetCountriesAction:
       allOf:
         - $ref: '#/components/schemas/StoreUpdateAction'
@@ -93732,6 +94397,24 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ChannelResourceIdentifier'
+    StoreSetFaqUrlAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            faqUrl:
+              type: "string"
+    StoreSetImprintUrlAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            imprintUrl:
+              type: "string"
     StoreSetLanguagesAction:
       allOf:
         - $ref: '#/components/schemas/StoreUpdateAction'
@@ -93752,6 +94435,24 @@ components:
               type: "string"
             name:
               $ref: '#/components/schemas/LocalizedString'
+    StoreSetOrderUrlTemplateAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            orderUrlTemplate:
+              type: "string"
+    StoreSetPrivacyPolicyUrlAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            privacyPolicyUrl:
+              type: "string"
     StoreSetProductSelectionsAction:
       allOf:
         - $ref: '#/components/schemas/StoreUpdateAction'
@@ -93763,6 +94464,24 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ProductSelectionSettingDraft'
+    StoreSetRefundPolicyUrlAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            refundPolicyUrl:
+              type: "string"
+    StoreSetShippingPolicyUrlAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            shippingPolicyUrl:
+              type: "string"
     StoreSetSupplyChannelsAction:
       allOf:
         - $ref: '#/components/schemas/StoreUpdateAction'
@@ -93774,6 +94493,15 @@ components:
               type: "array"
               items:
                 $ref: '#/components/schemas/ChannelResourceIdentifier'
+    StoreSetTermsOfServiceUrlAction:
+      allOf:
+        - $ref: '#/components/schemas/StoreUpdateAction'
+        - type: "object"
+          properties:
+            action:
+              type: "string"
+            termsOfServiceUrl:
+              type: "string"
     AwsAuthenticationMode:
       type: "string"
       enum:
