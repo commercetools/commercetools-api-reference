@@ -92,6 +92,105 @@ paths:
 
         "409":
           $ref: '#/components/responses/conflicting_409'
+  /{projectKey}/agents/intake/v1/responses:
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        schema:
+          type: "string"
+    post:
+      security:
+        - oauth_2_0:
+            - "manage_intake_agent:{projectKey}"
+      operationId: ByProjectKeyAgentsIntakeV1ResponsesPost
+      description: |-
+        Turns a natural-language prompt, optionally with supporting files, into a created [Cart](ctp:api:type:Cart) or [QuoteRequest](ctp:api:type:QuoteRequest), returned in commercetools REST representation.
+
+        Non-fatal issues, such as requested Products that could not be matched to the catalog or a file that failed to parse, are reported as `warnings` alongside a successful `201` response rather than failing the request.
+
+        Accepts either an `application/json` body or a `multipart/form-data` request. An `application/json` body requires `prompt`. A `multipart/form-data` request requires `prompt`, an uploaded file, or both. See [Multipart form data](/api/agents/intake-agent#multipart-form-data) for the file upload format.
+
+        If the Intake Agent is not enabled for the Project, a [FeatureDisabled](ctp:api:type:AgentFeatureDisabledError) error is returned.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentResponsesRequest'
+
+      responses:
+        "201":
+          description: |-
+            201
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponsesSuccess'
+
+        "400":
+          description: |-
+            400
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponsesErrorResponse'
+
+        "401":
+          description: |-
+            Missing, malformed, or invalid bearer token. Returned as an [AuthErrorResponse](ctp:api:type:AuthErrorResponse) rather than the [AgentResponsesErrorResponse](ctp:api:type:AgentResponsesErrorResponse) envelope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponsesAuthError'
+
+        "403":
+          description: |-
+            The access token is missing one or more of the required OAuth scopes. Returned as an [AuthErrorResponse](ctp:api:type:AuthErrorResponse) rather than the [AgentResponsesErrorResponse](ctp:api:type:AgentResponsesErrorResponse) envelope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponsesAuthError'
+
+        "409":
+          description: |-
+            409
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponsesErrorResponse'
+
+        "413":
+          description: |-
+            An uploaded file exceeds the maximum size of 20 MB.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponsesErrorResponse'
+
+        "500":
+          description: |-
+            500
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponsesErrorResponse'
+
+        "502":
+          description: |-
+            502
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponsesErrorResponse'
+
+        "503":
+          description: |-
+            503
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponsesErrorResponse'
+
   /{projectKey}/api-clients:
     description: |-
       Manage your API Clients via an API. Useful for Infrastructure-as-Code tooling, and regularly rotating API secrets.
@@ -44840,6 +44939,7 @@ components:
               "view_discount_codes:{projectKey}": ""
               "manage_discount_codes:{projectKey}": ""
               "manage_extensions:{projectKey}": ""
+              "manage_intake_agent:{projectKey}": ""
               "view_mcp_servers:{projectKey}": ""
               "manage_mcp_servers:{projectKey}": ""
               "view_key_value_documents:{projectKey}": ""
@@ -44964,6 +45064,411 @@ components:
       properties:
         action:
           type: "string"
+    AgentBusinessUnitAmbiguousError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentBusinessUnitLimitExceededError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentBusinessUnitUnresolvedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentExtractionFailedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentFeatureDisabledError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentFileNotProcessedWarning:
+      allOf:
+        - $ref: '#/components/schemas/WarningObject'
+        - type: "object"
+          required:
+            - code
+            - fileName
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            fileName:
+              type: "string"
+    AgentMissingCountryError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentMissingCustomerEmailError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentMissingEntityTypeError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentNoLineItemsExtractedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentOutOfScopeError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentProductSearchNotEnabledError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentProductsNotFoundError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentProductsNotFoundWarning:
+      allOf:
+        - $ref: '#/components/schemas/WarningObject'
+        - type: "object"
+          required:
+            - code
+            - message
+            - products
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            products:
+              type: "array"
+              items:
+                type: "string"
+    AgentQuoteRequestCreationFailedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - cartId
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+            cartId:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentResponsesAuthError:
+      allOf:
+        - $ref: '#/components/schemas/AuthErrorResponse'
+        - type: "object"
+          properties:
+            statusCode:
+              type: "integer"
+              format: "int32"
+            message:
+              type: "string"
+            errors:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ErrorObject'
+            error:
+              type: "string"
+            error_description:
+              type: "string"
+    AgentResponsesCartSuccess:
+      allOf:
+        - $ref: '#/components/schemas/AgentResponsesSuccess'
+        - type: "object"
+          required:
+            - entity
+          properties:
+            entityType:
+              $ref: '#/components/schemas/AgentResponsesOutputType'
+            warnings:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/WarningObject'
+            threadId:
+              type: "string"
+            entity:
+              $ref: '#/components/schemas/Cart'
+    AgentResponsesErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: "object"
+          required:
+            - errors
+          properties:
+            statusCode:
+              type: "integer"
+              format: "int32"
+            message:
+              type: "string"
+            errors:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/ErrorObject'
+            threadId:
+              type: "string"
+    AgentResponsesMultipartRequest:
+      type: "object"
+      required:
+        - payload
+      properties:
+        payload:
+          $ref: '#/components/schemas/AgentResponsesPayload'
+        files:
+          type: "array"
+          items:
+            {}
+    AgentResponsesOutputType:
+      type: "string"
+      enum:
+        - Cart
+        - QuoteRequest
+      x-annotation-package: "Agent"
+      x-annotation-enumDescriptions:
+        Cart: "Create a [Cart](ctp:api:type:Cart).n"
+        QuoteRequest: "Create a [QuoteRequest](ctp:api:type:QuoteRequest). Requires a verified
+         [Customer](ctp:api:type:Customer), identified by email.n"
+    AgentResponsesPayload:
+      type: "object"
+      required:
+        - locale
+        - outputType
+      properties:
+        outputType:
+          $ref: '#/components/schemas/AgentResponsesOutputType'
+        locale:
+          type: "string"
+        prompt:
+          type: "string"
+        businessUnit:
+          $ref: '#/components/schemas/BusinessUnitResourceIdentifier'
+        store:
+          $ref: '#/components/schemas/StoreResourceIdentifier'
+    AgentResponsesQuoteRequestSuccess:
+      allOf:
+        - $ref: '#/components/schemas/AgentResponsesSuccess'
+        - type: "object"
+          required:
+            - cartId
+            - entity
+          properties:
+            entityType:
+              $ref: '#/components/schemas/AgentResponsesOutputType'
+            warnings:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/WarningObject'
+            threadId:
+              type: "string"
+            entity:
+              $ref: '#/components/schemas/QuoteRequest'
+            cartId:
+              type: "string"
+    AgentResponsesRequest:
+      type: "object"
+      required:
+        - locale
+        - outputType
+        - prompt
+      properties:
+        outputType:
+          $ref: '#/components/schemas/AgentResponsesOutputType'
+        locale:
+          type: "string"
+        prompt:
+          type: "string"
+        businessUnit:
+          $ref: '#/components/schemas/BusinessUnitResourceIdentifier'
+        store:
+          $ref: '#/components/schemas/StoreResourceIdentifier'
+    AgentResponsesSuccess:
+      type: "object"
+      discriminator:
+        propertyName: entityType
+        mapping:
+          Cart: '#/components/schemas/AgentResponsesCartSuccess'
+          QuoteRequest: '#/components/schemas/AgentResponsesQuoteRequestSuccess'
+      required:
+        - entityType
+        - threadId
+      properties:
+        entityType:
+          $ref: '#/components/schemas/AgentResponsesOutputType'
+        warnings:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/WarningObject'
+        threadId:
+          type: "string"
+    AgentStoreAmbiguousError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentStoreDistributionChannelsUnsupportedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
+    AgentStoreUnresolvedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorObject'
+        - type: "object"
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: "string"
+            message:
+              type: "string"
+          additionalProperties:
+            type: "string"
     ApiClient:
       type: "object"
       required:
@@ -54608,6 +55113,22 @@ components:
       discriminator:
         propertyName: code
         mapping:
+          BusinessUnitAmbiguous: '#/components/schemas/AgentBusinessUnitAmbiguousError'
+          BusinessUnitLimitExceeded: '#/components/schemas/AgentBusinessUnitLimitExceededError'
+          BusinessUnitUnresolved: '#/components/schemas/AgentBusinessUnitUnresolvedError'
+          ExtractionFailed: '#/components/schemas/AgentExtractionFailedError'
+          FeatureDisabled: '#/components/schemas/AgentFeatureDisabledError'
+          MissingCountry: '#/components/schemas/AgentMissingCountryError'
+          MissingCustomerEmail: '#/components/schemas/AgentMissingCustomerEmailError'
+          MissingEntityType: '#/components/schemas/AgentMissingEntityTypeError'
+          NoLineItemsExtracted: '#/components/schemas/AgentNoLineItemsExtractedError'
+          OutOfScope: '#/components/schemas/AgentOutOfScopeError'
+          ProductSearchNotEnabled: '#/components/schemas/AgentProductSearchNotEnabledError'
+          ProductsNotFound: '#/components/schemas/AgentProductsNotFoundError'
+          QuoteRequestCreationFailed: '#/components/schemas/AgentQuoteRequestCreationFailedError'
+          StoreAmbiguous: '#/components/schemas/AgentStoreAmbiguousError'
+          StoreDistributionChannelsUnsupported: '#/components/schemas/AgentStoreDistributionChannelsUnsupportedError'
+          StoreUnresolved: '#/components/schemas/AgentStoreUnresolvedError'
           AnonymousIdAlreadyInUse: '#/components/schemas/AnonymousIdAlreadyInUseError'
           AssociateMissingPermission: '#/components/schemas/AssociateMissingPermissionError'
           AttributeDefinitionAlreadyExists: '#/components/schemas/AttributeDefinitionAlreadyExistsError'
@@ -97146,6 +97667,8 @@ components:
       discriminator:
         propertyName: code
         mapping:
+          FileNotProcessed: '#/components/schemas/AgentFileNotProcessedWarning'
+          ProductsNotFound: '#/components/schemas/AgentProductsNotFoundWarning'
           CannotChangeReservationExpiry: '#/components/schemas/CannotChangeReservationExpiryWarning'
           CannotCreateReservation: '#/components/schemas/CannotCreateReservationWarning'
           CannotUpdateReservation: '#/components/schemas/CannotUpdateReservationWarning'

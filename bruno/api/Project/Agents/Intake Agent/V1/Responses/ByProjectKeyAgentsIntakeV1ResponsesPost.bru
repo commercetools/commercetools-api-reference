@@ -1,0 +1,57 @@
+meta {
+  name: Create Cart or Quote Request from Unstructured Input
+  type: http
+  seq: 136
+}
+
+post {
+  url: {{apiUrl}}/{{project-key}}/agents/intake/v1/responses
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "outputType" : "Cart",
+    "locale" : "en-US",
+    "prompt" : "Please prepare a cart for jane.doe@example.com. We need 12 of SKU ABC-123 shipped to Germany.",
+    "businessUnit" : {
+      "typeId" : "business-unit",
+      "key" : "acme-west"
+    },
+    "store" : {
+      "typeId" : "store",
+      "key" : "west-coast"
+    }
+  }
+}  
+
+query {
+}
+
+script:post-response {
+  var data = res.body;
+  if(res.status == 200 || res.status == 201) {
+      if(data.results && data.results[0] && data.results[0].id && data.results[0].version){
+          bru.setEnvVar("response-id", data.results[0].id); 
+          bru.setEnvVar("response-version", data.results[0].version);
+      }
+      if(data.results && data.results[0] && data.results[0].key){
+          bru.setEnvVar("response-key", data.results[0].key); 
+      }
+      if(data.version){
+          bru.setEnvVar("response-version", data.version);
+      }
+      if(data.id){
+          bru.setEnvVar("response-id", data.id); 
+      }
+      if(data.key){
+          bru.setEnvVar("response-key", data.key);
+      }
+
+  }
+}
+
+assert {
+  res.status: in [200, 201]
+}
