@@ -1,0 +1,75 @@
+displayName: Agents
+description: |
+  Agents interpret unstructured input and produce structured commerce objects.
+/intake:
+  displayName: Intake Agent
+  description: |
+    Converts unstructured customer input into a [Cart](ctp:api:type:Cart) or [QuoteRequest](ctp:api:type:QuoteRequest).
+  /v1:
+    /responses:
+      post:
+        displayName: Create Cart or Quote Request from Unstructured Input
+        description: |
+          Turns a natural-language prompt, optionally with supporting files, into a created [Cart](ctp:api:type:Cart) or [QuoteRequest](ctp:api:type:QuoteRequest), returned in commercetools REST representation.
+
+          Non-fatal issues, such as requested Products that could not be matched to the catalog or a file that failed to parse, are reported as `warnings` alongside a successful `201` response rather than failing the request.
+
+          Accepts either an `application/json` body or a `multipart/form-data` request. An `application/json` body requires `prompt`. A `multipart/form-data` request requires `prompt`, an uploaded file, or both. See [Multipart form data](/api/agents/intake-agent#multipart-form-data) for the file upload format.
+
+          If the Intake Agent is not enabled for the Project, a [FeatureDisabled](ctp:api:type:AgentFeatureDisabledError) error is returned.
+        securedBy: [oauth_2_0: { scopes: ['manage_intake_agent:{projectKey}'] }]
+        body:
+          application/json:
+            type: AgentResponsesRequest
+            example: !include ../examples/agent/AgentResponsesRequest.json
+          multipart/form-data:
+            type: AgentResponsesMultipartRequest
+            example: !include ../examples/agent/AgentResponsesMultipartRequest.json
+        responses:
+          201:
+            body:
+              application/json:
+                type: AgentResponsesSuccess
+                example: !include ../examples/agent/AgentResponsesCartSuccess.json
+          400:
+            body:
+              application/json:
+                type: AgentResponsesErrorResponse
+                example: !include ../examples/agent/AgentResponsesErrorResponse.json
+          401:
+            description: |
+              Missing, malformed, or invalid bearer token. Returned as an [AuthErrorResponse](ctp:api:type:AuthErrorResponse) rather than the [AgentResponsesErrorResponse](ctp:api:type:AgentResponsesErrorResponse) envelope.
+            body:
+              application/json:
+                type: AgentResponsesAuthError
+                example: !include ../examples/agent/AgentResponsesAuthErrorUnauthorized.json
+          403:
+            description: |
+              The access token is missing one or more of the required OAuth scopes. Returned as an [AuthErrorResponse](ctp:api:type:AuthErrorResponse) rather than the [AgentResponsesErrorResponse](ctp:api:type:AgentResponsesErrorResponse) envelope.
+            body:
+              application/json:
+                type: AgentResponsesAuthError
+                example: !include ../examples/agent/AgentResponsesAuthErrorInsufficientScope.json
+          409:
+            body:
+              application/json:
+                type: AgentResponsesErrorResponse
+          413:
+            description: |
+              An uploaded file exceeds the maximum size of 20 MB.
+            body:
+              application/json:
+                type: AgentResponsesErrorResponse
+                example: !include ../examples/agent/AgentResponsesContentTooLarge.json
+          500:
+            body:
+              application/json:
+                type: AgentResponsesErrorResponse
+          502:
+            body:
+              application/json:
+                type: AgentResponsesErrorResponse
+          503:
+            body:
+              application/json:
+                type: AgentResponsesErrorResponse
