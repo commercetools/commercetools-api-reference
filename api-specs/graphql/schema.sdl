@@ -3677,6 +3677,7 @@ type Cart implements Versioned & ReferenceExpandable {
     cartState: CartState!
     key: String
     purchaseOrderNumber: String
+    directDiscountsIgnoreCartDiscounts: Boolean
     lock: CartLock
     custom: CustomFieldsType
     deleteDaysAfterLastModification: Int
@@ -4898,11 +4899,13 @@ type DirectDiscount {
     id: String!
     value: CartDiscountValue!
     target: CartDiscountTarget
+    participateInBestDealSelection: Boolean
 }
 
 type DirectDiscountDraftOutput {
     value: CartDiscountValue!
     target: CartDiscountTarget
+    participateInBestDealSelection: Boolean
 }
 
 """
@@ -6408,6 +6411,7 @@ type Order implements Versioned & ReferenceExpandable {
     syncInfo: [SyncInfo!]!
     returnInfo: [ReturnInfo!]!
     purchaseOrderNumber: String
+    directDiscountsIgnoreCartDiscounts: Boolean
     lastMessageSequenceNumber: Long! @deprecated(reason: "An internal field that should not be used in customer logic")
     cartRef: Reference
     cart: Cart
@@ -8703,6 +8707,10 @@ type Quote implements Versioned {
   BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
   """
   directDiscounts: [DirectDiscount!]!
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  directDiscountsIgnoreCartDiscounts: Boolean
     shippingRateInput: ShippingRateInput
     storeRef: KeyReference
     store: Store
@@ -8786,6 +8794,10 @@ type QuoteRequest implements Versioned {
   BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
   """
   directDiscounts: [DirectDiscount!]!
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  directDiscountsIgnoreCartDiscounts: Boolean
     shippingRateInput: ShippingRateInput
     storeRef: KeyReference
     store: Store
@@ -9645,6 +9657,11 @@ type SetStagedOrderDeliveryItemsOutput implements StagedOrderUpdateActionOutput 
     deliveryId: String
     deliveryKey: String
     items: [DeliveryItem!]!
+}
+
+type SetStagedOrderDirectDiscountsIgnoreCartDiscountsOutput implements StagedOrderUpdateActionOutput {
+    type: String!
+    directDiscountsIgnoreCartDiscounts: Boolean
 }
 
 type SetStagedOrderDirectDiscountsOutput implements StagedOrderUpdateActionOutput {
@@ -11089,7 +11106,6 @@ BETA: This feature can be subject to change and should be used carefully in prod
 """
 type VariantCreated implements MessagePayload {
     id: String!
-    productId: String!
     variantId: Int!
     key: String
     sku: String
@@ -11097,6 +11113,7 @@ type VariantCreated implements MessagePayload {
     images: [Image!]!
     assets: [Asset!]!
     attributesRaw: [RawAttribute!]!
+    productRef: Reference!
     type: String!
 }
 
@@ -11130,6 +11147,7 @@ type VariantData {
 BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
 """
 type VariantDeleted implements MessagePayload {
+    productRef: Reference!
     type: String!
 }
 
@@ -11150,6 +11168,7 @@ BETA: This feature can be subject to change and should be used carefully in prod
 type VariantImageAdded implements MessagePayload {
     image: Image!
     staged: Boolean!
+    productRef: Reference!
     type: String!
 }
 
@@ -11160,6 +11179,7 @@ type VariantImagesSet implements MessagePayload {
     staged: Boolean!
     images: [Image!]!
     oldImages: [Image!]!
+    productRef: Reference!
     type: String!
 }
 
@@ -11169,6 +11189,7 @@ BETA: This feature can be subject to change and should be used carefully in prod
 type VariantKeySet implements MessagePayload {
     key: String
     oldKey: String
+    productRef: Reference!
     type: String!
 }
 
@@ -11265,6 +11286,7 @@ type VariantProjectionQueryResult {
 BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
 """
 type VariantPublished implements MessagePayload {
+    productRef: Reference!
     type: String!
 }
 
@@ -11283,6 +11305,7 @@ type VariantSkuSet implements MessagePayload {
     sku: String
     oldSku: String
     staged: Boolean!
+    productRef: Reference!
     type: String!
 }
 
@@ -11290,6 +11313,7 @@ type VariantSkuSet implements MessagePayload {
 BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
 """
 type VariantStagedChangesRemoved implements MessagePayload {
+    productRef: Reference!
     type: String!
 }
 
@@ -14050,6 +14074,7 @@ input CartDraft {
     customerGroup: ResourceIdentifierInput
     shippingRateInput: ShippingRateInputDraft
     origin: CartOrigin = Customer
+    directDiscountsIgnoreCartDiscounts: Boolean
 }
 
 input CartScoreInput {
@@ -14099,6 +14124,7 @@ input CartUpdateAction {
     setCustomerId: SetCartCustomerId
     setDeleteDaysAfterLastModification: SetCartDeleteDaysAfterLastModification
     setDirectDiscounts: SetCartDirectDiscounts
+    setDirectDiscountsIgnoreCartDiscounts: SetCartDirectDiscountsIgnoreCartDiscounts
     setEstimatedDelivery: SetCartEstimatedDelivery
     setItemShippingAddressCustomField: SetCartItemShippingAddressCustomField
     setItemShippingAddressCustomType: SetCartItemShippingAddressCustomType
@@ -15254,6 +15280,7 @@ input DimensionsInput {
 input DirectDiscountDraft {
     value: CartDiscountValueInput!
     target: CartDiscountTargetInput
+    participateInBestDealSelection: Boolean
 }
 
 input DiscountCodeDraft {
@@ -17248,8 +17275,24 @@ input RemoveStoreSupplyChannel {
     supplyChannel: ResourceIdentifierInput!
 }
 
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input RemoveTypeEnumValues {
+    fieldName: String!
+    keys: [String!]!
+}
+
 input RemoveTypeFieldDefinition {
     fieldName: String!
+}
+
+"""
+BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+"""
+input RemoveTypeLocalizedEnumValues {
+    fieldName: String!
+    keys: [String!]!
 }
 
 """
@@ -17650,6 +17693,10 @@ input SetCartDeleteDaysAfterLastModification {
 
 input SetCartDirectDiscounts {
     discounts: [DirectDiscountDraft!]!
+}
+
+input SetCartDirectDiscountsIgnoreCartDiscounts {
+    directDiscountsIgnoreCartDiscounts: Boolean
 }
 
 input SetCartDiscountCustomField {
@@ -19547,6 +19594,10 @@ input SetStagedOrderDirectDiscounts {
     discounts: [DirectDiscountDraft!]!
 }
 
+input SetStagedOrderDirectDiscountsIgnoreCartDiscounts {
+    directDiscountsIgnoreCartDiscounts: Boolean
+}
+
 input SetStagedOrderEstimatedDelivery {
     estimatedDelivery: EstimatedDeliveryDraft
     shippingKey: String
@@ -20323,6 +20374,7 @@ input StagedOrderUpdateAction {
     setDeliveryCustomType: SetStagedOrderDeliveryCustomType
     setDeliveryItems: SetStagedOrderDeliveryItems
     setDirectDiscounts: SetStagedOrderDirectDiscounts
+    setDirectDiscountsIgnoreCartDiscounts: SetStagedOrderDirectDiscountsIgnoreCartDiscounts
     setEstimatedDelivery: SetStagedOrderEstimatedDelivery
     setItemShippingAddressCustomField: SetStagedOrderItemShippingAddressCustomField
     setItemShippingAddressCustomType: SetStagedOrderItemShippingAddressCustomType
@@ -20732,6 +20784,14 @@ input TypeDefinitionDraft {
 }
 
 input TypeUpdateAction {
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  removeEnumValues: RemoveTypeEnumValues
+    """
+  BETA: This feature can be subject to change and should be used carefully in production. https://docs.commercetools.com/api/contract#public-beta
+  """
+  removeLocalizedEnumValues: RemoveTypeLocalizedEnumValues
     addEnumValue: AddTypeEnumValue
     addFieldDefinition: AddTypeFieldDefinition
     addLocalizedEnumValue: AddTypeLocalizedEnumValue
