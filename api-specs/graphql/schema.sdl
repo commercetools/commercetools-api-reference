@@ -75,11 +75,23 @@ type Query implements CartQueryInterface & CustomerActiveCartInterface & OrderQu
     """
   This field gives access to the resources (such as carts) that are inside the given store.
   """
-  inStore(key: KeyReferenceInput!): InStore!
+  inStore(
+    key: KeyReferenceInput!
+    """
+    When `false`, in-store product reads return the original (untailored) product information instead of the Store-specific tailored values. Defaults to `true`.
+    """
+    tailored: Boolean = true
+  ): InStore!
     """
   This field gives access to the resources (such as carts) that are inside one of the given stores.
   """
-  inStores(keys: [KeyReferenceInput!]!): InStore!
+  inStores(
+    keys: [KeyReferenceInput!]!
+    """
+    When `false`, in-store product reads return the original (untailored) product information instead of the Store-specific tailored values. Defaults to `true`.
+    """
+    tailored: Boolean = true
+  ): InStore!
     """
   This field gives access to the resources (such as carts) as an associate of a given business unit.
   """
@@ -5353,6 +5365,17 @@ type InStore implements CartDiscountQueryInterface & CartQueryInterface & Custom
   It gives access to the data that is specific to the customer or the anonymous session linked to the access token.
   """
   me: InStoreMe!
+    category(
+    """
+    Queries with specified ID
+    """
+    id: String
+    """
+    Queries with specified key
+    """
+    key: String
+  ): Category
+    categories(where: String, sort: [String!], limit: Int, offset: Int): CategoryQueryResult!
     shippingMethodsByCart(id: String!): [ShippingMethod!]!
     cartDiscount(
     """
