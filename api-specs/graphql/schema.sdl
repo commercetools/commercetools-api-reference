@@ -779,10 +779,20 @@ type Mutation {
     """
     key: String
   ): CustomerGroup
-    createCategory(draft: CategoryDraft!): Category
+    createCategory(
+    draft: CategoryDraft!
+    """
+    The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions.
+    """
+    storeKey: KeyReferenceInput
+  ): Category
     updateCategory(
     version: Long!
     actions: [CategoryUpdateAction!]!
+    """
+    The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions.
+    """
+    storeKey: KeyReferenceInput
     """
     Queries with specified ID
     """
@@ -794,6 +804,10 @@ type Mutation {
   ): Category
     deleteCategory(
     version: Long!
+    """
+    The mutation is only performed if the resource is part of the store. Can be used with store-specific OAuth permissions.
+    """
+    storeKey: KeyReferenceInput
     """
     Queries with specified ID
     """
@@ -3993,6 +4007,8 @@ type Category implements Versioned & ReferenceExpandable {
     createdAt: DateTime!
     lastModifiedAt: DateTime!
     assets: [Asset!]!
+    storesRef: [KeyReference!]!
+    stores: [Store!]!
     custom: CustomFieldsType
     createdBy: Initiator
     lastModifiedBy: Initiator
@@ -13446,6 +13462,10 @@ input AddCategoryAsset {
     asset: AssetDraftInput!
 }
 
+input AddCategoryStore {
+    store: ResourceIdentifierInput!
+}
+
 input AddChannelRoles {
     roles: [ChannelRole!]!
 }
@@ -14393,6 +14413,7 @@ input CategoryDraft {
     metaKeywords: [LocalizedStringItemInputType!]
     orderHint: String
     parent: ResourceIdentifierInput
+    stores: [ResourceIdentifierInput!]
     assets: [AssetDraftInput!] = []
 }
 
@@ -14403,6 +14424,7 @@ input CategoryOrderHintInput {
 
 input CategoryUpdateAction {
     addAsset: AddCategoryAsset
+    addStore: AddCategoryStore
     changeAssetName: ChangeCategoryAssetName
     changeAssetOrder: ChangeCategoryAssetOrder
     changeName: ChangeCategoryName
@@ -14410,6 +14432,7 @@ input CategoryUpdateAction {
     changeSlug: ChangeCategorySlug
     changeParent: ChangeCategoryParent
     removeAsset: RemoveCategoryAsset
+    removeStore: RemoveCategoryStore
     setAssetCustomField: SetCategoryAssetCustomField
     setAssetCustomType: SetCategoryAssetCustomType
     setAssetDescription: SetCategoryAssetDescription
@@ -14423,6 +14446,7 @@ input CategoryUpdateAction {
     setMetaDescription: SetCategoryMetaDescription
     setMetaKeywords: SetCategoryMetaKeywords
     setMetaTitle: SetCategoryMetaTitle
+    setStores: SetCategoryStores
     setExternalId: SetCategoryExternalId
 }
 
@@ -17257,6 +17281,10 @@ input RemoveCategoryAsset {
     assetId: String
 }
 
+input RemoveCategoryStore {
+    store: ResourceIdentifierInput!
+}
+
 input RemoveChannelRoles {
     roles: [ChannelRole!]!
 }
@@ -18176,6 +18204,10 @@ input SetCategoryMetaKeywords {
 
 input SetCategoryMetaTitle {
     metaTitle: [LocalizedStringItemInputType!]
+}
+
+input SetCategoryStores {
+    stores: [ResourceIdentifierInput!]!
 }
 
 input SetChannelAddress {
