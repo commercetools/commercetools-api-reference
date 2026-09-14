@@ -372,6 +372,10 @@ types:
         type: OtlpProviderHeader[]
         description: |
           Headers configured for connecting to your OTLP provider.
+      auth?:
+        type: OtlpAuth
+        description: |
+          Authentication details used to connect to your OTLP provider.
     example:
       {
         'type': 'Otlp',
@@ -393,6 +397,10 @@ types:
         type: OtlpProviderHeader[]
         description: |
           Headers configured for connecting to your OTLP provider.
+      auth?:
+        type: OtlpAuth
+        description: |
+          Authentication details used to connect to your OTLP provider.
     example:
       {
         'type': 'OtlpHttp',
@@ -401,6 +409,46 @@ types:
         'headers': [{ 'name': 'api-key' }],
         'eventTypes': ['Metrics'],
       }
+  OtlpAuth:
+    (package): Configuration
+    displayName: OtlpAuth
+    discriminator: type
+    properties:
+      type:
+        type: OtlpAuthType
+        description: |
+          Authentication method used to connect to an OTLP provider.
+    description: |
+      Authentication details used to connect to an OTLP provider.
+  OtlpAuthType:
+    (package): Configuration
+    type: string
+    enum:
+      - OAuth2
+    description: |
+      Supported authentication methods for connecting to an OTLP provider.
+  OtlpAuthOAuth2:
+    (package): Configuration
+    type: OtlpAuth
+    discriminatorValue: OAuth2
+    properties:
+      clientId:
+        type: string
+        description: |
+          Client ID used to authenticate with your OTLP provider using the OAuth 2.0 client credentials flow.
+      tokenUrl:
+        type: string
+        description: |
+          URL of the OAuth 2.0 token endpoint used to obtain an access token for your OTLP provider.
+    example:
+      {
+        'type': 'OAuth2',
+        'clientId': 'myClientId',
+        'tokenUrl': 'https://auth.example.com/oauth/token',
+      }
+    description: |
+      Authenticates with an OTLP provider using the OAuth 2.0 client credentials flow.
+      The `clientSecret` used to obtain the access token is write-only and isn't returned in the response.
   OtlpProviderHeader:
     (package): Configuration
     type: object
@@ -422,6 +470,10 @@ types:
         type: OtlpProviderHeaderDraft[]
         description: |
           Headers configured for connecting to your OTLP provider.
+      auth?:
+        type: OtlpAuthDraft
+        description: |
+          Authentication details used to connect to an OTLP provider.
     example:
       {
         'type': 'Otlp',
@@ -429,6 +481,43 @@ types:
         'headers': [{ 'name': 'api-key', 'value': 'apiKey1234' }],
         'eventTypes': ['Metrics'],
       }
+  OtlpAuthDraft:
+    (package): Configuration
+    displayName: OtlpAuthDraft
+    discriminator: type
+    properties:
+      type:
+        type: OtlpAuthType
+        description: |
+          Authentication method used to connect to an OTLP provider.
+    description: |
+      Authentication details used to connect to an OTLP provider.
+  OtlpAuthOAuth2Draft:
+    (package): Configuration
+    type: OtlpAuthDraft
+    discriminatorValue: OAuth2
+    properties:
+      clientId:
+        type: string
+        description: |
+          Client ID used to authenticate with your OTLP provider using the OAuth 2.0 client credentials flow.
+      clientSecret:
+        type: string
+        description: |
+          Client secret used to authenticate with your OTLP provider using the OAuth 2.0 client credentials flow.
+      tokenUrl:
+        type: string
+        description: |
+          URL of the OAuth 2.0 token endpoint used to obtain an access token for your OTLP provider.
+    example:
+      {
+        'type': 'OAuth2',
+        'clientId': 'myClientId',
+        'clientSecret': 'myClientSecret',
+        'tokenUrl': 'https://auth.example.com/oauth/token',
+      }
+    description: |
+      Sets up OAuth 2.0 client credentials authentication for your OTLP provider.
   OtlpHttpProviderDraft:
     (package): Configuration
     type: ProviderDraft
@@ -442,6 +531,10 @@ types:
         type: OtlpProviderHeaderDraft[]
         description: |
           Headers configured for connecting to your OTLP provider.
+      auth?:
+        type: OtlpAuthDraft
+        description: |
+          Authentication details used to connect to your OTLP provider.
     example:
       {
         'type': 'OtlpHttp',
