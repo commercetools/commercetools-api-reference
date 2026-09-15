@@ -1,22 +1,26 @@
 meta {
-  name: Client Credentials
+  name: Anonymous session flow
   type: http
-  seq: 1
+  seq: 3
 }
 
 post {
-  url: {{authUrl}}/oauth/token
+  url: {{authUrl}}/oauth/{{project-key}}/anonymous/token
   body: formUrlEncoded
   auth: basic
+}
+
+auth:basic {
+  username: {{ctp_client_id}}
+  password: {{ctp_client_secret}}
 }
 
 body:form-urlencoded {
   grant_type: client_credentials
 }
 
-auth:basic {
-  username: {{ctp_client_id}}
-  password: {{ctp_client_secret}}
+assert {
+  res.status: eq 200
 }
 
 script:post-response {
@@ -40,8 +44,4 @@ script:post-response {
       }
     }
   }
-}
-
-assert {
-  res.status: eq 200
 }
