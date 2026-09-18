@@ -11,7 +11,16 @@ properties:
     description: |
       Configuration for the Product catalog model in the Project.
 
+      The `x-catalog-model` request header can override the effective Catalog model for a single request to resources that resolve Variant data, such as Carts, Orders, and Shopping Lists, independent of the Project's configured Catalog model. Use it during migration to test Modular Catalog behavior on selected requests before changing the Project's configured Catalog model. It is intended as a migration aid, not as a permanent substitute for the Project configuration. It has no effect on Product update actions.
+
       When set to `Classic`, Product Variants are embedded in the Product.
+
+      When set to `InMigration`, Product Variants remain embedded in the Product, but the Project's default resolution switches to the Modular Catalog model. Use this transitional state to complete your read migration to Modular while embedded Variant writes continue.
+      In this mode:
+      - Variants are resolved from standalone Variants by default, with no `x-catalog-model` header needed. This affects any resource that references a Variant, including Cart and Order line items, discount matching, and Product Selections.
+      - [Products](ctp:api:type:Product) and [Product Projections](ctp:api:type:ProductProjection) continue to return embedded Variant data.
+      - Product Search continues to index embedded Variants.
+      - Variant update actions on the Product API are still accepted, so continue dual-writing changes to embedded and standalone Variants during the migration. This keeps embedded Variant data up to date for Product Search, which continues to index embedded Variants.
 
       When set to `Modular`, Product Variants are managed as standalone entities.
       In this mode:
