@@ -1,0 +1,24 @@
+#%RAML 1.0 DataType
+(package): TaxCategory
+displayName: TaxRoundingTarget
+type: string
+description: |
+  For a [TaxRate](ctp:api:type:TaxRate) that is included in the price, this value determines which of the two derived amounts the [RoundingMode](ctp:api:type:RoundingMode) set by `taxRoundingMode` is applied to. The other amount is the exact difference from the gross price, so `totalNet` plus `totalTax` on [TaxedPrice](ctp:api:type:TaxedPrice) always equals `totalGross`.
+
+  This field has no effect if `includedInPrice` is `false`. In that case, the net price is supplied exactly, so rounding the gross price and rounding the tax amount give the same result.
+
+  For more information, see [Tax rounding target](/api/carts-orders-overview#tax-rounding-target).
+enum:
+  - Net
+  - Tax
+(enumDescriptions):
+  Net: |
+    `taxRoundingMode` is applied to the net price and the tax amount is the exact remainder.
+
+    For example, with a rate of 20% included in a gross price of 1.23 and `taxRoundingMode: HalfEven`, the net price rounds to 1.02 and the tax amount is 0.21.
+
+    This is the default value for a new Tax Rate.
+  Tax: |
+    `taxRoundingMode` is applied to the tax amount and the net price is the exact remainder.
+
+    For example, with a rate of 20% included in a gross price of 1.23 and `taxRoundingMode: HalfEven`, the tax amount rounds to 0.20 and the net price is 1.03.
