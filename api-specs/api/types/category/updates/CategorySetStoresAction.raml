@@ -1,0 +1,21 @@
+#%RAML 1.0 DataType
+(package): Category
+type: CategoryUpdateAction
+displayName: CategorySetStoresAction
+discriminatorValue: setStores
+(beta): true
+example: !include ../../../examples/Category/CategorySetStoresAction.json
+description: |
+  Every direct child Category must be assigned to at least one Store in that set; otherwise, the action is rejected.
+
+  - When updating a Category via the [general endpoint](#update-category), all Stores can be removed as a global Category is accessible in all Stores.
+  - When updating a Category via the [Store-specific endpoint](#update-category-in-store), the `stores` field cannot be empty; otherwise, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.
+
+    If you do not have permission for every Store currently assigned to the Category, an [Unauthorized](ctp:api:type:UnauthorizedError) error is returned.
+properties:
+  stores:
+    type: StoreResourceIdentifier[]
+    description: |
+      Value to set. It replaces the entire set of [Stores](ctp:api:type:Store) assigned to the Category.
+
+      If the `stores` field contains a Store that you do not have permission for, an [InvalidInput](ctp:api:type:InvalidInputError) error is returned.

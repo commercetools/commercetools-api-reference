@@ -1,0 +1,305 @@
+type:
+  baseDomain:
+    resourceType: Category
+    resourceQueryType: CategoryPagedQueryResponse
+    resourceDraft: CategoryDraft
+    whereExample: 'name(en = "main store")'
+    sortExample: name.en asc
+(updateable): Category
+(deleteable): Category
+(createable): CategoryDraft
+get:
+  displayName: Query Categories in Store
+  description: |
+    Retrieves [Categories](ctp:api:type:Category) that are either assigned to the specified [Store](ctp:api:type:Store) or global.
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'view_products:{projectKey}',
+              'view_categories:{projectKey}',
+              'view_products:{projectKey}:{storeKey}',
+              'view_categories:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include ../../examples/categories.example.json
+head:
+  displayName: Check if Category exists in Store by Query Predicate
+  description: |
+    Checks if one or more Categories exist in the [Store](ctp:api:type:Store) for the provided query predicate. Returns a `200` status if any Categories match the query predicate, or a `404` status otherwise.
+
+    For global Categories, use the [Check if Category exists by Query Predicate](ctp:api:endpoint:/{projectKey}/categories:HEAD) endpoint.
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'view_products:{projectKey}',
+              'view_categories:{projectKey}',
+              'view_products:{projectKey}:{storeKey}',
+              'view_categories:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  queryParameters:
+    where?:
+      type: string[]
+      description: |
+        Use to filter query responses.
+
+        For more information, see [Query Predicates](/api/predicates/query).
+post:
+  displayName: Create Category in Store
+  description: |
+    Creates a [Category](ctp:api:type:Category) in the specified [Store](ctp:api:type:Store).
+
+    For global Categories, use the [Create Category](ctp:api:endpoint:/{projectKey}/categories:POST) endpoint.
+
+    Creating a Category produces the [CategoryCreated](ctp:api:type:CategoryCreatedMessage) Message.
+  securedBy:
+    [
+      oauth_2_0:
+        {
+          scopes:
+            [
+              'manage_products:{projectKey}',
+              'manage_categories:{projectKey}',
+              'manage_products:{projectKey}:{storeKey}',
+              'manage_categories:{projectKey}:{storeKey}',
+            ],
+        },
+    ]
+  body:
+    application/json:
+      example: !include ../../examples/category-create.example.json
+  responses:
+    201:
+      body:
+        application/json:
+          example: !include ../../examples/category-in-store.example.json
+/key={key}:
+  (methodName): withKey
+  type:
+    baseResource:
+      uriParameterName: key
+      resourceType: Category
+      resourceUpdateType: CategoryUpdate
+  get:
+    displayName: Get Category in Store by Key
+    description: |
+      Retrieves a [Category](ctp:api:type:Category) by its `key` in the specified [Store](ctp:api:type:Store).
+
+      For global Categories, use the [Get Category by Key](ctp:api:endpoint:/{projectKey}/categories/key={key}:GET) endpoint.
+
+      If the Category does not exist in the Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_products:{projectKey}',
+                'view_categories:{projectKey}',
+                'view_products:{projectKey}:{storeKey}',
+                'view_categories:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/category-in-store.example.json
+  head:
+    displayName: Check if Category exists in Store by Key
+    description: |
+      Checks if a Category exists with the provided `key` in the specified [Store](ctp:api:type:Store). Returns a `200` status if the Category exists in the Store or is global, or a `404` status otherwise.
+
+      For global Categories, use the [Check if Category exists by Key](ctp:api:endpoint:/{projectKey}/categories/key={key}:HEAD) endpoint.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_products:{projectKey}',
+                'view_categories:{projectKey}',
+                'view_products:{projectKey}:{storeKey}',
+                'view_categories:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+  post:
+    displayName: Update Category in Store by Key
+    description: |
+      Updates a [Category](ctp:api:type:Category) by its `key` in the specified [Store](ctp:api:type:Store).
+
+      To update a global Category, use the [Update Category by Key](ctp:api:endpoint:/{projectKey}/categories/key={key}:POST) endpoint.
+
+      If the Category does not exist in the Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_products:{projectKey}',
+                'manage_categories:{projectKey}',
+                'manage_products:{projectKey}:{storeKey}',
+                'manage_categories:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        example: !include ../../examples/category-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/category-in-store.example.json
+  delete:
+    displayName: Delete Category in Store by Key
+    description: |
+      Deletes a [Category](ctp:api:type:Category) by its `key` in the specified [Store](ctp:api:type:Store).
+
+      To delete a global Category, use the [Delete Category by Key](ctp:api:endpoint:/{projectKey}/categories/key={key}:DELETE) endpoint.
+
+      If you do not have permissions for a Store the Category is assigned to, an [Unauthorized](ctp:api:type:UnauthorizedError) error is returned.
+
+      If the Category does not exist in the Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_products:{projectKey}',
+                'manage_categories:{projectKey}',
+                'manage_products:{projectKey}:{storeKey}',
+                'manage_categories:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/category-in-store.example.json
+/{ID}:
+  (methodName): withId
+  type:
+    baseResource:
+      uriParameterName: ID
+      resourceType: Category
+      resourceUpdateType: CategoryUpdate
+  get:
+    displayName: Get Category in Store by ID
+    description: |
+      Retrieves a [Category](ctp:api:type:Category) by its `id` if it is assigned to the specified [Store](ctp:api:type:Store) or is global.
+
+      For global Categories, use the [Get Category by ID](ctp:api:endpoint:/{projectKey}/categories/{id}:GET) endpoint.
+
+      If the Category does not exist in the Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_products:{projectKey}',
+                'view_categories:{projectKey}',
+                'view_products:{projectKey}:{storeKey}',
+                'view_categories:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/category-in-store.example.json
+  head:
+    displayName: Check if Category exists in Store by ID
+    description: |
+      Checks if a Category exists with the provided `id` in the specified [Store](ctp:api:type:Store). Returns a `200` status if the Category exists in the Store or is global, or a `404` status otherwise.
+
+      For global Categories, use the [Check if Category exists by ID](ctp:api:endpoint:/{projectKey}/categories/{id}:HEAD) endpoint.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_products:{projectKey}',
+                'view_categories:{projectKey}',
+                'view_products:{projectKey}:{storeKey}',
+                'view_categories:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+  post:
+    displayName: Update Category in Store by ID
+    description: |
+      Updates a [Category](ctp:api:type:Category) by its `id` in the specified [Store](ctp:api:type:Store).
+
+      To update a global Category, use the [Update Category by ID](ctp:api:endpoint:/{projectKey}/categories/{id}:POST) endpoint.
+
+      If the Category does not exist in the Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_products:{projectKey}',
+                'manage_categories:{projectKey}',
+                'manage_products:{projectKey}:{storeKey}',
+                'manage_categories:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    body:
+      application/json:
+        example: !include ../../examples/category-update.example.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/category-in-store.example.json
+  delete:
+    displayName: Delete Category in Store by ID
+    description: |
+      Deletes a [Category](ctp:api:type:Category) by its `id` in the specified [Store](ctp:api:type:Store).
+
+      To delete a global Category, use the [Delete Category by ID](ctp:api:endpoint:/{projectKey}/categories/{id}:DELETE) endpoint.
+
+      If you do not have permissions for a Store the Category is assigned to, an [Unauthorized](ctp:api:type:UnauthorizedError) error is returned.
+
+      If the Category does not exist in the Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_products:{projectKey}',
+                'manage_categories:{projectKey}',
+                'manage_products:{projectKey}:{storeKey}',
+                'manage_categories:{projectKey}:{storeKey}',
+              ],
+          },
+      ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ../../examples/category-in-store.example.json
