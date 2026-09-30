@@ -1,0 +1,28 @@
+#%RAML 1.0 DataType
+(package): ProductType
+type: ProductTypeUpdateAction
+displayName: ProductTypeChangeSavedToLineItemAction
+discriminatorValue: changeSavedToLineItem
+example: !include ../../../examples/ProductType/ProductTypeChangeSavedToLineItemAction.json
+description: |
+  Changes the `savedToLineItem` property of an [AttributeDefinition](ctp:api:type:AttributeDefinition) on a [ProductType](ctp:api:type:ProductType).
+  This update action controls whether the Attribute value is copied onto a [LineItem](ctp:api:type:LineItem) when a Product is added to a Cart.
+
+  Changing this value does not immediately affect Line Items already in a Cart. Existing Line Items are updated the next time their Product data is refreshed, such as when a [Recalculate](ctp:api:type:CartRecalculateAction) update action is performed with `updateProductData` set to `true`, or on a Cart update that triggers an API Extension. Replicating a Cart creates a new Cart that contains the current Product data; it does not update the original Cart.
+
+  When `savedToLineItem` is `false`, [LineItem predicates](/api/projects/predicates#lineitem-field-identifiers) that reference this Attribute, such as those in Cart Discounts and Shipping Methods, evaluate as if the Attribute is not set.
+properties:
+  attributeName:
+    type: string
+    pattern: ^[A-Za-z0-9_-]+$
+    minLength: 2
+    maxLength: 256
+    description: |
+      Name of the AttributeDefinition to update.
+  savedToLineItem:
+    type: boolean
+    description: |
+      Whether the Attribute value is copied onto a [LineItem](ctp:api:type:LineItem) when the Product is added to a Cart.
+      See [AttributeDefinition](ctp:api:type:AttributeDefinition) for details.
+
+      It has no effect if the Attribute already has the given value.

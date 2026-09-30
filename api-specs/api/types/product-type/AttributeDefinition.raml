@@ -48,3 +48,10 @@ properties:
       The maximum size of a searchable field is **restricted** by the [Field content size limit](/api/limits#field-content-size).
       This constraint is enforced at both [Product creation](ctp:api:endpoint:/{projectKey}/products:POST) and [Product update](/api/projects/products#update-product).
       If the length of the input exceeds the maximum size, an [InvalidField](ctp:api:type:InvalidFieldError) error is returned.
+  savedToLineItem:
+    type: boolean
+    description: |
+      Whether the Attribute value is copied onto the [LineItem](ctp:api:type:LineItem) when the Product is added to a Cart.
+      When `false`, the Attribute value is excluded from the Line Item variant. Line Items already in a Cart are not immediately affected by a change to this value. Existing Line Items are updated the next time their Product data is refreshed, such as when a [Recalculate](ctp:api:type:CartRecalculateAction) update action is performed with `updateProductData` set to `true`, or on a Cart update that triggers an API Extension. Replicating a Cart creates a new Cart that contains the current Product data; it does not update the original Cart.
+
+      When `savedToLineItem` is `false`, [LineItem predicates](/api/projects/predicates#lineitem-field-identifiers) that reference this Attribute, such as those in Cart Discounts and Shipping Methods, evaluate as if the Attribute is not set.
