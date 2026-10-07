@@ -104,6 +104,56 @@ traits:
   secured_by_manage_applications:
     securedBy:
       [oauth_2_0: { scopes: ['manage_checkout_applications:{projectKey}'] }]
+  secured_by_manage_recurring_payment_jobs:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_recurring_payment_jobs:{projectKey}',
+                'manage_projects:{projectKey}',
+              ],
+          },
+      ]
+  secured_by_view_recurring_payment_jobs:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_recurring_payment_jobs:{projectKey}',
+                'manage_recurring_payment_jobs:{projectKey}',
+                'manage_projects:{projectKey}',
+              ],
+          },
+      ]
+  secured_by_manage_recurring_payments:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'manage_recurring_payments:{projectKey}',
+                'manage_projects:{projectKey}',
+              ],
+          },
+      ]
+  secured_by_view_recurring_payments:
+    securedBy:
+      [
+        oauth_2_0:
+          {
+            scopes:
+              [
+                'view_recurring_payments:{projectKey}',
+                'manage_recurring_payments:{projectKey}',
+                'manage_projects:{projectKey}',
+              ],
+          },
+      ]
 
 /{projectKey}:
   (annotations.methodName): withProjectKey
@@ -129,10 +179,13 @@ traits:
           type: PaymentIntent
           example: !include ./examples/payments/capturePayment.json
         description: |
+          Requests to the payment [Connector](/checkout/connectors-and-applications#payment-connectors) time out after 30 seconds.
+
           Specific Error Codes:
           - [MultipleActionsNotAllowed](ctp:checkout:type:MultipleActionsNotAllowedError)
           - [RequiredField](ctp:checkout:type:RequiredFieldError)
           - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [ConnectorTimeout](ctp:checkout:type:ConnectorTimeoutError)
         responses:
           200:
             body:
@@ -140,6 +193,10 @@ traits:
               example: !include ../checkout/examples/payments/capturePaymentResponse.json
           400:
             description: The request was invalid.
+            body:
+              type: ErrorResponse
+          504:
+            description: The Connector did not respond within the configured timeout.
             body:
               type: ErrorResponse
   /transactions:
@@ -152,10 +209,14 @@ traits:
         type: TransactionDraft
         example: !include ./examples/transactions/transactionDraft.json
       description: |
-        Creates a Transaction on Checkout. Specific Error Codes:
+        Creates a Transaction on Checkout. Requests to the payment [Connector](/checkout/connectors-and-applications#payment-connectors) time out after 30 seconds.
+
+        Specific Error Codes:
         - [InvalidInput](ctp:checkout:type:InvalidInputError)
+        - [InternalConstraintViolated](ctp:checkout:type:InternalConstraintViolatedError)
         - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
         - [ConnectorFailed](ctp:checkout:type:ConnectorFailedError)
+        - [ConnectorTimeout](ctp:checkout:type:ConnectorTimeoutError)
         - [PaymentFailure](ctp:checkout:type:PaymentFailureError)
         - [RequiredField](ctp:checkout:type:RequiredFieldError)
       responses:
@@ -165,6 +226,10 @@ traits:
             example: !include ../checkout/examples/transactions/transaction.json
         400:
           description: The request was invalid.
+          body:
+            type: ErrorResponse
+        504:
+          description: The Connector did not respond within the configured timeout.
           body:
             type: ErrorResponse
     /{id}:
@@ -215,6 +280,338 @@ traits:
             description: The request was invalid.
             body:
               type: ErrorResponse
+  /recurring-payment-jobs:
+    displayName: Recurring Payment Jobs
+    get:
+      displayName: Query Recurring Payment Jobs
+      is:
+        - secured_by_view_recurring_payment_jobs
+      description: |
+        Retrieves Recurring Payment Jobs in a [Project](ctp:api:type:Project).
+
+        The results are [paginated](/api/general-concepts#pagination).
+      queryParameters:
+        sort?:
+          type: array
+          items: string
+          description: |
+            Controls [Sorting](/api/general-concepts#sorting) of query results. The following fields are available for sorting: `id`, `key`, `createdAt`, `lastModifiedAt`.
+          example: ['createdAt asc', 'id desc']
+        limit?:
+          type: integer
+          format: int32
+          description: |
+            Number of results requested.
+          default: 20
+          minimum: 0
+          maximum: 500
+        offset?:
+          type: integer
+          format: int32
+          description: |
+            Number of elements skipped.
+          default: 0
+          maximum: 10000
+        withTotal?:
+          type: boolean
+          default: false
+          description: |
+            Controls the calculation of the total number of query results.
+        status.state?:
+          type: string
+          description: |
+            Filters the results by `status.state` using the format `status.state=eq:{value}`.
+          example: eq:Failed
+      responses:
+        200:
+          body:
+            type: PaginatedRecurringPaymentJob
+            example: !include examples/recurring-payment-jobs/PaginatedRecurringPaymentJob.json
+    post:
+      displayName: Create Recurring Payment Job
+      is:
+        - secured_by_manage_recurring_payment_jobs
+      description: |
+        Creates a new [RecurringPaymentJob](ctp:checkout:type:RecurringPaymentJob). Specific Error Codes:
+        - [InvalidInput](ctp:checkout:type:InvalidInputError)
+        - [ReferencedResourceNotFound](ctp:checkout:type:ReferencedResourceNotFoundError)
+        - [RequiredField](ctp:checkout:type:RequiredFieldError)
+      body:
+        type: RecurringPaymentJobDraft
+        example: !include examples/recurring-payment-jobs/RecurringPaymentJobDraft.json
+      responses:
+        201:
+          body:
+            type: RecurringPaymentJob
+            example: !include examples/recurring-payment-jobs/RecurringPaymentJob.json
+        400:
+          description: The request was invalid.
+          body:
+            type: ErrorResponse
+    /{id}:
+      (annotations.methodName): withId
+      uriParameters:
+        id:
+          type: string
+          description: |
+            `id` of the [RecurringPaymentJob](ctp:checkout:type:RecurringPaymentJob).
+      get:
+        displayName: Get Recurring Payment Job by ID
+        is:
+          - secured_by_view_recurring_payment_jobs
+        description: |
+          Retrieves a Recurring Payment Job with a given `id`. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [GeneralError](ctp:checkout:type:GeneralError)
+        responses:
+          200:
+            body:
+              type: RecurringPaymentJob
+              example: !include examples/recurring-payment-jobs/RecurringPaymentJob.json
+      delete:
+        displayName: Delete Recurring Payment Job by ID
+        is:
+          - secured_by_manage_recurring_payment_jobs
+        description: |
+          Deletes a Recurring Payment Job with a given `id`. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [ConcurrentModification](ctp:checkout:type:ConcurrentModificationError)
+        queryParameters:
+          version:
+            type: integer
+            format: int64
+            description: Last seen version of the resource.
+        responses:
+          200:
+            body:
+              type: RecurringPaymentJob
+              example: !include examples/recurring-payment-jobs/RecurringPaymentJob.json
+    /key={key}:
+      (annotations.methodName): withKey
+      uriParameters:
+        key:
+          type: string
+          description: |
+            `key` of the [RecurringPaymentJob](ctp:checkout:type:RecurringPaymentJob).
+      get:
+        displayName: Get Recurring Payment Job by Key
+        is:
+          - secured_by_view_recurring_payment_jobs
+        description: |
+          Retrieves a Recurring Payment Job with a given `key`. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [GeneralError](ctp:checkout:type:GeneralError)
+        responses:
+          200:
+            body:
+              type: RecurringPaymentJob
+              example: !include examples/recurring-payment-jobs/RecurringPaymentJob.json
+      delete:
+        displayName: Delete Recurring Payment Job by Key
+        is:
+          - secured_by_manage_recurring_payment_jobs
+        description: |
+          Deletes a Recurring Payment Job with a given `key`. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [ConcurrentModification](ctp:checkout:type:ConcurrentModificationError)
+        queryParameters:
+          version:
+            type: integer
+            format: int64
+            description: Last seen version of the resource.
+        responses:
+          200:
+            body:
+              type: RecurringPaymentJob
+              example: !include examples/recurring-payment-jobs/RecurringPaymentJob.json
+  /recurring-payments:
+    displayName: Recurring Payments
+    get:
+      displayName: Query Recurring Payments
+      is:
+        - secured_by_view_recurring_payments
+      description: |
+        Retrieves Recurring Payments in a [Project](ctp:api:type:Project).
+
+        The results are [paginated](/api/general-concepts#pagination).
+      queryParameters:
+        sort?:
+          type: array
+          items: string
+          description: |
+            Controls [Sorting](/api/general-concepts#sorting) of query results. The following fields are available for sorting: `id`, `key`, `createdAt`, `lastModifiedAt`.
+          example: ['createdAt asc', 'id desc']
+        limit?:
+          type: integer
+          format: int32
+          description: |
+            Number of results requested.
+          default: 20
+          minimum: 0
+          maximum: 500
+        offset?:
+          type: integer
+          format: int32
+          description: |
+            Number of elements skipped.
+          default: 0
+          maximum: 10000
+        withTotal?:
+          type: boolean
+          default: false
+          description: |
+            Controls the calculation of the total number of query results.
+        recurringOrderId?:
+          type: string
+          description: |
+            Filters the results by the `id` of the [RecurringOrder](ctp:api:type:RecurringOrder) using the format `recurringOrderId=eq:{value}`.
+          example: eq:39ccda28-47f9-41bf-8dde-e1d720c19000
+      responses:
+        200:
+          body:
+            type: PaginatedRecurringPayment
+            example: !include examples/recurring-payments/PaginatedRecurringPayment.json
+    post:
+      displayName: Create Recurring Payment
+      is:
+        - secured_by_manage_recurring_payments
+      description: |
+        Creates a new [RecurringPayment](ctp:checkout:type:RecurringPayment). Specific Error Codes:
+        - [InvalidInput](ctp:checkout:type:InvalidInputError)
+        - [ReferencedResourceNotFound](ctp:checkout:type:ReferencedResourceNotFoundError)
+        - [RequiredField](ctp:checkout:type:RequiredFieldError)
+      body:
+        type: RecurringPaymentDraft
+        example: !include examples/recurring-payments/RecurringPaymentDraft.json
+      responses:
+        201:
+          body:
+            type: RecurringPayment
+            example: !include examples/recurring-payments/RecurringPayment.json
+        400:
+          description: The request was invalid.
+          body:
+            type: ErrorResponse
+    /{id}:
+      (annotations.methodName): withId
+      uriParameters:
+        id:
+          type: string
+          description: |
+            `id` of the [RecurringPayment](ctp:checkout:type:RecurringPayment).
+      get:
+        displayName: Get Recurring Payment by ID
+        is:
+          - secured_by_view_recurring_payments
+        description: |
+          Retrieves a Recurring Payment with a given `id`. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [GeneralError](ctp:checkout:type:GeneralError)
+        responses:
+          200:
+            body:
+              type: RecurringPayment
+              example: !include examples/recurring-payments/RecurringPayment.json
+      post:
+        displayName: Update Recurring Payment by ID
+        is:
+          - secured_by_manage_recurring_payments
+        description: |
+          Updates a Recurring Payment with a given `id`. Specific Error Codes:
+          - [InvalidInput](ctp:checkout:type:InvalidInputError)
+          - [ReferencedResourceNotFound](ctp:checkout:type:ReferencedResourceNotFoundError)
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [ConcurrentModification](ctp:checkout:type:ConcurrentModificationError)
+        body:
+          type: RecurringPaymentUpdateActions
+          example: !include examples/recurring-payments/RecurringPaymentUpdateActions.json
+        responses:
+          200:
+            body:
+              type: RecurringPayment
+              example: !include examples/recurring-payments/RecurringPayment.json
+          400:
+            description: The request was invalid.
+            body:
+              type: ErrorResponse
+      delete:
+        displayName: Delete Recurring Payment by ID
+        is:
+          - secured_by_manage_recurring_payments
+        description: |
+          Deletes a Recurring Payment with a given `id`. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [ConcurrentModification](ctp:checkout:type:ConcurrentModificationError)
+        queryParameters:
+          version:
+            type: integer
+            format: int64
+            description: Last seen version of the resource.
+        responses:
+          200:
+            body:
+              type: RecurringPayment
+              example: !include examples/recurring-payments/RecurringPayment.json
+    /key={key}:
+      (annotations.methodName): withKey
+      uriParameters:
+        key:
+          type: string
+          description: |
+            `key` of the [RecurringPayment](ctp:checkout:type:RecurringPayment).
+      get:
+        displayName: Get Recurring Payment by Key
+        is:
+          - secured_by_view_recurring_payments
+        description: |
+          Retrieves a Recurring Payment with a given `key`. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [GeneralError](ctp:checkout:type:GeneralError)
+        responses:
+          200:
+            body:
+              type: RecurringPayment
+              example: !include examples/recurring-payments/RecurringPayment.json
+      post:
+        displayName: Update Recurring Payment by Key
+        is:
+          - secured_by_manage_recurring_payments
+        description: |
+          Updates a Recurring Payment with a given `key`. Specific Error Codes:
+          - [InvalidInput](ctp:checkout:type:InvalidInputError)
+          - [ReferencedResourceNotFound](ctp:checkout:type:ReferencedResourceNotFoundError)
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [ConcurrentModification](ctp:checkout:type:ConcurrentModificationError)
+        body:
+          type: RecurringPaymentUpdateActions
+          example: !include examples/recurring-payments/RecurringPaymentUpdateActions.json
+        responses:
+          200:
+            body:
+              type: RecurringPayment
+              example: !include examples/recurring-payments/RecurringPayment.json
+          400:
+            description: The request was invalid.
+            body:
+              type: ErrorResponse
+      delete:
+        displayName: Delete Recurring Payment by Key
+        is:
+          - secured_by_manage_recurring_payments
+        description: |
+          Deletes a Recurring Payment with a given `key`. Specific Error Codes:
+          - [ResourceNotFound](ctp:checkout:type:ResourceNotFoundError)
+          - [ConcurrentModification](ctp:checkout:type:ConcurrentModificationError)
+        queryParameters:
+          version:
+            type: integer
+            format: int64
+            description: Last seen version of the resource.
+        responses:
+          200:
+            body:
+              type: RecurringPayment
+              example: !include examples/recurring-payments/RecurringPayment.json
   /payment-integrations:
     get:
       displayName: Query Payment Integrations

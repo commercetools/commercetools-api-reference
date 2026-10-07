@@ -3,15 +3,18 @@
 (annotations.beta): true
 displayName: TransactionItem
 type: object
+discriminator: type
 description: |
-  Payment information related to the [Transaction](/transactions-api#transaction).
+  Payment information related to the [Transaction](ctp:checkout:type:Transaction). If `type` is not present, this is a [TransactionItemPaymentIntegration](ctp:checkout:type:TransactionItemPaymentIntegration). Each supported payment flow has its own corresponding Transaction Item type, like [TransactionItemRecurring](ctp:checkout:type:TransactionItemRecurring).
 properties:
+  type?:
+    type: string
+    description: |
+      Type of the Transaction Item, matching the `type` of the [TransactionItemDraft](ctp:checkout:type:TransactionItemDraft) it was created from. Not present for Transaction Items created without an explicit `type`.
   amount?:
     type: Amount
-    description: Money value of the Transaction Item.
+    description: |
+      Money value of the Transaction Item.
   payment?:
     type: PaymentReference
     description: Reference to the [Payment](ctp:api:type:Payment) associated with the Transaction Item.
-  paymentIntegration:
-    type: PaymentIntegrationReference
-    description: Reference to the [Payment Integration](ctp:checkout:type:PaymentIntegration) to use to execute the payment.

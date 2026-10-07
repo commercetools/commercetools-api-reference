@@ -1,12 +1,17 @@
 #%RAML 1.0 DataType
 (annotations.package): Transaction
 (annotations.beta): true
-displayName: TransactionItemDraft
 type: object
+displayName: TransactionItemDraft
+discriminator: type
+description: |
+  Base type for creating a Transaction Item. If `type` is omitted, a [TransactionItemPaymentIntegrationDraft](ctp:checkout:type:TransactionItemPaymentIntegrationDraft) is created to process the payment through a Payment Integration. Each supported payment flow has its own corresponding Transaction Item Draft type, like [TransactionItemRecurringDraft](ctp:checkout:type:TransactionItemRecurringDraft).
 properties:
-  paymentIntegration:
-    type: PaymentIntegrationResourceIdentifier
-    description: Resource Identifier of the [Payment Integration](/connectors-and-applications#payment-integrations) to use to execute the payment.
+  type?:
+    type: string
+    description: |
+      Type of the Transaction Item to create.
   amount?:
     type: Amount
-    description: Money value of the Transaction Item.
+    description: |
+      Money value of the Transaction Item. If not present, the Connector resolves the amount from the [Cart](ctp:api:type:Cart).
