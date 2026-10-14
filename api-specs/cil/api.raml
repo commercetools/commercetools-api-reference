@@ -1,0 +1,317 @@
+#%RAML 1.0
+---
+title: Commerce Integration Layer Shopper Identity API
+uses:
+  annotations: annotations.raml
+version: v1
+mediaType: application/json
+baseUri: https://auth.integration-layer.{region}.commercetools.com
+(annotations.sdkBaseUri): https://auth.integration-layer.europe-west1.gcp.commercetools.com
+baseUriParameters:
+  region:
+    type: string
+    description: |
+      Region in which the Commerce Integration Layer is hosted. commercetools provides the exact host for your Region when the Commerce Integration Layer is enabled.
+
+securitySchemes:
+  oauth_2_0:
+    type: Pass Through
+    description: |
+      Session token of the shopper, sent as a bearer credential in the `Authorization` header.
+      The token is returned by [Create or upgrade a Session](#/{projectKey}/main/session_post).
+    describedBy:
+      headers:
+        Authorization:
+          type: string
+          description: |
+            `Bearer {session token}`
+
+types:
+  SessionGrantType:
+    (annotations.package): Session
+    type: string
+    description: Grant used to mint or upgrade a session.
+    (annotations.enumDescriptions):
+      anonymous: An anonymous shopper session.
+      password: A signed-in customer session. Merges an anonymous cart when a prior session bearer is sent.
+      register: Creates a customer, then mints a signed-in session.
+      refresh: Refreshes the sealed commercetools token behind an existing session. Requires a valid session token as bearer.
+      idp: Signs in through an external OIDC [identity provider](/commerce-integration-layer/development/identity-providers).
+      extension: Signs in through your Project's own [extension](/commerce-integration-layer/development/extension-authentication), which authenticates the shopper and tells the Commerce Integration Layer who they are. Requires the extension to export `onResolveLogin` on its `hooks` object; refused otherwise.
+    enum:
+      - anonymous
+      - password
+      - register
+      - refresh
+      - idp
+      - extension
+  Presentment:
+    (annotations.package): Session
+    type: object
+    description: |
+      Presentment context of a session. If omitted, values fall back to the existing session, and then to the Project's configured defaults.
+      A GraphQL query with no resolvable presentment fails with `SESSION_MISSING_PRESENTMENT`.
+    properties:
+      locale?:
+        type: string
+        description: Locale of the session.
+      currency?:
+        type: string
+        description: Currency of the session.
+      country?:
+        type: string
+        description: Country of the session.
+
+  SessionRequest:
+    (annotations.package): Session
+    type: Presentment
+    description: |
+      Request body for `POST /session`. The `grant_type` determines the other fields that apply.
+    discriminator: grant_type
+    properties:
+      grant_type?:
+        type: SessionGrantType
+        default: anonymous
+        description: Grant to use. Defaults to `anonymous` when omitted.
+
+  AnonymousSessionRequest:
+    (annotations.package): Session
+    type: SessionRequest
+    description: Mints an anonymous shopper session. Requires no bearer token.
+    discriminatorValue: anonymous
+
+  PasswordSessionRequest:
+    (annotations.package): Session
+    type: SessionRequest
+    description: |
+      Mints a signed-in Customer session. Merges an anonymous Cart when a prior session bearer is sent.
+    discriminatorValue: password
+    properties:
+      email:
+        type: string
+        description: Email address of the Customer.
+      password:
+        type: string
+        description: Password of the Customer.
+
+  RegisterInput:
+    (annotations.package): Session
+    type: object
+    description: Customer data for the `register` grant.
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      companyName?:
+        type: string
+
+  RegisterSessionRequest:
+    (annotations.package): Session
+    type: SessionRequest
+    description: Creates a Customer, then mints a signed-in session.
+    discriminatorValue: register
+    properties:
+      input:
+        type: RegisterInput
+
+  RefreshSessionRequest:
+    (annotations.package): Session
+    type: SessionRequest
+    description: |
+      Refreshes the sealed commercetools token behind an existing session. Requires a valid session token as bearer.
+      Refresh a few minutes before expiry. The previous token keeps working until it expires, so in-flight requests don't fail.
+      After the session token expires, this grant returns `401` and you must mint a new session; a signed-in shopper must sign in again.
+    discriminatorValue: refresh
+
+  IdpSessionRequest:
+    (annotations.package): Session
+    type: SessionRequest
+    description: Signs in through an external OIDC identity provider. Provide either `code` or `id_token`.
+    discriminatorValue: idp
+    properties:
+      code?:
+        type: string
+        description: Authorization code issued by the identity provider.
+      id_token?:
+        type: string
+        description: ID token issued by the identity provider.
+
+  SessionUpdateRequest:
+    (annotations.package): Session
+    type: Presentment
+    description: Request body for `PATCH /session`. Provide the presentment values to change.
+
+  SessionBusinessUnitRequest:
+    (annotations.package): Session
+    type: object
+    description: Selects the B2B Business Unit and Store of a session.
+    properties:
+      businessUnitKey:
+        type: string
+        description: Key of the Business Unit to select.
+      storeKey:
+        type: string
+        description: Key of the Store to select. It must be one of the Stores of the Business Unit.
+
+  SessionDistributionChannelRequest:
+    (annotations.package): Session
+    type: object
+    description: Selects the distribution Channel that scopes Channel-specific prices for the session.
+    properties:
+      distributionChannelId:
+        type: string | nil
+        description: |
+          Identifier of the distribution Channel to select. Pass `null` to clear an explicit selection.
+
+  SessionScopeRequest:
+    (annotations.package): Session
+    type: object
+    description: |
+      Selects the Store and Channels of a session. Provide at least one property. A property that is omitted is left unchanged, and `null` clears it.
+    properties:
+      storeKey?:
+        type: string | nil
+        description: |
+          Key of the Store to select. Pass `null` to leave Store scope, which also clears both Channels unless the same request names them. A session scoped to a Business Unit cannot clear its Store.
+      supplyChannelId?:
+        type: string | nil
+        description: |
+          Identifier of the inventory supply Channel to select. The Channel must have the `InventorySupply` role. Pass `null` to clear the selection.
+      distributionChannelId?:
+        type: string | nil
+        description: |
+          Identifier of the distribution Channel to select. The Channel must have the `ProductDistribution` role. Pass `null` to clear the selection.
+
+  SessionResponse:
+    (annotations.package): Session
+    type: object
+    description: |
+      Session token to send as the bearer credential for the Experience API (GraphQL).
+      The commercetools token sealed inside the session token never leaves the Commerce Integration Layer.
+    properties:
+      token:
+        type: string
+        description: |
+          Opaque signed JWT. Do not decode it or rely on its structure.
+      expires_in:
+        type: integer
+        description: |
+          Lifetime of the token in seconds. It depends on how the session was minted, so don't hard-code a value:
+
+          - A session from the `anonymous`, `password`, or `register` grant expires with its sealed commercetools access token, by default 48 hours after it was minted or last refreshed. Updating presentment or selecting a scope reissues the token without extending this.
+          - A session from the `idp` grant lasts up to 30 days after it was minted or last refreshed.
+      identity:
+        type: string
+        description: Identity of the shopper, for example `anonymous`.
+
+/{projectKey}/main/session:
+  uriParameters:
+    projectKey:
+      type: string
+      description: Key of the [Project](ctp:api:type:Project).
+  displayName: Session
+  post:
+    displayName: Create or Upgrade Session
+    description: |
+      Mints or upgrades a shopper session. The grant is defined by `grant_type` in the request body and defaults to `anonymous`.
+
+      Minting an anonymous session requires no token. For other grants, send the session token as bearer where required, for example for `refresh`, or for `password` to merge an anonymous Cart.
+    body:
+      type: SessionRequest
+      example:
+        value:
+          grant_type: anonymous
+          locale: en-US
+          currency: USD
+          country: US
+    responses:
+      200:
+        description: Session minted, upgraded, or refreshed.
+        body:
+          type: SessionResponse
+          example:
+            value:
+              token: <session token>
+              expires_in: 172800
+              identity: anonymous
+  patch:
+    displayName: Update Session Presentment
+    description: |
+      Updates the presentment (locale, currency, country) of the session and reissues the token.
+    securedBy: [oauth_2_0: { scopes: [] }]
+    body:
+      type: SessionUpdateRequest
+      example:
+        value:
+          locale: de-DE
+          currency: EUR
+          country: DE
+    responses:
+      200:
+        description: Session updated and token reissued.
+        body:
+          type: SessionResponse
+  delete:
+    displayName: Sign Out
+    description: |
+      Signs out the shopper and revokes the session, including the previous token from a refresh that has not expired yet. The revocation takes effect immediately.
+    securedBy: [oauth_2_0: { scopes: [] }]
+    responses:
+      204:
+        description: Session revoked.
+  /business-unit:
+    displayName: Session Business Unit
+    put:
+      displayName: Select Business Unit
+      description: |
+        Selects a B2B Business Unit and Store for the session and reissues the token. Requires a signed-in Customer session that is an associate of the Business Unit.
+      securedBy: [oauth_2_0: { scopes: [] }]
+      body:
+        type: SessionBusinessUnitRequest
+      responses:
+        200:
+          description: Business Unit selected and token reissued.
+          body:
+            type: SessionResponse
+  /distribution-channel:
+    displayName: Session Distribution Channel
+    put:
+      displayName: Select Distribution Channel
+      description: |
+        Selects the distribution Channel that scopes Channel-specific prices for the session and reissues the token.
+        Pass `distributionChannelId: null` to clear an explicit selection.
+      securedBy: [oauth_2_0: { scopes: [] }]
+      body:
+        type: SessionDistributionChannelRequest
+        example:
+          value:
+            distributionChannelId: null
+      responses:
+        200:
+          description: Distribution Channel selected and token reissued.
+          body:
+            type: SessionResponse
+  /scope:
+    displayName: Session Scope
+    put:
+      displayName: Select Store and Channels
+      description: |
+        Selects the Store and the supply and distribution Channels of the session, and reissues the token. Works for every session, including an anonymous one.
+        A session scoped to a Business Unit stays within the Stores of that Business Unit.
+      securedBy: [oauth_2_0: { scopes: [] }]
+      body:
+        type: SessionScopeRequest
+        example:
+          value:
+            storeKey: berlin
+            distributionChannelId: null
+      responses:
+        200:
+          description: Scope selected and token reissued.
+          body:
+            type: SessionResponse
