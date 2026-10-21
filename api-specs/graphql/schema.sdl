@@ -8990,6 +8990,7 @@ type RecurrencePolicy implements Versioned {
   ): String
     descriptionAllLocales: [LocalizedString!]
     schedule: RecurrencePolicySchedule!
+    minDaysBetweenOrders: Int
     createdAt: DateTime!
     lastModifiedAt: DateTime!
     createdBy: Initiator
@@ -9122,6 +9123,12 @@ type RecurringOrderFailureError {
 type RecurringOrderKeySet implements MessagePayload {
     key: String
     oldKey: String
+    type: String!
+}
+
+type RecurringOrderNowRequested implements MessagePayload {
+    requestedAt: DateTime!
+    reason: String
     type: String!
 }
 
@@ -17023,6 +17030,7 @@ input RecurrencePolicyDraft {
     name: [LocalizedStringItemInputType!]
     description: [LocalizedStringItemInputType!]
     schedule: RecurrencePolicyScheduleInput!
+    minDaysBetweenOrders: Int
 }
 
 input RecurrencePolicyScheduleInput {
@@ -17033,6 +17041,7 @@ input RecurrencePolicyScheduleInput {
 input RecurrencePolicyUpdateAction {
     setDescription: SetRecurrencePolicyDescription
     setKey: SetRecurrencePolicyKey
+    setMinDaysBetweenOrders: SetRecurrencePolicyMinDaysBetweenOrders
     setName: SetRecurrencePolicyName
     setSchedule: SetRecurrencePolicySchedule
 }
@@ -17088,6 +17097,7 @@ input RecurringOrderUpdateAction {
     setSchedule: SetRecurringOrderSchedule
     setStartsAt: SetRecurringOrderStartsAt
     transitionState: TransitionRecurringOrderState
+    requestOrderNow: RequestRecurringOrderNow
 }
 
 input RecurringOrdersOnlyInput {
@@ -17453,6 +17463,10 @@ input RemoveZoneLocation {
 
 input RequestQuoteRenegotiation {
     buyerComment: String
+}
+
+input RequestRecurringOrderNow {
+    reason: String
 }
 
 input ResourceIdentifierInput {
@@ -19346,6 +19360,10 @@ input SetRecurrencePolicyDescription {
 
 input SetRecurrencePolicyKey {
     key: String!
+}
+
+input SetRecurrencePolicyMinDaysBetweenOrders {
+    minDaysBetweenOrders: Int
 }
 
 input SetRecurrencePolicyName {
