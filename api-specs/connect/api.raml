@@ -119,6 +119,8 @@ resourceTypes: !include types/ResourceTypes.raml
         type: DeploymentDraft
         example: !include ./examples/deployment/draft.json
       description: |
+        The `manage_api_clients:{projectKey}` scope is required if the connector version uses commercetools managed API Client credentials.
+
         Specific Error Codes:
         - [ConnectorStagedNotPreviewable](ctp:connect:type:ConnectorStagedNotPreviewableError)
         - [DeploymentUnsupportedRegion](ctp:connect:type:DeploymentUnsupportedRegionError)
@@ -185,12 +187,25 @@ resourceTypes: !include types/ResourceTypes.raml
       /logs:
         type: deploymentLogs
         get:
-          displayName: Query logs from Deployment by id
+          displayName: Query DeploymentLogs from Deployment by Deployment ID
           description: |
             Specific Error Codes:
             - [DeploymentApplicationDoesNotExist](ctp:connect:type:DeploymentApplicationDoesNotExistError)
             - [DeploymentLogInvalidDate](ctp:connect:type:DeploymentLogInvalidDateError)
             - [DeploymentLogInvalidPageToken](ctp:connect:type:DeploymentLogInvalidPageTokenError)
+      /revisions:
+        type: deploymentRevisions
+        get:
+          displayName: Query DeploymentRevisions of Deployment by Deployment ID
+        /{revision}:
+          (annotations.methodName): withRevision
+          type: deploymentRevisionByParam
+          get:
+            displayName: Get DeploymentRevision of Deployment by Deployment ID
+          /rollback:
+            type: deploymentRollback
+            post:
+              displayName: Rollback Deployment by Deployment ID
     /key={key}:
       (annotations.methodName): withKey
       type:
@@ -200,12 +215,25 @@ resourceTypes: !include types/ResourceTypes.raml
       /logs:
         type: deploymentLogs
         get:
-          displayName: Query logs from Deployment by key
+          displayName: Query DeploymentLogs from Deployment by Deployment Key
           description: |
             Specific Error Codes:
             - [DeploymentApplicationDoesNotExist](ctp:connect:type:DeploymentApplicationDoesNotExistError)
             - [DeploymentLogInvalidDate](ctp:connect:type:DeploymentLogInvalidDateError)
             - [DeploymentLogInvalidPageToken](ctp:connect:type:DeploymentLogInvalidPageTokenError)
+      /revisions:
+        type: deploymentRevisions
+        get:
+          displayName: Query DeploymentRevisions of Deployment by Deployment Key
+        /{revision}:
+          (annotations.methodName): withRevision
+          type: deploymentRevisionByParam
+          get:
+            displayName: Get DeploymentRevision of Deployment by Deployment Key
+          /rollback:
+            type: deploymentRollback
+            post:
+              displayName: Rollback Deployment by Deployment Key
 /connectors:
   /{ID}:
     (annotations.methodName): withId

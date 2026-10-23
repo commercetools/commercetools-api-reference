@@ -104,6 +104,71 @@ deploymentByParam:
         body:
           type: Deployment
           example: !include ../examples/deployment/minimal.json
+deploymentRevisions:
+  get:
+    description: |
+      Retrieves the revisions of a Deployment, most recent first.
+
+      Only versions that were deployed successfully are returned, so every result is a valid rollback target.
+      At most 20 revisions are returned.
+    is:
+      - secured_by_view_connectors_deployments
+    responses:
+      200:
+        body:
+          type: array
+          items: DeploymentRevision
+          example: !include ../examples/deployment/revisions.json
+deploymentRevisionByParam:
+  uriParameters:
+    revision:
+      description: |
+        `revisionNumber` of the DeploymentRevision.
+      type: number
+      format: int64
+      minimum: 1
+  get:
+    is:
+      - secured_by_view_connectors_deployments
+    responses:
+      200:
+        description: The requested DeploymentRevision was found.
+        body:
+          type: DeploymentRevision
+          example: !include ../examples/deployment/revision.json
+      404:
+        description: The requested DeploymentRevision wasn't found.
+        body:
+          type: ErrorResponse
+          example: !include ../examples/error/not-found.json
+deploymentRollback:
+  post:
+    description: |
+      Restores the configuration of the revision onto the Deployment.
+      A new Deployment version is created from the revision and deployed.
+
+      The `manage_api_clients:{projectKey}` scope is required if the connector version uses commercetools managed API Client credentials.
+
+      Specific Error Codes:
+      - [DeploymentRollbackNotAllowed](ctp:connect:type:DeploymentRollbackNotAllowedError)
+      - [DeploymentInvalidStatusTransition](ctp:connect:type:DeploymentInvalidStatusTransitionError)
+      - [ConcurrentModification](ctp:connect:type:ConcurrentModificationError)
+    is:
+      - secured_by_manage_connectors_deployments
+    body:
+      type: DeploymentRollback
+      example: !include ../examples/deployment/rollback.json
+    responses:
+      202:
+        description: The rollback was accepted and the Deployment was queued.
+        body:
+          type: Deployment
+          example: !include ../examples/deployment/minimal.json
+      404:
+        description: The requested Deployment or DeploymentRevision wasn't found.
+        body:
+          type: ErrorResponse
+          example: !include ../examples/error/not-found.json
 deploymentLogs:
   type: base
   get:

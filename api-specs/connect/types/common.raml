@@ -130,6 +130,9 @@ types:
     description: |
       Configures how failed event delivery attempts are retried. Only applies to `event` applications.
 
+      `minBackoffSeconds`, `maxBackoffSeconds`, and `maxAttempts` only apply when `strategy` is `exponential-backoff`, and
+      must not be set when `strategy` is `immediate`. `minBackoffSeconds` must be less than or equal to `maxBackoffSeconds`.
+
       If not set, defaults to `exponential-backoff` with a `minBackoffSeconds` of 10, a `maxBackoffSeconds` of 120, and a
       `maxAttempts` of 10, unless the Connect application's `connect.yaml` file declares its own retry policy.
     properties:
@@ -145,7 +148,8 @@ types:
           - immediate
           - exponential-backoff
       minBackoffSeconds?:
-        type: integer
+        type: number
+        format: int32
         description: Minimum backoff delay, in seconds, before the first retry. Required when `strategy` is `exponential-backoff`.
         minimum: 1
         maximum: 600
@@ -157,7 +161,7 @@ types:
       maxAttempts?:
         type: integer
         description: |
-          Maximum number of delivery attempts before the message delivery is considered failed. Only applies when `strategy` is `exponential-backoff`.
+          Maximum number of delivery attempts before the message delivery is considered failed. Only applies when `strategy` is `exponential-backoff`. If not set, the number of attempts defaults to 10 unless the Connect application's `connect.yaml` file declares its own retry policy.
         minimum: 5
         maximum: 100
   DeploymentConfigurationApplication:
@@ -352,6 +356,49 @@ types:
       documentationUrl?:
         type: string
         description: URL to the documentation of the Connector.
+  DeploymentRevisionApplication:
+    description: |
+      Configuration of an application as it was at a [DeploymentRevision](ctp:connect:type:DeploymentRevision).
+    example: !include ../examples/deployment/DeploymentRevisionApplication.json
+    properties:
+      applicationName:
+        type: string
+        description: Name of the application.
+        pattern: ^[A-Za-z0-9_-]+$
+        minLength: 2
+        maxLength: 256
+      standardConfiguration?:
+        type: ConfigurationValue[]
+        description: Contains values of keys that are saved in plain text.
+      securedConfiguration?:
+        type: ConfigurationValue[]
+        description: Contains keys of secret values. The values themselves are masked.
+      topic?:
+        type: string
+        description: Google Cloud Pub/Sub Topic when application type is event.
+      schedule?:
+        type: string
+        description: Cron schedule for when application type is job.
+      retryPolicy?:
+        type: RetryPolicy
+        description: Retry policy applied when application type is event.
+  DeploymentRevisionConnector:
+    example: !include ../examples/deployment/DeploymentRevisionConnector.json
+    description: |
+      Identity and source of the [Connector](ctp:connect:type:Connector) that was deployed at a [DeploymentRevision](ctp:connect:type:DeploymentRevision).
+      Rolling back restores this Connector version.
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          `id` of the Connector.
+      version:
+        type: integer
+        description: Version of the Connector.
+      repository:
+        type: Repository
+        description: Details of the GitHub repository that contains the Connect applications.
   DeploymentGlobalConfiguration:
     description: Global configuration applied to all applications in the deployment.
     properties:
