@@ -126,6 +126,40 @@ types:
       scopes:
         type: string[]
         description: List of [scopes](/hosts-and-authorization#authorization) assigned to the API Client.
+  RetryPolicy:
+    description: |
+      Configures how failed event delivery attempts are retried. Only applies to `event` applications.
+
+      If not set, defaults to `exponential-backoff` with a `minBackoffSeconds` of 10, a `maxBackoffSeconds` of 120, and a
+      `maxAttempts` of 10, unless the Connect application's `connect.yaml` file declares its own retry policy.
+    properties:
+      strategy:
+        type: string
+        description: The retry strategy to apply.
+        (annotations.enumDescriptions):
+          immediate: |
+            Retries failed event deliveries as soon as possible without a backoff delay.
+          exponential-backoff: |
+            Increases the delay between failed delivery attempts up to the configured maximum.
+        enum:
+          - immediate
+          - exponential-backoff
+      minBackoffSeconds?:
+        type: integer
+        description: Minimum backoff delay, in seconds, before the first retry. Required when `strategy` is `exponential-backoff`.
+        minimum: 1
+        maximum: 600
+      maxBackoffSeconds?:
+        type: integer
+        description: Maximum backoff delay, in seconds, that the retry delay grows to and plateaus at. Required when `strategy` is `exponential-backoff`.
+        minimum: 1
+        maximum: 600
+      maxAttempts?:
+        type: integer
+        description: |
+          Maximum number of delivery attempts before the message delivery is considered failed. Only applies when `strategy` is `exponential-backoff`.
+        minimum: 5
+        maximum: 100
   DeploymentConfigurationApplication:
     description: |
       Describes the configuration set of a given application.
@@ -142,6 +176,9 @@ types:
       schedule?:
         type: string
         description: Cron expression that overrides the default schedule defined in the `connect.yaml` file for `job` applications. If not set, the default schedule from the `connect.yaml` file is used.
+      retryPolicy?:
+        type: RetryPolicy
+        description: Retry policy that overrides the default retry policy defined in the `connect.yaml` file for `event` applications. If not set, the default retry policy from the `connect.yaml` file is used.
   ApplicationDeployment:
     description: |
       Describes an application deployment of the Connector.
@@ -171,6 +208,9 @@ types:
       schedule?:
         type: string
         description: Cron schedule for job applications.
+      retryPolicy?:
+        type: RetryPolicy
+        description: Retry policy applied to event applications.
   ConnectorReportEntryType:
     type: string
     description: |
