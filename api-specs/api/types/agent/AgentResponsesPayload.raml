@@ -3,7 +3,7 @@
 type: object
 displayName: AgentResponsesPayload
 description: |
-  Structured fields for the `payload` part of a `multipart/form-data` [/responses](/api/projects/intake#create-a-cart-quote-request-or-shopping-list) request to Intake. `prompt` is optional when files are attached.
+  Structured fields for the `payload` part of a `multipart/form-data` [/responses](/api/projects/intake#create-a-cart-quote-request-or-shopping-list) request to Intake. `prompt` is optional when files are attached or `shoppingList` is set.
 
   For an `application/json` request, use [AgentResponsesRequest](ctp:api:type:AgentResponsesRequest) instead.
 example: !include ../../examples/agent/AgentResponsesPayload.json
@@ -19,12 +19,22 @@ properties:
   prompt?:
     type: string
     description: |
-      Natural-language description of the entity to create, such as the body of an email or a note. Required if no file is attached. For a Shopping List, the name of the list must be stated in either the prompt or an attached file.
+      Natural-language description of the entity to create, such as the body of an email or a note. Required if no file is attached and `shoppingList` is not set. For a Shopping List, the name of the list must be stated in either the prompt or an attached file.
   businessUnit?:
     type: BusinessUnitResourceIdentifier
     description: |
-      [BusinessUnit](ctp:api:type:BusinessUnit) to use for the request. If omitted, Intake resolves it from the input.
+      [BusinessUnit](ctp:api:type:BusinessUnit) to use for the request. Takes precedence over the Business Unit of the Shopping List in `shoppingList`. If omitted, Intake resolves it from the input or from the Shopping List.
   store?:
     type: StoreResourceIdentifier
     description: |
-      [Store](ctp:api:type:Store) to use for the request. If omitted, Intake resolves it from the input.
+      [Store](ctp:api:type:Store) to use for the request. Takes precedence over the Store of the Shopping List in `shoppingList`. If omitted, Intake resolves it from the input or from the Shopping List.
+  shoppingList?:
+    type: ShoppingListResourceIdentifier
+    description: |
+      [ShoppingList](ctp:api:type:ShoppingList) to create the Cart or Quote Request from. Intake reads the list once and uses its Line Items as the Products of the request. The ShoppingList must exist and be accessible to the caller.
+
+      If the Shopping List can't be read, a [ShoppingListUnresolved](ctp:api:type:AgentShoppingListUnresolvedError) error is returned.
+
+      If files are attached, an [InvalidField](ctp:api:type:InvalidFieldError) error is returned.
+
+      If `outputType` is `ShoppingList`, an [InvalidField](ctp:api:type:InvalidFieldError) error is returned.
