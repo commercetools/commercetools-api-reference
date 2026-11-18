@@ -4,7 +4,9 @@ type: object
 displayName: ModifiedBy
 example: !include ../examples/ModifiedBy.json
 description: |
-  Information about the user or API Client who performed the change. This is a variant of [LastModifiedBy](ctp:api:type:LastModifiedBy).
+  Information about the user, API Client, or source that performed the change. This is a variant of [LastModifiedBy](ctp:api:type:LastModifiedBy).
+
+  `attributedTo` is only set for changes made after 22 October 2026.
 properties:
   isPlatformClient:
     type: boolean
@@ -13,12 +15,14 @@ properties:
   id?:
     type: string
     description: |
+
       [ID](/general-concepts#identifier) of the Merchant Center user who made the change.
 
       Present only if `isPlatformClient` is `true`.
   type:
     type: string
     description: |
+
       Indicates who performed the change.
 
       - If the change was made by a user, the value is `"user"`.
@@ -30,6 +34,12 @@ properties:
       [ID](/general-concepts#identifier) of the [API Client](ctp:api:type:ApiClient) that made the change.
 
       Present only if the change was made using an API Client.
+  externalUserId?:
+    type: string
+    description: |
+      [External user ID](/general-concepts#external-user-ids) of the user who made the change.
+
+      Present only if the change was made by an API Client with an external user ID.
   anonymousId?:
     type: string
     description: |
@@ -44,3 +54,9 @@ properties:
     type: Reference
     description: |
       The [Associate](ctp:api:type:Associate) who made the change in the context of a [Business Unit](ctp:api:type:BusinessUnit). Only available for [B2B](/offering/commerce-b2b)-enabled Projects when an Associate acts on behalf of a company using the [associate endpoints](/business-units-and-associates-apis-overview#on-the-associate-endpoints).
+  attributedTo?:
+    type: Attribution
+    description: |
+      Indicates if the change was made indirectly, for example by an agent acting on behalf of a user.
+
+      Present only for changes made after 22 October 2026.
