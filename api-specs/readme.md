@@ -512,7 +512,7 @@ If you need to add a new **scope**, follow these steps:
 
 You can find the list of the annotations available of our APIs in the [annotations.raml](./api/types/annotations.raml) file.
 
-In the RAML spec for the HTTP API (`api-specs/api` folder), use the following format:
+In the RAML spec for the commerce platform APIs (`api-specs/api` folder), use the following format:
 
 ```raml
   (placeholderParam):

@@ -44,7 +44,7 @@ yarn run generate-postman
 
 3. Navigate to `commercetools-docs/api-specs/postman`. You can find the `collection.json` and `template.json` files in the respective folders for each API:
 
-- api: HTTP API
+- api: commerce platform REST APIs
 - history: Change History API
 - import: Import API
 
